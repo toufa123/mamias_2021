@@ -1,0 +1,34 @@
+﻿/app/var/*
+/app/test/*
+app/vendor/*
+###> symfony/framework-bundle ###
+app/.env.local
+app/.env.local.php
+app/.env.*.local
+app/config/secrets/prod/prod.decrypt.private.php
+
+#idea folder
+.idea/
+###< symfony/framework-bundle ###
+
+###> symfony/phpunit-bridge ###
+app/.phpunit
+app/.phpunit.result.cache
+app/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php_cs
+/.php_cs.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> squizlabs/php_codesniffer ###
+app/.phpcs-cache
+app/phpcs.xml
+###< squizlabs/php_codesniffer ###
+
+###> liip/imagine-bundle ###
+app/public/media/cache/
+###< liip/imagine-bundle ###
+
+

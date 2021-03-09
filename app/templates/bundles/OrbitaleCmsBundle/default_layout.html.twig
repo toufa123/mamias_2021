@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.attributes.get('_locale') }}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}Welcome to your new CMS!{% endblock %}</title>
+    {% block stylesheets %}{% endblock %}
+    {% block orbitale_cms_head_metas %}{% endblock %}
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{ asset('resources/logo/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('resources/logo/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('resources/logo/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('resources/logo/favicon-16x16.png') }}">
+</head>
+<body>
+
+{% block orbitale_cms_breadcrumbs %}
+    {{ wo_render_breadcrumbs() }}
+
+{% endblock %}
+
+{% block orbitale_cms_page_content %}
+    {% block orbitale_cms_pages_list %}{% endblock %}
+{% endblock %}
+
+{% block javascripts %}{% endblock %}
+</body>
+</html>
