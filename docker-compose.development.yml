@@ -101,16 +101,16 @@ services:
   #######################################
   # Mail
   #######################################
-  maildev:
-    container_name: "${name}_maildev"
-    image: maildev/maildev:latest
-    restart: always
-    ports:
-      - "${maildev_port}:80" # smtp server
-      - "1026:25"
-    labels:
-      - "traefik.http.services.${name}_mail.loadbalancer.server.port=1025"
-      - "traefik.http.routers.${name}_mail.rule=Host(`mail.${name}.localhost`)"
+  #maildev:
+  #  container_name: "${name}_maildev"
+  #  image: maildev/maildev:latest
+  #  restart: always
+  #  ports:
+  #    - "${maildev_port}:80" # smtp server
+  #    - "1026:25"
+  #  labels:
+  #    - "traefik.http.services.${name}_mail.loadbalancer.server.port=1025"
+  #    - "traefik.http.routers.${name}_mail.rule=Host(`mail.${name}.localhost`)"
 
 
       #######################################
@@ -124,7 +124,7 @@ services:
       #- "${portainer_port}:80"
       #command: --no-auth -H unix:///var/run/docker.sock
       #volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      #- /var/run/docker.sock:/var/run/docker.sock
       #labels:
       #- "traefik.http.routers.${name}_portainer.rule=Host(`portainer.${name}.docker.localhost`)"
   #######################################

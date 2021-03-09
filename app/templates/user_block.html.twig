@@ -20,8 +20,8 @@
 
 
                 <img
-                    src=" https://ui-avatars.com/api/?name={{ app.user.getFirstname() }}+{{ app.user.getLastname }}&background=00aeef&color=fff&rounded=true&bold=true&format=svg"
-                    class="img-circle" alt="Avatar"/>
+                        src=" https://ui-avatars.com/api/?name={{ app.user.getFirstname() }}+{{ app.user.getLastname }}&background=00aeef&color=fff&rounded=true&bold=true&format=svg"
+                        class="img-circle" alt="Avatar"/>
                 <!--<img src="{{ _user_image }}" class="img-circle" alt="Avatar"/>-->
             {% endif %}
             <p>{{ app.user }}</p>
@@ -38,12 +38,12 @@
         <li class="user-footer">
             <div class="pull-left">
                 <a href="{{ _profile_uri }}" class="btn btn-default btn-flat"><i
-                        class="fa fa-user"></i> {{ _profile_text }}</a>
+                            class="fa fa-user"></i> {{ _profile_text }}</a>
             </div>
 
             <div class="pull-right">
                 <a href="{{ _logout_uri }}" class="btn btn-default btn-flat"><i
-                        class="fa fa-sign-out fa-fw"></i> {{ _logout_text }}</a>
+                            class="fa fa-sign-out fa-fw"></i> {{ _logout_text }}</a>
             </div>
         </li>
     {% endif %}

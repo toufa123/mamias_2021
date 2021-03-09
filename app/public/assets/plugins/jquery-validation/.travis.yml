@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - 6
+    - 6
 
 sudo: false
 
 install:
-  - npm install
+    - npm install
 
 cache:
-  directories:
-    - node_modules
+    directories:
+        - node_modules
