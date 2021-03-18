@@ -44,7 +44,7 @@ class SearchSpecies
     /**
      * @var string| null
      */
-    private $invasive;
+    private $phylum;
 
     /**
      * @var string| null
@@ -61,14 +61,14 @@ class SearchSpecies
      */
     private $vectorName;
 
-    public function getInvasive(): ?string
+    public function getPhylum(): ?string
     {
-        return $this->invasive;
+        return $this->phylum;
     }
 
-    public function setInvasive(?string $invasive): self
+    public function setPhylum(?string $phylum): self
     {
-        $this->invasive = $invasive;
+        $this->phylum = $phylum;
 
         return $this;
     }

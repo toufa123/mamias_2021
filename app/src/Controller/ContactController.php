@@ -73,13 +73,13 @@ class ContactController extends AbstractController
                     ->setTo($email)
                     //->setBcc (['mamias2020@gmail.com' => 'MAMIAS team'])
                     ->setBody(
-                        $this->renderView('contact/sendemail.html.twig', ['LastName' => $LastName]),
+                        $this->renderView('contact/sendemail.html.twig', ['LastName' => $LastName, 'email' => $email]),
                         'text/html'
                     )
                     ->addPart(
                         'Hi ' . $LastName . '! Your Message is successfully Submitted.We will get back to you soon!
                         Thanks.
-                        MAMIAS Team',
+                        MAMIAS Admin',
                         'text/plain'
                     );
 
@@ -104,23 +104,22 @@ class ContactController extends AbstractController
                     ->setTo('atef.ouerghi@spa-rac.org')
                     //->setBcc (['mamias2020@gmail.com' => 'MAMIAS team'])
                     ->setBody(
-                        $this->renderView('contact/sendnotification.html.twig'),
+                        $this->renderView('contact/sendnotification.html.twig', ['email' => $email]),
                         'text/html'
                     )
                     ->addPart(
-                        'Hi a Contact Messsage was sent', 'text/plain');
+                        'Hi a Contact Messsage was sent from' . $email, 'text/plain');
 
                 $mailer->send($message);
                 $mailer->send($email);
+                $this->addFlash('success', 'Your Message is sent. A confirmation Email was sent to your email adress !');
+
+
+                return $this->redirectToRoute('contact');
             } catch (Exception $e) {
                 echo $e->getMessage();
             }
 
-            $request->getSession()
-                ->getFlashBag()
-                ->add('success', 'Your Message is sent. A confirmation Email was sent to your email adress !');
-
-            return $this->redirectToRoute('contact');
         }
 
         return $this->render(

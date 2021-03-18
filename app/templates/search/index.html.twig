@@ -86,6 +86,10 @@
 
                                 </div>
                                 <div class="col-md-4">
+                                    <a href="#help" data-toggle="modal" data-target=".help"
+                                       class="card-link-f text-custom btn btn-primary waves-effect waves-light m-b-5 float-right">&nbsp;<i
+                                            class="fas fa-question"></i> </a>
+
                                 </div>
                             </div>
                         </div>
@@ -121,8 +125,8 @@
                                     {{ form_errors(form.Ecap) }}
                                     {{ form_widget(form.Ecap, {'attr': {'class': 'form-control  select2'}}) }}
                                     <br><br>
-                                    {{ form_errors(form.invasive) }}
-                                    {{ form_widget(form.invasive, {'attr': {'class': 'form-control select2'}}) }}
+                                    {{ form_errors(form.phylum) }}
+                                    {{ form_widget(form.phylum, {'attr': {'class': 'form-control select2'}}) }}
                                     <br><br>
                                     {{ form_errors(form.country) }}
                                     {{ form_widget(form.country, {'attr': {'class': 'form-control  select2'}}) }}
@@ -182,7 +186,33 @@
         </div>
     </div>
 
+    <div id="help" class="modal fade help" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+         aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" style="width:80%; max-width: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-custom mt-0">Search Help</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
 
+                </div>
+                <div class="modal-body">
+                    <p>SPA/RAC maintains this Marine Mediterranean Invasive Alien Species Database (MAMIAS) in order to
+                        facilitate access to data relevant for the implementation of the Barcelona Convention’s Protocol
+                        concerning Specially Protected Areas and Biological Diversity in the Mediterranean (SPA/BD
+                        Protocol), and more particularly, the Action Plan concerning species introductions and invasive
+                        species in the Mediterranean Sea.</p>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-custom waves-effect" data-dismiss="modal">Close</button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 
 {% endblock %}
@@ -211,6 +241,7 @@
     <script src="{{ asset('assets/plugins/select2/js/select2.full.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/switchery/switchery.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/tooltipster/tooltipster.bundle.min.js') }}"></script>
     <script type="text/javascript">
         "use strict";
         //var n = document.createElement('script');
@@ -411,6 +442,30 @@
             $(".select2").select2({
                 //allowClear: true
             });
+
+            function formatResult(item) {
+                if (!item.id) {
+                    // return `text` for optgroup
+                    return item.text;
+                }
+
+                // return item template
+                return $('<i>' + item.text + '</i>');
+            }
+
+            function formatSelection(item) {
+                // return selection template
+                return $('<i>' + item.text + '</i>');
+            }
+
+            $("#speciesName").select2({
+                // Specify format function for dropdown item
+                templateResult: formatResult,
+                // Specify format function for selected item
+                templateSelection: formatSelection
+            });
+
+
             $("#switch1").click(function () {
                 $("#panel").slideToggle();
                 $.cookie('switch1', true);
@@ -437,6 +492,7 @@
                 $.cookie('switch1', false);
                 $('#datatable-buttons').table.table().draw();
             })
+
 
         });
 

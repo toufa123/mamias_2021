@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Catalogue;
 use App\Entity\Country;
 use App\Entity\EcAp;
 use App\Entity\Ecofunctional;
@@ -15,6 +16,12 @@ use App\Entity\SuccessType;
 use App\Entity\VectorName;
 use App\Repository\CountryRepository;
 use App\Repository\OriginRepository;
+use App\Repository\SuccessTypeRepository;
+use App\Repository\EcofunctionalRepository;
+use App\Repository\CatalogueRepository;
+use App\Repository\VectorNameRepository;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use App\Repository\EcApRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -43,6 +50,10 @@ class SearchType extends AbstractType
                 EntityType::class,
                 [
                     'class' => Ecofunctional::class,
+                    'query_builder' => function (EcofunctionalRepository $er) {
+                        return $er->createQueryBuilder('a')
+                            ->orderBy('a.ecofunctional', 'ASC');
+                    },
                     'placeholder' => 'Select an EcoFunctional Group',
                     'choice_value' => 'id',
                     'choice_label' => 'ecofunctional',
@@ -54,7 +65,7 @@ class SearchType extends AbstractType
                 'origin',
                 EntityType::class,
                 [
-                    'class' => Country::class,
+
                     'query_builder' => function (OriginRepository $er) {
                         return $er->createQueryBuilder('f')
                             ->orderBy('f.originRegion', 'ASC');
@@ -70,7 +81,7 @@ class SearchType extends AbstractType
                 'med1stSighting',
                 ChoiceType::class,
                 [
-                    'choices' => $this->getYears(1750),
+                    'choices' => $this->getYears(1792),
                     'placeholder' => 'Select Year of First Med Sighting',
                     'attr' => ['class' => 'select2'],
                     'required' => false,
@@ -81,6 +92,10 @@ class SearchType extends AbstractType
                 EntityType::class,
                 [
                     'class' => SuccessType::class,
+                    'query_builder' => function (SuccessTypeRepository $er) {
+                        return $er->createQueryBuilder('f')
+                            ->orderBy('f.successType', 'ASC');
+                    },
                     'placeholder' => 'Select Establishment',
                     'choice_label' => 'successType',
                     'choice_value' => 'id',
@@ -88,11 +103,22 @@ class SearchType extends AbstractType
                     'required' => false,
                 ]
             )
-            //->add('invasive', ChoiceType::class, ['placeholder' => 'Select Invasive Caracteristics', 'attr' => ['class' => 'chzn-select'], 'choices' => [
-
-            //'Yes' => 1,
-            //  'No' => 0,
-            //],])
+            ->add(
+                'phylum',
+                EntityType::class,
+                [
+                    'class' => Catalogue::class,
+                    'query_builder' => function (CatalogueRepository $er) {
+                        //dd($er->getphylum());
+                        return $er->getphylum()[0];
+                    },
+                    'placeholder' => 'Select A Phylum',
+                    'choice_label' => 'phylum',
+                    'choice_value' => 'id',
+                    'attr' => ['class' => 'form-control select2'],
+                    'required' => false,
+                ]
+            )
             ->add(
                 'country',
                 EntityType::class,
@@ -126,6 +152,11 @@ class SearchType extends AbstractType
                 EntityType::class,
                 [
                     'class' => EcAp::class,
+                    'query_builder' => function (EcApRepository $er) {
+                        return $er->createQueryBuilder('f')
+                            ->orderBy('f.ecap', 'ASC');
+                    },
+
                     'placeholder' => 'Select EcAp SubRegion',
                     'choice_label' => 'ecap',
                     'choice_value' => 'id',
@@ -133,18 +164,18 @@ class SearchType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add(
-                'invasive',
-                EntityType::class,
-                [
-                    'class' => Invasiveness::class,
-                    'placeholder' => 'Select Impact',
-                    'choice_label' => 'invasivness',
-                    'choice_value' => 'id',
-                    'attr' => ['class' => 'select2'],
-                    'required' => false,
-                ]
-            )
+            //->add(
+            //    'invasive',
+            //    EntityType::class,
+            //    [
+            //        'class' => Invasiveness::class,
+            //        'placeholder' => 'Select Impact',
+            //        'choice_label' => 'invasivness',
+            //        'choice_value' => 'id',
+            //        'attr' => ['class' => 'select2'],
+            //        'required' => false,
+            //    ]
+            //)
             ->add(
                 'status',
                 EntityType::class,
@@ -162,6 +193,10 @@ class SearchType extends AbstractType
                 EntityType::class,
                 [
                     'class' => VectorName::class,
+                    'query_builder' => function (NestedTreeRepository $er) {
+                        return $er->createQueryBuilder('f')
+                            ->orderBy('f.vectorName', 'ASC');
+                    },
                     'choice_label' => 'vectorName',
                     'expanded' => false,
                     'required' => false,
@@ -181,7 +216,7 @@ class SearchType extends AbstractType
 
     private function getYears($min, $max = 'current')
     {
-        $years = range($min, ('current' === $max ? date('Y') : $max));
+        $years = range($min, ('current' === $max ? date('Y') + 10 : $max));
 
         return array_combine($years, $years);
     }

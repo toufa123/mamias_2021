@@ -84,7 +84,7 @@
                                                 <p>No Synonyms </p>
                                             {% elseif entity.relation.GBIFlink %}
                                                 {% for u in entity.relation.Synonyms %}
-                                                    <span class="text-dark">{{ u.SpeciesSynonym }}</span> <span
+                                                    <span class="text-dark"><i>{{ u.SpeciesSynonym }}</i></span> <span
                                                     class="text-custom">/</span>
                                                 {% endfor %}
                                             {% endif %}

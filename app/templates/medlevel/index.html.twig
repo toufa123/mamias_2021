@@ -65,7 +65,7 @@
             <i class="mdi mdi-clipboard-alert widget-two-icon"></i>
             <div class="wigdet-two-content text-white">
                 <p class="m-0 text-uppercase font-600 font-secondary text-overflow" title="Statistics">
-                    Toatl Invasive Species </p>
+                    Total Invasive Species </p>
                 <h2 class="text-white"><span data-plugin="counterup">{{ invasive }}</span>
 
                 </h2>
@@ -263,7 +263,13 @@
                                 type: 'column'
                             },
                             title: {
-                                text: 'Stacked column chart'
+                                text: 'Number of reported NIS known or likely to be introduced by each of the main pathways',
+                                style: {
+                                    color: '#00AEEF',
+                                    fontFamily: 'Roboto',
+                                }
+
+
                             },
                             xAxis: {
                                 categories: xCategories
@@ -282,11 +288,11 @@
                                 }
                             },
                             legend: {
-                                align: 'right',
-                                x: -100,
-                                verticalAlign: 'top',
-                                y: 20,
-                                floating: true,
+                                //align: 'centre',
+                                //verticalAlign: 'bottom',
+
+                                //floating: true,
+                                title: {text: 'Certainty'},
                                 backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
                                 borderColor: '#CCC',
                                 borderWidth: 1,

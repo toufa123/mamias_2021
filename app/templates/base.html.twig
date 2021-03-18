@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MAMIAS Web Aoolication 2019"/>
+    <meta name="description" content="MAMIAS Web Application 2021"/>
+    <meta name="google-site-verification" content="wp1T2ZMHcGvgRsUTSNjrjEI4slx3ePbgIx5l741GT7U"/>
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('resources/logo/favicon.ico') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('resources/logo/apple-touch-icon.png') }}">
@@ -152,7 +153,7 @@
                                class="right-menu-item btn-custom waves-effect waves-light m-b-5"
                                data-toggle="tooltip" data-placement="bottom" title=""
                                data-original-title="Go to Admin Area">
-                                <i id="tooltip-hover" class="mdi mdi-monitor-dashboard tooltipstered"></i>
+                                <i class="mdi mdi-monitor-dashboard tooltipstered"></i>
                             </a>
                         </li>
 
@@ -429,20 +430,23 @@
                 <li><a href="{{ path('faq') }}" class="m-item m-fab-blue"
                        title="FAQ">
                         <i class="fa fa-question"></i></a></li>
-                <li><a href="#top" id="tooltip-hover" class="m-item m-fab-blue" title="Scroll up">
+                <li><a href="#top" class="m-item m-fab-blue" title="Scroll up">
                         <i class="fa fa-arrow-up"></i></a></li>
 
-                <li><a href="https://www.facebook.com/SPARACinfos/" target="_blank" id="tooltip-hover"
+                <li><a href="https://twitter.com/sparacinfos" target="_blank"
                        class="m-item m-fab-blue"> <i class="fab fa-twitter" title="Follow us on twitter"></i></a>
                 </li>
 
-                <li><a href="https://twitter.com/sparacinfos" target="_blank" id="tooltip-hover"
+                <li><a href="https://www.facebook.com/SPARACinfos/" target="_blank"
                        class="m-item m-fab-blue"> <i class="fab fa-facebook-f" title="Follow us on Facebook"></i></a>
                 </li>
             </ul>
         </div>
 
+
+        {# {{ render_esi(path('ch_cookie_consent.show')) }} #}
         {{ render_esi(path('ch_cookie_consent.show_if_cookie_consent_not_set')) }}
+
 
         <!-- Footer -->
         <footer class="footer text-right">
@@ -452,8 +456,8 @@
                         © <span class="text-white"> {{ "now"|date("Y") }} </span><a href="http://www.rac-spa.org/"
                                                                                     class="card-link-f text-custom"
                                                                                     target="_blank">UNEP-MAP-SPA/RAC </a>
-                        |<a href="{{ asset('sitemap.default.xml') }}"
-                            class="card-link-f text-custom">&nbsp;SiteMap </a>
+                        <!--|<a href="{{ asset('sitemap.default.xml') }}"
+                            class="card-link-f text-custom">&nbsp;SiteMap </a>-->
                         |<a href="#terms" data-toggle="modal" data-target=".terms"
                             class="card-link-f text-custom">&nbsp;Terms & Conditions </a>
                         |<a href="#terms" data-toggle="modal" data-target=".privacy"
@@ -495,12 +499,12 @@
                 <p>SPA/RAC will endeavour to keep this information system updated and data accurate through a
                     participatory process and consultation with the Contracting Parties to Barcelona Convention.
                     However, it should be understood that the information contained therein may not necessarily reflect
-                    all information made available to the SPA/RAC, as some data and information may, of necessity, be
+                    all information made available to SPA/RAC, as some data and information may, of necessity, be
                     preliminary in nature and must be submitted to a final review process.</p>
                 <p>This web application is developed in order to further enable the MAMIAS database, as an online
                     platform for the collection, exploitation, and dissemination of information on marine biological
                     invasions in the Mediterranean Sea, to support relevant regional and international policies.</p>
-                <p>The SPA/RAC makes every effort to provide and maintain accurate, complete, useable, and timely
+                <p>SPA/RAC makes every effort to provide and maintain accurate, complete, useable, and timely
                     information on the online database. However, these data and information are provided with the
                     understanding that they are not guaranteed to be correct or complete. Indeed, this information is
                     subject to change and should, in each case, be independently verified before reliance is placed on
@@ -1127,7 +1131,7 @@
 <!--[endif]-->
 <script src="{{ asset('assets/plugins/jquery-knob/jquery.knob.js') }}"></script>
 <!-- Toastr js -->
-<script src="{{ asset('assets/plugins/toastr/toastr.js') }}"></script>
+<!--<script src="{{ asset('assets/plugins/toastr/toastr.js') }}"></script>-->
 <script src="{{ asset('assets/js/jquery.fullscreen-min.js') }}"></script>
 <script src="{{ asset('assets/js/fab-buttons.min.js') }}"></script>
 <!-- App js -->
@@ -1150,9 +1154,27 @@
             return false;
             $('#tooltip-hover2').tooltipster();
         });
-        $('#tooltip-hover1').tooltipster();
+
+        $('#tooltip-hover').tooltipster();
     });
 
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-XXXXX-Y', 'auto');
+    ga('send', 'pageview');
 </script>
 
 

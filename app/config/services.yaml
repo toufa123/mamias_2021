@@ -8,6 +8,8 @@ parameters:
     app.admin_password: 'MAVA_2022'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
     container.dumper.inline_factories: true
+    router.request_context.host: mamias.org
+    router.request_context.scheme: http
 
 services:
     # default configuration for services in *this* file
@@ -196,4 +198,11 @@ services:
         arguments: [ ~, App\Entity\Vectors, App\Controller\VectorsAdminController ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: Settings, label: Patways/Vectors }
+        public: true
+
+    admin.contact:
+        class: App\Admin\ContactAdmin
+        arguments: [ ~, App\Entity\Contact, App\Controller\ContactAdminController ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: users, label: Contact }
         public: true

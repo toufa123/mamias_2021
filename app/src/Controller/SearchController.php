@@ -40,6 +40,7 @@ class SearchController extends AbstractController
         $status = null;
         $pathway = null;
         $ec = null;
+        $phylum = null;
         $search = new SearchSpecies();
         $form = $this->createForm(SearchType::class, $search);
 
@@ -50,6 +51,7 @@ class SearchController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $data = $form->getData();
             $speciesName = $data->getSpeciesName();
+
             if ('' != $speciesName) {
                 $sId = $em->getRepository(Catalogue::class)->findOneBy(['Species' => $speciesName])->getId();
             }

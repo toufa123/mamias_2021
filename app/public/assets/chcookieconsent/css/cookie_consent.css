@@ -8,7 +8,7 @@
     width: 100%;
     display: inline-block;
     z-index: 99999;
-    padding: 35px 40px;
+    padding: 10px 10px;
 }
 
 .ch-cookie-consent__title {
@@ -31,12 +31,12 @@
 }
 
 .ch-cookie-consent__form {
-    margin-top: 40px;
+    margin-top: 10px;
 }
 
 .ch-cookie-consent__category {
     border-bottom: 1px solid #00AEEF;
-    padding: 30px 0;
+    padding: 10px 0;
     display: -ms-flexbox;
     display: flex;
 }

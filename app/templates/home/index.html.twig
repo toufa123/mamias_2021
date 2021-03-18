@@ -176,13 +176,13 @@
         //});
         //var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
 
-        $.getJSON('{{ asset('assets/geojson/medcountries2020.geojson') }}', function (geojson) {
+        $.getJSON('{{ asset('assets/geojson/cp.geojson') }}', function (geojson) {
             // Initiate the chart
             $('#highcontainer').highcharts('Map', {
                 borderWidth: 1,
                 //height: (9 / 16 * 100) + '%',
                 title: {
-                    text: 'Number of Reported Marine NIS by Country',
+                    text: 'Number of Reported Marine NIS by Mediterranean Country',
                     style: {
                         color: '#00AEEF',
                         font: "Roboto Light",
@@ -251,7 +251,7 @@
                 },
                 series: [{
                     //name: 'Number of NIS',
-                    color: '#E0E0E0',
+                    color: '#6b6a6a',
                     mapData: geojson,
                     enableMouseTracking: false,
                     showInLegend: false
@@ -294,7 +294,7 @@
                     zoomType: 'x'
                 },
                 title: {
-                    text: 'Numbers of new reported marine non-indigenous species ',
+                    text: 'Numbers of new reported marine non-indigenous species in the Mediterranean ',
                     style: {
                         color: '#00AEEF',
                         font: "Roboto Light",

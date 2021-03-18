@@ -277,7 +277,7 @@ class SpeciesDeclarationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $species = $em->getRepository(Mamias::class)->findBy([], ['relation' => 'ASC']);
         $country = $em->getRepository(Country::class)->findBy([], ['country' => 'ASC']);
-
+        //dd($species.relation);
         // NIS List sheet
         //$spreadsheet->createSheet();
         // Zero based, so set the second tab as active sheet
@@ -297,14 +297,17 @@ class SpeciesDeclarationController extends Controller
             ->setAutoSize(true);
         //$sheet2->getColumnDimension ('B')->setVisible (false);
 
+
         $row = 2;
         foreach ($species as $e) {
             //$spreadsheet->setActiveSheetIndex(1)
             $sheet2
-                ->setCellValue('A' . $row, $e->getRelation()->getId())
-                ->setCellValue('B' . $row, $e->getRelation()->getSpecies());
+                ->setCellValue('B' . $row, $e->getRelation()->getSpecies())
+                ->setCellValue('A' . $row, $e->getRelation()->getId());
+            //->setCellValue('B' . $row, $e->getRelation()->getSpecies());
             ++$row;
         }
+
 
         // Country List sheet
         //$spreadsheet->createSheet();
@@ -329,7 +332,10 @@ class SpeciesDeclarationController extends Controller
                 ->setCellValue('B' . $row2, $c->getCountry());
             ++$row2;
         }
-
+        $sheet2->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
+        $sheet3->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
+        $sheet2->getProtection()->setSheet(true);
+        $sheet3->getProtection()->setSheet(true);
         $spreadsheet->setActiveSheetIndex(0);
 
         $col_count = 10000;

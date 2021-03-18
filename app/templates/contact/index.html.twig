@@ -8,18 +8,7 @@
 
 {% block body %}
 
-    <div class="row">
-        {% if app.session.flashBag.has('success') %}
-            <div class="alert alert-success alert-dismissible fade in" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-                {% for msg in app.session.flashBag.get('success') %}
-                    {{ msg }}
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
+
 
     <div class="row">
         <div class="col-sm-12">
@@ -34,6 +23,20 @@
         </div>
     </div>
 
+    <div class="row ">
+        <div class="col-md-12">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <i class="mdi mdi-check-all"></i>
+                {% for message in app.flashes('success') %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
 
     <div class="row justify-content-center m-t-50 p-b-10 m-b-30">
         <div class="col-md-10">
@@ -87,6 +90,7 @@
                         <div class="contact-detail">
                             <i class="fas fa-map-marker-alt"></i>
                             <address>
+                                <h5>Regional Activity Centre for Specially Protected Areas (SPA/RAC)</h5><br>
                                 Boulevard du Leader Yasser Arafat B.P. 337 - 1080 Tunis Cedex - La Charguia <br>
                                 Tunis, Tunisia
                             </address>
@@ -102,7 +106,7 @@
                         <div class="contact-detail">
                             <i class="fas fa-envelope"></i>
                             <p>
-                                <a href="">info@mamias.org</a>
+                                <a href="mailto:admin@mamias.org">admin@mamias.org</a>
                             </p>
                         </div>
 

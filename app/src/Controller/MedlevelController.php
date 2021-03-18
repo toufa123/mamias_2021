@@ -75,7 +75,7 @@ class MedlevelController extends AbstractController
         $ob8->chart->renderTo('linechart');
         $ob8->xAxis->categories($cat);
         $ob8->yAxis->allowDecimals(false);
-        $ob8->title->text('Temporal variability in numbers of new reported marine non-indigenous species');
+        $ob8->title->text('Temporal variability in number of new reported marine non-indigenous species');
         $ob8->title->style(
             [
                 'fontFamily' => 'Roboto Light',
@@ -100,7 +100,7 @@ class MedlevelController extends AbstractController
             ]
         );
 
-        $ob8->series([['name' => 'numbers of new reported marine non-indigenous species', 'color' => '#00AEEF', 'data' => $datacu]]);
+        $ob8->series([['name' => 'number of new reported marine NIS', 'color' => '#00AEEF', 'data' => $datacu]]);
         //Ecofunctional Groups of NIS
         $groups = $em->getRepository(Mamias::class)->getSpeciesbyGroup();
         //dump($groups); die;

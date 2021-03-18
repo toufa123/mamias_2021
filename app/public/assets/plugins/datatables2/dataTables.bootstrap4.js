@@ -167,7 +167,7 @@
         }
 
         attach(
-            $(host).empty().html('<ul class="pagination"/>').children('ul'),
+            $(host).empty().html('<ul class="pagination flex-wrap"/>').children('ul'),
             buttons
         );
 
