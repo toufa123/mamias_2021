@@ -111,7 +111,7 @@ class MamiasRepository extends ServiceEntityRepository
     /**
      * @return Mamias[] Returns an array of Mamias objects
      */
-    public function findSpeciesByParametres($sId, $eco, $origin, $su, $year, $country, $ecapmed, $status, $pathway)
+    public function findSpeciesByParametres($sId, $eco, $origin, $su, $year, $country, $ecapmed, $status, $pathway, $reg)
     {
         $query = $this->createQueryBuilder('m');
         $query = $query
@@ -131,6 +131,7 @@ class MamiasRepository extends ServiceEntityRepository
             ->addSelect('success.successType')
             ->leftJoin('m.speciesstatus', 'speciesstatus')
             ->addSelect('speciesstatus.status')
+
             ->leftJoin('m.Pathway', 'Pathway')
             ->leftJoin('Pathway.VectorName', 'vector')
             ->addSelect('vector.vectorName');
@@ -158,10 +159,10 @@ class MamiasRepository extends ServiceEntityRepository
             $query = $query->andWhere('c.country = :val4')
                 ->setParameter('val4', $country);
         }
-        //if (!empty($reg)) {
-        //    $query = $query->andWhere ('c.regionalSea = :val4')
-        //        ->setParameter ('val4', $reg);
-        //}
+        if (!empty($reg)) {
+            $query = $query->andWhere('c.regionalSea = :val10')
+                ->setParameter('val10', $reg);
+        }
         if (!empty($ecapmed)) {
             $query = $query->andWhere('c.ecap = :val7')
                 ->setParameter('val', $ecapmed);

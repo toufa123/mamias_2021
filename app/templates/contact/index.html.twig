@@ -25,15 +25,17 @@
 
     <div class="row ">
         <div class="col-md-12">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-                <i class="mdi mdi-check-all"></i>
-                {% for message in app.flashes('success') %}
-                    {{ message }}
-                {% endfor %}
-            </div>
+            {% if app.session.flashBag.has('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="mdi mdi-check-all"></i>
+                    {% for message in app.flashes('success') %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
     </div>

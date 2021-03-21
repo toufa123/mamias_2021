@@ -18,6 +18,7 @@ use App\Repository\CountryRepository;
 use App\Repository\OriginRepository;
 use App\Repository\SuccessTypeRepository;
 use App\Repository\EcofunctionalRepository;
+use App\Repository\RegionalSeaRepository;
 use App\Repository\CatalogueRepository;
 use App\Repository\VectorNameRepository;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
@@ -103,22 +104,7 @@ class SearchType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add(
-                'phylum',
-                EntityType::class,
-                [
-                    'class' => Catalogue::class,
-                    'query_builder' => function (CatalogueRepository $er) {
-                        //dd($er->getphylum());
-                        return $er->getphylum()[0];
-                    },
-                    'placeholder' => 'Select A Phylum',
-                    'choice_label' => 'phylum',
-                    'choice_value' => 'id',
-                    'attr' => ['class' => 'form-control select2'],
-                    'required' => false,
-                ]
-            )
+
             ->add(
                 'country',
                 EntityType::class,
@@ -135,18 +121,22 @@ class SearchType extends AbstractType
                     'required' => false,
                 ]
             )
-            //->add(
-            //    'regionalSea',
-            //    EntityType::class,
-            //    [
-            //        'class' => RegionalSea::class,
-            //        'placeholder' => 'Select a Sea',
-            //        'choice_label' => 'regionalSea',
-            //        'choice_value' => 'id',
-            //        'attr' => ['class' => 'select2'],
-            //        'required' => false
-            //    ]
-            //)
+            ->add(
+                'regionalSea',
+                EntityType::class,
+                [
+                    'class' => RegionalSea::class,
+                    'query_builder' => function (RegionalSeaRepository $er) {
+                        return $er->createQueryBuilder('f')
+                            ->orderBy('f.regionalSea', 'ASC');
+                    },
+                    'placeholder' => 'Select a Sea',
+                    'choice_label' => 'regionalSea',
+                    'choice_value' => 'id',
+                    'attr' => ['class' => 'form-control select2'],
+                    'required' => false
+                ]
+            )
             ->add(
                 'Ecap',
                 EntityType::class,

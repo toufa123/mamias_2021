@@ -125,8 +125,8 @@
                                     {{ form_errors(form.Ecap) }}
                                     {{ form_widget(form.Ecap, {'attr': {'class': 'form-control  select2'}}) }}
                                     <br><br>
-                                    {{ form_errors(form.phylum) }}
-                                    {{ form_widget(form.phylum, {'attr': {'class': 'form-control select2'}}) }}
+                                    {{ form_errors(form.regionalSea) }}
+                                    {{ form_widget(form.regionalSea, {'attr': {'class': 'form-control select2'}}) }}
                                     <br><br>
                                     {{ form_errors(form.country) }}
                                     {{ form_widget(form.country, {'attr': {'class': 'form-control  select2'}}) }}
@@ -440,7 +440,7 @@
 
             // Select2
             $(".select2").select2({
-                //allowClear: true
+                allowClear: true
             });
 
             function formatResult(item) {
@@ -462,7 +462,9 @@
                 // Specify format function for dropdown item
                 templateResult: formatResult,
                 // Specify format function for selected item
-                templateSelection: formatSelection
+                templateSelection: formatSelection,
+                //allowClear: true,
+                //minimumInputLength: 3
             });
 
 
@@ -490,7 +492,9 @@
                 $('#vectorName').val(null).trigger('change');
                 $("#panel").hide();
                 $.cookie('switch1', false);
-                $('#datatable-buttons').table.table().draw();
+                $('#datatable-buttons').DataTable().clear().draw();
+                //$('#datatable-buttons').table.table().draw();
+                window.location.reload(true);
             })
 
 

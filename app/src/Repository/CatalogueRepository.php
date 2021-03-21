@@ -91,12 +91,17 @@ class CatalogueRepository extends ServiceEntityRepository
 
     public function getphylum()
     {
-        return $this->createQueryBuilder('a')
-            ->select('a.phylum')
-            ->groupBy('a.phylum')
-            ->orderBy('a.phylum', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('a');
+        return $qb->select('a.phylum')
+            //->groupBy('a.id')
+            ->GroupBy('a.phylum')
+            ->orderBy('a.phylum', 'ASC');
+        //->getQuery()->getScalarResult();
+        //->distinct();
+        //->getQuery();
+        //->getResult();
+
+
     }
 
 }

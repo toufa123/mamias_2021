@@ -113,11 +113,11 @@ class ContactController extends AbstractController
                 $mailer->send($message);
                 $mailer->send($email);
                 $this->addFlash('success', 'Your Message is sent. A confirmation Email was sent to your email adress !');
-
-
                 return $this->redirectToRoute('contact');
+
             } catch (Exception $e) {
                 echo $e->getMessage();
+
             }
 
         }

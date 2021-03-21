@@ -55,6 +55,11 @@ class SearchController extends AbstractController
             if ('' != $speciesName) {
                 $sId = $em->getRepository(Catalogue::class)->findOneBy(['Species' => $speciesName])->getId();
             }
+
+            if ('' != $phylum) {
+                $p = $em->getRepository(Catalogue::class)->findOneBy(['phylum' => $phylum])->getId();
+            }
+
             $e = $data->getEcofunctional();
             if ('' != $e) {
                 $eco = $em->getRepository(Ecofunctional::class)->findOneBy(['ecofunctional' => $e])->getId();
@@ -73,10 +78,10 @@ class SearchController extends AbstractController
             if ('' != $c) {
                 $country = $em->getRepository(Country::class)->findOneBy(['country' => $c])->getId();
             }
-            //$r = $data->getRegionalSea ();
-            //if ('' != $r) {
-            //    $reg = $em->getRepository (RegionalSea::class)->findOneBy (['regionalSea' => $r])->getId ();
-            //}
+            $r = $data->getRegionalSea();
+            if ('' != $r) {
+                $reg = $em->getRepository(RegionalSea::class)->findOneBy(['regionalSea' => $r])->getId();
+            }
             $ec = $data->getEcap();
             if ('' != $ec) {
                 $ecapmed = $em->getRepository(EcAp::class)->findOneBy(['ecap' => $ec])->getId();
@@ -95,7 +100,7 @@ class SearchController extends AbstractController
             //dump($st, $pat, $status, $pathway);die;
 
             $species = $em->getRepository(Mamias::class)->findSpeciesByParametres(
-                $sId, $eco, $origin, $su, $year, $country, $ecapmed, $status, $pathway);
+                $sId, $eco, $origin, $su, $year, $country, $ecapmed, $status, $pathway, $reg);
             //dump ($species); die;
         } else {
             $em = $this->getDoctrine()->getManager();
