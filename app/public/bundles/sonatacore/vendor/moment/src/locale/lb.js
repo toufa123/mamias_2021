@@ -15,7 +15,6 @@ function processRelativeTime(number, withoutSuffix, key, isFuture) {
     };
     return withoutSuffix ? format[key][0] : format[key][1];
 }
-
 function processFutureTime(string) {
     var number = string.substr(0, string.indexOf(' '));
     if (eifelerRegelAppliesToNumber(number)) {
@@ -23,7 +22,6 @@ function processFutureTime(string) {
     }
     return 'an ' + string;
 }
-
 function processPastTime(string) {
     var number = string.substr(0, string.indexOf(' '));
     if (eifelerRegelAppliesToNumber(number)) {
@@ -31,7 +29,6 @@ function processPastTime(string) {
     }
     return 'virun ' + string;
 }
-
 /**
  * Returns true if the word before the given number loses the '-n' ending.
  * e.g. 'an 10 Deeg' but 'a 5 Deeg'
@@ -76,11 +73,11 @@ function eifelerRegelAppliesToNumber(number) {
 export default moment.defineLocale('lb', {
     months: 'Januar_Februar_Mäerz_Abrëll_Mee_Juni_Juli_August_September_Oktober_November_Dezember'.split('_'),
     monthsShort: 'Jan._Febr._Mrz._Abr._Mee_Jun._Jul._Aug._Sept._Okt._Nov._Dez.'.split('_'),
-    monthsParseExact: true,
+    monthsParseExact : true,
     weekdays: 'Sonndeg_Méindeg_Dënschdeg_Mëttwoch_Donneschdeg_Freideg_Samschdeg'.split('_'),
     weekdaysShort: 'So._Mé._Dë._Më._Do._Fr._Sa.'.split('_'),
     weekdaysMin: 'So_Mé_Dë_Më_Do_Fr_Sa'.split('_'),
-    weekdaysParseExact: true,
+    weekdaysParseExact : true,
     longDateFormat: {
         LT: 'H:mm [Auer]',
         LTS: 'H:mm:ss [Auer]',
@@ -106,20 +103,20 @@ export default moment.defineLocale('lb', {
             }
         }
     },
-    relativeTime: {
-        future: processFutureTime,
-        past: processPastTime,
-        s: 'e puer Sekonnen',
-        m: processRelativeTime,
-        mm: '%d Minutten',
-        h: processRelativeTime,
-        hh: '%d Stonnen',
-        d: processRelativeTime,
-        dd: '%d Deeg',
-        M: processRelativeTime,
-        MM: '%d Méint',
-        y: processRelativeTime,
-        yy: '%d Joer'
+    relativeTime : {
+        future : processFutureTime,
+        past : processPastTime,
+        s : 'e puer Sekonnen',
+        m : processRelativeTime,
+        mm : '%d Minutten',
+        h : processRelativeTime,
+        hh : '%d Stonnen',
+        d : processRelativeTime,
+        dd : '%d Deeg',
+        M : processRelativeTime,
+        MM : '%d Méint',
+        y : processRelativeTime,
+        yy : '%d Joer'
     },
     ordinalParse: /\d{1,2}\./,
     ordinal: '%d.',

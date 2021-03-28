@@ -1,6 +1,6 @@
 'use strict';
 
-window.onload = function () {
+window.onload = function() {
     manageWebbyDisplay();
 
     new MutationObserver(function (mutations, self) {
@@ -31,7 +31,7 @@ window.onload = function () {
             }
 
             // Wait input values to be populated before executing the query
-            setTimeout(function () {
+            setTimeout(function(){
                 op.querySelector('.execute').click();
                 op.scrollIntoView();
             }, 500);

@@ -78,6 +78,15 @@ abstract class AbstractAdminExtension implements AdminExtensionInterface
     {
     }
 
+    /**
+     * @phpstan-param AdminInterface<T> $admin
+     */
+    public function configurePersistentParameters(AdminInterface $admin, array $parameters): array
+    {
+        // NEXT_MAJOR: Return $parameters instead.
+        return array_merge($parameters, $this->getPersistentParameters($admin));
+    }
+
     public function alterNewInstance(AdminInterface $admin, $object)
     {
     }
@@ -156,6 +165,18 @@ abstract class AbstractAdminExtension implements AdminExtensionInterface
     }
 
     /**
+     * @param array<string, array<string, mixed>> $actions
+     *
+     * @return array<string, array<string, mixed>>
+     *
+     * @phpstan-param AdminInterface<T> $admin
+     */
+    public function configureDashboardButtons(AdminInterface $admin, array $actions): array
+    {
+        return $actions;
+    }
+
+    /**
      * @phpstan-param AdminInterface<T> $admin
      */
     public function configureDefaultFilterValues(AdminInterface $admin, array &$filterValues)
@@ -174,6 +195,18 @@ abstract class AbstractAdminExtension implements AdminExtensionInterface
      */
     public function configureFormOptions(AdminInterface $admin, array &$formOptions): void
     {
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     *
+     * @return array<string, mixed>
+     *
+     * @phpstan-param AdminInterface<T> $admin
+     */
+    public function configureFilterParameters(AdminInterface $admin, array $parameters): array
+    {
+        return $parameters;
     }
 }
 

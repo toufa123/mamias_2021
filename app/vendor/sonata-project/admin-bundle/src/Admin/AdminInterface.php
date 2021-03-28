@@ -30,11 +30,9 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * NEXT_MAJOR: Add all these methods to the interface by uncommenting them.
  *
- * @method array                           configureActionButtons(string $action, ?object $object = null)
  * @method string                          getSearchResultLink(object $object)
  * @method array                           getDefaultFilterParameters()
  * @method bool                            isCurrentRoute(string $name, ?string $adminCode)
- * @method bool                            canAccessObject(string $action, object $object)
  * @method mixed                           getPersistentParameter(string $name)
  * @method string[]                        getExportFields()
  * @method array                           getSubClasses()
@@ -51,6 +49,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @method string|null                     getParentAssociationMapping()
  * @method void                            reorderFormGroup(string $group, array $keys)
  * @method void                            defineFormBuilder(FormBuilderInterface $formBuilder)
+ * @method FieldDescriptionInterface       createFieldDescription(string $propertyName, array $options = [])
  *
  * @phpstan-template T of object
  * @phpstan-extends AccessRegistryInterface<T>
@@ -731,11 +730,6 @@ interface AdminInterface extends TaggedAdminInterface, AccessRegistryInterface, 
      */
     public function getListMode();
 
-    /*
-     * Configure buttons for an action
-     */
-    // public function configureActionButtons(string $action, ?object $object = null): array;
-
     // NEXT_MAJOR: uncomment this method for 4.0
     /*
      * Returns the result link for an object.
@@ -789,6 +783,9 @@ interface AdminInterface extends TaggedAdminInterface, AccessRegistryInterface, 
 //     * the getFormBuilder is only call by the main admin class.
 //     */
 //    public function defineFormBuilder(FormBuilderInterface $formBuilder): void;
+
+//    NEXT_MAJOR: uncomment this method in 4.0
+//    public function createFieldDescription(string $propertyName, array $options = []): FieldDescriptionInterface;
 }
 
 class_exists(\Sonata\Form\Validator\ErrorElement::class);

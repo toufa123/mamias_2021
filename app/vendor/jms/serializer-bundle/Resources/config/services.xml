@@ -87,6 +87,10 @@
             <argument id="jms_serializer.metadata.typed_properties_driver.inner" type="service"/>
             <argument type="service" id="jms_serializer.type_parser" on-invalid="null" />
         </service>
+        <service id="jms_serializer.metadata.doc_block_driver" class="JMS\Serializer\Metadata\Driver\DocBlockDriver" public="false">
+            <argument id="jms_serializer.metadata.doc_block_driver.inner" type="service"/>
+            <argument type="service" id="jms_serializer.type_parser" on-invalid="null" />
+        </service>
 
         <service id="jms_serializer.metadata.service_locator" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
             <argument type="collection">
@@ -231,6 +235,11 @@
         </service>
         <service id="jms_serializer.xml_deserialization_visitor" class="JMS\Serializer\Visitor\Factory\XmlDeserializationVisitorFactory" public="false">
             <tag name="jms_serializer.deserialization_visitor" format="xml" />
+        </service>
+
+        <service id="jms_serializer.cache.cache_clearer" class="JMS\SerializerBundle\Cache\CacheClearer" public="false">
+            <argument type="service" id="jms_serializer.metadata.cache"/>
+            <tag name="kernel.cache_clearer" />
         </service>
 
         <service id="jms_serializer.cache.cache_warmer" class="JMS\SerializerBundle\Cache\CacheWarmer" public="false">

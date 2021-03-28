@@ -1,7 +1,6 @@
 # jms/serializer 
 
 [![Build status][Master image]][Master] 
-[![Coverage Status][Master coverage image]][Master coverage] 
 
 ![alt text](doc/logo-small.png)
 
@@ -48,8 +47,6 @@ For eventual paid support please write an email to [goetas@gmail.com](mailto:goe
   
   [Master image]: https://img.shields.io/travis/schmittjoh/serializer/master.svg?style=flat-square
   [Master]: https://travis-ci.org/schmittjoh/serializer
-  [Master coverage image]: https://img.shields.io/scrutinizer/coverage/g/schmittjoh/serializer/master.svg?style=flat-square
-  [Master coverage]: https://scrutinizer-ci.com/g/schmittjoh/serializer/?branch=master
   
   [1.x]: https://github.com/schmittjoh/serializer/tree/1.x
   [2.x]: https://github.com/schmittjoh/serializer/tree/2.x

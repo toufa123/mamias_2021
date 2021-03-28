@@ -19,11 +19,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
+use Thormeier\BreadcrumbBundle\Provider\BreadcrumbProvider;
 
 class SearchController extends AbstractController
 {
     /**
-     * @Route("services/search", name="search",  options={"sitemap" = true})
+     * @Route("services/search", name="search")
      */
     public function index(Request $request, Breadcrumbs $breadcrumbs)
     {
@@ -127,6 +128,12 @@ class SearchController extends AbstractController
         $NbperCountry = json_encode(
             $em->getRepository(CountryDistribution::class)->findSpeciesByParametres($id)
         );
+
+        //$breadcrumbProvider = $this->get('thormeier_breadcrumb.breadcrumb_provider');
+        //$crumb = $breadcrumbProvider->getBreadcrumbByRoute('species_fiche');
+        //$crumb->setRouteParameters([ 'id' => $entity->getId(), ]);
+        //$crumb->setLabelParameters([ '%species%' => $entity->getRelation(), ]);
+
 
         $NbperCountry1 =
             $em->getRepository(CountryDistribution::class)->findSpeciesByParametres($id);

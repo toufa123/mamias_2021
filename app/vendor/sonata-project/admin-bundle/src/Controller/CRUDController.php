@@ -135,6 +135,8 @@ class CRUDController implements ContainerAwareInterface
     {
         $request = $this->getRequest();
 
+        $this->assertObjectExists($request);
+
         $this->admin->checkAccess('list');
 
         $preResponse = $this->preList($request);
@@ -213,9 +215,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $object = $this->admin->getObject($id);
 
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $this->checkParentChildAssociation($request, $object);
 
@@ -306,9 +306,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $existingObject = $this->admin->getObject($id);
 
-        if (!$existingObject) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $this->checkParentChildAssociation($request, $existingObject);
 
@@ -564,10 +562,13 @@ class CRUDController implements ContainerAwareInterface
     public function createAction()
     {
         $request = $this->getRequest();
-        // the key used to lookup the template
-        $templateKey = 'edit';
+
+        $this->assertObjectExists($request);
 
         $this->admin->checkAccess('create');
+
+        // the key used to lookup the template
+        $templateKey = 'edit';
 
         $class = new \ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
 
@@ -694,9 +695,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $object = $this->admin->getObject($id);
 
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $this->checkParentChildAssociation($request, $object);
 
@@ -748,9 +747,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $object = $this->admin->getObject($id);
 
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $this->admin->checkAccess('history', $object);
 
@@ -796,9 +793,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $object = $this->admin->getObject($id);
 
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $this->admin->checkAccess('historyViewRevision', $object);
 
@@ -842,15 +837,15 @@ class CRUDController implements ContainerAwareInterface
      * Compare history revisions of object.
      *
      * @param int|string|null $id
-     * @param int|string|null $base_revision
-     * @param int|string|null $compare_revision
+     * @param int|string|null $baseRevision
+     * @param int|string|null $compareRevision
      *
      * @throws AccessDeniedException If access is not granted
      * @throws NotFoundHttpException If the object or revision does not exist or the audit reader is not available
      *
      * @return Response
      */
-    public function historyCompareRevisionsAction($id = null, $base_revision = null, $compare_revision = null) // NEXT_MAJOR: Remove the unused $id parameter
+    public function historyCompareRevisionsAction($id = null, $baseRevision = null, $compareRevision = null) // NEXT_MAJOR: Remove the unused $id parameter
     {
         $this->admin->checkAccess('historyCompareRevisions');
 
@@ -858,9 +853,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $object = $this->admin->getObject($id);
 
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $manager = $this->get('sonata.admin.audit.manager');
 
@@ -873,29 +866,53 @@ class CRUDController implements ContainerAwareInterface
 
         $reader = $manager->getReader($this->admin->getClass());
 
+        // NEXT_MAJOR: Remove this condition.
+        if ($request->attributes->has('base_revision')) {
+            // BC layer for "base_revision" route parameter.
+            $baseRevision = $baseRevision ?? $request->attributes->get('base_revision');
+
+            @trigger_error(sprintf(
+                'Route parameter "base_revision" for action "%s()" is deprecated since sonata-project/admin-bundle 3.92.'
+                .' Use "baseRevision" parameter instead.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
+        // NEXT_MAJOR: Remove this condition.
+        if ($request->attributes->has('compare_revision')) {
+            // BC layer for "compare_revision" route parameter.
+            $compareRevision = $compareRevision ?? $request->attributes->get('compare_revision');
+
+            @trigger_error(sprintf(
+                'Route parameter "compare_revision" for action "%s()" is deprecated since sonata-project/admin-bundle 3.92.'
+                .' Use "compareRevision" parameter instead.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
         // retrieve the base revision
-        $base_object = $reader->find($this->admin->getClass(), $id, $base_revision);
-        if (!$base_object) {
+        $baseObject = $reader->find($this->admin->getClass(), $id, $baseRevision);
+        if (!$baseObject) {
             throw $this->createNotFoundException(sprintf(
                 'unable to find the targeted object `%s` from the revision `%s` with classname : `%s`',
                 $id,
-                $base_revision,
+                $baseRevision,
                 $this->admin->getClass()
             ));
         }
 
         // retrieve the compare revision
-        $compare_object = $reader->find($this->admin->getClass(), $id, $compare_revision);
-        if (!$compare_object) {
+        $compareObject = $reader->find($this->admin->getClass(), $id, $compareRevision);
+        if (!$compareObject) {
             throw $this->createNotFoundException(sprintf(
                 'unable to find the targeted object `%s` from the revision `%s` with classname : `%s`',
                 $id,
-                $compare_revision,
+                $compareRevision,
                 $this->admin->getClass()
             ));
         }
 
-        $this->admin->setSubject($base_object);
+        $this->admin->setSubject($baseObject);
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
         $template = $this->admin->getTemplate('show_compare');
@@ -903,8 +920,8 @@ class CRUDController implements ContainerAwareInterface
 
         return $this->renderWithExtraParams($template, [
             'action' => 'show',
-            'object' => $base_object,
-            'object_compare' => $compare_object,
+            'object' => $baseObject,
+            'object_compare' => $compareObject,
             'elements' => $this->admin->getShow(),
         ], null);
     }
@@ -1001,9 +1018,7 @@ class CRUDController implements ContainerAwareInterface
         $id = $request->get($this->admin->getIdParameter());
         $object = $this->admin->getObject($id);
 
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $this->assertObjectExists($request);
 
         $this->admin->checkAccess('acl', $object);
 
@@ -1641,6 +1656,29 @@ class CRUDController implements ContainerAwareInterface
             'objectId' => $this->admin->getNormalizedIdentifier($object),
             'objectName' => $this->escapeHtml($this->admin->toString($object)),
         ], Response::HTTP_OK);
+    }
+
+    final protected function assertObjectExists(Request $request): void
+    {
+        $admin = $this->admin;
+
+        while (null !== $admin) {
+            $objectId = $request->get($admin->getIdParameter());
+
+            if (null !== $objectId) {
+                $adminObject = $admin->getObject($objectId);
+
+                if (null === $adminObject) {
+                    throw $this->createNotFoundException(sprintf(
+                        'Unable to find %s object with id: %s.',
+                        $admin->getClassnameLabel(),
+                        $objectId
+                    ));
+                }
+            }
+
+            $admin = $admin->isChild() ? $admin->getParent() : null;
+        }
     }
 
     private function getSelectedTab(Request $request): array

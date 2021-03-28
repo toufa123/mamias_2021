@@ -4,20 +4,20 @@ import isObjectEmpty from '../utils/is-object-empty';
 import isNumber from '../utils/is-number';
 import isDate from '../utils/is-date';
 import map from '../utils/map';
-import {createInvalid} from './valid';
-import {Moment, isMoment} from '../moment/constructor';
-import {getLocale} from '../locale/locales';
-import {hooks} from '../utils/hooks';
+import { createInvalid } from './valid';
+import { Moment, isMoment } from '../moment/constructor';
+import { getLocale } from '../locale/locales';
+import { hooks } from '../utils/hooks';
 import checkOverflow from './check-overflow';
-import {isValid} from './valid';
+import { isValid } from './valid';
 
-import {configFromStringAndArray} from './from-string-and-array';
-import {configFromStringAndFormat} from './from-string-and-format';
-import {configFromString} from './from-string';
-import {configFromArray} from './from-array';
-import {configFromObject} from './from-object';
+import { configFromStringAndArray }  from './from-string-and-array';
+import { configFromStringAndFormat } from './from-string-and-format';
+import { configFromString }          from './from-string';
+import { configFromArray }           from './from-array';
+import { configFromObject }          from './from-object';
 
-function createFromConfig(config) {
+function createFromConfig (config) {
     var res = new Moment(checkOverflow(prepareConfig(config)));
     if (res._nextDay) {
         // Adding is smart enough around DST
@@ -28,7 +28,7 @@ function createFromConfig(config) {
     return res;
 }
 
-export function prepareConfig(config) {
+export function prepareConfig (config) {
     var input = config._i,
         format = config._f;
 
@@ -50,7 +50,7 @@ export function prepareConfig(config) {
         configFromStringAndArray(config);
     } else if (format) {
         configFromStringAndFormat(config);
-    } else {
+    }  else {
         configFromInput(config);
     }
 
@@ -74,7 +74,7 @@ function configFromInput(config) {
             return parseInt(obj, 10);
         });
         configFromArray(config);
-    } else if (typeof (input) === 'object') {
+    } else if (typeof(input) === 'object') {
         configFromObject(config);
     } else if (isNumber(input)) {
         // from milliseconds
@@ -84,7 +84,7 @@ function configFromInput(config) {
     }
 }
 
-export function createLocalOrUTC(input, format, locale, strict, isUTC) {
+export function createLocalOrUTC (input, format, locale, strict, isUTC) {
     var c = {};
 
     if (locale === true || locale === false) {
@@ -93,7 +93,7 @@ export function createLocalOrUTC(input, format, locale, strict, isUTC) {
     }
 
     if ((isObject(input) && isObjectEmpty(input)) ||
-        (isArray(input) && input.length === 0)) {
+            (isArray(input) && input.length === 0)) {
         input = undefined;
     }
     // object construction must be done this way.

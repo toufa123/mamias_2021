@@ -1,4 +1,4 @@
-jQuery(document).ready(function () {
+jQuery(document).ready(function() {
     SonataCore.remove_iCheck_in_flashmessage();
     SonataCore.addFlashmessageListener();
 });

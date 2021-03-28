@@ -3,10 +3,10 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
-        uglify: {
+        uglify : {
             target: {
                 files: {
-                    'build/js/bootstrap-datetimepicker.min.js': 'src/js/bootstrap-datetimepicker.js'
+                    'build/js/bootstrap-datetimepicker.min.js' : 'src/js/bootstrap-datetimepicker.js'
                 }
             },
             options: {
@@ -27,34 +27,34 @@ module.exports = function (grunt) {
                 'Gruntfile.js', 'src/js/*.js'
             ],
             options: {
-                'browser': true,
-                'node': true,
-                'boss': false,
-                'curly': true,
-                'debug': false,
-                'devel': false,
-                'eqeqeq': true,
-                'bitwise': true,
-                'eqnull': true,
-                'evil': false,
-                'forin': true,
-                'immed': false,
-                'laxbreak': false,
-                'newcap': true,
-                'noarg': true,
-                'noempty': false,
-                'nonew': false,
-                'onevar': true,
-                'plusplus': false,
-                'regexp': false,
-                'undef': true,
-                'sub': true,
-                'strict': true,
-                'unused': true,
-                'white': true,
-                'es3': true,
-                'camelcase': true,
-                'quotmark': 'single',
+                'browser'  : true,
+                'node'     : true,
+                'boss'     : false,
+                'curly'    : true,
+                'debug'    : false,
+                'devel'    : false,
+                'eqeqeq'   : true,
+                'bitwise'  : true,
+                'eqnull'   : true,
+                'evil'     : false,
+                'forin'    : true,
+                'immed'    : false,
+                'laxbreak' : false,
+                'newcap'   : true,
+                'noarg'    : true,
+                'noempty'  : false,
+                'nonew'    : false,
+                'onevar'   : true,
+                'plusplus' : false,
+                'regexp'   : false,
+                'undef'    : true,
+                'sub'      : true,
+                'strict'   : true,
+                'unused'   : true,
+                'white'    : true,
+                'es3'      : true,
+                'camelcase' : true,
+                'quotmark' : 'single',
                 'globals': {
                     'define': false,
                     'jQuery': false,
@@ -130,7 +130,8 @@ module.exports = function (grunt) {
                 }
                 done();
             });
-        } else {
+        }
+        else {
             grunt.util.spawn({
                 cmd: 'src/nuget/nuget.exe',
                 args: [

@@ -24,6 +24,7 @@
 
 {% block title %}{{- page.title -}}{% endblock %}
 {% block body %}
+    {{ breadcrumbs() }}
     {# {% block orbitale_cms_breadcrumbs %}
     <div id="breadcrumbs" class="{{ orbitale_cms_design.breadcrumbs_class }}">
         {% set slugsArray = [] %}

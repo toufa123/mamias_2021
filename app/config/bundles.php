@@ -52,4 +52,5 @@ return [
     Rollerworks\Bundle\PasswordStrengthBundle\RollerworksPasswordStrengthBundle::class => ['all' => true],
     Presta\SitemapBundle\PrestaSitemapBundle::class => ['all' => true],
     ConnectHolland\CookieConsentBundle\CHCookieConsentBundle::class => ['all' => true],
+    Thormeier\BreadcrumbBundle\ThormeierBreadcrumbBundle::class => ['all' => true],
 ];

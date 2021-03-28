@@ -45,10 +45,7 @@ body > .header .logo {
     vertical-align: middle;
     width: 200px;
 }
-
-.logo img + span {
-    width: 140px;
-}
+.logo img + span { width: 140px; }
 
 .open > .dropdown-menu {
     animation-duration: .3s;
@@ -76,6 +73,7 @@ body > .header .logo {
 .btn.btn-danger.btn-outline:hover {
     color: #fff;
 }
+
 
 
 /* navigation */
@@ -117,7 +115,7 @@ body > .header .logo {
     padding: 0;
     margin: 0;
     background: inherit;
-    float: left;
+    float:left;
 }
 
 .sonata-bc .breadcrumb li a {
@@ -168,7 +166,7 @@ body > .header .logo {
     text-decoration: none;
 }
 
-.skin-black .navbar .breadcrumb > li > a:hover {
+.skin-black .navbar .breadcrumb > li  > a:hover {
     color: #444;
     background: #f5f5f5;
 }
@@ -260,7 +258,7 @@ body.fixed .content-header .navbar {
     padding-left: 52px;
 }
 
-@media (min-width: 768px) {
+@media(min-width:768px) {
     .navbar-static-side {
         z-index: 1;
         position: absolute;
@@ -347,27 +345,21 @@ body.fixed .sonata-list-table {
 td.sonata-ba-list-field .editable {
     cursor: pointer;
 }
-
 td.sonata-ba-list-field .btn.editable {
     border-bottom: solid 1px #BBB;
 }
-
 td.sonata-ba-list-field .editable-empty:not(.editable-open) {
     display: none;
 }
-
 .sonata-ba-list tr:hover .editable-empty {
     display: inline-block;
 }
-
 .editable-pre-wrapped {
     white-space: normal;
 }
-
 .editable-container .prev:before {
     content: "\2190 ";
 }
-
 .editable-container .next:before {
     content: "\2192 ";
 }
@@ -390,8 +382,8 @@ td.sonata-ba-list-field .editable-empty:not(.editable-open) {
  */
 body.sonata-icheck .checkbox label,
 body.sonata-icheck .radio label {
-    padding-left: 0;
-    margin-left: 0;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 /**
@@ -407,7 +399,6 @@ body.sonata-icheck .radio label {
     margin-right: 5px;
     margin-top: -3px;
 }
-
 .form-inline .checkbox div[class^="icheckbox"],
 .form-inline .checkbox-inline div[class^="icheckbox"],
 .form-inline .radio div[class^="iradio"],
@@ -418,7 +409,6 @@ body.sonata-icheck .radio label {
     margin-right: 5px;
     margin-top: -3px;
 }
-
 /* Hide Delete checkbox on sonata_type_collection tables */
 .sonata-ba-field-inline-table td > div.checkbox > label > .control-label__text {
     position: absolute;
@@ -427,7 +417,7 @@ body.sonata-icheck .radio label {
     padding: 0;
     margin: -1px;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    clip: rect(0,0,0,0);
     border: 0;
 }
 

@@ -44,7 +44,6 @@ function FetchStream(url, options) {
     this.ended = false;
     this.readyToRead = 0;
 }
-
 utillib.inherits(FetchStream, Stream);
 
 FetchStream.prototype._read = function (size) {
@@ -186,17 +185,17 @@ FetchStream.prototype.parseUrl = function (url) {
     }
 
     if (transport === https) {
-        if ('agentHttps' in this.options) {
+        if('agentHttps' in this.options){
             urloptions.agent = this.options.agentHttps;
         }
-        if ('agent' in this.options) {
+        if('agent' in this.options){
             urloptions.agent = this.options.agent;
         }
     } else {
-        if ('agentHttp' in this.options) {
+        if('agentHttp' in this.options){
             urloptions.agent = this.options.agentHttp;
         }
-        if ('agent' in this.options) {
+        if('agent' in this.options){
             urloptions.agent = this.options.agent;
         }
     }

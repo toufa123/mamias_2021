@@ -29,10 +29,12 @@ use Sonata\Form\Validator\ErrorElement;
  * @method array configureBatchActions(AdminInterface $admin, array $actions)
  * @method array configureExportFields(AdminInterface $admin, array $fields)
  * @method array configureActionButtons(AdminInterface $admin, array $list, string $action, object $object)
+ * @method array configureDashboardButtons(AdminInterface $admin, array $actions)
  * @method void  configureDefaultFilterValues(AdminInterface $admin, array &$filterValues)
  * @method void  configureDefaultSortValues(AdminInterface $admin, array &$sortValues)
  * @method void  configureFormOptions(AdminInterface $admin, array &$formOptions)
  * @method array configurePersistentParameters(AdminInterface $admin, array $parameters)
+ * @method array configureFilterParameters(AdminInterface $admin, array $parameters)
  *
  * @phpstan-template T of object
  */
@@ -272,6 +274,12 @@ interface AdminExtensionInterface
     // public function configureActionButtons(AdminInterface $admin, array $list, string $action, object $object): array;
 
     /*
+     * @phpstan-param AdminInterface<T> $admin
+     */
+    // NEXT_MAJOR: Uncomment this method
+    // public function configureDashboardButtons(AdminInterface $admin, array $actions): array;
+
+    /*
      * NEXT_MAJOR: Uncomment this method
      *
      * Returns a list of default filters
@@ -297,6 +305,17 @@ interface AdminExtensionInterface
      * @phpstan-param AdminInterface<T> $admin
      */
     // public function configureFormOptions(AdminInterface $admin, array &$formOptions): void;
+
+    /*
+     * NEXT_MAJOR: Uncomment this method and remove the corresponding @method annotation.
+     *
+     * @param array<string, mixed> $parameters
+     *
+     * @return array<string, mixed>
+     *
+     * @phpstan-param AdminInterface<T> $admin
+     */
+    //public function configureFilterParameters(AdminInterface $admin, array $parameters): array;
 }
 
 class_exists(\Sonata\Form\Validator\ErrorElement::class);

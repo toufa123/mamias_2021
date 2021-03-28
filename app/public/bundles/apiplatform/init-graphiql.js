@@ -45,7 +45,7 @@ function graphQLFetcher(graphQLParams) {
     });
 }
 
-window.onload = function () {
+window.onload = function() {
     var data = JSON.parse(document.getElementById('graphiql-data').innerText);
     entrypoint = data.entrypoint;
 

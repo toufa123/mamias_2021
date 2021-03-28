@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RegionalSeaRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(\Doctrine\Common\Persistence\ManagerRegistry $registry)
     {
         parent::__construct($registry, RegionalSea::class);
     }

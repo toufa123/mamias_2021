@@ -15,7 +15,7 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 class NationallevController extends AbstractController
 {
     /**
-     * @Route("services/dash/nat/", name="nat",  options={"sitemap" = true})
+     * @Route("services/dash/nat/", name="nat")
      */
     public function index(Request $request, Breadcrumbs $breadcrumbs)
     {

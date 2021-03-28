@@ -39,4 +39,67 @@ redcode_tree:
 presta_sitemap:
     resource: "@PrestaSitemapBundle/Resources/config/routing.yml"
 
+home:
+    path: /
+    controller: App\Controller\HomeController::index
+    options:
+        breadcrumb:
+            label: Home
 
+contact:
+    path: /contact
+    controller: App\Controller\ContactController::index
+    options:
+        breadcrumb:
+            label: Contact Us
+            parent_route: home
+
+
+med:
+    path: /services/dash/med
+    controller: App\Controller\MedlevelController::index
+    options:
+        breadcrumb:
+            label: MAMIAS Services / Mediterranean Level
+            parent_route: home
+
+nat:
+    path: /services/dash/nat
+    controller: App\Controller\NationallevController::index
+    options:
+        breadcrumb:
+            label: MAMIAS Services / National Level
+            parent_route: home
+
+search:
+    path: /services/search
+    controller: App\Controller\SearchController::index
+    options:
+        breadcrumb:
+            label: MAMIAS Services / Serach MAMIAS
+            parent_route: home
+
+species_fiche:
+    path: /services/search/{id}/show
+    controller: App\Controller\SearchController::show
+    options:
+        breadcrumb:
+            label: '%%species%%'
+            parent_route: search
+
+
+FAQ:
+    path: /FAQ
+    controller: App\Controller\FaqController::index
+    options:
+        breadcrumb:
+            label: FAQ
+            parent_route: home
+
+CMS:
+    path: /pages/{slug}
+    #resource: "@OrbitaleCmsBundle/Controller/PageController::indexAction"
+    options:
+        breadcrumb:
+            label: Contact Us
+            parent_route: home

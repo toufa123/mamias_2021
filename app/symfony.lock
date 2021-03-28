@@ -39,9 +39,6 @@
     "laminas/laminas-eventmanager": {
         "version": "3.3.0"
     },
-    "paragonie/constant_time_encoding": {
-        "version": "v2.4.0"
-    },
     "phpstan/extension-installer": {
         "version": "1.1.0"
     },
@@ -50,5 +47,8 @@
     },
     "symfony/proxy-manager-bridge": {
         "version": "v4.4.19"
+    },
+    "thormeier/breadcrumb-bundle": {
+        "version": "2.2.1"
     }
 }

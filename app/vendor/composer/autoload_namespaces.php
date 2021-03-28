@@ -11,7 +11,6 @@ return array(
     'RedCode\\TreeBundle' => array($vendorDir . '/redcode/tree-bundle'),
     'PHPMD\\' => array($vendorDir . '/phpmd/phpmd/src/main/php'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
-    'Google_Service_' => array($vendorDir . '/google/apiclient-services/src'),
     'Gaufrette' => array($vendorDir . '/knplabs/gaufrette/src'),
     'CrEOF\\Spatial' => array($vendorDir . '/creof/doctrine2-spatial/lib'),
     'CrEOF\\Geo\\WKT' => array($vendorDir . '/creof/wkt-parser/lib'),

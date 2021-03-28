@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class FaqController extends AbstractController
 {
     /**
-     * @Route("/faq", name="faq", options={"sitemap" = true})
+     * @Route("/faq", name="faq")
      */
     public function index()
     {

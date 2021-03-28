@@ -7,27 +7,27 @@
 * http://www.opensource.org/licenses/mit-license.php
 */
 (function ($) {
-    $.fn.confirmExit = function () {
+    $.fn.confirmExit = function() {
         $(this).attr('data-original', $(this).serialize());
 
-        $(this).on('submit', function () {
+		$(this).on('submit', function() {
             $(this).removeAttr('data-original');
         });
 
         return $(this);
-    };
+	  };
 
-    $(window).on('beforeunload', function (event) {
+    $(window).on('beforeunload', function(event) {
         var e = event || window.event,
             message = Admin.get_translations('CONFIRM_EXIT'),
             changes = false
         ;
 
-        $('form[data-original]').each(function () {
+        $('form[data-original]').each(function() {
             if ($(this).attr('data-original') !== $(this).serialize()) {
                 changes = true;
 
-
+                return;
             }
         });
 

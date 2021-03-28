@@ -674,6 +674,9 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFilterParameters()
     {
         $parameters = $this->getDefaultFilterParameters();
@@ -725,14 +728,31 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
             $parameters['_per_page'] = $this->getMaxPerPage();
         }
 
+        $parameters = $this->configureFilterParameters($parameters);
+
+        foreach ($this->getExtensions() as $extension) {
+            // NEXT_MAJOR: remove method_exists check
+            if (method_exists($extension, 'configureFilterParameters')) {
+                $parameters = $extension->configureFilterParameters($this, $parameters);
+            }
+        }
+
         return $parameters;
     }
 
     /**
-     * NEXT_MAJOR: Change the visibility to protected (similar to buildShow, buildForm, ...).
+     * NEXT_MAJOR: Change the visibility to private.
      */
     public function buildDatagrid()
     {
+        if ('sonata_deprecation_mute' !== (\func_get_args()[0] ?? null)) {
+            @trigger_error(sprintf(
+                'The %s() method is deprecated since sonata-project/admin-bundle 3.92'
+                .' and will become private in version 4.0.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
         if ($this->loaded['datagrid']) {
             return;
         }
@@ -746,10 +766,8 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
             if ($this->hasListFieldDescription($filterParameters['_sort_by'])) {
                 $filterParameters['_sort_by'] = $this->getListFieldDescription($filterParameters['_sort_by']);
             } else {
-                $filterParameters['_sort_by'] = $this->getModelManager()->getNewFieldDescriptionInstance(
-                    $this->getClass(),
-                    $filterParameters['_sort_by'],
-                    []
+                $filterParameters['_sort_by'] = $this->createFieldDescription(
+                    $filterParameters['_sort_by']
                 );
 
                 $this->getListBuilder()->buildField(null, $filterParameters['_sort_by'], $this);
@@ -1357,14 +1375,16 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
 
     public function getForm()
     {
-        $this->buildForm();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildForm('sonata_deprecation_mute');
 
         return $this->form;
     }
 
     public function getList()
     {
-        $this->buildList();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildList('sonata_deprecation_mute');
 
         return $this->list;
     }
@@ -1393,7 +1413,8 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
 
     public function getDatagrid()
     {
-        $this->buildDatagrid();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildDatagrid('sonata_deprecation_mute');
 
         return $this->datagrid;
     }
@@ -1731,14 +1752,16 @@ EOT;
 
     public function getFormFieldDescriptions()
     {
-        $this->buildForm();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildForm('sonata_deprecation_mute');
 
         return $this->formFieldDescriptions;
     }
 
     public function getFormFieldDescription($name)
     {
-        $this->buildForm();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildForm('sonata_deprecation_mute');
 
         if (!$this->hasFormFieldDescription($name)) {
             @trigger_error(sprintf(
@@ -1770,7 +1793,8 @@ EOT;
      */
     public function hasFormFieldDescription($name)
     {
-        $this->buildForm();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildForm('sonata_deprecation_mute');
 
         return \array_key_exists($name, $this->formFieldDescriptions);
     }
@@ -1797,7 +1821,8 @@ EOT;
      */
     public function getShowFieldDescriptions()
     {
-        $this->buildShow();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildShow('sonata_deprecation_mute');
 
         return $this->showFieldDescriptions;
     }
@@ -1811,7 +1836,8 @@ EOT;
      */
     public function getShowFieldDescription($name)
     {
-        $this->buildShow();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildShow('sonata_deprecation_mute');
 
         if (!$this->hasShowFieldDescription($name)) {
             @trigger_error(sprintf(
@@ -1836,7 +1862,8 @@ EOT;
 
     public function hasShowFieldDescription($name)
     {
-        $this->buildShow();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildShow('sonata_deprecation_mute');
 
         return \array_key_exists($name, $this->showFieldDescriptions);
     }
@@ -1853,14 +1880,16 @@ EOT;
 
     public function getListFieldDescriptions()
     {
-        $this->buildList();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildList('sonata_deprecation_mute');
 
         return $this->listFieldDescriptions;
     }
 
     public function getListFieldDescription($name)
     {
-        $this->buildList();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildList('sonata_deprecation_mute');
 
         if (!$this->hasListFieldDescription($name)) {
             @trigger_error(sprintf(
@@ -1886,7 +1915,8 @@ EOT;
 
     public function hasListFieldDescription($name)
     {
-        $this->buildList();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildList('sonata_deprecation_mute');
 
         return \array_key_exists($name, $this->listFieldDescriptions);
     }
@@ -1903,7 +1933,8 @@ EOT;
 
     public function getFilterFieldDescription($name)
     {
-        $this->buildDatagrid();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildDatagrid('sonata_deprecation_mute');
 
         if (!$this->hasFilterFieldDescription($name)) {
             @trigger_error(sprintf(
@@ -1928,7 +1959,8 @@ EOT;
 
     public function hasFilterFieldDescription($name)
     {
-        $this->buildDatagrid();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildDatagrid('sonata_deprecation_mute');
 
         return \array_key_exists($name, $this->filterFieldDescriptions);
     }
@@ -1945,7 +1977,8 @@ EOT;
 
     public function getFilterFieldDescriptions()
     {
-        $this->buildDatagrid();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildDatagrid('sonata_deprecation_mute');
 
         return $this->filterFieldDescriptions;
     }
@@ -2425,6 +2458,8 @@ EOT;
     }
 
     /**
+     * NEXT_MAJOR: Change visibility to protected.
+     *
      * Return the list of permissions the user should have in order to display the admin.
      *
      * @param string $context
@@ -2475,7 +2510,8 @@ EOT;
 
     public function getShow()
     {
-        $this->buildShow();
+        // NEXT_MAJOR: Remove the `'sonata_deprecation_mute'` param
+        $this->buildShow('sonata_deprecation_mute');
 
         return $this->show;
     }
@@ -2691,7 +2727,10 @@ EOT;
 
         if (\in_array($action, ['show', 'delete', 'acl', 'history'], true)
             && $this->hasRoute('edit')
-            && $this->canAccessObject('edit', $object)
+            && null !== $object
+            && null !== $this->id($object)
+            // NEXT_MAJOR: Replace by `$this->hasAccess`
+            && $this->canAccessObject('edit', $object, 'sonata_deprecation_mute')
         ) {
             $list['edit'] = [
                 // NEXT_MAJOR: Remove this line and use commented line below it instead
@@ -2702,7 +2741,10 @@ EOT;
 
         if (\in_array($action, ['show', 'edit', 'acl'], true)
             && $this->hasRoute('history')
-            && $this->canAccessObject('history', $object)
+            && null !== $object
+            && null !== $this->id($object)
+            // NEXT_MAJOR: Replace by `$this->hasAccess`
+            && $this->canAccessObject('history', $object, 'sonata_deprecation_mute')
         ) {
             $list['history'] = [
                 // NEXT_MAJOR: Remove this line and use commented line below it instead
@@ -2714,7 +2756,10 @@ EOT;
         if (\in_array($action, ['edit', 'history'], true)
             && $this->isAclEnabled()
             && $this->hasRoute('acl')
-            && $this->canAccessObject('acl', $object)
+            && null !== $object
+            && null !== $this->id($object)
+            // NEXT_MAJOR: Replace by `$this->hasAccess`
+            && $this->canAccessObject('acl', $object, 'sonata_deprecation_mute')
         ) {
             $list['acl'] = [
                 // NEXT_MAJOR: Remove this line and use commented line below it instead
@@ -2725,7 +2770,10 @@ EOT;
 
         if (\in_array($action, ['edit', 'history', 'acl'], true)
             && $this->hasRoute('show')
-            && $this->canAccessObject('show', $object)
+            && null !== $object
+            && null !== $this->id($object)
+            // NEXT_MAJOR: Replace by `$this->hasAccess`
+            && $this->canAccessObject('show', $object, 'sonata_deprecation_mute')
             && \count($this->getShow()) > 0
         ) {
             $list['show'] = [
@@ -2772,6 +2820,8 @@ EOT;
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.93.
+     *
      * Get the list of actions that can be accessed directly from the dashboard.
      *
      * @return array<string, array<string, mixed>>
@@ -2799,6 +2849,15 @@ EOT;
                 'url' => $this->generateUrl('list'),
                 'icon' => 'list',
             ];
+        }
+
+        $actions = $this->configureDashboardButtons($actions);
+
+        foreach ($this->getExtensions() as $extension) {
+            // NEXT_MAJOR: remove method check
+            if (method_exists($extension, 'configureDashboardButtons')) {
+                $actions = $extension->configureDashboardButtons($this, $actions);
+            }
         }
 
         return $actions;
@@ -2847,6 +2906,8 @@ EOT;
     }
 
     /**
+     * NEXT_MAJOR: Remove this method.
+     *
      * Check object existence and access, without throw Exception.
      *
      * @param string $action
@@ -2858,6 +2919,14 @@ EOT;
      */
     public function canAccessObject($action, $object)
     {
+        if ('sonata_deprecation_mute' !== (\func_get_args()[2] ?? null)) {
+            @trigger_error(sprintf(
+                'The method %s() is deprecated since sonata-project/admin-bundle 3.92'
+                .' and will be removed an in 4.0. Use `hasAccess()` instead',
+                __METHOD__,
+            ), \E_USER_DEPRECATED);
+        }
+
         if (!\is_object($object)) {
             return false;
         }
@@ -2890,6 +2959,26 @@ EOT;
     final public function hasTemplateRegistry(): bool
     {
         return null !== $this->templateRegistry;
+    }
+
+    final public function createFieldDescription(string $propertyName, array $options = []): FieldDescriptionInterface
+    {
+        $fieldDescriptionFactory = $this->getFieldDescriptionFactory();
+
+        // NEXT_MAJOR: Remove the "if" block and leave the "else" one.
+        if (null === $fieldDescriptionFactory) {
+            $fieldDescription = $this->getModelManager()->getNewFieldDescriptionInstance(
+                $this->getClass(),
+                $propertyName,
+                $options
+            );
+        } else {
+            $fieldDescription = $fieldDescriptionFactory->create($this->getClass(), $propertyName, $options);
+        }
+
+        $fieldDescription->setAdmin($this);
+
+        return $fieldDescription;
     }
 
     /**
@@ -2936,6 +3025,16 @@ EOT;
     protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
     {
         return $query;
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     *
+     * @return array<string, mixed>
+     */
+    protected function configureFilterParameters(array $parameters): array
+    {
+        return $parameters;
     }
 
     /**
@@ -3036,6 +3135,16 @@ EOT;
     }
 
     /**
+     * @param array<string, array<string, mixed>> $actions
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    protected function configureDashboardButtons(array $actions): array
+    {
+        return $actions;
+    }
+
+    /**
      * NEXT_MAJOR: remove this method.
      *
      * @deprecated Use configureTabMenu instead
@@ -3061,10 +3170,18 @@ EOT;
     }
 
     /**
-     * build the view FieldDescription array.
+     * NEXT_MAJOR: Change the visibility to private.
      */
     protected function buildShow()
     {
+        if ('sonata_deprecation_mute' !== (\func_get_args()[0] ?? null)) {
+            @trigger_error(sprintf(
+                'The %s() method is deprecated since sonata-project/admin-bundle 3.92'
+                .' and will become private in version 4.0.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
         if ($this->loaded['show']) {
             return;
         }
@@ -3082,10 +3199,20 @@ EOT;
     }
 
     /**
-     * build the list FieldDescription array.
+     * NEXT_MAJOR: Change visibility to private.
+     *
+     * @deprecated since sonata-project/admin-bundle 3.92 will be private in 4.0
      */
     protected function buildList()
     {
+        if ('sonata_deprecation_mute' !== (\func_get_args()[0] ?? null)) {
+            @trigger_error(sprintf(
+                'The %s() method is deprecated since sonata-project/admin-bundle 3.92'
+                .' and will become private in version 4.0.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
         if ($this->loaded['list']) {
             return;
         }
@@ -3096,8 +3223,7 @@ EOT;
         $mapper = new ListMapper($this->getListBuilder(), $this->list, $this);
 
         if (\count($this->getBatchActions()) > 0 && $this->hasRequest() && !$this->getRequest()->isXmlHttpRequest()) {
-            $fieldDescription = $this->getModelManager()->getNewFieldDescriptionInstance(
-                $this->getClass(),
+            $fieldDescription = $this->createFieldDescription(
                 'batch',
                 [
                     'label' => 'batch',
@@ -3107,7 +3233,6 @@ EOT;
                 ]
             );
 
-            $fieldDescription->setAdmin($this);
             // NEXT_MAJOR: Remove this line and use commented line below it instead
             $fieldDescription->setTemplate($this->getTemplate('batch'));
             // $fieldDescription->setTemplate($this->getTemplateRegistry()->getTemplate('batch'));
@@ -3122,8 +3247,7 @@ EOT;
         }
 
         if ($this->hasRequest() && $this->getRequest()->isXmlHttpRequest()) {
-            $fieldDescription = $this->getModelManager()->getNewFieldDescriptionInstance(
-                $this->getClass(),
+            $fieldDescription = $this->createFieldDescription(
                 'select',
                 [
                     'label' => false,
@@ -3133,7 +3257,6 @@ EOT;
                 ]
             );
 
-            $fieldDescription->setAdmin($this);
             // NEXT_MAJOR: Remove this line and use commented line below it instead
             $fieldDescription->setTemplate($this->getTemplate('select'));
             // $fieldDescription->setTemplate($this->getTemplateRegistry()->getTemplate('select'));
@@ -3143,10 +3266,20 @@ EOT;
     }
 
     /**
-     * Build the form FieldDescription collection.
+     * NEXT_MAJOR: Change visibility to private.
+     *
+     * @deprecated since sonata-project/admin-bundle 3.92 will be private in 4.0
      */
     protected function buildForm()
     {
+        if ('sonata_deprecation_mute' !== (\func_get_args()[0] ?? null)) {
+            @trigger_error(sprintf(
+                'The %s() method is deprecated since sonata-project/admin-bundle 3.92'
+                .' and will become private in version 4.0.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
         if ($this->loaded['form']) {
             return;
         }

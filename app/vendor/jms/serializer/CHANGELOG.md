@@ -1,5 +1,47 @@
 # Changelog
 
+## [3.12.2](https://github.com/schmittjoh/serializer/tree/3.12.2) (2021-03-23)
+
+**Fixed bugs:**
+
+- `Undefined offset: 0` when using `@var null|string` instead of `@var string|null` [\#1301](https://github.com/schmittjoh/serializer/pull/1301) ([ruudk](https://github.com/ruudk))
+
+**Merged pull requests:**
+
+- move around some doc block classes [\#1304](https://github.com/schmittjoh/serializer/pull/1304) ([goetas](https://github.com/goetas))
+
+## [3.12.1](https://github.com/schmittjoh/serializer/tree/3.12.1) (2021-03-21)
+
+**Fixed bugs:**
+
+- Fix for issue \#1286: loading fails when deserializing XML [\#1289](https://github.com/schmittjoh/serializer/pull/1289) ([jviersel-ipronto](https://github.com/jviersel-ipronto))
+- Fix DocBlockTypeResolver crash on PHP 7.3 and less [\#1288](https://github.com/schmittjoh/serializer/pull/1288) ([simPod](https://github.com/simPod))
+- Doctrine `json` field type can contain not only an array [\#1295](https://github.com/schmittjoh/serializer/pull/1295) ([gam6itko](https://github.com/gam6itko))
+
+**Merged pull requests:**
+
+- add missing CustomPropertyOrderingStrategyTest [\#1296](https://github.com/schmittjoh/serializer/pull/1296) ([gam6itko](https://github.com/gam6itko))
+- fix \#314 [\#1293](https://github.com/schmittjoh/serializer/pull/1293) ([gam6itko](https://github.com/gam6itko))
+- Show all toctree on index page [\#1292](https://github.com/schmittjoh/serializer/pull/1292) ([gam6itko](https://github.com/gam6itko))
+
+# Changelog
+
+## [3.12.0](https://github.com/schmittjoh/serializer/tree/3.12.0) (2021-03-04)
+
+**Fixed bugs:**
+
+- Remove from the serialization groups if no match [\#1291](https://github.com/schmittjoh/serializer/pull/1291) ([goetas](https://github.com/goetas))
+
+**Merged pull requests:**
+
+- \[DOCS\] Add 'Deserialization Exclusion Strategy with Groups' topic [\#1287](https://github.com/schmittjoh/serializer/pull/1287) ([gam6itko](https://github.com/gam6itko))
+- Add ascii\_string, dateinterval, and json to doctrine type mapping [\#1281](https://github.com/schmittjoh/serializer/pull/1281) ([dontub](https://github.com/dontub))
+- Cleanup [\#1278](https://github.com/schmittjoh/serializer/pull/1278) ([simPod](https://github.com/simPod))
+- Drop coverage badge [\#1277](https://github.com/schmittjoh/serializer/pull/1277) ([simPod](https://github.com/simPod))
+- Introduce PHPStan [\#1276](https://github.com/schmittjoh/serializer/pull/1276) ([simPod](https://github.com/simPod))
+- Replace Scrutinizer with GA [\#1275](https://github.com/schmittjoh/serializer/pull/1275) ([simPod](https://github.com/simPod))
+- Add throws tag [\#1273](https://github.com/schmittjoh/serializer/pull/1273) ([VincentLanglet](https://github.com/VincentLanglet))
+
 ## [3.11.0](https://github.com/schmittjoh/serializer/tree/3.11.0) (2020-12-29)
 
 **Implemented enhancements:**

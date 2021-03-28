@@ -29,6 +29,7 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
      */
     protected $fieldMapping = [
         'string' => 'string',
+        'ascii_string' => 'string',
         'text' => 'string',
         'blob' => 'string',
         'guid' => 'string',
@@ -46,6 +47,8 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
         'datetimetz_immutable' => 'DateTimeImmutable',
         'time_immutable' => 'DateTimeImmutable',
         'date_immutable' => 'DateTimeImmutable',
+
+        'dateinterval' => 'DateInterval',
 
         'float' => 'float',
         'decimal' => 'float',

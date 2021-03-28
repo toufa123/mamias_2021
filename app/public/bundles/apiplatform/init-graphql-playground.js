@@ -1,4 +1,4 @@
-window.addEventListener('load', function (event) {
+window.addEventListener('load', function(event) {
     var loadingWrapper = document.getElementById('loading-wrapper');
     loadingWrapper.classList.add('fadeOut');
 

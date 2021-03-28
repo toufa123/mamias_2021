@@ -22,13 +22,11 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
+        'd11dcc0191a380951885e568af488540' => __DIR__ . '/..' . '/sonata-project/block-bundle/src/Resources/stubs/symfony2.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
-        'd11dcc0191a380951885e568af488540' => __DIR__ . '/..' . '/sonata-project/block-bundle/src/Resources/stubs/symfony2.php',
-        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
-        'a8d3953fd9959404dd22d3dfcd0a79f0' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'abede361264e2ae69ec1eee813a101af' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/abs.php',
         '21a5860fbef5be28db5ddfbc3cca67c4' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/acos.php',
@@ -93,7 +91,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
     public static $prefixLengthsPsr4 = array (
         'p' => 
         array (
-            'phpseclib3\\' => 11,
             'phpDocumentor\\Reflection\\' => 25,
         ),
         'Z' => 
@@ -114,6 +111,7 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
             'Twig\\Extra\\String\\' => 18,
             'Twig\\Extensions\\' => 16,
             'Twig\\' => 5,
+            'Thormeier\\BreadcrumbBundle\\' => 27,
         ),
         'S' => 
         array (
@@ -211,7 +209,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
             'Sonata\\BlockBundle\\' => 19,
             'Sonata\\AdminBundle\\' => 19,
             'Sensio\\Bundle\\FrameworkExtraBundle\\' => 35,
-            'SensioLabs\\Security\\' => 20,
         ),
         'R' => 
         array (
@@ -234,7 +231,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
             'PhpParser\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'PhpCsFixer\\' => 11,
-            'ParagonIE\\ConstantTime\\' => 23,
             'PackageVersions\\' => 16,
             'PUGX\\AutocompleterBundle\\' => 25,
             'PHPStan\\PhpDocParser\\' => 21,
@@ -288,13 +284,10 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
-            'Google\\Auth\\' => 12,
-            'Google\\' => 7,
             'Gedmo\\' => 6,
         ),
         'F' => 
         array (
-            'Firebase\\JWT\\' => 13,
             'Fig\\Link\\' => 9,
             'FOS\\UserBundle\\' => 15,
             'FOS\\CKEditorBundle\\' => 19,
@@ -302,7 +295,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         ),
         'E' => 
         array (
-            'Ersah\\GABundle\\' => 15,
             'Egulias\\EmailValidator\\' => 23,
             'EWZ\\Bundle\\RecaptchaBundle\\' => 27,
         ),
@@ -346,10 +338,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
     );
 
     public static $prefixDirsPsr4 = array (
-        'phpseclib3\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
-        ),
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
@@ -383,6 +371,10 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
+        ),
+        'Thormeier\\BreadcrumbBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/thormeier/breadcrumb-bundle',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
@@ -760,10 +752,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         array (
             0 => __DIR__ . '/..' . '/sensio/framework-extra-bundle/src',
         ),
-        'SensioLabs\\Security\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sensiolabs/security-checker/SensioLabs/Security',
-        ),
         'Rollerworks\\Component\\PasswordStrength\\' => 
         array (
             0 => __DIR__ . '/..' . '/rollerworks/password-strength-validator/src',
@@ -828,10 +816,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         'PhpCsFixer\\' => 
         array (
             0 => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src',
-        ),
-        'ParagonIE\\ConstantTime\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
         'PackageVersions\\' => 
         array (
@@ -949,21 +933,9 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Google\\Auth\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/google/auth/src',
-        ),
-        'Google\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/google/apiclient/src',
-        ),
         'Gedmo\\' => 
         array (
             0 => __DIR__ . '/..' . '/gedmo/doctrine-extensions/src',
-        ),
-        'Firebase\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Fig\\Link\\' => 
         array (
@@ -980,10 +952,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         'FM\\ElfinderBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/helios-ag/fm-elfinder-bundle/src',
-        ),
-        'Ersah\\GABundle\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ersah/ga-bundle',
         ),
         'Egulias\\EmailValidator\\' => 
         array (
@@ -1133,10 +1101,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         ),
         'G' => 
         array (
-            'Google_Service_' => 
-            array (
-                0 => __DIR__ . '/..' . '/google/apiclient-services/src',
-            ),
             'Gaufrette' => 
             array (
                 0 => __DIR__ . '/..' . '/knplabs/gaufrette/src',
@@ -1167,27 +1131,6 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Collator' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/Collator.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Google_AccessToken_Revoke' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_AccessToken_Verify' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_AuthHandler_AuthHandlerFactory' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_AuthHandler_Guzzle5AuthHandler' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_AuthHandler_Guzzle6AuthHandler' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_AuthHandler_Guzzle7AuthHandler' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Client' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Collection' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Exception' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Http_Batch' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Http_MediaFileUpload' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Http_REST' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Model' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Service' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Service_Exception' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Service_Resource' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Task_Composer' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Task_Exception' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Task_Retryable' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Task_Runner' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
-        'Google_Utils_UriTemplate' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'IntlDateFormatter' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/IntlDateFormatter.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Locale' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/Locale.php',
@@ -1244,6 +1187,7 @@ class ComposerStaticInitfc6508db3cb32eafc37203101f90ef6f
         'PhpCsFixer\\Tests\\Test\\IntegrationCaseFactoryInterface' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/tests/Test/IntegrationCaseFactoryInterface.php',
         'PhpCsFixer\\Tests\\Test\\InternalIntegrationCaseFactory' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/tests/Test/InternalIntegrationCaseFactory.php',
         'PhpCsFixer\\Tests\\Test\\IsIdenticalConstraint' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/tests/Test/IsIdenticalConstraint.php',
+        'PhpCsFixer\\Tests\\Test\\TokensWithObservedTransformers' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/tests/Test/TokensWithObservedTransformers.php',
         'RecursiveCallbackFilterIterator' => __DIR__ . '/..' . '/studio-42/elfinder/php/elFinderVolumeLocalFileSystem.class.php',
         'SqlFormatter' => __DIR__ . '/..' . '/jdorn/sql-formatter/lib/SqlFormatter.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',

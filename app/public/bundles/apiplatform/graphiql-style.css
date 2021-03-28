@@ -106,14 +106,14 @@ body {
     background: white;
 }
 
-#graphiql .graphiql-container .execute-options > li.selected,
-#graphiql .graphiql-container .toolbar-menu-items > li.hover,
-#graphiql.graphiql-container .toolbar-menu-items > li:active,
-#graphiql .graphiql-container .toolbar-menu-items > li:hover,
-#graphiql.graphiql-container .toolbar-select-options > li.hover,
-#graphiql .graphiql-container .toolbar-select-options > li:active,
-#graphiql .graphiql-container .toolbar-select-options > li:hover,
-#graphiql .graphiql-container .history-contents > p:hover,
-#graphiql .graphiql-container .history-contents > p:active {
+#graphiql .graphiql-container .execute-options>li.selected,
+#graphiql .graphiql-container .toolbar-menu-items>li.hover,
+#graphiql.graphiql-container .toolbar-menu-items>li:active,
+#graphiql .graphiql-container .toolbar-menu-items>li:hover,
+#graphiql.graphiql-container .toolbar-select-options>li.hover,
+#graphiql .graphiql-container .toolbar-select-options>li:active,
+#graphiql .graphiql-container .toolbar-select-options>li:hover,
+#graphiql .graphiql-container .history-contents>p:hover,
+#graphiql .graphiql-container .history-contents>p:active {
     background: #288690;
 }

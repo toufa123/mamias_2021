@@ -1,11 +1,11 @@
 /*body{*/
-/*padding-top: 50px;*/
+    /*padding-top: 50px;*/
 /*}*/
 
 /*@media (max-width: 978px) {*/
-/*body{*/
-/*padding-top: 0;*/
-/*}*/
+    /*body{*/
+        /*padding-top: 0;*/
+    /*}*/
 /*}*/
 
 div.border {
@@ -54,6 +54,7 @@ div.connection div input.big {
 .sonata-bc.sonata-ba-no-side-menu div.container-fluid > div.content {
     margin-left: 0;
 }
+
 
 
 div.sonata-ba-field-inline-table input.title {
@@ -114,7 +115,6 @@ div.sonata-actions {
 td.sonata-ba-list-field.sonata-ba-list-field-boolean i {
     margin-right: 1ex;
 }
-
 td.sonata-ba-list-field.sonata-ba-list-field-boolean a:hover {
     text-decoration: none;
 }
@@ -175,7 +175,7 @@ th.sonata-ba-list-field-header-order-asc.sonata-ba-list-field-order-active a:hov
 }
 
 .sonata-ba-list-field-header-label-icon {
-    margin-right: 2px;
+  margin-right: 2px;
 }
 
 em.sonata-ba-field-help {
@@ -241,15 +241,14 @@ input[type="file"] {
 }
 
 .sonata-ba-view-container.history-audit-compare th {
-    width: 10%;
+     width: 10%;
 }
 
 .sonata-ba-view-container.history-audit-compare td {
-    width: 40%;
+     width: 40%;
 }
-
 .sonata-ba-view-container.history-audit-compare th.diff {
-    background: pink;
+     background: pink;
 }
 
 .container-fluid > .sidebar {
@@ -344,8 +343,8 @@ legend.sonata-ba-fieldset-collapsed-description + .sonata-ba-collapsed-fields {
 }
 
 body.fixed .content-header .navbar.stuck {
-    position: fixed;
-    top: 50px;
+    position:fixed;
+    top:50px;
     width: 100%;
     margin-left: -15px;
     z-index: 5;
@@ -357,8 +356,8 @@ body.fixed .content-header .navbar.stuck {
 }
 
 .form-actions.stuck {
-    position: fixed;
-    bottom: 0;
+    position:fixed;
+    bottom:0;
     width: 100%;
     margin-left: -15px;
     margin-bottom: 0;
@@ -366,35 +365,30 @@ body.fixed .content-header .navbar.stuck {
     border-radius: 0;
 }
 
-@media (max-width: 768px) {
+@media(max-width:768px) {
     body.fixed .main-header {
         position: relative;
     }
-
     body.fixed .content-wrapper,
     body.fixed .right-side {
         padding-top: 0;
     }
-
     body.fixed .content-header nav.navbar.stuck {
         top: 0;
         position: relative;
         margin: 0;
         width: 100%;
     }
-
     body.fixed .main-sidebar {
         position: absolute;
     }
-
     /* disable slimScroll */
     body.fixed .main-sidebar .slimScrollDiv,
     body.fixed .main-sidebar .sidebar {
         overflow: visible !important;
         height: auto !important;
     }
-
-    .navbar-custom-menu > .navbar-nav > li > .dropdown-menu {
+    .navbar-custom-menu > .navbar-nav > li >.dropdown-menu {
         width: auto !important;
         min-width: 230px; /* width of the left sidebar */
     }
