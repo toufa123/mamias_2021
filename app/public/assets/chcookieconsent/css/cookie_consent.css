@@ -6,15 +6,18 @@
     background-color: #007AB2;
     color: #FFFFFF;
     width: 100%;
+    height: 310px;
     display: inline-block;
     z-index: 99999;
     padding: 10px 10px;
 }
 
 .ch-cookie-consent__title {
-    color: #00AEEF;
+    color: #CEF6FF;
     font-family: "Roboto";
     margin-top: 0;
+    font-size: 10px;
+
 }
 
 .ch-cookie-consent__read-more {
@@ -31,12 +34,12 @@
 }
 
 .ch-cookie-consent__form {
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .ch-cookie-consent__category {
     border-bottom: 1px solid #00AEEF;
-    padding: 10px 0;
+    padding: 5px 0;
     display: -ms-flexbox;
     display: flex;
 }
@@ -62,6 +65,18 @@
 @media screen and (max-width: 641px) {
     .ch-cookie-consent__category-toggle {
         margin-top: 20px;
+    }
+
+    .ch-cookie-consent__category-description {
+        display: none;
+    }
+
+}
+
+
+@media screen and (max-width: 480px) {
+    .ch-cookie-consent__category-description {
+        display: none;
     }
 }
 
@@ -110,12 +125,12 @@
 
 .ch-cookie-consent__category-description {
     font-family: "Roboto";
-    font-size: "11";
+    font-size: 11px;
     margin: 0;
 }
 
 .ch-cookie-consent__btn {
-    margin-top: 25px;
+    margin-top: 10px;
     width: 70px;
     background: linear-gradient(349.19deg, #00AEEF 0%, #00aeee 100%);
     color: #fff;
