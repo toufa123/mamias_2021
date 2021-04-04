@@ -42,6 +42,7 @@ class HomeController extends AbstractController
         //dump ($mamDate);die;
 
         $NbperCountry = $em->getRepository(Mamias::class)->getSpeciesPerCountry();
+        //dd($NbperCountry);
         $NbperCountry1 = json_encode($em->getRepository(Mamias::class)->getSpeciesPerCountry());
         //$a = json_decode ($NbperCountry1, true);
         //dump ($NbperCountry1);die;
@@ -49,7 +50,7 @@ class HomeController extends AbstractController
         //dump($_ENV);die;
 
         //draw cumulative numbre of NIS
-        $total = $em->getRepository(Mamias::class)->gettotal();
+        //$total = $em->getRepository(Mamias::class)->gettotal();
         $cumulative = $em->getRepository(Mamias::class)->getcumulative();
         //dump($cumulative);die;
         $datacu = [];

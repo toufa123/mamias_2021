@@ -84,7 +84,7 @@ class Mamias
     /**
      * Vectors and Pathways of Introduction in the Mediterranean.
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Pathway", mappedBy="mamias",cascade={"all"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Pathway", mappedBy="mamias",cascade={"all"}, orphanRemoval=true, fetch="EAGER")
      */
     private $Pathway;
 

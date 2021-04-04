@@ -52,6 +52,8 @@ class CountryDistributionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->select('COUNT(a)')
+            ->where('a.AreaSighting IS NOT NULL')
+            ->andWhere('a.AreaSighting !=\'\'')
             ->getQuery()
             ->getSingleScalarResult();
     }

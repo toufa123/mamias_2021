@@ -42,13 +42,11 @@ class NationallevController extends AbstractController
         //dump($user);die;
         if ('' != $user & 'anon.' != $user & 'admin_sparac' != $user) {
             $co = $user->getCountry()->getId();
-            dump($co);
-            exit;
             $em = $this->getDoctrine()->getManager();
-
             $n1 = $em->getRepository(Mamias::class)->findnumbersBycountry($co);
+            dd($n1);
             $n11 = $em->getRepository(Mamias::class)->findnumbersBycountry2($co);
-            dump($n11);
+            //dump($n11);
             exit;
             $n2 = $em->getRepository(Mamias::class)->findnumbersByestablished($co);
             $n3 = $em->getRepository(Mamias::class)->findnumbersByInvasive($co);
@@ -206,9 +204,9 @@ class NationallevController extends AbstractController
                 if ('' != $c) {
                     $co = $em->getRepository(Country::class)->findOneBy(['country' => $c])->getId();
                 }
-                $n1 = $em->getRepository(Mamias::class)->findnumbersBycountry($co);
-                $n11 = $em->getRepository(Mamias::class)->findnumbersBycountry2($co);
-                //dump($n11);die;
+                $n1 = $em->getRepository(Mamias::class)->findnumbersBycountry($co)['0']['1'];
+                //$n11 = $em->getRepository(Mamias::class)->findnumbersBycountry2($co);
+                //dump($n1);die;
                 $n2 = $em->getRepository(Mamias::class)->findnumbersByestablished($co);
                 $n3 = $em->getRepository(Mamias::class)->findnumbersByInvasive($co);
                 $n4 = $em->getRepository(Mamias::class)->getcumulativebyCountry1($co);

@@ -35,6 +35,7 @@ class NfpController extends AbstractController
             //dump($userCountry);die;
 
             $n1 = $em->getRepository(Mamias::class)->findnumbersBycountry($userCountry);
+            dd($n1);
             $n2 = $em->getRepository(Mamias::class)->findnumbersByestablished($userCountry);
             $n3 = $em->getRepository(Mamias::class)->findnumbersByInvasive($userCountry);
 
