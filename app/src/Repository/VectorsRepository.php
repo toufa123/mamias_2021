@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Vectors;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Vectors|null find($id, $lockMode = null, $lockVersion = null)

@@ -343,7 +343,7 @@ final class GeoOccurenceAdmin extends AbstractAdmin
             ->add('mamias', null, ['label' => 'Species Name'])
             //->add('imageFile', 'vich_image')
             ->add('country', null, ['label' => 'Country'])
-            ->add('Location', PointType::class, ['label' => 'Location'])
+            ->add('Location', Point::class, ['label' => 'Location'])
             //->add('longitude', null, array('label' => 'longitude'))
             ->add('date_occurence', null, ['label' => 'Date of the Occurence'])
             ->add('imageFile', null, ['label' => 'Picture', 'template' => 'declaration/picture.html.twig'])

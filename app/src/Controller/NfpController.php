@@ -4,10 +4,8 @@ namespace App\Controller;
 
 use App\Application\Sonata\UserBundle\Entity\User;
 use App\Entity\Mamias;
-use App\Form\BaselineType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class NfpController extends AbstractController
@@ -82,35 +80,6 @@ class NfpController extends AbstractController
 
         return $this->render('FOSUserBundle:Profile:show_content.html.twig', [
             'entity' => $national_expert,
-        ]);
-    }
-
-    /*
-     * @Route("/upload/", name="upload")
-     * @IsGranted("ROLE_FOCALPOINT")
-     */
-    public function uploadAction(Request $request)
-    {
-        $User = $this->get('security.token_storage')->getToken()->getUser();
-        $baseline = new baseline();
-        $form = $this->createForm(BaselineType::class, $baseline);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $country = $form['country']->getData();
-            $date_reporting = $form['date_reporting']->getData();
-            $filename = $form['filename']->getData();
-            $baseline->setCountry($country);
-            $baseline->setDateReporting($date_reporting);
-            $baseline->setBaselineFile($filename);
-            $baseline->setUser($User);
-
-            // finally add data in database
-            $bl = $this->getDoctrine()->getManager();
-            $bl->persist($baseline);
-            $bl->flush();
-        }
-
-        return $this->render('nfp/index.html.twig', ['form' => $form->createView(),
         ]);
     }
 }

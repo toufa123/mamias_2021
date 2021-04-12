@@ -6,14 +6,11 @@ use App\Entity\Contact;
 use App\Form\ContactType;
 use Swift_Mailer;
 use Swift_Message;
-use Swift_SmtpTransport;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\DependencyInjection\EnvVarProcessorInterface;
-
 
 class ContactController extends AbstractController
 {
@@ -25,7 +22,6 @@ class ContactController extends AbstractController
         $this->mailer = $mailer;
         $this->templating = $templating;
     }
-
 
     /**
      * @Route("/contact", name="contact",  options={"sitemap" = true})
@@ -43,7 +39,6 @@ class ContactController extends AbstractController
 
         // check if form is submitted and Recaptcha response is success
         if ($form->isSubmitted() && $form->isValid()) {
-            //$this->addFlash('success', 'Article Created! Knowledge is power!');
             $FirstName = $form['FirstName']->getData();
             $LastName = $form['LastName']->getData();
             $email = $form['email']->getData();
@@ -62,9 +57,7 @@ class ContactController extends AbstractController
             $sn->persist($contact);
             $sn->flush();
 
-            //$mailer = new Swift_Mailer($transport);
             try {
-                //$img = $message->embed(\Swift_Image::fromPath('resources/logo/Logo-Mamias-web.png'));
                 $message = (new Swift_Message())
                     //$message = \Swift_Message::newInstance()
                     ->setSubject($subject)
@@ -83,19 +76,6 @@ class ContactController extends AbstractController
                         'text/plain'
                     );
 
-                //$transport = (new Swift_SmtpTransport('127.0.0.1', 25))
-                //   ->setUsername('NULL')
-                //    ->setPassword('NULL')
-                //;
-                //$mailer = new Swift_Mailer($transport);
-
-                //$transporter = new Swift_SmtpTransport('smtp.gmail.com', 587, 'tls');
-                //$transporter->setAuthMode ('login')
-                //->setUsername ('mamias2020@gmail.com')
-                //->setPassword ('MAMIAS2019')
-                //->setStreamOptions (['ssl' => ['allow_self_signed' => true, 'verify_peer' => false]]);
-                //$transporter->setLocalDomain ('[127.0.0.1]');
-                //$mailer = new Swift_Mailer($transporter);
                 $email = (new Swift_Message('Contact Message'))
                     //$message = \Swift_Message::newInstance()
                     //->setSubject ($subject)
@@ -113,13 +93,11 @@ class ContactController extends AbstractController
                 $mailer->send($message);
                 $mailer->send($email);
                 $this->addFlash('success', 'Your Message is sent. A confirmation Email was sent to your email adress !');
+
                 return $this->redirectToRoute('contact');
-
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 echo $e->getMessage();
-
             }
-
         }
 
         return $this->render(

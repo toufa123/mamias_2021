@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Catalogue;
 use App\Entity\Country;
 use App\Entity\EcAp;
 use App\Entity\Ecofunctional;
@@ -15,14 +14,12 @@ use App\Entity\Status;
 use App\Entity\SuccessType;
 use App\Entity\VectorName;
 use App\Repository\CountryRepository;
-use App\Repository\OriginRepository;
-use App\Repository\SuccessTypeRepository;
-use App\Repository\EcofunctionalRepository;
-use App\Repository\RegionalSeaRepository;
-use App\Repository\CatalogueRepository;
-use App\Repository\VectorNameRepository;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use App\Repository\EcApRepository;
+use App\Repository\EcofunctionalRepository;
+use App\Repository\OriginRepository;
+use App\Repository\RegionalSeaRepository;
+use App\Repository\SuccessTypeRepository;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -66,7 +63,6 @@ class SearchType extends AbstractType
                 'origin',
                 EntityType::class,
                 [
-
                     'query_builder' => function (OriginRepository $er) {
                         return $er->createQueryBuilder('f')
                             ->orderBy('f.originRegion', 'ASC');
@@ -134,7 +130,7 @@ class SearchType extends AbstractType
                     'choice_label' => 'regionalSea',
                     'choice_value' => 'id',
                     'attr' => ['class' => 'form-control select2'],
-                    'required' => false
+                    'required' => false,
                 ]
             )
             ->add(

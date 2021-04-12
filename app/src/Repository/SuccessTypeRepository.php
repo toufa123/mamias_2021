@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\SuccessType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method SuccessType|null find($id, $lockMode = null, $lockVersion = null)

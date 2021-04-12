@@ -8,5 +8,4 @@ use Sonata\AdminBundle\Controller\CRUDController;
 
 final class ContactAdminController extends CRUDController
 {
-
 }

@@ -554,7 +554,7 @@ final class CatalogueAdmin extends AbstractAdmin
     {
         $entitymanager = $this->getDoctrine()->getManager();
         $Aphia = '';
-        $object = $this->admin->getSubject();
+        $object = $this->getSubject();
         $Species = '';
         $Aphia = (int)$object->getAphia();
         $S = $object->getSpecies();

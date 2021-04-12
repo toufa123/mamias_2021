@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Status;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Status|null find($id, $lockMode = null, $lockVersion = null)

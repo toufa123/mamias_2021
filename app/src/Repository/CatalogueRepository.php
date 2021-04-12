@@ -3,10 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Catalogue;
-use App\Entity\Country;
 use App\Entity\Mamias;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Catalogue|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,7 +18,6 @@ class CatalogueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Catalogue::class);
     }
-
 
     /**
      * @return Catalogue[] Returns an array of Catalogue objects
@@ -92,6 +89,7 @@ class CatalogueRepository extends ServiceEntityRepository
     public function getphylum()
     {
         $qb = $this->createQueryBuilder('a');
+
         return $qb->select('a.phylum')
             //->groupBy('a.id')
             ->GroupBy('a.phylum')
@@ -100,8 +98,5 @@ class CatalogueRepository extends ServiceEntityRepository
         //->distinct();
         //->getQuery();
         //->getResult();
-
-
     }
-
 }

@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\RegionalSea;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method RegionalSea|null find($id, $lockMode = null, $lockVersion = null)

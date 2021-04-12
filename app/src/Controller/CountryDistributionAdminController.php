@@ -15,6 +15,7 @@ use App\Entity\VectorName;
 use CrEOF\Geo\WKT\Parser;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use DateTime;
+use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sonata\AdminBundle\Controller\CRUDController;

@@ -442,7 +442,6 @@
             $(".select2").select2({
                 allowClear: true
             });
-
             function formatResult(item) {
                 if (!item.id) {
                     // return `text` for optgroup
@@ -452,7 +451,6 @@
                 // return item template
                 return $('<i>' + item.text + '</i>');
             }
-
             function formatSelection(item) {
                 // return selection template
                 return $('<i>' + item.text + '</i>');
@@ -465,18 +463,22 @@
                 templateSelection: formatSelection,
                 //allowClear: true,
                 //minimumInputLength: 3
+
             });
 
 
             $("#switch1").click(function () {
                 $("#panel").slideToggle();
                 $.cookie('switch1', true);
-                //alert($.cookie('switch1'))
+                $("#speciesName").prop("disabled", true);
+
             });
             if ($.cookie('switch1') === 'true') {
                 $('#switch1').click();
             } else {
                 $("#panel").hide();
+                $("#speciesName").prop("disabled", false);
+
             }
 
             $("#reset").click(function () {
@@ -490,14 +492,12 @@
                 $('#invasive').val(null).trigger('change');
                 $('#status').val(null).trigger('change');
                 $('#vectorName').val(null).trigger('change');
-                $("#panel").hide();
+                $('#panel').hide();
                 $.cookie('switch1', false);
-                $('#datatable-buttons').DataTable().clear().draw();
+                //$('#datatable-buttons').DataTable().clear().draw();
                 //$('#datatable-buttons').table.table().draw();
                 window.location.reload(true);
             })
-
-
         });
 
     </script>

@@ -60,7 +60,7 @@ med:
     controller: App\Controller\MedlevelController::index
     options:
         breadcrumb:
-            label: MAMIAS Services / Mediterranean Level
+            label: MAMIAS Services / Dashboard / Mediterranean Level
             parent_route: home
 
 nat:
@@ -68,7 +68,7 @@ nat:
     controller: App\Controller\NationallevController::index
     options:
         breadcrumb:
-            label: MAMIAS Services / National Level
+            label: MAMIAS Services / Dashboard / National Level
             parent_route: home
 
 search:
@@ -76,7 +76,7 @@ search:
     controller: App\Controller\SearchController::index
     options:
         breadcrumb:
-            label: MAMIAS Services / Serach MAMIAS
+            label: MAMIAS Services / Searching / Serach MAMIAS
             parent_route: home
 
 species_fiche:

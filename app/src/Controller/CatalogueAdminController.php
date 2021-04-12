@@ -6,19 +6,16 @@ namespace App\Controller;
 
 use App\Entity\Catalogue;
 use App\Entity\Synonym;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Client;
+use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
-//use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
-//use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use UniqueConstraintViolationException;
 
 final class CatalogueAdminController extends CRUDController
 {

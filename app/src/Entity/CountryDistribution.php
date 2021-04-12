@@ -110,7 +110,7 @@ class CountryDistribution
         $this->createdAt = new DateTime('now');
         $this->updatedAt = new DateTime('now');
         //$this->firstAreaSighting = new\DateTime('now');
-        $this->vector = new ArrayCollection();
+        $this->VectorName = new ArrayCollection();
     }
 
     public function getId(): ?int

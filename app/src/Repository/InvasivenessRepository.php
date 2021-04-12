@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Invasiveness;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Invasiveness|null find($id, $lockMode = null, $lockVersion = null)

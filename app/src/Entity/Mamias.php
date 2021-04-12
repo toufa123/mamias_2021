@@ -144,7 +144,7 @@ class Mamias
 
     public function __construct()
     {
-        $this->VectorName = new ArrayCollection();
+        //$this->VectorName = new ArrayCollection();
         $this->Distribution = new ArrayCollection();
         $this->Geo = new ArrayCollection();
         $this->createdAt = new DateTime('now');

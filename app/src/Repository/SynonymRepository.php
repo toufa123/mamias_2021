@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Synonym;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Synonym|null find($id, $lockMode = null, $lockVersion = null)

@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Literature;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Literature|null find($id, $lockMode = null, $lockVersion = null)

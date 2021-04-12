@@ -153,7 +153,6 @@ class Catalogue
         $this->updatedAt = new DateTime('now');
         $this->Synonyms = new ArrayCollection();
         $this->status = 'Validated';
-        $this->Synonym = new ArrayCollection();
     }
 
     public function getId(): ?int

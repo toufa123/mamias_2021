@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Mamias;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Mamias|null find($id, $lockMode = null, $lockVersion = null)
@@ -59,11 +58,12 @@ class MamiasRepository extends ServiceEntityRepository
             ->select('count(a.id)')
             ->where('a.Success != 7')
             ->andWhere('a.Success != 9')
+            ->andWhere('a.Success != 12')
             ->andWhere('a.firstMedSighting IS NOT NULL')
-            ->andWhere('a.firstMedSighting !=\'\'')
+            //->leftJoin('a.Distribution', 'd')
+            //->andWhere('d.AreaSighting IS NOT NULL')
             ->getQuery()
             ->getSingleScalarResult();
-
     }
 
     public function findAllS()
@@ -72,7 +72,10 @@ class MamiasRepository extends ServiceEntityRepository
             ->Select('z.id')
             ->AddSelect('z.firstMedSighting')
             ->andWhere('z.firstMedSighting IS NOT NULL')
-            ->andWhere('z.firstMedSighting !=\'\'')
+            ->where('z.Success != 7')
+            ->andWhere('z.Success != 9')
+            ->andWhere('z.Success != 12')
+            //->andWhere('z.firstMedSighting !=\'\'')
             ->leftJoin('z.relation', 'Catalogue')
             ->addSelect('Catalogue.Species')
             ->leftJoin('z.Ecofunctional', 'Ecofunctional')
@@ -81,16 +84,12 @@ class MamiasRepository extends ServiceEntityRepository
             ->addSelect('Origin.originRegion')
             ->leftJoin('z.Success', 'success')
             ->addSelect('success.successType')
-            ->where('success.id != 7')
-            ->andWhere('success.id != 9')
             ->leftJoin('z.speciesstatus', 'speciesstatus')
             ->addSelect('speciesstatus.status')
             ->leftJoin('z.Distribution', 'd')
+            ->andWhere('d.AreaSighting IS NOT NULL')
+            ->andWhere('d.country IS NOT NULL')
             ->leftjoin('d.country', 'c')
-            //->addSelect ('c.country')
-            ->andWhere('cc.id != 0')
-            //->lefjoin ('d.ecap', 'e')
-            //->addSelect ('e.ecap')
             ->orderBy('z.id')
             ->groupBy('z.id', 'Catalogue.Species', 'Ecofunctional.ecofunctional', 'Origin.originRegion', 'success.successType', 'speciesstatus.status')
             ->getQuery()
@@ -102,8 +101,11 @@ class MamiasRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->select('COUNT(a)')
             ->Where('a.Success=6')
+            ->andWhere('a.Success != 7')
+            ->andWhere('a.Success != 9')
+            ->andWhere('a.Success != 12')
             ->andWhere('a.firstMedSighting IS NOT NULL')
-            ->andWhere('a.firstMedSighting !=\'\'')
+            //->andWhere('a.firstMedSighting !=\'\'')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -113,8 +115,11 @@ class MamiasRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->select('COUNT(a)')
             ->Where('a.Success=8')
+            ->andWhere('a.Success != 7')
+            ->andWhere('a.Success != 9')
+            ->andWhere('a.Success != 12')
             ->andWhere('a.firstMedSighting IS NOT NULL')
-            ->andWhere('a.firstMedSighting !=\'\'')
+            //->andWhere('a.firstMedSighting !=\'\'')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -130,12 +135,13 @@ class MamiasRepository extends ServiceEntityRepository
             ->AddSelect('m.id')
             ->AddSelect('m.firstMedSighting')
             ->andWhere('m.firstMedSighting IS NOT NULL')
-            ->andWhere('m.firstMedSighting !=\'\'')
+            //->andWhere('m.firstMedSighting !=\'\'')
             ->leftJoin('m.Distribution', 'c')
+            ->andWhere('c.country IS NOT NULL')
+            ->andWhere('c.AreaSighting IS NOT NULL')
             ->addSelect('c')
             ->leftjoin('c.country', 'cc')
             ->addSelect('cc.country')
-            ->andWhere('cc.id >1')
             ->leftJoin('m.relation', 'Catalogue')
             ->addSelect('Catalogue.Species')
             ->leftJoin('m.Ecofunctional', 'Ecofunctional')
@@ -145,6 +151,7 @@ class MamiasRepository extends ServiceEntityRepository
             ->leftJoin('m.Success', 'success')
             ->where('m.Success != 7')
             ->andWhere('success.id != 9')
+            ->andWhere('success.id != 12')
             ->addSelect('success.successType')
             ->leftJoin('m.speciesstatus', 'speciesstatus')
             ->addSelect('speciesstatus.status')
@@ -213,15 +220,17 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getSpeciesPerCountry()
     {
-
         return $this->createQueryBuilder('m')
-            ->select('count(m.id) As z')
-            ->leftJoin('m.Success', 'success')
-            ->where('success.id != 7')
-            ->andWhere('success.id != 9')
+            ->select('count(distinct m.id) As z')
+            //->leftJoin('m.Success', 'success')
+            ->where('m.Success != 7')
+            ->andWhere('m.Success != 9')
+            ->andWhere('m.Success != 12')
             ->andWhere('m.firstMedSighting IS NOT NULL')
-            ->andWhere('m.firstMedSighting !=\'\'')
+            //->andWhere('m.firstMedSighting !=\'\'')
             ->leftJoin('m.Distribution', 'c')
+            ->andWhere('c.AreaSighting IS NOT NULL')
+            //->andWhere('c.AreaSighting !=\'\'')
             ->leftJoin('c.country', 'cc')
             ->addSelect('cc.country')
             ->andWhere('cc.id != 0')
@@ -230,21 +239,23 @@ class MamiasRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
     }
 
-    //public function gettotal()
-    //{
-    //    $rawSql1 = 'SELECT mamias.first_med_sighting, (SELECT COUNT(DISTINCT mamias.id)) AS Total ' .
-    //        'FROM mamias WHERE mamias.first_med_sighting IS NOT NULL AND mamias.first_med_sighting != \'\' AND mamias.success_id != 7 AND mamias.success_id != 9 GROUP BY mamias.first_med_sighting ORDER BY mamias.first_med_sighting';
-    //    $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
-    //    $stmt1->execute([]);
-    //    return $stmt1->fetchAll();
-    //}
+    public function gettotal()
+    {
+        $rawSql1 = 'SELECT mamias.first_med_sighting, (SELECT COUNT(DISTINCT mamias.id)) AS Total ' .
+            'FROM mamias WHERE mamias.first_med_sighting IS NOT NULL 
+             AND mamias.success_id != 7 AND mamias.success_id != 9 ' .
+            'AND mamias.success_id != 12 GROUP BY mamias.first_med_sighting ORDER BY mamias.first_med_sighting';
+        $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
+        $stmt1->execute([]);
+
+        return $stmt1->fetchAll();
+    }
 
     /*
      * Cumulative numbe for Home Page and Med
      */
     public function getcumulative()
     {
-
         //return $this->createQueryBuilder('m')
         //    ->select('m.firstMedSighting')
         //    ->addSelect('sum(count(distinct m.id))')
@@ -266,17 +277,20 @@ class MamiasRepository extends ServiceEntityRepository
 
         $rawSql1 = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative ' .
             'FROM mamias WHERE mamias.first_med_sighting IS NOT NULL AND length(mamias.first_med_sighting) > 0 '
-            . 'AND mamias.success_id != 7 AND mamias.success_id !=9 GROUP BY mamias.first_med_sighting ORDER BY mamias.first_med_sighting';
+            . 'AND mamias.success_id != 7 AND mamias.success_id !=9 AND mamias.success_id !=12 
+            GROUP BY mamias.first_med_sighting ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute([]);
+
         return $stmt1->fetchAll();
     }
 
     public function getSpeciesbyGroup()
     {
         $rawSql1 = 'SELECT ecofunctional.ecofunctional , (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
-            'FROM mamias, ecofunctional WHERE mamias.ecofunctional_id = ecofunctional.id  AND mamias.success_id != 7 AND mamias.success_id !=9 GROUP BY ecofunctional.ecofunctional';
+            'FROM mamias, ecofunctional WHERE mamias.ecofunctional_id = ecofunctional.id  
+            AND mamias.success_id != 7 AND mamias.success_id !=9 AND mamias.success_id !=12 GROUP BY ecofunctional.ecofunctional';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute([]);
@@ -287,7 +301,8 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesbyestablishement()
     {
         $rawSql1 = 'SELECT success_type.success_type AS Success, (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
-            'FROM mamias, success_type WHERE mamias.success_id = success_type.id  AND mamias.success_id != 7  AND mamias.success_id !=9 GROUP BY success_type.success_type';
+            'FROM mamias, success_type WHERE mamias.success_id = success_type.id  
+            AND mamias.success_id != 7  AND mamias.success_id !=9 AND mamias.success_id !=12 GROUP BY success_type.success_type';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute([]);
@@ -298,7 +313,8 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesbystatus()
     {
         $rawSql1 = 'SELECT status.status AS status, (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
-            'FROM mamias, status WHERE mamias.speciesstatus_id = status.id  AND mamias.success_id != 7 AND mamias.success_id !=9 GROUP BY status.status';
+            'FROM mamias, status WHERE mamias.speciesstatus_id = status.id  AND mamias.success_id != 7 
+            AND mamias.success_id !=9 AND mamias.success_id !=12 GROUP BY status.status';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute([]);
@@ -309,7 +325,8 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesbyOrigins()
     {
         $rawSql1 = "SELECT split_part( origin.origin_region, ' ' , 1 ) As origin, (SELECT COUNT(DISTINCT mamias.id)) AS Value " .
-            'FROM mamias, origin WHERE mamias.origin_id = origin.id  AND mamias.success_id != 7 AND mamias.success_id !=9 GROUP BY origin ';
+            'FROM mamias, origin WHERE mamias.origin_id = origin.id  AND mamias.success_id != 7 AND mamias.success_id !=9 
+            AND mamias.success_id !=12 GROUP BY origin ';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute([]);
@@ -320,7 +337,8 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesbyEcap()
     {
         $rawSql1 = 'SELECT ecap.ecap As ecap, (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
-            ' FROM mamias, country_distribution, ecap WHERE mamias.id = country_distribution.mamias_id AND mamias.success_id != 7 AND mamias.success_id !=9' .
+            ' FROM mamias, country_distribution, ecap WHERE mamias.id = country_distribution.mamias_id 
+                AND mamias.success_id != 7 AND mamias.success_id !=9 AND mamias.success_id !=12' .
             ' AND country_distribution.ecap_id = ecap.id GROUP BY ecap ';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -329,17 +347,18 @@ class MamiasRepository extends ServiceEntityRepository
         return $stmt1->fetchAll();
     }
 
-
     public function findnumbersBycountry($co)
     {
         return $this->createQueryBuilder('m')
             ->select('count(m.id)')
-            ->leftJoin('m.Success', 'success')
-            ->where('success.id != 7')
+            //->leftJoin('m.Success', 'success')
+            ->where('m.Success != 7')
+            ->andWhere('m.Success != 9')
+            ->andWhere('m.Success != 12')
             ->andWhere('m.firstMedSighting IS NOT NULL')
-            ->andWhere('m.firstMedSighting !=\'\'')
-            ->andWhere('success.id != 9')
             ->leftJoin('m.Distribution', 'c')
+            ->andWhere('c.AreaSighting IS NOT NULL')
+            ->andWhere('c.country IS NOT NULL')
             ->leftJoin('c.country', 'cc')
             ->andWhere('cc.id = :id')
             //->andWhere('cc.id > 1')
@@ -350,13 +369,13 @@ class MamiasRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
     }
 
-
     public function getcumulativeBycountry($co)
     {
         $rawSql = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative '
             . '  FROM mamias , country_distribution , country WHERE mamias.first_med_sighting IS NOT NULL AND  length(mamias.first_med_sighting) > 0  '
-            . '  WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7 AND mamias.success_id !=9'
-            . '  AND country.id = :country  '
+            . '  WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id 
+                AND mamias.success_id != 7 AND mamias.success_id !=9 AND mamias.success_id !=12 AND WHERE country_distribution.AreaSighting IS NOT NULL'
+            . '  AND WHERE country_distribution.country IS NOT NULL AND country.id = :country  '
             . '  GROUP BY mamias.first_med_sighting, country.country ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql);
@@ -370,7 +389,7 @@ class MamiasRepository extends ServiceEntityRepository
         $rawSql = 'SELECT country.country As Country, (SELECT DISTINCT COUNT(mamias.id)) As Value '
             . ' FROM mamias , country_distribution , country '
             . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            . ' AND mamias.success_id = 6'
+            . ' AND mamias.success_id = 6 AND mamias.success_id != 7 AND mamias.success_id !=9 AND mamias.success_id !=12'
             . ' AND country.id = :country'
             . ' GROUP BY country.country ORDER BY country.country ASC';
 
@@ -385,7 +404,7 @@ class MamiasRepository extends ServiceEntityRepository
         $rawSql = 'SELECT country.country As Country, (SELECT DISTINCT COUNT(mamias.id)) As Value '
             . ' FROM mamias , country_distribution , country '
             . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            . ' AND mamias.success_id = 8'
+            . ' AND mamias.success_id = 8 AND mamias.success_id != 7 AND mamias.success_id !=9 AND mamias.success_id !=12'
             . ' AND country.id = :country'
             . ' GROUP BY country.country ORDER BY country.country ASC';
 
@@ -399,7 +418,7 @@ class MamiasRepository extends ServiceEntityRepository
     {
         $rawSql1 = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative '
             . ' FROM mamias , country_distribution , country '
-            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7'
+            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7 AND mamias.success_id != 9 AND mamias.success_id != 12'
             . ' AND mamias.first_med_sighting IS NOT NULL AND country.id = :country GROUP BY  mamias.first_med_sighting, country.country ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -441,10 +460,12 @@ class MamiasRepository extends ServiceEntityRepository
             ->select('m', 'c')
             ->where('m.Success  != 7')
             ->andWhere('m.Success  != 9')
+            ->andWhere('m.Success  != 12')
             ->leftJoin('m.Distribution', 'c')
-            ->addSelect('c')
-            ->andWhere('m.firstMedSighting IS NOT NULL')
-            ->andWhere('m.firstMedSighting !=\'\'');
+            ->andWhere(('c.AreaSighting IS NOT NULL')
+                ->addSelect('c')
+                ->andWhere('m.firstMedSighting IS NOT NULL'));
+        //->andWhere('m.firstMedSighting !=\'\'');
 
         if (!empty($country)) {
             $query = $query->andWhere('c.country = :val4')

@@ -170,7 +170,7 @@
     <script>
         data = [];
         var data =  {{ NbperCountry1 |raw }};
-        //console.log(data);
+        console.log(data);
         //$.each(data, function () {
         //    this.value = (this.value < 1 ? 1 : this.value);
         //});
@@ -263,8 +263,8 @@
                     joinBy: ['NAME', 'country'],
                     data: data,
                     name: 'Number of NIS',
-                    minSize: 8,
-                    maxSize: '20%',
+                    //minSize: 8,
+                    //maxSize: '20%',
                     dataLabels: {
                         enabled: true,
                         allowOverlap: false,

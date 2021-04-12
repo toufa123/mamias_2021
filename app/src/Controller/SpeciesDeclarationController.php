@@ -25,7 +25,6 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\File;
@@ -35,11 +34,11 @@ class SpeciesDeclarationController extends Controller
     private $mailer;
     private $templating;
 
-    public function __construct(Swift_Mailer $mailer, EngineInterface $templating, FlashBagInterface $flash)
+    public function __construct(Swift_Mailer $mailer, EngineInterface $templating)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
-        $this->flash = $flash;
+        //$this->flash = $flash;
     }
 
     /**
@@ -194,7 +193,7 @@ class SpeciesDeclarationController extends Controller
         if (move_uploaded_file($tmp_name, $uploadfile)) {
             $spreadsheet = $reader->load($uploadfile);
             $sheetData = $spreadsheet->getActiveSheet()->toArray();
-            dump($sheetData);
+            //dump($sheetData);
             exit;
 
             $request->getSession()
@@ -297,7 +296,6 @@ class SpeciesDeclarationController extends Controller
             ->setAutoSize(true);
         //$sheet2->getColumnDimension ('B')->setVisible (false);
 
-
         $row = 2;
         foreach ($species as $e) {
             //$spreadsheet->setActiveSheetIndex(1)
@@ -307,7 +305,6 @@ class SpeciesDeclarationController extends Controller
             //->setCellValue('B' . $row, $e->getRelation()->getSpecies());
             ++$row;
         }
-
 
         // Country List sheet
         //$spreadsheet->createSheet();

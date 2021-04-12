@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\EcAp;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method EcAp|null find($id, $lockMode = null, $lockVersion = null)

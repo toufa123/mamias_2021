@@ -19,7 +19,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
-use Thormeier\BreadcrumbBundle\Provider\BreadcrumbProvider;
 
 class SearchController extends AbstractController
 {
@@ -102,7 +101,7 @@ class SearchController extends AbstractController
 
             $species = $em->getRepository(Mamias::class)->findSpeciesByParametres(
                 $sId, $eco, $origin, $su, $year, $country, $ecapmed, $status, $pathway, $reg);
-            //dump ($species); die;
+        //dump ($species); die;
         } else {
             $em = $this->getDoctrine()->getManager();
             $species = $em->getRepository(Mamias::class)->findAllS();
@@ -133,7 +132,6 @@ class SearchController extends AbstractController
         //$crumb = $breadcrumbProvider->getBreadcrumbByRoute('species_fiche');
         //$crumb->setRouteParameters([ 'id' => $entity->getId(), ]);
         //$crumb->setLabelParameters([ '%species%' => $entity->getRelation(), ]);
-
 
         $NbperCountry1 =
             $em->getRepository(CountryDistribution::class)->findSpeciesByParametres($id);
