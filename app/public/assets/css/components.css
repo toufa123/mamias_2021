@@ -1702,10 +1702,10 @@ File: Components
     top: 30px;
     overflow: hidden;
     vertical-align: middle;
-    height: 80px;
-    width: 80px;
+    height: 60px;
+    width: 60px;
     text-align: center;
-    line-height: 80px;
+    line-height: 60px;
     border-radius: 50%;
 }
 
