@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Pareto series type for Highcharts
  *
- * (c) 2010-2019 Sebastian Bochan
+ * (c) 2010-2021 Sebastian Bochan
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Mixins/DerivedSeries.js', [_modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (H, Series, U) {
         /* *
          *
@@ -208,7 +206,6 @@
          */
         var ParetoSeries = /** @class */ (function (_super) {
             __extends(ParetoSeries, _super);
-
             function ParetoSeries() {
                 /* *
                  *
@@ -227,7 +224,6 @@
                 _this.options = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions

@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Highcharts cylinder module
  *
- * (c) 2010-2019 Kacper Madej
+ * (c) 2010-2021 Kacper Madej
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/Cylinder/CylinderPoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -77,7 +75,6 @@
          * */
         var CylinderPoint = /** @class */ (function (_super) {
             __extends(CylinderPoint, _super);
-
             function CylinderPoint() {
                 /* *
                  *
@@ -90,7 +87,6 @@
                 _this.series = void 0;
                 return _this;
             }
-
             return CylinderPoint;
         }(ColumnPoint));
         extend(CylinderPoint.prototype, {
@@ -249,22 +245,28 @@
         };
         // Retruns cylinder path for top or bottom
         RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
+            var _a = shapeArgs.width,
+                width = _a === void 0 ? 0 : _a,
+                _b = shapeArgs.height,
+                height = _b === void 0 ? 0 : _b,
+                _c = shapeArgs.alphaCorrection,
+                alphaCorrection = _c === void 0 ? 0 : _c;
             // A half of the smaller one out of width or depth (optional, because
             // there's no depth for a funnel that reuses the code)
             var depth = pick(shapeArgs.depth,
-                shapeArgs.width),
-                radius = Math.min(shapeArgs.width,
+                width, 0),
+                radius = Math.min(width,
                     depth) / 2,
                 // Approximated longest diameter
                 angleOffset = deg2rad * (chart.options.chart.options3d.beta - 90 +
-                    (shapeArgs.alphaCorrection || 0)),
+                    alphaCorrection),
                 // Could be top or bottom of the cylinder
-                y = shapeArgs.y + (isBottom ? shapeArgs.height : 0),
+                y = (shapeArgs.y || 0) + (isBottom ? height : 0),
                 // Use cubic Bezier curve to draw a cricle in x,z (y is constant).
                 // More math. at spencermortensen.com/articles/bezier-circle/
                 c = 0.5519 * radius,
-                centerX = shapeArgs.width / 2 + shapeArgs.x,
-                centerZ = depth / 2 + shapeArgs.z,
+                centerX = width / 2 + (shapeArgs.x || 0),
+                centerZ = depth / 2 + (shapeArgs.z || 0),
                 // points could be generated in a loop, but readability will plummet
                 points = [{
                     x: 0,
@@ -432,7 +434,6 @@
          */
         var CylinderSeries = /** @class */ (function (_super) {
             __extends(CylinderSeries, _super);
-
             function CylinderSeries() {
                 /* *
                  *
@@ -451,7 +452,6 @@
                 _this.points = void 0;
                 return _this;
             }
-
             /**
              * A cylinder graph is a variation of a 3d column graph. The cylinder graph
              * features cylindrical points.

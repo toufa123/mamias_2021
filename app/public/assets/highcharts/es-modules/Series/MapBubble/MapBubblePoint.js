@@ -25,15 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, BubbleSeries = _a.bubble, MapSeries = _a.map;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -42,11 +39,9 @@ var extend = U.extend, merge = U.merge;
  * */
 var MapBubblePoint = /** @class */ (function (_super) {
     __extends(MapBubblePoint, _super);
-
     function MapBubblePoint() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-
     /* *
      *
      *  Functions

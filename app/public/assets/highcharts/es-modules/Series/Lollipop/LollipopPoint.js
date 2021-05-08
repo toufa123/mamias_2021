@@ -25,7 +25,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -34,7 +33,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var Point = SeriesRegistry.series.prototype.pointClass, _a = SeriesRegistry.seriesTypes, areaProto = _a.area.prototype,
     DumbbellPoint = _a.dumbbell.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-
 var isObject = U.isObject, extend = U.extend;
 /* *
  *
@@ -43,14 +41,12 @@ var isObject = U.isObject, extend = U.extend;
  * */
 var LollipopPoint = /** @class */ (function (_super) {
     __extends(LollipopPoint, _super);
-
     function LollipopPoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.series = void 0;
         _this.options = void 0;
         return _this;
     }
-
     return LollipopPoint;
 }(DumbbellPoint));
 extend(LollipopPoint.prototype, {

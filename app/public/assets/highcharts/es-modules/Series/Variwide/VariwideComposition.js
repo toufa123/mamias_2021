@@ -13,7 +13,6 @@
 import Tick from '../../Core/Axis/Tick.js';
 import Axis from '../../Core/Axis/Axis.js';
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent, wrap = U.wrap;
 /* *
  *

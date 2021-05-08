@@ -27,16 +27,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, isNumber = U.isNumber;
 /* *
  *
@@ -45,11 +42,9 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, is
  * */
 var Series3D = /** @class */ (function (_super) {
     __extends(Series3D, _super);
-
     function Series3D() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-
     /* *
      *
      *  Functions

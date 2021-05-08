@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Bullet graph series type for Highcharts
  *
- * (c) 2010-2019 Kacper Madej
+ * (c) 2010-2021 Kacper Madej
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/Bullet/BulletPoint.js', [_modules['Series/Column/ColumnSeries.js']], function (ColumnSeries) {
         /* *
          *
@@ -71,7 +69,6 @@
          * */
         var BulletPoint = /** @class */ (function (_super) {
             __extends(BulletPoint, _super);
-
             function BulletPoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -80,7 +77,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -96,7 +92,7 @@
                     this.targetGraphic = this.targetGraphic.destroy();
                 }
                 _super.prototype.destroy.apply(this, arguments);
-
+                return;
             };
             return BulletPoint;
         }(ColumnSeries.prototype.pointClass));
@@ -164,7 +160,6 @@
          */
         var BulletSeries = /** @class */ (function (_super) {
             __extends(BulletSeries, _super);
-
             function BulletSeries() {
                 /* *
                  *
@@ -185,7 +180,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              * Functions
@@ -208,7 +202,6 @@
                 _super.prototype.drawPoints.apply(this, arguments);
                 series.points.forEach(function (point) {
                     var pointOptions = point.options,
-                        shapeArgs,
                         targetGraphic = point.targetGraphic,
                         targetShapeArgs,
                         targetVal = point.target,
@@ -220,7 +213,11 @@
                     if (isNumber(targetVal) && targetVal !== null) {
                         targetOptions = merge(options.targetOptions, pointOptions.targetOptions);
                         height = targetOptions.height;
-                        shapeArgs = point.shapeArgs;
+                        var shapeArgs = point.shapeArgs;
+                        // #15547
+                        if (point.dlBox && shapeArgs && !isNumber(shapeArgs.width)) {
+                            shapeArgs = point.dlBox;
+                        }
                         width = relativeLength(targetOptions.width, shapeArgs.width);
                         y = series.yAxis.translate(targetVal, false, true, false, true) - targetOptions.height / 2 - 0.5;
                         targetShapeArgs = series.crispCol.apply({

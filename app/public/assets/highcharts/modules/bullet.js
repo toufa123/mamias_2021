@@ -1,9 +1,9 @@
 /*
- Highcharts JS v9.0.0 (2021-02-02)
+ Highcharts JS v9.1.0 (2021-05-03)
 
  Bullet graph series type for Highcharts
 
- (c) 2010-2019 Kacper Madej
+ (c) 2010-2021 Kacper Madej
 
  License: www.highcharts.com/license
 */
@@ -14,8 +14,8 @@
         return b
     }) : b("undefined" !== typeof Highcharts ? Highcharts : void 0)
 })(function (b) {
-    function d(b, f, a, q) {
-        b.hasOwnProperty(f) || (b[f] = q.apply(null, a))
+    function d(b, f, a, r) {
+        b.hasOwnProperty(f) || (b[f] = r.apply(null, a))
     }
 
     b = b ? b._modules : {};
@@ -73,7 +73,7 @@
                 b(a, e);
                 a.prototype = null === e ? Object.create(e) : (h.prototype = e.prototype, new h)
             }
-        }(), c = f.seriesTypes.column, r = a.extend, m = a.isNumber, t = a.merge, n = a.pick, v = a.relativeLength;
+        }(), c = f.seriesTypes.column, t = a.extend, l = a.isNumber, u = a.merge, p = a.pick, v = a.relativeLength;
         a = function (b) {
             function a() {
                 var a = null !== b && b.apply(this, arguments) || this;
@@ -90,31 +90,31 @@
                 b.prototype.drawPoints.apply(this, arguments);
                 a.points.forEach(function (b) {
                     var e = b.options,
-                        g = b.targetGraphic, d = b.target, p = b.y;
-                    if (m(d) && null !== d) {
-                        var k = t(c.targetOptions, e.targetOptions);
-                        var q = k.height;
-                        var l = b.shapeArgs;
-                        var u = v(k.width, l.width);
-                        var r = a.yAxis.translate(d, !1, !0, !1, !0) - k.height / 2 - .5;
-                        l = a.crispCol.apply({
+                        g = b.targetGraphic, d = b.target, q = b.y;
+                    if (l(d) && null !== d) {
+                        var k = u(c.targetOptions, e.targetOptions);
+                        var r = k.height;
+                        var m = b.shapeArgs;
+                        b.dlBox && m && !l(m.width) && (m = b.dlBox);
+                        var n = v(k.width, m.width);
+                        var t = a.yAxis.translate(d, !1, !0, !1, !0) - k.height / 2 - .5;
+                        n = a.crispCol.apply({
                             chart: h,
                             borderWidth: k.borderWidth,
                             options: {crisp: c.crisp}
-                        }, [l.x + l.width / 2 - u / 2, r, u, q]);
-                        g ? (g[h.pointCount < f ? "animate" : "attr"](l), m(p) && null !== p ? g.element.point = b : g.element.point = void 0) : b.targetGraphic = g = h.renderer.rect().attr(l).add(a.group);
+                        }, [m.x + m.width / 2 - n / 2, t, n, r]);
+                        g ? (g[h.pointCount < f ? "animate" : "attr"](n), l(q) && null !== q ? g.element.point = b : g.element.point = void 0) : b.targetGraphic = g = h.renderer.rect().attr(n).add(a.group);
                         h.styledMode || g.attr({
-                            fill: n(k.color,
-                                e.color, a.zones.length && (b.getZone.call({
+                            fill: p(k.color, e.color, a.zones.length && (b.getZone.call({
                                 series: a,
                                 x: b.x,
                                 y: d,
                                 options: {}
                             }).color || a.color) || void 0, b.color, a.color),
-                            stroke: n(k.borderColor, b.borderColor, a.options.borderColor),
+                            stroke: p(k.borderColor, b.borderColor, a.options.borderColor),
                             "stroke-width": k.borderWidth
                         });
-                        m(p) && null !== p && (g.element.point = b);
+                        l(q) && null !== q && (g.element.point = b);
                         g.addClass(b.getClassName() + " highcharts-bullet-target", !0)
                     } else g && (b.targetGraphic = g.destroy())
                 })
@@ -122,20 +122,19 @@
             a.prototype.getExtremes = function (a) {
                 var c = this.targetData;
                 a = b.prototype.getExtremes.call(this, a);
-                c && c.length && (c = b.prototype.getExtremes.call(this, c), m(c.dataMin) &&
-                (a.dataMin = Math.min(n(a.dataMin, Infinity), c.dataMin)), m(c.dataMax) && (a.dataMax = Math.max(n(a.dataMax, -Infinity), c.dataMax)));
+                c && c.length && (c = b.prototype.getExtremes.call(this,
+                    c), l(c.dataMin) && (a.dataMin = Math.min(p(a.dataMin, Infinity), c.dataMin)), l(c.dataMax) && (a.dataMax = Math.max(p(a.dataMax, -Infinity), c.dataMax)));
                 return a
             };
-            a.defaultOptions = t(c.defaultOptions, {
+            a.defaultOptions = u(c.defaultOptions, {
                 targetOptions: {width: "140%", height: 3, borderWidth: 0},
                 tooltip: {pointFormat: '<span style="color:{series.color}">\u25cf</span> {series.name}: <b>{point.y}</b>. Target: <b>{point.target}</b><br/>'}
             });
             return a
         }(c);
-        r(a.prototype, {parallelArrays: ["x", "y", "target"], pointArrayMap: ["y", "target"]});
+        t(a.prototype, {parallelArrays: ["x", "y", "target"], pointArrayMap: ["y", "target"]});
         a.prototype.pointClass = b;
-        f.registerSeriesType("bullet",
-            a);
+        f.registerSeriesType("bullet", a);
         "";
         return a
     });

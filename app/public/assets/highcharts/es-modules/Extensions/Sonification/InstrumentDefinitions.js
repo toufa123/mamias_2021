@@ -12,7 +12,6 @@
 'use strict';
 import Instrument from './Instrument.js';
 import utilities from './Utilities.js';
-
 var instruments = {};
 ['sine', 'square', 'triangle', 'sawtooth'].forEach(function (waveform) {
     // Add basic instruments

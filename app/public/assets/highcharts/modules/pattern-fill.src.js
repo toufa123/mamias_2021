@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Module for adding patterns and images as point fills.
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  * Author: Torstein Hønsi, Øystein Moseng
  *
  * License: www.highcharts.com/license
@@ -24,14 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/PatternFill.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js']], function (A, Chart, H, Point, Series, SVGRenderer, U) {
+    _registerModule(_modules, 'Extensions/PatternFill.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js']], function (A, Chart, H, O, Point, Series, SVGRenderer, U) {
         /* *
          *
          *  Module for using patterns or images as point fills.
@@ -45,9 +44,9 @@
          *
          * */
         var animObject = A.animObject;
+        var getOptions = O.getOptions;
         var addEvent = U.addEvent,
             erase = U.erase,
-            getOptions = U.getOptions,
             merge = U.merge,
             pick = U.pick,
             removeEvent = U.removeEvent,
@@ -186,7 +185,6 @@
             });
             return patterns;
         })();
-
         /**
          * Utility function to compute a hash value from an object. Modified Java
          * String.hashCode implementation in JS. Use the preSeed parameter to add an
@@ -225,7 +223,6 @@
             }
             return hash.toString(16).replace('-', '1');
         }
-
         /**
          * Set dimensions on pattern from point. This function will set internal
          * pattern._width/_height properties if width and height are not both already
@@ -373,14 +370,16 @@
             pattern.id = id;
             // Use an SVG path for the pattern
             if (options.path) {
-                path = options.path;
+                path = U.isObject(options.path) ?
+                    options.path :
+                    {d: options.path};
                 // The background
                 if (options.backgroundColor) {
                     rect(options.backgroundColor);
                 }
                 // The pattern
                 attribs = {
-                    'd': path.d || path
+                    'd': path.d
                 };
                 if (!this.styledMode) {
                     attribs.stroke = path.stroke || color;

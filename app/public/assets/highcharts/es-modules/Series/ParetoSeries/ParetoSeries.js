@@ -25,16 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, merge = U.merge, extend = U.extend;
 /* *
  *
@@ -52,7 +49,6 @@ var correctFloat = U.correctFloat, merge = U.merge, extend = U.extend;
  */
 var ParetoSeries = /** @class */ (function (_super) {
     __extends(ParetoSeries, _super);
-
     function ParetoSeries() {
         /* *
          *
@@ -70,7 +66,6 @@ var ParetoSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions

@@ -27,12 +27,10 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import PolygonMixin from '../../Mixins/Polygon.js';
 
@@ -41,7 +39,6 @@ var getBoundingBoxFromPolygon = PolygonMixin.getBoundingBoxFromPolygon, getPolyg
     rotate2DToPoint = PolygonMixin.rotate2DToPoint;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 
@@ -49,7 +46,6 @@ var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber
     merge = U.merge;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudUtils from './WordcloudUtils.js';
-
 /**
  * @private
  * @class
@@ -59,7 +55,6 @@ import WordcloudUtils from './WordcloudUtils.js';
  */
 var WordcloudSeries = /** @class */ (function (_super) {
     __extends(WordcloudSeries, _super);
-
     function WordcloudSeries() {
         /* *
          *
@@ -77,7 +72,6 @@ var WordcloudSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /**
      *
      * Functions
@@ -90,7 +84,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
             lineWidth: 0,
             maxPadding: 0,
             startOnTick: false,
-            title: null,
+            title: void 0,
             tickPositions: []
         };
         Series.prototype.bindAxes.call(this);
@@ -191,7 +185,9 @@ var WordcloudSeries = /** @class */ (function (_super) {
                     x: placement.x,
                     y: placement.y,
                     text: point.name,
-                    rotation: placement.rotation
+                    rotation: isNumber(placement.rotation) ?
+                        placement.rotation :
+                        void 0
                 }),
                 polygon = getPolygon(placement.x, placement.y, point.dimensions.width, point.dimensions.height, placement.rotation),
                 rectangle = getBoundingBoxFromPolygon(polygon), delta = WordcloudUtils.intersectionTesting(point, {
@@ -219,8 +215,8 @@ var WordcloudSeries = /** @class */ (function (_super) {
             // Check if point was placed, if so delete it, otherwise place it
             // on the correct positions.
             if (isObject(delta)) {
-                attr.x += delta.x;
-                attr.y += delta.y;
+                attr.x = (attr.x || 0) + delta.x;
+                attr.y = (attr.y || 0) + delta.y;
                 rectangle.left += delta.x;
                 rectangle.right += delta.x;
                 rectangle.top += delta.y;
@@ -228,6 +224,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
                 field = WordcloudUtils.updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
+                point.isInside = true; // #15447
             } else {
                 point.isNull = true;
             }

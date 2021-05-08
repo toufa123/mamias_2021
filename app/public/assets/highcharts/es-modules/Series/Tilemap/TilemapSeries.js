@@ -28,20 +28,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 import './TilemapComposition.js';
 /* *
@@ -58,7 +54,6 @@ import './TilemapComposition.js';
  */
 var TilemapSeries = /** @class */ (function (_super) {
     __extends(TilemapSeries, _super);
-
     function TilemapSeries() {
         /* *
          *
@@ -78,7 +73,6 @@ var TilemapSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

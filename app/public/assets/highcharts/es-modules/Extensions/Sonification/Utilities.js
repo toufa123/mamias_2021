@@ -12,9 +12,7 @@
 'use strict';
 import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
-
 var clamp = U.clamp;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The SignalHandler class. Stores signal callbacks (event handlers), and
@@ -33,7 +31,6 @@ var clamp = U.clamp;
 function SignalHandler(supportedSignals) {
     this.init(supportedSignals || []);
 }
-
 SignalHandler.prototype.init = function (supportedSignals) {
     this.supportedSignals = supportedSignals;
     this.signals = {};

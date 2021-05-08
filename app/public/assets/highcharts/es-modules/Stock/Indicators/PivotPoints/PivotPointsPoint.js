@@ -22,14 +22,11 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
-
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -46,7 +43,6 @@ function destroyExtraLabels(point, functionName) {
         point[prop] = null;
     }
 }
-
 /* eslint-enable valid-jsdoc */
 /* *
  *
@@ -55,7 +51,6 @@ function destroyExtraLabels(point, functionName) {
  * */
 var PivotPointsPoint = /** @class */ (function (_super) {
     __extends(PivotPointsPoint, _super);
-
     function PivotPointsPoint() {
         /**
          *

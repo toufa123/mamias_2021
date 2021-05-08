@@ -65,7 +65,6 @@ import utilities from './Utilities.js';
 function TimelineEvent(options) {
     this.init(options || {});
 }
-
 TimelineEvent.prototype.init = function (options) {
     this.options = options;
     this.time = options.time || 0;
@@ -173,7 +172,6 @@ TimelineEvent.prototype.cancel = function (fadeOut) {
 function TimelinePath(options) {
     this.init(options);
 }
-
 TimelinePath.prototype.init = function (options) {
     this.options = options;
     this.id = this.options.id = options.id || uniqueKey();
@@ -415,7 +413,6 @@ TimelinePath.prototype.playEvents = function (direction) {
 function Timeline(options) {
     this.init(options || {});
 }
-
 Timeline.prototype.init = function (options) {
     this.options = options;
     this.cursor = 0;

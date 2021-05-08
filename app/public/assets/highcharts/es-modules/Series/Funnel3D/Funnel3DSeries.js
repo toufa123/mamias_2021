@@ -29,22 +29,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import './Funnel3DComposition.js';
 /* *
@@ -63,7 +58,6 @@ import './Funnel3DComposition.js';
  */
 var Funnel3DSeries = /** @class */ (function (_super) {
     __extends(Funnel3DSeries, _super);
-
     function Funnel3DSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -78,7 +72,6 @@ var Funnel3DSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -132,12 +125,12 @@ var Funnel3DSeries = /** @class */ (function (_super) {
         extend(this.xAxis.options, {
             gridLineWidth: 0,
             lineWidth: 0,
-            title: null,
+            title: void 0,
             tickPositions: []
         });
-        extend(this.yAxis.options, {
+        merge(true, this.yAxis.options, {
             gridLineWidth: 0,
-            title: null,
+            title: void 0,
             labels: {
                 enabled: false
             }
@@ -160,7 +153,7 @@ var Funnel3DSeries = /** @class */ (function (_super) {
             //
             y1, y3, y5,
             //
-            h, shapeArgs;
+            h, shapeArgs; // @todo: Type it. It's an extended SVGAttributes.
         // Return the width at a specific y coordinate
         series.getWidthAt = getWidthAt = function (y) {
             var top = (centerY - height / 2);
@@ -270,7 +263,7 @@ var Funnel3DSeries = /** @class */ (function (_super) {
                 x: centerX,
                 width: getWidthAt(point.plotY),
                 y: y1,
-                bottom: shapeArgs.height,
+                bottom: shapeArgs.height || 0,
                 fullWidth: width
             };
             if (!ignoreHiddenPoint || point.visible !== false) {

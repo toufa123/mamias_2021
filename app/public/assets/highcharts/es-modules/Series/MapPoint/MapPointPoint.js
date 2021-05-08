@@ -25,15 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import U from '../../Core/Utilities.js';
-
 var merge = U.merge;
 /* *
  *
@@ -42,7 +39,6 @@ var merge = U.merge;
  * */
 var MapPointPoint = /** @class */ (function (_super) {
     __extends(MapPointPoint, _super);
-
     function MapPointPoint() {
         /* *
          *
@@ -55,7 +51,6 @@ var MapPointPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

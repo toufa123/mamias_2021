@@ -21,7 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -30,9 +29,7 @@ import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -40,10 +37,8 @@ var merge = U.merge;
 function getSecondCoordinate(p1, p2, x) {
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
-
 var Tunnel = /** @class */ (function (_super) {
     __extends(Tunnel, _super);
-
     /* *
      *
      * Constructors
@@ -52,7 +47,6 @@ var Tunnel = /** @class */ (function (_super) {
     function Tunnel(chart, options) {
         return _super.call(this, chart, options) || this;
     }
-
     /* *
      *
      * Functions
@@ -181,7 +175,9 @@ Tunnel.prototype.defaultOptions = merge(CrookedLine.prototype.defaultOptions,
                 },
                 events: {
                     drag: function (e, target) {
-                        if (target.chart.isInsidePlot(e.chartX - target.chart.plotLeft, e.chartY - target.chart.plotTop)) {
+                        if (target.chart.isInsidePlot(e.chartX - target.chart.plotLeft, e.chartY - target.chart.plotTop, {
+                            visiblePlotOnly: true
+                        })) {
                             target.translateHeight(this.mouseMoveToTranslation(e).y);
                             target.redraw(false);
                         }
@@ -196,7 +192,9 @@ Tunnel.prototype.defaultOptions = merge(CrookedLine.prototype.defaultOptions,
         controlPointOptions: {
             events: {
                 drag: function (e, target) {
-                    if (target.chart.isInsidePlot(e.chartX - target.chart.plotLeft, e.chartY - target.chart.plotTop)) {
+                    if (target.chart.isInsidePlot(e.chartX - target.chart.plotLeft, e.chartY - target.chart.plotTop, {
+                        visiblePlotOnly: true
+                    })) {
                         var translation = this.mouseMoveToTranslation(e);
                         target.translateSide(translation.x, translation.y, this.index);
                         target.redraw(false);

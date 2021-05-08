@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2021 Paweł Dalek
  *
- *  Volume By Price (VBP) indicator for Highstock
+ *  Volume By Price (VBP) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -27,25 +27,20 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import A from '../../../Core/Animation/AnimationUtilities.js';
-
 var animObject = A.animObject;
 import H from '../../../Core/Globals.js';
-
 var noop = H.noop;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error,
     extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable require-jsdoc */
-
 // Utils
 function arrayExtremesOHLC(data) {
     var dataLength = data.length, min = data[0][3], max = min, i = 1, currentPoint;
@@ -63,7 +58,6 @@ function arrayExtremesOHLC(data) {
         max: max
     };
 }
-
 /* eslint-enable require-jsdoc */
 var abs = Math.abs, columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
 /**
@@ -77,7 +71,6 @@ var abs = Math.abs, columnPrototype = SeriesRegistry.seriesTypes.column.prototyp
  */
 var VBPIndicator = /** @class */ (function (_super) {
     __extends(VBPIndicator, _super);
-
     function VBPIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -92,7 +85,6 @@ var VBPIndicator = /** @class */ (function (_super) {
         _this.zoneLinesSVG = void 0;
         return _this;
     }
-
     VBPIndicator.prototype.init = function (chart) {
         var indicator = this, params, baseSeries, volumeSeries;
         H.seriesTypes.sma.prototype.init.apply(indicator, arguments);
@@ -105,18 +97,15 @@ var VBPIndicator = /** @class */ (function (_super) {
     // Adds events related with removing series
     VBPIndicator.prototype.addCustomEvents = function (baseSeries, volumeSeries) {
         var indicator = this;
-
         /* eslint-disable require-jsdoc */
         function toEmptyIndicator() {
             indicator.chart.redraw();
             indicator.setData([]);
             indicator.zoneStarts = [];
             if (indicator.zoneLinesSVG) {
-                indicator.zoneLinesSVG.destroy();
-                delete indicator.zoneLinesSVG;
+                indicator.zoneLinesSVG = indicator.zoneLinesSVG.destroy();
             }
         }
-
         /* eslint-enable require-jsdoc */
         // If base series is deleted, indicator series data is filled with
         // an empty array
@@ -134,12 +123,16 @@ var VBPIndicator = /** @class */ (function (_super) {
     };
     // Initial animation
     VBPIndicator.prototype.animate = function (init) {
-        var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, translate, position;
+        var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, position;
         if (!init && group) {
-            translate = inverted ? 'translateY' : 'translateX';
             position = inverted ? series.yAxis.top : series.xAxis.left;
-            group['forceAnimate:' + translate] = true;
-            attr[translate] = position;
+            if (inverted) {
+                group['forceAnimate:translateY'] = true;
+                attr.translateY = position;
+            } else {
+                group['forceAnimate:translateX'] = true;
+                attr.translateX = position;
+            }
             group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
@@ -296,7 +289,9 @@ var VBPIndicator = /** @class */ (function (_super) {
             if (this.points.length) {
                 this.setData([]);
                 this.zoneStarts = [];
-                this.zoneLinesSVG.destroy();
+                if (this.zoneLinesSVG) {
+                    this.zoneLinesSVG = this.zoneLinesSVG.destroy();
+                }
             }
             return [];
         }
@@ -428,6 +423,9 @@ var VBPIndicator = /** @class */ (function (_super) {
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * The number of price zones.
              */
@@ -510,6 +508,7 @@ var VBPIndicator = /** @class */ (function (_super) {
 }(SMAIndicator));
 extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
+    nameComponents: ['ranges'],
     bindTo: {
         series: false,
         eventName: 'afterSetExtremes'

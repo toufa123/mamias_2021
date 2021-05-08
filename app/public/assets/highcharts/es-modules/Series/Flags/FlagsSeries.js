@@ -25,18 +25,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
@@ -44,7 +41,6 @@ import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach,
     wrap = U.wrap;
 import './FlagsSymbols.js';
-
 /**
  * The Flags series.
  *
@@ -56,7 +52,6 @@ import './FlagsSymbols.js';
  */
 var FlagsSeries = /** @class */ (function (_super) {
     __extends(FlagsSeries, _super);
-
     function FlagsSeries() {
         /* *
          *
@@ -75,7 +70,6 @@ var FlagsSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -124,6 +118,10 @@ var FlagsSeries = /** @class */ (function (_super) {
             if (typeof plotY !== 'undefined' &&
                 plotX >= 0 &&
                 !outsideRight) {
+                // #15384
+                if (graphic && point.hasNewShapeType()) {
+                    graphic = graphic.destroy();
+                }
                 // Create the flag
                 if (!graphic) {
                     graphic = point.graphic = renderer.label('', null, null, shape, null, null, options.useHTML)
@@ -240,7 +238,10 @@ var FlagsSeries = /** @class */ (function (_super) {
         points.forEach(function (point) {
             var graphic = point.graphic;
             if (graphic) {
-                addEvent(graphic.element, 'mouseover', function () {
+                if (point.unbindMouseOver) {
+                    point.unbindMouseOver();
+                }
+                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function () {
                     // Raise this point
                     if (point.stackIndex > 0 &&
                         !point.raised) {
@@ -288,9 +289,10 @@ var FlagsSeries = /** @class */ (function (_super) {
      */
     FlagsSeries.prototype.setClip = function () {
         Series.prototype.setClip.apply(this, arguments);
-        if (this.options.clip !== false && this.sharedClipKey) {
-            this.markerGroup
-                .clip(this.chart[this.sharedClipKey]);
+        if (this.options.clip !== false &&
+            this.sharedClipKey &&
+            this.markerGroup) {
+            this.markerGroup.clip(this.chart.sharedClips[this.sharedClipKey]);
         }
     };
     /**
@@ -388,7 +390,7 @@ var FlagsSeries = /** @class */ (function (_super) {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
         threshold: null,
         /**
@@ -527,6 +529,8 @@ extend(FlagsSeries.prototype, {
      * @function Highcharts.seriesTypes.flags#invertGroups
      */
     invertGroups: noop,
+    // Flags series group should not be invertible (#14063).
+    invertible: false,
     noSharedTooltip: true,
     pointClass: FlagsPoint,
     sorted: false,

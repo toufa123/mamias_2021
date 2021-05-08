@@ -11,9 +11,9 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
+import O from '../../Core/Options.js';
 
-var setOptions = U.setOptions;
+var setOptions = O.setOptions;
 H.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -146,11 +146,6 @@ H.theme = {
         },
         candlestick: {
             lineColor: 'white'
-        }
-    },
-    toolbar: {
-        itemStyle: {
-            color: '#CCC'
         }
     },
     navigation: {

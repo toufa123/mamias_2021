@@ -9,13 +9,10 @@
  * */
 'use strict';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
-
 var columnProto = ColumnSeries.prototype;
 import Series from '../Core/Series/Series.js';
-
 var seriesProto = Series.prototype;
 import U from '../Core/Utilities.js';
-
 var defined = U.defined, stableSort = U.stableSort;
 /**
  * @private

@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Plugin for displaying a message when there is no data visible in chart.
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  * Author: Oystein Moseng
  *
  * License: www.highcharts.com/license
@@ -24,14 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/NoDataToDisplay.js', [_modules['Core/Renderer/HTML/AST.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Color/Palette.js'], _modules['Core/Utilities.js']], function (AST, Chart, palette, U) {
+    _registerModule(_modules, 'Extensions/NoDataToDisplay.js', [_modules['Core/Renderer/HTML/AST.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Options.js'], _modules['Core/Color/Palette.js'], _modules['Core/Utilities.js']], function (AST, Chart, O, palette, U) {
         /* *
          *
          *  Plugin for displaying a message when there is no data visible in chart.
@@ -45,9 +44,9 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var getOptions = O.getOptions;
         var addEvent = U.addEvent,
-            extend = U.extend,
-            getOptions = U.getOptions;
+            extend = U.extend;
         var chartPrototype = Chart.prototype,
             defaultOptions = getOptions();
         // Add language option

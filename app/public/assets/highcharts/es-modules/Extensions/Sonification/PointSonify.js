@@ -198,7 +198,6 @@ var defaultInstrumentOptions = {
     minFrequency: 220,
     maxFrequency: 2200
 };
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Sonify a single point.
@@ -218,10 +217,9 @@ var defaultInstrumentOptions = {
  * @return {void}
  */
 function pointSonify(options) {
-    var _a;
     var point = this, chart = point.series.chart,
-        masterVolume = pick(options.masterVolume, (_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.masterVolume),
-        dataExtremes = options.dataExtremes || {},
+        masterVolume = pick(options.masterVolume, chart.options.sonification &&
+            chart.options.sonification.masterVolume), dataExtremes = options.dataExtremes || {},
         // Get the value to pass to instrument.play from the mapping value
         // passed in.
         getMappingValue = function (value, makeFunction, allowedExtremes) {
@@ -317,7 +315,6 @@ function pointSonify(options) {
         }
     });
 }
-
 /**
  * Cancel sonification of a point. Calls onEnd functions.
  *
@@ -341,7 +338,6 @@ function pointCancelSonify(fadeOut) {
         this.sonification.signalHandler.emitSignal('onEnd', 'cancelled');
     }
 }
-
 var pointSonifyFunctions = {
     pointSonify: pointSonify,
     pointCancelSonify: pointCancelSonify

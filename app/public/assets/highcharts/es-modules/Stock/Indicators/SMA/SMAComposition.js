@@ -7,10 +7,8 @@
  * */
 'use strict';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, ohlcProto = SeriesRegistry.seriesTypes.ohlc.prototype;
 import U from '../../../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend;
 /* *
  *
@@ -24,7 +22,7 @@ addEvent(Series, 'init', function (eventOptions) {
         options.id !== 'highcharts-navigator-series') {
         extend(series, {
             pointValKey: ohlcProto.pointValKey,
-            keys: ohlcProto.keys,
+            // keys: ohlcProto.keys, // @todo potentially nonsense
             pointArrayMap: ohlcProto.pointArrayMap,
             toYData: ohlcProto.toYData
         });

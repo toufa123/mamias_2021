@@ -23,16 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ATRIndicator = _a.atr;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
 /**
  * The Keltner Channels series type.
@@ -45,7 +42,6 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
  */
 var KeltnerChannelsIndicator = /** @class */ (function (_super) {
     __extends(KeltnerChannelsIndicator, _super);
-
     function KeltnerChannelsIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -53,7 +49,6 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     KeltnerChannelsIndicator.prototype.init = function () {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -202,7 +197,7 @@ export default KeltnerChannelsIndicator;
  * A Keltner Channels indicator. If the [type](#series.keltnerchannels.type)
  * option is not specified, it is inherited from[chart.type](#chart.type).
  *
- * @extends      series,plotOptions.sma
+ * @extends      series,plotOptions.keltnerchannels
  * @since        7.0.0
  * @product      highstock
  * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

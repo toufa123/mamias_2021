@@ -25,18 +25,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import AreaSeries from '../Area/AreaSeries.js';
-
 var areaProto = AreaSeries.prototype;
 import SplineSeries from '../Spline/SplineSeries.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -54,7 +51,6 @@ var extend = U.extend, merge = U.merge;
  */
 var AreaSplineSeries = /** @class */ (function (_super) {
     __extends(AreaSplineSeries, _super);
-
     function AreaSplineSeries() {
         /* *
          *
@@ -72,7 +68,6 @@ var AreaSplineSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /**
      * The area spline series is an area series where the graph between the
      * points is smoothed into a spline.

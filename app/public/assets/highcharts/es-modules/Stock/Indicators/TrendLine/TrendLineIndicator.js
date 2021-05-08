@@ -23,15 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, isArray = U.isArray;
 /* *
  *
@@ -49,7 +46,6 @@ var extend = U.extend, merge = U.merge, isArray = U.isArray;
  */
 var TrendLineIndicator = /** @class */ (function (_super) {
     __extends(TrendLineIndicator, _super);
-
     function TrendLineIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -62,7 +58,6 @@ var TrendLineIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -122,6 +117,7 @@ var TrendLineIndicator = /** @class */ (function (_super) {
          * @excluding period
          */
         params: {
+            period: void 0,
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be

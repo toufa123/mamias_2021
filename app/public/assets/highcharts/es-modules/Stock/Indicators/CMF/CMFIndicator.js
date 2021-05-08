@@ -4,7 +4,7 @@
  *
  *  Author: Sebastian Domas
  *
- *  Chaikin Money Flow indicator for Highstock
+ *  Chaikin Money Flow indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -29,15 +29,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /**
  * The CMF series type.
@@ -50,7 +47,6 @@ var merge = U.merge;
  */
 var CMFIndicator = /** @class */ (function (_super) {
     __extends(CMFIndicator, _super);
-
     function CMFIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -67,7 +63,6 @@ var CMFIndicator = /** @class */ (function (_super) {
         _this.nameBase = 'Chaikin Money Flow';
         return _this;
     }
-
     /**
      * Checks if the series and volumeSeries are accessible, number of
      * points.x is longer than period, is series has OHLC data
@@ -82,7 +77,6 @@ var CMFIndicator = /** @class */ (function (_super) {
                 chart.get(options.params.volumeSeriesID))), isSeriesOHLC = (series &&
             series.yData &&
             series.yData[0].length === 4);
-
         /**
          * @private
          * @param {Highcharts.Series} serie to check length validity on.
@@ -92,7 +86,6 @@ var CMFIndicator = /** @class */ (function (_super) {
             return serie.xData &&
                 serie.xData.length >= options.params.period;
         }
-
         return !!(series &&
             volumeSeries &&
             isLengthValid(series) &&
@@ -125,7 +118,6 @@ var CMFIndicator = /** @class */ (function (_super) {
     CMFIndicator.prototype.getMoneyFlow = function (xData, seriesYData, volumeSeriesYData, period) {
         var len = seriesYData.length, moneyFlowVolume = [], sumVolume = 0, sumMoneyFlowVolume = 0, moneyFlowXData = [],
             moneyFlowYData = [], values = [], i, point, nullIndex = -1;
-
         /**
          * Calculates money flow volume, changes i, nullIndex vars from
          * upper scope!
@@ -140,7 +132,6 @@ var CMFIndicator = /** @class */ (function (_super) {
                 low !== null &&
                 close !== null &&
                 high !== low;
-
             /**
              * @private
              * @param {number} h - High value
@@ -151,12 +142,10 @@ var CMFIndicator = /** @class */ (function (_super) {
             function getMoneyFlowMultiplier(h, l, c) {
                 return ((c - l) - (h - c)) / (h - l);
             }
-
             return isValid ?
                 getMoneyFlowMultiplier(high, low, close) * volume :
                 ((nullIndex = i), null);
         }
-
         if (period > 0 && period <= len) {
             for (i = 0; i < period; i++) {
                 moneyFlowVolume[i] = getMoneyFlowVolume(seriesYData[i], volumeSeriesYData[i]);
@@ -206,8 +195,11 @@ var CMFIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.cmf
      */
     CMFIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            period: 14,
+            index: void 0,
             /**
              * The id of another series to use its data as volume data for the
              * indiator calculation.

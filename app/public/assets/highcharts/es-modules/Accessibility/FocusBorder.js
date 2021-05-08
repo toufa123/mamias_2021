@@ -14,14 +14,12 @@ import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // Attributes that trigger a focus border update
 var svgElementBorderUpdateTriggers = [
     'x', 'y', 'transform', 'width', 'height', 'r', 'd', 'stroke-width'
 ];
-
 /**
  * Add hook to destroy focus border if SVG element is destroyed, unless
  * hook already exists.
@@ -34,13 +32,13 @@ function addDestroyFocusBorderHook(el) {
     }
     var origDestroy = el.destroy;
     el.destroy = function () {
-        var _a, _b;
-        (_b = (_a = el.focusBorder) === null || _a === void 0 ? void 0 : _a.destroy) === null || _b === void 0 ? void 0 : _b.call(_a);
+        if (el.focusBorder && el.focusBorder.destroy) {
+            el.focusBorder.destroy();
+        }
         return origDestroy.apply(el, arguments);
     };
     el.focusBorderDestroyHook = origDestroy;
 }
-
 /**
  * Remove hook from SVG element added by addDestroyFocusBorderHook, if
  * existing.
@@ -54,7 +52,6 @@ function removeDestroyFocusBorderHook(el) {
     el.destroy = el.focusBorderDestroyHook;
     delete el.focusBorderDestroyHook;
 }
-
 /**
  * Add hooks to update the focus border of an element when the element
  * size/position is updated, unless already added.
@@ -82,7 +79,6 @@ function addUpdateFocusBorderHooks(el) {
         };
     });
 }
-
 /**
  * Remove hooks from SVG element added by addUpdateFocusBorderHooks, if
  * existing.
@@ -103,7 +99,6 @@ function removeUpdateFocusBorderHooks(el) {
     });
     delete el.focusBorderUpdateHooks;
 }
-
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
@@ -115,9 +110,9 @@ extend(SVGElement.prototype, {
      *
      * @param {number} margin
      *
-     * @param {Highcharts.CSSObject} style
+     * @param {SVGAttributes} attribs
      */
-    addFocusBorder: function (margin, style) {
+    addFocusBorder: function (margin, attribs) {
         // Allow updating by just adding new border
         if (this.focusBorder) {
             this.removeFocusBorder();
@@ -153,7 +148,6 @@ extend(SVGElement.prototype, {
                 y: posYCorrection
             };
         }
-
         var isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
             var isRotated = !!this.rotation;
@@ -182,7 +176,7 @@ extend(SVGElement.prototype, {
                 }
             }
         }
-        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((style && style.borderRadius || 0).toString(), 10))
+        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((attribs && attribs.r || 0).toString(), 10))
             .addClass('highcharts-focus-border')
             .attr({
                 zIndex: 99
@@ -190,11 +184,11 @@ extend(SVGElement.prototype, {
             .add(this.parentGroup);
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
-                stroke: style && style.stroke,
-                'stroke-width': style && style.strokeWidth
+                stroke: attribs && attribs.stroke,
+                'stroke-width': attribs && attribs.strokeWidth
             });
         }
-        addUpdateFocusBorderHooks(this, margin, style);
+        addUpdateFocusBorderHooks(this, margin, attribs);
         addDestroyFocusBorderHook(this);
     },
     /**
@@ -225,7 +219,7 @@ H.Chart.prototype.renderFocusBorder = function () {
             focusElement.addFocusBorder(focusBorderOptions.margin, {
                 stroke: focusBorderOptions.style.color,
                 strokeWidth: focusBorderOptions.style.lineWidth,
-                borderRadius: focusBorderOptions.style.borderRadius
+                r: focusBorderOptions.style.borderRadius
             });
         }
     }

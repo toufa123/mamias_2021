@@ -22,18 +22,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
-
 // Utils:
 /**
  * @private
@@ -43,7 +39,6 @@ function sumArray(array) {
         return prev + cur;
     }, 0);
 }
-
 /**
  * @private
  */
@@ -54,7 +49,6 @@ function meanDeviation(arr, sma) {
     }
     return sum;
 }
-
 /* eslint-enable valid-jsdoc */
 /* *
  *
@@ -72,7 +66,6 @@ function meanDeviation(arr, sma) {
  */
 var CCIIndicator = /** @class */ (function (_super) {
     __extends(CCIIndicator, _super);
-
     function CCIIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -85,7 +78,6 @@ var CCIIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -139,8 +131,11 @@ var CCIIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.cci
      */
     CCIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         }
     });
     return CCIIndicator;

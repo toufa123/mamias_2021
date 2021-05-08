@@ -25,16 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
-
 var colProto = ColumnSeries.prototype;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The ColumnPyramidSeries class
@@ -47,7 +44,6 @@ var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
  */
 var ColumnPyramidSeries = /** @class */ (function (_super) {
     __extends(ColumnPyramidSeries, _super);
-
     function ColumnPyramidSeries() {
         /* *
          *
@@ -65,7 +61,6 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions

@@ -5,11 +5,9 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-
 var noop = H.noop;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, defined = U.defined;
 /* ************************************************************************** *
  *

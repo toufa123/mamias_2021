@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
- * (c) 2009-2019 Torstein Honsi
+ * (c) 2009-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -21,14 +21,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Themes/GridLight.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Highcharts, U) {
+    _registerModule(_modules, 'Extensions/Themes/GridLight.js', [_modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Utilities.js']], function (Highcharts, O, U) {
         /* *
          *
          *  (c) 2010-2021 Torstein Honsi
@@ -41,8 +40,8 @@
          *
          * */
         /* global document */
-        var createElement = U.createElement,
-            setOptions = U.setOptions;
+        var setOptions = O.setOptions;
+        var createElement = U.createElement;
         // Load the fonts
         createElement('link', {
             href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',

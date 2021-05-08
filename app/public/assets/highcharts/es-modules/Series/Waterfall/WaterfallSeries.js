@@ -25,7 +25,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -33,7 +32,6 @@ import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import U from '../../Core/Utilities.js';
 
@@ -42,7 +40,6 @@ var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat,
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import '../../Core/Options.js';
-
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -53,7 +50,6 @@ import '../../Core/Options.js';
 function ownProp(obj, key) {
     return Object.hasOwnProperty.call(obj, key);
 }
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -63,7 +59,6 @@ function ownProp(obj, key) {
  */
 var WaterfallSeries = /** @class */ (function (_super) {
     __extends(WaterfallSeries, _super);
-
     function WaterfallSeries() {
         /* *
          *
@@ -88,7 +83,6 @@ var WaterfallSeries = /** @class */ (function (_super) {
         _this.yData = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions
@@ -298,7 +292,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
             series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
-
+        return;
     };
     // Return y value or string if point is sum
     WaterfallSeries.prototype.toYData = function (pt) {
@@ -380,8 +374,14 @@ var WaterfallSeries = /** @class */ (function (_super) {
                 path.length &&
                 ((!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis))) {
-                path[path.length - 2][2] += prevArgs.height;
-                path[path.length - 1][2] += prevArgs.height;
+                var nextLast = path[path.length - 2];
+                if (nextLast && typeof nextLast[2] === 'number') {
+                    nextLast[2] += prevArgs.height || 0;
+                }
+                var last = path[path.length - 1];
+                if (last && typeof last[2] === 'number') {
+                    last[2] += prevArgs.height || 0;
+                }
             }
         }
         return path;
@@ -418,7 +418,6 @@ var WaterfallSeries = /** @class */ (function (_super) {
             }
             actualStackX.stackState.push(actualStackX.stackState[statesLen - 1] + nextS);
         }
-
         series.yAxis.stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
         // code responsible for creating stacks for waterfall series

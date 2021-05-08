@@ -27,16 +27,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var AreaSplineSeries = SeriesRegistry.seriesTypes.areaspline;
 import U from '../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge;
 /**
  * Bell curve class
@@ -49,7 +46,6 @@ var correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, mer
  */
 var BellcurveSeries = /** @class */ (function (_super) {
     __extends(BellcurveSeries, _super);
-
     function BellcurveSeries() {
         /* *
          *
@@ -69,7 +65,6 @@ var BellcurveSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Static Functions

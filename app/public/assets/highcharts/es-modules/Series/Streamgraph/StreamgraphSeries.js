@@ -27,15 +27,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var AreaSplineSeries = SeriesRegistry.seriesTypes.areaspline;
 import U from '../../Core/Utilities.js';
-
 var merge = U.merge, extend = U.extend;
 /**
  * Streamgraph series type
@@ -48,7 +45,6 @@ var merge = U.merge, extend = U.extend;
  */
 var StreamgraphSeries = /** @class */ (function (_super) {
     __extends(StreamgraphSeries, _super);
-
     function StreamgraphSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -61,7 +57,6 @@ var StreamgraphSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions

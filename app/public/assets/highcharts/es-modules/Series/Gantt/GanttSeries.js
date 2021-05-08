@@ -27,16 +27,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, XRangeSeries = SeriesRegistry.seriesTypes.xrange;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, splat = U.splat;
 import '../../Core/Axis/TreeGridAxis.js';
 import '../../Extensions/CurrentDateIndication.js';
@@ -56,7 +53,6 @@ import '../../Gantt/Pathfinder.js';
  */
 var GanttSeries = /** @class */ (function (_super) {
     __extends(GanttSeries, _super);
-
     function GanttSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -70,7 +66,6 @@ var GanttSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -100,7 +95,7 @@ var GanttSeries = /** @class */ (function (_super) {
             cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, diamondShape;
         if (point.options.milestone) {
             if (isNumber(plotY) && point.y !== null && point.visible !== false) {
-                diamondShape = renderer.symbols.diamond(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+                diamondShape = renderer.symbols.diamond(shapeArgs.x || 0, shapeArgs.y || 0, shapeArgs.width || 0, shapeArgs.height || 0);
                 if (graphic) {
                     graphic[verb]({
                         d: diamondShape
@@ -132,9 +127,9 @@ var GanttSeries = /** @class */ (function (_super) {
         XRangeSeries.prototype.translatePoint.call(series, point);
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs;
-            size = shapeArgs.height;
+            size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
+                x: (shapeArgs.x || 0) - (size / 2),
                 y: shapeArgs.y,
                 width: size,
                 height: size

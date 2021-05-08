@@ -12,12 +12,18 @@ import A from '../Core/Animation/AnimationUtilities.js';
 
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+
+var format = F.format;
+import O from '../Core/Options.js';
+
+var setOptions = O.setOptions;
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 
-var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber,
-    pick = U.pick, setOptions = U.setOptions, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, pick = U.pick,
+    syncTimeout = U.syncTimeout;
 /**
  * Containing the position of a box that should be avoided by labels.
  *
@@ -163,7 +169,6 @@ setOptions({
         }
     }
 });
-
 /* eslint-disable valid-jsdoc */
 /**
  * Counter-clockwise, part of the fast line intersection logic.
@@ -175,7 +180,6 @@ function ccw(x1, y1, x2, y2, x3, y3) {
     var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
     return cw > 0 ? true : !(cw < 0);
 }
-
 /**
  * Detect if two lines intersect.
  *
@@ -186,7 +190,6 @@ function intersectLine(x1, y1, x2, y2, x3, y3, x4, y4) {
     return ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
         ccw(x1, y1, x2, y2, x3, y3) !== ccw(x1, y1, x2, y2, x4, y4);
 }
-
 /**
  * Detect if a box intersects with a line.
  *
@@ -200,7 +203,6 @@ function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
         intersectLine(x, y, x, y + h, x1, y1, x2, y2) // left of label
     );
 }
-
 /**
  * General symbol definition for labels with connector.
  *
@@ -251,7 +253,6 @@ Series.prototype.getPointsOnGraph = function () {
         yAxis = this.yAxis, paneLeft = inverted ? yAxis.pos : xAxis.pos, paneTop = inverted ? xAxis.pos : yAxis.pos,
         onArea = pick(this.options.label.onArea, !!this.area),
         translatedThreshold = yAxis.getThreshold(this.options.threshold), grid = {};
-
     /**
      * Push the point to the interpolated points, but only if that position in
      * the grid has not been occupied. As a performance optimization, we divide
@@ -266,7 +267,6 @@ Series.prototype.getPointsOnGraph = function () {
             interpolated.push(point);
         }
     }
-
     // For splines, get the point at length (possible caveat: peaks are not
     // correctly detected)
     if (this.getPointSpline &&
@@ -380,7 +380,6 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
         onArea = pick(this.options.label.onArea, !!this.area),
         findDistanceToOthers = (onArea || this.options.label.connectorAllowed), chart = this.chart, series, points,
         leastDistance = 16, withinRange, xDist, yDist, i, j;
-
     /**
      * @private
      */
@@ -390,7 +389,6 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
             r2.top > r1.bottom ||
             r2.bottom < r1.top);
     }
-
     /**
      * Get the weight in order to determine the ideal position. Larger distance
      * to other series gives more weight. Smaller distance to the actual point
@@ -400,7 +398,6 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
     function getWeight(distToOthersSquared, distToPointSquared) {
         return distToOthersSquared - distToPointSquared;
     }
-
     // First check for collision with existing labels
     for (i = 0; i < chart.boxesToAvoid.length; i += 1) {
         if (intersectRect(chart.boxesToAvoid[i], {
@@ -523,7 +520,6 @@ Chart.prototype.drawSeriesLabels = function () {
             areaMin = Math.min.apply(Math, dataExtremes);
             areaMax = Math.max.apply(Math, dataExtremes);
         }
-
         /**
          * @private
          */
@@ -535,7 +531,6 @@ Chart.prototype.drawSeriesLabels = function () {
                 y >= paneTop &&
                 y <= paneTop + paneHeight - bBox.height);
         }
-
         /**
          * @private
          */
@@ -544,7 +539,6 @@ Chart.prototype.drawSeriesLabels = function () {
                 series.labelBySeries = label.destroy();
             }
         }
-
         if (series.visible && !series.isSeriesBoosting && points) {
             if (!label) {
                 var labelText = series.name;
@@ -722,7 +716,6 @@ Chart.prototype.drawSeriesLabels = function () {
     fireEvent(chart, 'afterDrawSeriesLabels');
     // console.timeEnd('drawSeriesLabels');
 };
-
 /* eslint-disable no-invalid-this */
 /**
  * Prepare drawing series labels.
@@ -732,28 +725,28 @@ Chart.prototype.drawSeriesLabels = function () {
  */
 function drawLabels(e) {
     if (this.renderer) {
-        var chart = this, delay = animObject(chart.renderer.globalAnimation).duration;
-        chart.labelSeries = [];
-        chart.labelSeriesMaxSum = 0;
-        U.clearTimeout(chart.seriesLabelTimer);
+        var chart_1 = this, delay_1 = animObject(chart_1.renderer.globalAnimation).duration;
+        chart_1.labelSeries = [];
+        chart_1.labelSeriesMaxSum = 0;
+        U.clearTimeout(chart_1.seriesLabelTimer);
         // Which series should have labels
-        chart.series.forEach(function (series) {
+        chart_1.series.forEach(function (series) {
             var options = series.options.label, label = series.labelBySeries, closest = label && label.closest;
             if (options.enabled &&
                 series.visible &&
                 (series.graph || series.area) &&
                 !series.isSeriesBoosting) {
-                chart.labelSeries.push(series);
+                chart_1.labelSeries.push(series);
                 if (options.minFontSize && options.maxFontSize) {
                     series.sum = series.yData.reduce(function (pv, cv) {
                         return (pv || 0) + (cv || 0);
                     }, 0);
-                    chart.labelSeriesMaxSum = Math.max(chart.labelSeriesMaxSum, series.sum);
+                    chart_1.labelSeriesMaxSum = Math.max(chart_1.labelSeriesMaxSum, series.sum);
                 }
                 // The labels are processing heavy, wait until the animation is
                 // done
                 if (e.type === 'load') {
-                    delay = Math.max(delay, animObject(series.options.animation).duration);
+                    delay_1 = Math.max(delay_1, animObject(series.options.animation).duration);
                 }
                 // Keep the position updated to the axis while redrawing
                 if (closest) {
@@ -768,14 +761,13 @@ function drawLabels(e) {
                 }
             }
         });
-        chart.seriesLabelTimer = syncTimeout(function () {
-            if (chart.series && chart.labelSeries) { // #7931, chart destroyed
-                chart.drawSeriesLabels();
+        chart_1.seriesLabelTimer = syncTimeout(function () {
+            if (chart_1.series && chart_1.labelSeries) { // #7931, chart destroyed
+                chart_1.drawSeriesLabels();
             }
-        }, chart.renderer.forExport || !delay ? 0 : delay);
+        }, chart_1.renderer.forExport || !delay_1 ? 0 : delay_1);
     }
 }
-
 // Leave both events, we handle animation differently (#9815)
 addEvent(Chart, 'load', drawLabels);
 addEvent(Chart, 'redraw', drawLabels);

@@ -28,15 +28,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Funnel3DSeries = SeriesRegistry.seriesTypes.funnel3d;
 import U from '../../Core/Utilities.js';
-
 var merge = U.merge;
 /* *
  *
@@ -55,7 +52,6 @@ var merge = U.merge;
  */
 var Pyramid3DSeries = /** @class */ (function (_super) {
     __extends(Pyramid3DSeries, _super);
-
     function Pyramid3DSeries() {
         /* *
          *
@@ -73,7 +69,6 @@ var Pyramid3DSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /**
      * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
      * a type of chart often used to visualize stages in a sales project,

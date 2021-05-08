@@ -27,17 +27,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 
@@ -66,7 +63,6 @@ var FunnelSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -210,7 +206,6 @@ var FunnelSeries = /** @class */ (function (_super) {
                 relativeTo * parseInt(length, 10) / 100 :
                 parseInt(length, 10);
         }
-
         series.getWidthAt = function (y) {
             var top = (centerY - height / 2);
             return (y > neckY || height === neckHeight) ?

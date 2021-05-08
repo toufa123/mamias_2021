@@ -12,9 +12,12 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import F from '../Core/FormatUtilities.js';
+
+var format = F.format;
 import U from '../Core/Utilities.js';
 
-var format = U.format, pick = U.pick;
+var pick = U.pick;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -32,7 +35,6 @@ var format = U.format, pick = U.pick;
 function stringTrim(str) {
     return str.trim && str.trim() || str.replace(/^\s+|\s+$/g, '');
 }
-
 /**
  * i18n utility function. Format a single array or plural statement in a format
  * string. If the statement is not an array or plural statement, returns the
@@ -55,7 +57,7 @@ function formatExtendedStatement(statement, ctx) {
     if (eachStart > -1) {
         var eachEnd = statement.slice(eachStart).indexOf(')') + eachStart, preEach = statement.substring(0, eachStart),
             postEach = statement.substring(eachEnd + 1), eachStatement = statement.substring(eachStart + 6, eachEnd),
-            eachArguments = eachStatement.split(','), lenArg = Number(eachArguments[1]), len;
+            eachArguments = eachStatement.split(','), lenArg = Number(eachArguments[1]), len = void 0;
         result = '';
         arr = ctx[eachArguments[0]];
         if (arr) {
@@ -93,7 +95,7 @@ function formatExtendedStatement(statement, ctx) {
     // Array index
     if (indexStart > -1) {
         var arrayName = statement.substring(0, indexStart), ix = Number(statement.substring(indexStart + 1, indexEnd)),
-            val;
+            val = void 0;
         arr = ctx[arrayName];
         if (!isNaN(ix) && arr) {
             if (ix < 0) {
@@ -115,7 +117,6 @@ function formatExtendedStatement(statement, ctx) {
     // Standard substitution, delegate to format or similar
     return '{' + statement + '}';
 }
-
 /**
  * i18n formatting function. Extends Highcharts.format() functionality by also
  * handling arrays and plural conditionals. Arrays can be indexed as follows:

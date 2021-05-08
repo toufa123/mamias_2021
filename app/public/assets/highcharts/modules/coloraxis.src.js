@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * ColorAxis module
  *
- * (c) 2012-2019 Pawel Potaczek
+ * (c) 2012-2021 Pawel Potaczek
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Mixins/ColorSeries.js', [], function () {
         /* *
          *
@@ -189,7 +187,6 @@
          */
         var ColorAxis = /** @class */ (function (_super) {
             __extends(ColorAxis, _super);
-
             /* *
              *
              *  Constructors
@@ -215,7 +212,6 @@
                 _this.init(chart, userOptions);
                 return _this;
             }
-
             /* *
              *
              *  Functions
@@ -238,7 +234,7 @@
                     horiz = userOptions.layout ?
                         userOptions.layout !== 'vertical' :
                         legend.layout !== 'vertical';
-                var options = merge(ColorAxis.defaultOptions,
+                var options = merge(ColorAxis.defaultColorAxisOptions,
                     userOptions, {
                         showEmpty: false,
                         title: null,
@@ -249,9 +245,6 @@
                 axis.side = userOptions.side || horiz ? 2 : 1;
                 axis.reversed = userOptions.reversed || !horiz;
                 axis.opposite = !horiz;
-                // Keep the options structure updated for export. Unlike xAxis and
-                // yAxis, the colorAxis is not an array. (#3207)
-                chart.options[axis.coll] = options;
                 _super.prototype.init.call(this, chart, options);
                 // Base init() pushes it to the xAxis array, now pop it again
                 // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -620,7 +613,7 @@
                             .add(axis.legendGroup);
                         axis.cross.addedToColorAxis = true;
                         if (!axis.chart.styledMode &&
-                            axis.crosshair) {
+                            typeof axis.crosshair === 'object') {
                             axis.cross.attr({
                                 fill: axis.crosshair.color
                             });
@@ -840,7 +833,7 @@
              * @optionparent colorAxis
              * @ignore
              */
-            ColorAxis.defaultOptions = {
+            ColorAxis.defaultColorAxisOptions = {
                 /**
                  * Whether to allow decimals on the color axis.
                  * @type      {boolean}
@@ -1256,10 +1249,19 @@
         // Add the color axis. This also removes the axis' own series to prevent
         // them from showing up individually.
         addEvent(Legend, 'afterGetAllItems', function (e) {
+            var _this = this;
             var colorAxisItems = [],
                 colorAxes = this.chart.colorAxis || [],
                 options,
                 i;
+            var destroyItem = function (item) {
+                var i = e.allItems.indexOf(item);
+                if (i !== -1) {
+                    // #15436
+                    _this.destroyItem(e.allItems[i]);
+                    e.allItems.splice(i, 1);
+                }
+            };
             colorAxes.forEach(function (colorAxis) {
                 options = colorAxis.options;
                 if (options && options.showInLegend) {
@@ -1277,10 +1279,10 @@
                         if (!series.options.showInLegend || options.dataClasses) {
                             if (series.options.legendType === 'point') {
                                 series.points.forEach(function (point) {
-                                    erase(e.allItems, point);
+                                    destroyItem(point);
                                 });
                             } else {
-                                erase(e.allItems, series);
+                                destroyItem(series);
                             }
                         }
                     });

@@ -363,7 +363,7 @@ var controllableMixin = {
         var annotation = this.annotation, options = merge(true, this.options, newOptions),
             parentGroup = this.graphic.parentGroup;
         this.destroy();
-        this.constructor(annotation, options);
+        this.constructor(annotation, options, this.index);
         this.render(parentGroup);
         this.redraw();
     }

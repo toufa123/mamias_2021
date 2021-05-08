@@ -12,9 +12,7 @@
 'use strict';
 import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
-
 var addEvent = U.addEvent, merge = U.merge;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -25,7 +23,6 @@ function isWithinDescriptionThreshold(series) {
         a11yOptions.series.pointDescriptionEnabledThreshold ||
         a11yOptions.series.pointDescriptionEnabledThreshold === false;
 }
-
 /**
  * @private
  */
@@ -35,14 +32,12 @@ function shouldForceMarkers(series) {
             series.options.accessibility.enabled) !== false;
     return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
 }
-
 /**
  * @private
  */
 function hasIndividualPointMarkerOptions(series) {
     return !!(series._hasPointMarkers && series.points && series.points.length);
 }
-
 /**
  * @private
  */
@@ -63,7 +58,6 @@ function unforceSeriesMarkerOptions(series) {
         });
     }
 }
-
 /**
  * @private
  */
@@ -79,7 +73,6 @@ function forceZeroOpacityMarkerOptions(options) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -88,7 +81,6 @@ function getPointMarkerOpacity(pointOptions) {
         pointOptions.marker.states.normal &&
         pointOptions.marker.states.normal.opacity || 1;
 }
-
 /**
  * @private
  */
@@ -101,7 +93,6 @@ function unforcePointMarkerOptions(pointOptions) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -122,7 +113,6 @@ function handleForcePointMarkers(series) {
         }
     }
 }
-
 /**
  * @private
  */
@@ -177,5 +167,4 @@ function addForceMarkersEvents() {
         }
     });
 }
-
 export default addForceMarkersEvents;

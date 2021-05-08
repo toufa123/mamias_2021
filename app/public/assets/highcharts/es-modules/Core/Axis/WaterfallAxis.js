@@ -9,7 +9,6 @@
  * */
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, objectEach = U.objectEach;
 /**
  * @private
@@ -31,7 +30,6 @@ var WaterfallAxis;
      */
     var Composition = /** @class */ (function () {
         /* eslint-disable no-invalid-this, valid-jsdoc */
-
         /* *
          *
          *  Constructors
@@ -46,7 +44,6 @@ var WaterfallAxis;
                 changed: false
             };
         }
-
         /* *
          *
          *  Functions
@@ -86,7 +83,6 @@ var WaterfallAxis;
      *  Functions
      *
      * */
-
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * @private
@@ -97,9 +93,7 @@ var WaterfallAxis;
         addEvent(AxisClass, 'afterRender', onAfterRender);
         addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
     }
-
     WaterfallAxis.compose = compose;
-
     /**
      * @private
      */
@@ -111,7 +105,6 @@ var WaterfallAxis;
             delete stacks.alreadyChanged;
         }
     }
-
     /**
      * @private
      */
@@ -123,7 +116,6 @@ var WaterfallAxis;
             axis.waterfall.renderStackTotals();
         }
     }
-
     /**
      * @private
      */
@@ -140,7 +132,6 @@ var WaterfallAxis;
             }
         }
     }
-
     /**
      * @private
      */

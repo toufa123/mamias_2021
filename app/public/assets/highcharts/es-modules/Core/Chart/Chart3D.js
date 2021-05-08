@@ -16,16 +16,12 @@ import Chart from './Chart.js';
 import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective, shapeArea3D = Math3D.shapeArea3D;
 import O from '../Options.js';
-
 var genericDefaultOptions = O.defaultOptions;
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import ZAxis from '../Axis/ZAxis.js';
-
 var Chart3D;
 (function (Chart3D) {
     /* *
@@ -51,7 +47,6 @@ var Chart3D;
             this.frame3d = void 0;
             this.chart = chart;
         }
-
         /* *
          *
          *  Functions
@@ -617,7 +612,6 @@ var Chart3D;
             }
         }
     };
-
     /* *
      *
      *  Functions
@@ -636,7 +630,7 @@ var Chart3D;
          * Whether it is a 3D chart.
          */
         chartProto.is3d = function () {
-            return (this.options.chart.options3d &&
+            return Boolean(this.options.chart.options3d &&
                 this.options.chart.options3d.enabled); // #4280
         };
         chartProto.propsRequireDirtyBox.push('chart.options3d');
@@ -673,9 +667,7 @@ var Chart3D;
         wrap(ChartClass, 'renderSeries', wrapRenderSeries);
         wrap(ChartClass, 'setClassName', wrapSetClassName);
     }
-
     Chart3D.compose = compose;
-
     /**
      * Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to
      * the real 'scatter3d' series type. (#8407)
@@ -688,7 +680,6 @@ var Chart3D;
             }
         }
     }
-
     /**
      * @private
      */
@@ -1497,7 +1488,6 @@ var Chart3D;
             });
         }
     }
-
     /**
      * Add the required CSS classes for column sides (#6018)
      * @private
@@ -1553,7 +1543,6 @@ var Chart3D;
             }, this);
         }
     }
-
     /**
      * Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to
      * the real 'scatter3d' series type. (#8407)
@@ -1572,7 +1561,6 @@ var Chart3D;
             });
         }
     }
-
     /**
      * @private
      */
@@ -1605,7 +1593,6 @@ var Chart3D;
             chart.chart3d.frame3d = chart.chart3d.get3dFrame(); // #7942
         }
     }
-
     /**
      * @private
      */
@@ -1615,7 +1602,6 @@ var Chart3D;
             this.isDirtyBox = true;
         }
     }
-
     /**
      * @private
      */
@@ -1624,7 +1610,6 @@ var Chart3D;
             this.chart3d.frame3d = this.chart3d.get3dFrame();
         }
     }
-
     /**
      * @private
      */
@@ -1633,14 +1618,12 @@ var Chart3D;
             this.chart3d = new Composition(this);
         }
     }
-
     /**
      * @private
      */
     function wrapIsInsidePlot(proceed) {
         return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
     }
-
     /**
      * Draw the series in the reverse order (#3803, #3917)
      * @private
@@ -1657,7 +1640,6 @@ var Chart3D;
             proceed.call(this);
         }
     }
-
     /**
      * @private
      */

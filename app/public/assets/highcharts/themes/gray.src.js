@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
- * (c) 2009-2019 Torstein Honsi
+ * (c) 2009-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -21,14 +21,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Themes/Gray.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Extensions/Themes/Gray.js', [_modules['Core/Globals.js'], _modules['Core/Options.js']], function (H, O) {
         /* *
          *
          *  (c) 2010-2021 Torstein Honsi
@@ -40,7 +39,7 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var setOptions = U.setOptions;
+        var setOptions = O.setOptions;
         H.theme = {
             colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
                 '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -173,11 +172,6 @@
                 },
                 candlestick: {
                     lineColor: 'white'
-                }
-            },
-            toolbar: {
-                itemStyle: {
-                    color: '#CCC'
                 }
             },
             navigation: {

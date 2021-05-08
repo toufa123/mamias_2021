@@ -23,20 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../../Core/Utilities.js';
 
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge, pick = U.pick,
     splat = U.splat;
 import './SMAComposition.js';
-
 var generateMessage = RequiredIndicatorMixin.generateMessage;
 /* *
  *
@@ -50,7 +47,6 @@ var generateMessage = RequiredIndicatorMixin.generateMessage;
  */
 var SMAIndicator = /** @class */ (function (_super) {
     __extends(SMAIndicator, _super);
-
     function SMAIndicator() {
         /* *
          *
@@ -71,7 +67,6 @@ var SMAIndicator = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -150,7 +145,6 @@ var SMAIndicator = /** @class */ (function (_super) {
         // Make sure we find series which is a base for an indicator
         chart.linkSeries();
         indicator.dataEventsToUnbind = [];
-
         /**
          * @private
          * @return {void}
@@ -214,7 +208,6 @@ var SMAIndicator = /** @class */ (function (_super) {
             }
             indicator.isDirtyData = false;
         }
-
         if (!indicator.linkedParent) {
             return error('Series ' +
                 indicator.options.linkedTo +
@@ -226,10 +219,10 @@ var SMAIndicator = /** @class */ (function (_super) {
         if (indicator.calculateOn === 'init') {
             recalculateValues();
         } else {
-            var unbinder = addEvent(indicator.chart, indicator.calculateOn, function () {
+            var unbinder_1 = addEvent(indicator.chart, indicator.calculateOn, function () {
                 recalculateValues();
                 // Call this just once, on init
-                unbinder();
+                unbinder_1();
             });
         }
         // return indicator;
@@ -243,7 +236,7 @@ var SMAIndicator = /** @class */ (function (_super) {
         if (linkedParent && linkedParent.compareValue && compareToMain) {
             series.compareValue = linkedParent.compareValue;
         }
-
+        return;
     };
     /**
      * @private

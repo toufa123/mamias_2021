@@ -7,14 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../../Globals.js';
-
-var isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, win = H.win;
 import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
-
 var attr = U.attr, createElement = U.createElement, extend = U.extend, pick = U.pick;
 /**
  * Renderer placebo
@@ -24,23 +20,6 @@ var HTMLRenderer = SVGRenderer;
 /* eslint-disable valid-jsdoc */
 // Extend SvgRenderer for useHTML option.
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
-    /**
-     * @private
-     * @function Highcharts.SVGRenderer#getTransformKey
-     *
-     * @return {string}
-     */
-    getTransformKey: function () {
-        return isMS && !/Edge/.test(win.navigator.userAgent) ?
-            '-ms-transform' :
-            isWebKit ?
-                '-webkit-transform' :
-                isFirefox ?
-                    'MozTransform' :
-                    win.opera ?
-                        '-o-transform' :
-                        '';
-    },
     /**
      * Create HTML text node. This is used by the VML renderer as well as the
      * SVG renderer through the useHTML option.
@@ -156,7 +135,6 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         // is translated
                         parents.reverse().forEach(function (parentGroup) {
                             var htmlGroupStyle, cls = attr(parentGroup.element, 'class');
-
                             /**
                              * Common translate setter for X and Y on the HTML
                              * group. Reverted the fix for #6957 du to
@@ -176,7 +154,6 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 }
                                 parentGroup.doTransform = true;
                             }
-
                             // Create a HTML div and append it to the parent div
                             // to emulate the SVG group structure
                             var parentGroupStyles = parentGroup.styles || {};
@@ -207,7 +184,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 }(htmlGroup)),
                                 on: function () {
                                     if (parents[0].div) { // #6418
-                                        wrapper.on.apply({element: parents[0].div}, arguments);
+                                        wrapper.on.apply({
+                                            element: parents[0].div,
+                                            onEvents: wrapper.onEvents
+                                        }, arguments);
                                     }
                                     return parentGroup;
                                 },

@@ -25,12 +25,10 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -38,7 +36,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, AreaSeries = _a.area, LineSeries = _a.line,
     ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 import '../../Core/Legend.js';
 /* *
@@ -48,7 +45,6 @@ import '../../Core/Legend.js';
  * */
 var PolygonSeries = /** @class */ (function (_super) {
     __extends(PolygonSeries, _super);
-
     function PolygonSeries() {
         /* *
          *
@@ -61,7 +57,6 @@ var PolygonSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions

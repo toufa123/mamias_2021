@@ -11,18 +11,14 @@
  * */
 'use strict';
 import Ajax from '../Extensions/Ajax.js';
-
 var ajax = Ajax.ajax;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-
 var doc = H.doc;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-
 var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber,
     merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 /**
@@ -548,7 +544,6 @@ var Data = /** @class */ (function () {
         };
         this.init(dataOptions, chartOptions, chart);
     }
-
     /* *
      *
      *  Functions
@@ -797,7 +792,6 @@ var Data = /** @class */ (function () {
          */
         function parseRow(columnStr, rowNumber, noAdd, callbacks) {
             var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
-
             /**
              * @private
              */
@@ -806,7 +800,6 @@ var Data = /** @class */ (function () {
                 cl = columnStr[j - 1];
                 cn = columnStr[j + 1];
             }
-
             /**
              * @private
              */
@@ -818,7 +811,6 @@ var Data = /** @class */ (function () {
                     dataTypes[column].push(type);
                 }
             }
-
             /**
              * @private
              */
@@ -850,7 +842,6 @@ var Data = /** @class */ (function () {
                 ++column;
                 ++actualColumn;
             }
-
             if (!columnStr.trim().length) {
                 return;
             }
@@ -885,7 +876,6 @@ var Data = /** @class */ (function () {
             }
             push();
         }
-
         /**
          * Attempt to guess the delimiter. We do a separate parse pass here
          * because we need to count potential delimiters softly without making
@@ -971,7 +961,6 @@ var Data = /** @class */ (function () {
             }
             return guessed;
         }
-
         /**
          * Tries to guess the date format
          *  - Check if either month candidate exceeds 12
@@ -1067,7 +1056,6 @@ var Data = /** @class */ (function () {
             }
             return format;
         }
-
         /**
          * @todo
          * Figure out the best axis types for the data
@@ -1078,7 +1066,6 @@ var Data = /** @class */ (function () {
          */
         function deduceAxisTypes() {
         }
-
         if (csv && options.beforeParse) {
             csv = options.beforeParse.call(this, csv);
         }
@@ -1119,7 +1106,7 @@ var Data = /** @class */ (function () {
                 options.dateFormat = deduceDateFormat(columns[0]);
             }
             // lines.forEach(function (line, rowNo) {
-            //    var trimmed = self.trim(line),
+            //    let trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',
             //        items;
@@ -1210,7 +1197,6 @@ var Data = /** @class */ (function () {
         delete options.csvURL;
         delete options.rowsURL;
         delete options.columnsURL;
-
         /**
          * @private
          */
@@ -1230,7 +1216,6 @@ var Data = /** @class */ (function () {
                     clearTimeout(data.liveDataTimeout);
                     chart.liveDataURL = url;
                 }
-
                 /**
                  * @private
                  */
@@ -1242,7 +1227,6 @@ var Data = /** @class */ (function () {
                             setTimeout(performFetch, updateIntervalMs);
                     }
                 }
-
                 ajax({
                     url: url,
                     dataType: tp || 'json',
@@ -1261,7 +1245,6 @@ var Data = /** @class */ (function () {
                 });
                 return true;
             }
-
             if (!request(originalOptions.csvURL, function (res) {
                 chart.update({
                     data: {
@@ -1286,7 +1269,6 @@ var Data = /** @class */ (function () {
                 }
             }
         }
-
         performFetch(true);
         return this.hasURLOption(options);
     };
@@ -1338,7 +1320,6 @@ var Data = /** @class */ (function () {
                 }
             });
         }
-
         if (googleSpreadsheetKey) {
             delete options.googleSpreadsheetKey;
             fetchSheet(function (json) {
@@ -1938,7 +1919,6 @@ var SeriesBuilder = /** @class */ (function () {
         /* eslint-enable no-invalid-this */
         this.name = void 0;
     }
-
     /**
      * Populates readers with column indexes. A reader can be added without
      * a specific index and for those readers the index is taken sequentially

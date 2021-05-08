@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
- * (c) 2017-2019 Highsoft AS
+ * (c) 2017-2021 Highsoft AS
  * Authors: Jon Arild Nygard
  *
  * License: www.highcharts.com/license
@@ -22,13 +22,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Mixins/Geometry.js', [], function () {
         /* *
          *
@@ -100,7 +98,6 @@
         var getAngleBetweenPoints = Geometry.getAngleBetweenPoints,
             getCenterOfPoints = Geometry.getCenterOfPoints,
             getDistanceBetweenPoints = Geometry.getDistanceBetweenPoints;
-
         /**
          * @private
          * @param {number} x
@@ -115,7 +112,6 @@
                 decimals);
             return Math.round(x * a) / a;
         }
-
         /**
          * Calculates the area of a circle based on its radius.
          * @private
@@ -130,7 +126,6 @@
             }
             return Math.PI * r * r;
         }
-
         /**
          * Calculates the area of a circular segment based on the radius of the circle
          * and the height of the segment.
@@ -146,7 +141,6 @@
         function getCircularSegmentArea(r, h) {
             return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
         }
-
         /**
          * Calculates the area of overlap between two circles based on their radiuses
          * and the distance between them.
@@ -183,7 +177,6 @@
             }
             return overlap;
         }
-
         /**
          * Calculates the intersection points of two circles.
          *
@@ -226,7 +219,6 @@
             }
             return points;
         }
-
         /**
          * Calculates all the intersection points for between a list of circles.
          * @private
@@ -252,7 +244,6 @@
                 return points.concat(additional);
             }, []);
         }
-
         /**
          * Tests wether the first circle is completely overlapping the second circle.
          *
@@ -266,7 +257,6 @@
             return getDistanceBetweenPoints(circle1, circle2) + circle2.r <
                 circle1.r + 1e-10;
         }
-
         /**
          * Tests wether a point lies within a given circle.
          * @private
@@ -280,7 +270,6 @@
         function isPointInsideCircle(point, circle) {
             return getDistanceBetweenPoints(point, circle) <= circle.r + 1e-10;
         }
-
         /**
          * Tests wether a point lies within a set of circles.
          * @private
@@ -296,7 +285,6 @@
                 return !isPointInsideCircle(point, circle);
             });
         }
-
         /**
          * Tests wether a point lies outside a set of circles.
          *
@@ -314,7 +302,6 @@
                 return isPointInsideCircle(point, circle);
             });
         }
-
         /**
          * Calculates the points for the polygon of the intersection area between a set
          * of circles.
@@ -331,7 +318,6 @@
                     return isPointInsideAllCircles(p, circles);
                 });
         }
-
         /**
          * Calculate the path for the area of overlap between a set of circles.
          * @todo handle cases with only 1 or 0 arcs.
@@ -572,7 +558,7 @@
                 } else if (reflected.fx >= simplex[simplex.length - 2].fx) {
                     // If the reflected point is worse than the second worse, then
                     // contract.
-                    var contracted;
+                    var contracted = void 0;
                     if (reflected.fx > worst.fx) {
                         // If the reflected is worse than the worst point, do a
                         // contraction
@@ -628,17 +614,21 @@
          * @todo export this function to enable usage
          */
         var draw = function draw(params) {
-            var _a;
-            var component = this,
-                graphic = component.graphic,
-                animatableAttribs = params.animatableAttribs,
+            var _this = this;
+            var animatableAttribs = params.animatableAttribs,
                 onComplete = params.onComplete,
                 css = params.css,
-                renderer = params.renderer,
-                animation = (_a = component.series) === null || _a === void 0 ? void 0 : _a.options.animation;
-            if (component.shouldDraw()) {
+                renderer = params.renderer;
+            var animation = (this.series && this.series.chart.hasRendered) ?
+                // Chart-level animation on updates
+                void 0 :
+                // Series-level animation on new points
+                (this.series &&
+                    this.series.options.animation);
+            var graphic = this.graphic;
+            if (this.shouldDraw()) {
                 if (!graphic) {
-                    component.graphic = graphic =
+                    this.graphic = graphic =
                         renderer[params.shapeType](params.shapeArgs)
                             .add(params.group);
                 }
@@ -647,8 +637,8 @@
                     .attr(params.attribs)
                     .animate(animatableAttribs, params.isNew ? false : animation, onComplete);
             } else if (graphic) {
-                var destroy = function () {
-                    component.graphic = graphic = graphic.destroy();
+                var destroy_1 = function () {
+                    _this.graphic = graphic = (graphic && graphic.destroy());
                     if (isFn(onComplete)) {
                         onComplete();
                     }
@@ -656,10 +646,10 @@
                 // animate only runs complete callback if something was animated.
                 if (Object.keys(animatableAttribs).length) {
                     graphic.animate(animatableAttribs, void 0, function () {
-                        destroy();
+                        destroy_1();
                     });
                 } else {
-                    destroy();
+                    destroy_1();
                 }
             }
         };
@@ -726,7 +716,6 @@
          * */
         var VennPoint = /** @class */ (function (_super) {
             __extends(VennPoint, _super);
-
             function VennPoint() {
                 /* *
                  *
@@ -740,7 +729,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -758,7 +746,7 @@
             return VennPoint;
         }(ScatterSeries.prototype.pointClass));
         extend(VennPoint.prototype, {
-            draw: DrawPointMixin.draw
+            draw: DrawPointMixin.drawPoint
         });
         /* *
          *
@@ -812,7 +800,6 @@
             VennUtils.geometry = GeometryMixin;
             VennUtils.geometryCircles = GeometryCirclesModule;
             VennUtils.nelderMead = NelderMeadMixin;
-
             /* *
              *
              *  Functions
@@ -864,9 +851,7 @@
                 // Returns the modified relations.
                 return relations;
             }
-
             VennUtils.addOverlapToSets = addOverlapToSets;
-
             /**
              * Finds the root of a given function. The root is the input value needed
              * for a function to return 0.
@@ -921,7 +906,6 @@
                 }
                 return x;
             }
-
             /**
              * Uses the bisection method to make a best guess of the ideal distance
              * between two circles too get the desired overlap.
@@ -959,9 +943,7 @@
                 }
                 return distance;
             }
-
             VennUtils.getDistanceBetweenCirclesByOverlap = getDistanceBetweenCirclesByOverlap;
-
             /**
              * Finds the available width for a label, by taking the label position and
              * finding the largest distance, which is inside all internal circles, and
@@ -1007,9 +989,7 @@
                 // Find the smallest distance of left and right.
                 return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
             }
-
             VennUtils.getLabelWidth = getLabelWidth;
-
             /**
              * Calculates a margin for a point based on the iternal and external
              * circles. The margin describes if the point is well placed within the
@@ -1039,9 +1019,7 @@
                 }, margin);
                 return margin;
             }
-
             VennUtils.getMarginFromCircles = getMarginFromCircles;
-
             /**
              * Calculates the area of overlap between a list of circles.
              * @private
@@ -1062,14 +1040,11 @@
                 }
                 return overlap;
             }
-
             // eslint-disable-next-line require-jsdoc
             function isSet(x) {
                 return isArray(x.sets) && x.sets.length === 1;
             }
-
             VennUtils.isSet = isSet;
-
             // eslint-disable-next-line require-jsdoc
             function isValidRelation(x) {
                 var map = {};
@@ -1086,12 +1061,10 @@
                         return invalid;
                     }));
             }
-
             // eslint-disable-next-line require-jsdoc
             function isValidSet(x) {
                 return (isValidRelation(x) && isSet(x) && x.value > 0);
             }
-
             /**
              * Uses a greedy approach to position all the sets. Works well with a small
              * number of sets, and are in these cases a good choice aesthetically.
@@ -1222,9 +1195,7 @@
                 // Return the positions of each set.
                 return mapOfIdToCircles;
             }
-
             VennUtils.layoutGreedyVenn = layoutGreedyVenn;
-
             /**
              * Calculates the difference between the desired overlap and the actual
              * overlap between two circles.
@@ -1257,9 +1228,7 @@
                     return totalLoss + loss;
                 }, 0);
             }
-
             VennUtils.loss = loss;
-
             /**
              * Prepares the venn data so that it is usable for the layout function.
              * Filter out sets, or intersections that includes sets, that are missing in
@@ -1314,9 +1283,7 @@
                         return mapOfIdToRelation[id];
                     });
             }
-
             VennUtils.processVennData = processVennData;
-
             /**
              * Takes two sets and finds the one with the largest total overlap.
              * @private
@@ -1328,7 +1295,6 @@
             function sortByTotalOverlap(a, b) {
                 return b.totalOverlap - a.totalOverlap;
             }
-
             VennUtils.sortByTotalOverlap = sortByTotalOverlap;
         })(VennUtils || (VennUtils = {}));
         /* *
@@ -1416,7 +1382,6 @@
          */
         var VennSeries = /** @class */ (function (_super) {
             __extends(VennSeries, _super);
-
             function VennSeries() {
                 /* *
                  *
@@ -1437,7 +1402,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Static Functions
@@ -1674,7 +1638,7 @@
             VennSeries.prototype.animate = function (init) {
                 if (!init) {
                     var series = this,
-                        animOptions = animObject(series.options.animation);
+                        animOptions_1 = animObject(series.options.animation);
                     series.points.forEach(function (point) {
                         var args = point.shapeArgs;
                         if (point.graphic && args) {
@@ -1690,7 +1654,7 @@
                             }
                             point.graphic
                                 .attr(attr)
-                                .animate(animate, animOptions);
+                                .animate(animate, animOptions_1);
                             // If shape is path, then fade it in after the circles
                             // animation
                             if (args.d) {
@@ -1700,7 +1664,7 @@
                                             opacity: 1
                                         });
                                     }
-                                }, animOptions.duration);
+                                }, animOptions_1.duration);
                             }
                         }
                     }, series);
@@ -1851,7 +1815,7 @@
                             style: {
                                 width: dataLabelWidth
                             }
-                        }, isObject(dlOptions) && dlOptions);
+                        }, isObject(dlOptions, true) ? dlOptions : void 0);
                     }
                     // Set name for usage in tooltip and in data label.
                     point.name = point.options.name || sets.join('∩');

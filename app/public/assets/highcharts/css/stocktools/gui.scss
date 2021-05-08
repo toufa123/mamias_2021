@@ -30,7 +30,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-draw-mode {
-  cursor: crosshair;
+    cursor: crosshair;
 }
 
 .highcharts-bindings-wrapper * {
@@ -97,7 +97,6 @@ $button-hover-color: #e6ebf5;
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   transform: rotate(90deg);
 }
-
 .highcharts-bindings-wrapper .highcharts-arrow-up {
   background-size: cover;
   outline: none;
@@ -133,7 +132,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper .highcharts-arrow-left.highcharts-arrow-right {
-  /* Safari */
+    /* Safari */
   -webkit-transform: rotate(0deg);
   /* Firefox */
   -moz-transform: rotate(0deg);
@@ -170,8 +169,8 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper > ul {
-  width: 40px;
-  position: relative;
+    width: 40px;
+    position: relative;
 }
 
 .highcharts-bindings-wrapper .highcharts-stocktools-toolbar li {
@@ -185,7 +184,6 @@ $button-hover-color: #e6ebf5;
   position: relative;
   background-color: $button-background-color;
 }
-
 .highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn {
   cursor: default;
 }
@@ -203,26 +201,26 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper li > span.highcharts-menu-item-btn {
-  display: block;
-  float: left;
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
+    display: block;
+    float: left;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
 }
 
 .highcharts-submenu-wrapper li > span.highcharts-menu-item-btn {
-  width: 40px;
+    width: 40px;
 }
 
 .highcharts-bindings-wrapper li > span.highcharts-submenu-item-arrow {
-  float: left;
-  width: 10px;
-  height: 100%;
-  cursor: pointer;
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
+    float: left;
+    width: 10px;
+    height: 100%;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
 }
 
 .highcharts-bindings-wrapper li.highcharts-separator {
@@ -233,7 +231,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper li.highcharts-separator > span.highcharts-menu-item-btn {
-  width: 100%;
+    width: 100%;
 }
 
 .highcharts-bindings-wrapper li.highcharts-active > span.highcharts-menu-item-btn,
@@ -259,11 +257,15 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper li:hover, .highcharts-submenu-item-arrow:hover {
-  background-color: $button-hover-color;
+    background-color: $button-hover-color;
 }
 
 .highcharts-bindings-wrapper .highcharts-arrow-down, .highcharts-bindings-wrapper .highcharts-arrow-up {
-  width: 50%;
-  height: 20px;
-  float: left;
+    width: 50%;
+    height: 20px;
+    float: left;
+}
+
+li.highcharts-disabled-btn:hover, .highcharts-disabled-btn .highcharts-submenu-item-arrow:hover {
+    background-color: $button-background-color;
 }

@@ -23,19 +23,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import palette from '../../../Core/Color/Palette.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, ATRIndicator = _a.atr, SMAIndicator = _a.sma;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, isArray = U.isArray, extend = U.extend, merge = U.merge, objectEach = U.objectEach;
 /* eslint-disable require-jsdoc */
-
 // Utils:
 function createPointObj(mainSeries, index, close) {
     return {
@@ -44,7 +40,6 @@ function createPointObj(mainSeries, index, close) {
         x: mainSeries.xData[index]
     };
 }
-
 /* eslint-enable require-jsdoc */
 /* *
  *
@@ -62,7 +57,6 @@ function createPointObj(mainSeries, index, close) {
  */
 var SupertrendIndicator = /** @class */ (function (_super) {
     __extends(SupertrendIndicator, _super);
-
     function SupertrendIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -76,7 +70,6 @@ var SupertrendIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -385,6 +378,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
+            index: void 0,
             /**
              * Multiplier for Supertrend Indicator.
              */
@@ -404,7 +398,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: palette.indicatorPositiveLine,
+        risingTrendColor: palette.positiveColor,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -413,7 +407,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: palette.indicatorNegativeLine,
+        fallingTrendColor: palette.negativeColor,
         /**
          * The styles for the Supertrend line that intersect main series.
          *

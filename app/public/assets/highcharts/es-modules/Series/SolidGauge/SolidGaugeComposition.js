@@ -11,10 +11,8 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-
 var Renderer = H.Renderer;
 import U from '../../Core/Utilities.js';
-
 var wrap = U.wrap;
 /**
  * Additional options, depending on the actual symbol drawn.

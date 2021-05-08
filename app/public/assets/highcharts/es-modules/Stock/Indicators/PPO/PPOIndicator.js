@@ -23,16 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
 /* *
  *
@@ -50,7 +47,6 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U
  */
 var PPOIndicator = /** @class */ (function (_super) {
     __extends(PPOIndicator, _super);
-
     function PPOIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -63,7 +59,6 @@ var PPOIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -73,7 +68,7 @@ var PPOIndicator = /** @class */ (function (_super) {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
-
+            return;
         });
     };
     PPOIndicator.prototype.getValues = function (series, params) {
@@ -145,6 +140,7 @@ var PPOIndicator = /** @class */ (function (_super) {
          * @excluding period
          */
         params: {
+            period: void 0,
             /**
              * Periods for Percentage Price Oscillator calculations.
              *

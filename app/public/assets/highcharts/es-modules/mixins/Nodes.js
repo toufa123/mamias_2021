@@ -8,7 +8,6 @@ import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-
 var defined = U.defined, extend = U.extend, find = U.find, pick = U.pick;
 var NodesMixin = H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
@@ -26,7 +25,6 @@ var NodesMixin = H.NodesMixin = {
                 return node.id === id;
             });
         }
-
         var node = findById(this.nodes, id), PointClass = this.pointClass, options;
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);

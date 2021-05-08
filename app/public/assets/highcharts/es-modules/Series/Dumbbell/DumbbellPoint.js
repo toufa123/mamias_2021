@@ -25,13 +25,11 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, pick = U.pick;
 /* *
  *
@@ -40,7 +38,6 @@ var extend = U.extend, pick = U.pick;
  * */
 var DumbbellPoint = /** @class */ (function (_super) {
     __extends(DumbbellPoint, _super);
-
     function DumbbellPoint() {
         /* *
          *
@@ -54,7 +51,6 @@ var DumbbellPoint = /** @class */ (function (_super) {
         _this.pointWidth = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -98,6 +94,14 @@ var DumbbellPoint = /** @class */ (function (_super) {
             }
         }
         point.connector[verb](series.getConnectorAttribs(point));
+    };
+    DumbbellPoint.prototype.destroy = function () {
+        // #15560
+        if (!this.graphic) {
+            this.graphic = this.connector;
+            this.connector = void 0;
+        }
+        return _super.prototype.destroy.call(this);
     };
     return DumbbellPoint;
 }(AreaRangePoint));

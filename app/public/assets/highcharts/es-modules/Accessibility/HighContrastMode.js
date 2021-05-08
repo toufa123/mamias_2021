@@ -11,7 +11,6 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-
 var doc = H.doc, isMS = H.isMS, win = H.win;
 var whcm = {
     /**

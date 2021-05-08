@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Boost module
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  * Author: Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -25,13 +25,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/Boost/Boostables.js', [], function () {
         /* *
          *
@@ -95,7 +93,6 @@
         var clamp = U.clamp,
             error = U.error,
             pick = U.pick;
-
         /* eslint-disable valid-jsdoc */
         /**
          * A static shader mimicing axis translation functions found in Core/Axis
@@ -303,7 +300,6 @@
                 errors = [],
                 // Texture uniform
                 uSamplerUniform;
-
             /**
              * Handle errors accumulated in errors stack
              * @private
@@ -313,7 +309,6 @@
                     error('[highcharts boost] shader error - ' + errors.join('\n'));
                 }
             }
-
             /**
              * String to shader program
              * @private
@@ -335,7 +330,6 @@
                 }
                 return shader;
             }
-
             /**
              * Create the shader.
              * Loads the shader program statically defined above
@@ -348,14 +342,12 @@
                     handleErrors();
                     return false;
                 }
-
                 /**
                  * @private
                  */
                 function uloc(n) {
                     return gl.getUniformLocation(shaderProgram, n);
                 }
-
                 shaderProgram = gl.createProgram();
                 gl.attachShader(shaderProgram, v);
                 gl.attachShader(shaderProgram, f);
@@ -380,7 +372,6 @@
                 isInverted = uloc('isInverted');
                 return true;
             }
-
             /**
              * Destroy the shader
              * @private
@@ -391,7 +382,6 @@
                     shaderProgram = false;
                 }
             }
-
             /**
              * Bind the shader.
              * This makes the shader the active one until another one is bound,
@@ -403,7 +393,6 @@
                     gl.useProgram(shaderProgram);
                 }
             }
-
             /**
              * Set a uniform value.
              * This uses a hash map to cache uniform locations.
@@ -419,7 +408,6 @@
                     gl.uniform1f(u, val);
                 }
             }
-
             /**
              * Set the active texture
              * @private
@@ -430,7 +418,6 @@
                     gl.uniform1i(uSamplerUniform, texture);
                 }
             }
-
             /**
              * Set if inversion state
              * @private
@@ -441,7 +428,6 @@
                     gl.uniform1i(isInverted, flag);
                 }
             }
-
             /**
              * Enable/disable circle drawing
              * @private
@@ -451,7 +437,6 @@
                     gl.uniform1i(isCircleUniform, flag ? 1 : 0);
                 }
             }
-
             /**
              * Flush
              * @private
@@ -462,7 +447,6 @@
                     gl.uniform1i(isCircleUniform, 0);
                 }
             }
-
             /**
              * Set bubble uniforms
              * @private
@@ -488,7 +472,6 @@
                     setUniform('bubbleMaxSize', series.maxPxSize);
                 }
             }
-
             /**
              * Set the Color uniform.
              * @private
@@ -499,7 +482,6 @@
                     gl.uniform4f(fillColorUniform, color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3]);
                 }
             }
-
             /**
              * Set skip translation
              * @private
@@ -509,7 +491,6 @@
                     gl.uniform1i(skipTranslationUniform, flag === true ? 1 : 0);
                 }
             }
-
             /**
              * Set the perspective matrix
              * @private
@@ -520,7 +501,6 @@
                     gl.uniformMatrix4fv(pUniform, false, m);
                 }
             }
-
             /**
              * Set the point size.
              * @private
@@ -531,7 +511,6 @@
                     gl.uniform1f(psUniform, p);
                 }
             }
-
             /**
              * Get the shader program handle
              * @private
@@ -540,7 +519,6 @@
             function getProgram() {
                 return shaderProgram;
             }
-
             if (gl) {
                 if (!createShader()) {
                     return false;
@@ -587,7 +565,6 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-
         /* eslint-disable valid-jsdoc */
         /**
          * Vertex Buffer abstraction.
@@ -615,7 +592,6 @@
                 iterator = 0,
                 // farray = false,
                 data;
-
             // type = type || 'float';
             /**
              * @private
@@ -630,7 +606,6 @@
                 components = dataComponents || 2;
                 data = [];
             }
-
             /**
              * Build the buffer
              * @private
@@ -663,7 +638,6 @@
                 farray = false;
                 return true;
             }
-
             /**
              * Bind the buffer
              * @private
@@ -678,7 +652,6 @@
                 gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
                 // gl.enableVertexAttribArray(vertAttribute);
             }
-
             /**
              * Render the buffer
              * @private
@@ -704,7 +677,6 @@
                 gl.drawArrays(gl[drawMode.toUpperCase()], from / components, (to - from) / components);
                 return true;
             }
-
             /**
              * @private
              */
@@ -716,7 +688,6 @@
                     preAllocated[++iterator] = b;
                 }
             }
-
             /**
              * Note about pre-allocated buffers:
              *     - This is slower for charts with many series
@@ -727,7 +698,6 @@
                 iterator = -1;
                 preAllocated = new Float32Array(size);
             }
-
             // /////////////////////////////////////////////////////////////////////////
             return {
                 destroy: destroy,
@@ -761,7 +731,6 @@
             merge = U.merge,
             objectEach = U.objectEach,
             pick = U.pick;
-
         /* eslint-disable valid-jsdoc */
         /**
          * Main renderer. Used to render series.
@@ -831,7 +800,6 @@
                         showSkipSummary: false
                     }
                 };
-
             // /////////////////////////////////////////////////////////////////////////
             /**
              * @private
@@ -839,7 +807,6 @@
             function setOptions(options) {
                 merge(true, settings, options);
             }
-
             /**
              * @private
              */
@@ -865,7 +832,6 @@
                 }
                 return 0;
             }
-
             /**
              * Allocate a float buffer to fit all series
              * @private
@@ -882,7 +848,6 @@
                 });
                 vbuffer.allocate(s);
             }
-
             /**
              * @private
              */
@@ -896,7 +861,6 @@
                 }
                 vbuffer.allocate(s);
             }
-
             /**
              * Returns an orthographic perspective matrix
              * @private
@@ -913,7 +877,6 @@
                     -1, 1, -(far + near) / (far - near), 1
                 ];
             }
-
             /**
              * Clear the depth and color buffer
              * @private
@@ -921,7 +884,6 @@
             function clear() {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             }
-
             /**
              * Get the WebGL context
              * @private
@@ -930,7 +892,6 @@
             function getGL() {
                 return gl;
             }
-
             /**
              * Push data for a single series
              * This calculates additional vertices and transforms the data to be
@@ -962,7 +923,7 @@
                     // For some reason eslint/TypeScript don't pick up that this is
                     // actually used: --- bre1470: it is never read, just set
                     // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
-                    points = series.points || false, lastX = false, lastY = false, minVal, pcolor, scolor,
+                    points = series.points || false, lastX = false, lastY = false, minVal, scolor,
                     sdata = isStacked ? series.data : (xData || rawData), closestLeft = {x: Number.MAX_VALUE, y: 0},
                     closestRight = {x: -Number.MAX_VALUE, y: 0},
                     //
@@ -973,8 +934,8 @@
                     x, y, d, z, i = -1, px = false, nx = false, low,
                     chartDestroyed = typeof chart.index === 'undefined', nextInside = false, prevInside = false,
                     pcolor = false, drawAsBar = asBar[series.type], isXInside = false, isYInside = true,
-                    firstPoint = true, zones = options.zones || false, zoneDefColor = false,
-                    threshold = options.threshold, gapSize = false;
+                    firstPoint = true, zoneAxis = options.zoneAxis || 'y', zones = options.zones || false,
+                    zoneDefColor = false, threshold = options.threshold, gapSize = false;
                 if (options.boostData && options.boostData.length > 0) {
                     return;
                 }
@@ -1002,7 +963,6 @@
                     plotWidth = series.chart.plotHeight;
                 }
                 series.closestPointRangePx = Number.MAX_VALUE;
-
                 /**
                  * Push color to color buffer - need to do this per vertex.
                  * @private
@@ -1015,7 +975,6 @@
                         inst.colorData.push(color[3]);
                     }
                 }
-
                 /**
                  * Push a vertice to the data buffer.
                  * @private
@@ -1032,7 +991,6 @@
                         data.push(pointSize || 1);
                     }
                 }
-
                 /**
                  * @private
                  */
@@ -1041,7 +999,6 @@
                         inst.segments[inst.segments.length - 1].to = data.length || vlen;
                     }
                 }
-
                 /**
                  * Create a new segment for the current set.
                  * @private
@@ -1060,7 +1017,6 @@
                         from: data.length || vlen
                     });
                 }
-
                 /**
                  * Push a rectangle to the data buffer.
                  * @private
@@ -1079,7 +1035,6 @@
                     pushColor(color);
                     vertice(x + w, y);
                 }
-
                 // Create the first segment
                 beginSegment();
                 // Special case for point shapes
@@ -1107,13 +1062,21 @@
                     }
                     points.forEach(function (point) {
                         var plotY = point.plotY,
-                            shapeArgs,
                             swidth,
                             pointAttr;
                         if (typeof plotY !== 'undefined' &&
                             !isNaN(plotY) &&
-                            point.y !== null) {
-                            shapeArgs = point.shapeArgs;
+                            point.y !== null &&
+                            point.shapeArgs) {
+                            var _a = point.shapeArgs,
+                                _b = _a.x,
+                                x_1 = _b === void 0 ? 0 : _b,
+                                _c = _a.y,
+                                y_1 = _c === void 0 ? 0 : _c,
+                                _d = _a.width,
+                                width_1 = _d === void 0 ? 0 : _d,
+                                _e = _a.height,
+                                height_1 = _e === void 0 ? 0 : _e;
                             pointAttr = chart.styledMode ?
                                 point.series
                                     .colorAttribs(point) :
@@ -1137,7 +1100,7 @@
                                 scolor[0] /= 255.0;
                                 scolor[1] /= 255.0;
                                 scolor[2] /= 255.0;
-                                pushRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height, scolor);
+                                pushRect(x_1, y_1, width_1, height_1, scolor);
                                 swidth /= 2;
                             }
                             // } else {
@@ -1149,12 +1112,12 @@
                             // bottom-right. This causes a vertical and horizontal flip
                             // in the resulting image, making it rotated 180 degrees.
                             if (series.type === 'heatmap' && chart.inverted) {
-                                shapeArgs.x = xAxis.len - shapeArgs.x;
-                                shapeArgs.y = yAxis.len - shapeArgs.y;
-                                shapeArgs.width = -shapeArgs.width;
-                                shapeArgs.height = -shapeArgs.height;
+                                x_1 = xAxis.len - x_1;
+                                y_1 = yAxis.len - y_1;
+                                width_1 = -width_1;
+                                height_1 = -height_1;
                             }
-                            pushRect(shapeArgs.x + swidth, shapeArgs.y + swidth, shapeArgs.width - (swidth * 2), shapeArgs.height - (swidth * 2), pcolor);
+                            pushRect(x_1 + swidth, y_1 + swidth, width_1 - (swidth * 2), height_1 - (swidth * 2), pcolor);
                         }
                     });
                     closeSegment();
@@ -1168,6 +1131,9 @@
                 // });
                 while (i < sdata.length - 1) {
                     d = sdata[++i];
+                    if (typeof d === 'undefined') {
+                        continue;
+                    }
                     // px = x = y = z = nx = low = false;
                     // chartDestroyed = typeof chart.index === 'undefined';
                     // nextInside = prevInside = pcolor = isXInside = isYInside = false;
@@ -1291,10 +1257,19 @@
                     }
                     // Note: Boost requires that zones are sorted!
                     if (zones) {
-                        pcolor = zoneDefColor.rgba;
+                        pcolor = zoneDefColor.rgba.slice();
                         zones.some(function (// eslint-disable-line no-loop-func
                             zone, i) {
                             var last = zones[i - 1];
+                            if (zoneAxis === 'x') {
+                                if (typeof zone.value !== 'undefined' && x <= zone.value) {
+                                    if (!last || x >= last.value) {
+                                        pcolor = color(zone.color).rgba;
+                                    }
+                                    return true;
+                                }
+                                return false;
+                            }
                             if (typeof zone.value !== 'undefined' && y <= zone.value) {
                                 if (!last || y >= last.value) {
                                     pcolor = color(zone.color).rgba;
@@ -1331,26 +1306,6 @@
                             // x = plotWidth;
                         }
                     }
-                    if (drawAsBar) {
-                        // maxVal = y;
-                        minVal = low;
-                        if (low === false || typeof low === 'undefined') {
-                            if (y < 0) {
-                                minVal = y;
-                            } else {
-                                minVal = 0;
-                            }
-                        }
-                        if (!isRange && !isStacked) {
-                            minVal = Math.max(threshold === null ? yMin : threshold, // #5268
-                                yMin); // #8731
-                        }
-                        if (!settings.useGPUTranslations) {
-                            minVal = yAxis.toPixels(minVal, true);
-                        }
-                        // Need to add an extra point here
-                        vertice(x, minVal, 0, 0, pcolor);
-                    }
                     // No markers on out of bounds things.
                     // Out of bound things are shown if and only if the next
                     // or previous point is inside the rect.
@@ -1381,6 +1336,26 @@
                         }
                         continue;
                     }
+                    if (drawAsBar) {
+                        // maxVal = y;
+                        minVal = low;
+                        if (low === false || typeof low === 'undefined') {
+                            if (y < 0) {
+                                minVal = y;
+                            } else {
+                                minVal = 0;
+                            }
+                        }
+                        if (!isRange && !isStacked) {
+                            minVal = Math.max(threshold === null ? yMin : threshold, // #5268
+                                yMin); // #8731
+                        }
+                        if (!settings.useGPUTranslations) {
+                            minVal = yAxis.toPixels(minVal, true);
+                        }
+                        // Need to add an extra point here
+                        vertice(x, minVal, 0, 0, pcolor);
+                    }
                     // Do step line if enabled.
                     // Draws an additional point at the old Y at the new X.
                     // See #6976.
@@ -1404,7 +1379,6 @@
                 if (settings.debug.showSkipSummary) {
                     console.log('skipped points:', skipped); // eslint-disable-line no-console
                 }
-
                 /**
                  * @private
                  */
@@ -1422,7 +1396,6 @@
                     }
                     vertice(point.x, point.y, 0, 2);
                 }
-
                 if (!hadPoints &&
                     connectNulls !== false &&
                     series.drawMode === 'line_strip') {
@@ -1436,7 +1409,6 @@
                 }
                 closeSegment();
             }
-
             /**
              * Push a series to the renderer
              * If we render the series immediatly, we don't have to loop later
@@ -1453,7 +1425,7 @@
                 if (settings.debug.timeSeriesProcessing) {
                     console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
                 }
-                series.push({
+                var obj = {
                     segments: [],
                     // from: data.length,
                     markerFrom: markerData.length,
@@ -1481,14 +1453,18 @@
                         'treemap': 'triangles',
                         'bubble': 'points'
                     }[s.type] || 'line_strip'
-                });
+                };
+                if (s.index >= series.length) {
+                    series.push(obj);
+                } else {
+                    series[s.index] = obj;
+                }
                 // Add the series data to our buffer(s)
-                pushSeriesData(s, series[series.length - 1]);
+                pushSeriesData(s, obj);
                 if (settings.debug.timeSeriesProcessing) {
                     console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
                 }
             }
-
             /**
              * Flush the renderer.
              * This removes pushed series and vertices.
@@ -1503,7 +1479,6 @@
                     vbuffer.destroy();
                 }
             }
-
             /**
              * Pass x-axis to shader
              * @private
@@ -1523,7 +1498,6 @@
                 shader.setUniform('xAxisIsLog', (!!axis.logarithmic));
                 shader.setUniform('xAxisReversed', (!!axis.reversed));
             }
-
             /**
              * Pass y-axis to shader
              * @private
@@ -1543,7 +1517,6 @@
                 shader.setUniform('yAxisIsLog', (!!axis.logarithmic));
                 shader.setUniform('yAxisReversed', (!!axis.reversed));
             }
-
             /**
              * Set the translation threshold
              * @private
@@ -1554,7 +1527,6 @@
                 shader.setUniform('hasThreshold', has);
                 shader.setUniform('translatedThreshold', translation);
             }
-
             /**
              * Render the data
              * This renders all pushed series.
@@ -1718,7 +1690,6 @@
                 }
                 flush();
             }
-
             /**
              * Render the data when ready
              * @private
@@ -1736,7 +1707,6 @@
                     }, 1);
                 }
             }
-
             /**
              * Set the viewport size in pixels
              * Creates an orthographic perspective matrix and applies it.
@@ -1754,7 +1724,6 @@
                 shader.bind();
                 shader.setPMatrix(orthoMatrix(width, height));
             }
-
             /**
              * Init OpenGL
              * @private
@@ -1838,7 +1807,6 @@
                         // silent error
                     }
                 }
-
                 // Circle shape
                 createTexture('circle', function (ctx) {
                     ctx.beginPath();
@@ -1884,7 +1852,6 @@
                 }
                 return true;
             }
-
             /**
              * Check if we have a valid OGL context
              * @private
@@ -1893,7 +1860,6 @@
             function valid() {
                 return gl !== false;
             }
-
             /**
              * Check if the renderer has been initialized
              * @private
@@ -1902,7 +1868,6 @@
             function inited() {
                 return isInited;
             }
-
             /**
              * @private
              */
@@ -1920,7 +1885,6 @@
                     gl.canvas.height = 1;
                 }
             }
-
             // /////////////////////////////////////////////////////////////////////////
             exports = {
                 allocateBufferForSingleSeries: allocateBufferForSingleSeries,
@@ -1962,7 +1926,6 @@
         var doc = H.doc;
         var error = U.error;
         var mainCanvas;
-
         /**
          * Create a canvas + context and attach it to the target
          *
@@ -2115,7 +2078,6 @@
         var pick = U.pick;
         // This should be a const.
         var CHUNK_SIZE = 3000;
-
         /**
          * Tolerant max() function.
          *
@@ -2147,7 +2109,6 @@
             });
             return r;
         }
-
         /**
          * Return true if ths boost.enabled option is true
          *
@@ -2166,7 +2127,6 @@
                 chart.options.boost &&
                 chart.options.boost.enabled), true);
         }
-
         /**
          * Returns true if we should force boosting the chart
          * @private
@@ -2221,7 +2181,6 @@
                 sboostCount > 5);
             return chart.boostForceChartBoost;
         }
-
         /* eslint-disable valid-jsdoc */
         /**
          * Performs the actual render if the renderer is
@@ -2238,7 +2197,6 @@
                 renderer.render(chart || series.chart);
             }
         }
-
         /**
          * @private
          */
@@ -2250,7 +2208,6 @@
                 renderer.allocateBufferForSingleSeries(series);
             }
         }
-
         /**
          * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
          * UI thread.
@@ -2292,7 +2249,6 @@
                 }
             }
         }
-
         /**
          * Returns true if the current browser supports webgl
          *
@@ -2318,7 +2274,6 @@
             }
             return false;
         }
-
         /* eslint-disable no-invalid-this */
         /**
          * Used for treemap|heatmap.drawPoints
@@ -2350,7 +2305,6 @@
             }
             renderIfNotSeriesBoosting(renderer, this);
         }
-
         /* eslint-enable no-invalid-this, valid-jsdoc */
         var funs = {
             patientMax: patientMax,
@@ -2391,7 +2345,6 @@
             renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting,
             shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
             index;
-
         /* eslint-disable valid-jsdoc */
         /**
          * Initialize the boot module.
@@ -2489,7 +2442,6 @@
                         // Perform the actual renderer if we're on series level
                         renderIfNotSeriesBoosting(renderer, this, chart);
                     }
-
                     /**
                      * This builds the KD-tree
                      * @private
@@ -2503,6 +2455,9 @@
                             low = false,
                             chartDestroyed = typeof chart.index === 'undefined',
                             isYInside = true;
+                        if (typeof d === 'undefined') {
+                            return true;
+                        }
                         if (!chartDestroyed) {
                             if (useRaw) {
                                 x = d[0];
@@ -2571,7 +2526,6 @@
                         }
                         return !chartDestroyed;
                     }
-
                     /**
                      * @private
                      */
@@ -2584,7 +2538,6 @@
                             console.timeEnd('kd tree building'); // eslint-disable-line no-console
                         }
                     }
-
                     // Loop over the points to build the k-d tree - skip this if
                     // exporting
                     if (!chart.renderer.forExport) {
@@ -2630,6 +2583,7 @@
                 fill: true,
                 sampling: true
             });
+            Chart.prototype.propsRequireUpdateSeries.push('boost');
             // Take care of the canvas blitting
             Chart.prototype.callbacks.push(function (chart) {
                 /**
@@ -2641,7 +2595,6 @@
                         chart.ogl.render(chart);
                     }
                 }
-
                 /**
                  * Clear chart-level canvas.
                  * @private
@@ -2679,6 +2632,24 @@
                 //     chart.boostForceChartBoost =
                 //         shouldForceChartSeriesBoosting(chart);
                 // });
+                var prevX = -1;
+                var prevY = -1;
+                addEvent(chart.pointer, 'afterGetHoverData', function () {
+                    var series = chart.hoverSeries;
+                    if (chart.markerGroup && series) {
+                        var xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                        var yAxis = chart.inverted ? series.xAxis : series.yAxis;
+                        if ((xAxis && xAxis.pos !== prevX) ||
+                            (yAxis && yAxis.pos !== prevY)) {
+                            // #10464: Keep the marker group position in sync with the
+                            // position of the hovered series axes since there is only
+                            // one shared marker group when boosting.
+                            chart.markerGroup.translate(xAxis.pos, yAxis.pos);
+                            prevX = xAxis.pos;
+                            prevY = yAxis.pos;
+                        }
+                    }
+                });
             });
             /* eslint-enable no-invalid-this */
         }
@@ -2732,12 +2703,20 @@
                             // draw the columns
                             this.points.forEach(function (point) {
                                 var plotY = point.plotY,
-                                    shapeArgs,
                                     pointAttr;
                                 if (typeof plotY !== 'undefined' &&
                                     !isNaN(plotY) &&
-                                    point.y !== null) {
-                                    shapeArgs = point.shapeArgs;
+                                    point.y !== null &&
+                                    ctx) {
+                                    var _a = point.shapeArgs || {},
+                                        _b = _a.x,
+                                        x = _b === void 0 ? 0 : _b,
+                                        _c = _a.y,
+                                        y = _c === void 0 ? 0 : _c,
+                                        _d = _a.width,
+                                        width = _d === void 0 ? 0 : _d,
+                                        _e = _a.height,
+                                        height = _e === void 0 ? 0 : _e;
                                     if (!chart.styledMode) {
                                         pointAttr = point.series.pointAttribs(point);
                                     } else {
@@ -2745,9 +2724,9 @@
                                     }
                                     ctx.fillStyle = pointAttr.fill;
                                     if (inverted) {
-                                        ctx.fillRect(yAxis.len - shapeArgs.y + xAxis.left, xAxis.len - shapeArgs.x + yAxis.top, -shapeArgs.height, -shapeArgs.width);
+                                        ctx.fillRect(yAxis.len - y + xAxis.left, xAxis.len - x + yAxis.top, -height, -width);
                                     } else {
-                                        ctx.fillRect(shapeArgs.x + xAxis.left, shapeArgs.y + yAxis.top, shapeArgs.width, shapeArgs.height);
+                                        ctx.fillRect(x + xAxis.left, y + yAxis.top, width, height);
                                     }
                                 }
                             });
@@ -3216,7 +3195,6 @@
                         chart.boostCopy();
                     }
                 }
-
                 /**
                  * @private
                  */
@@ -3228,7 +3206,6 @@
                         chart.canvas.getContext('2d').clearRect(0, 0, chart.canvas.width, chart.canvas.height);
                     }
                 }
-
                 addEvent(chart, 'predraw', clear);
                 addEvent(chart, 'render', canvasToSVG);
             });
@@ -3236,7 +3213,7 @@
 
         return initCanvasBoost;
     });
-    _registerModule(_modules, 'Extensions/Boost/BoostOverrides.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js'], _modules['Extensions/Boost/BoostUtils.js'], _modules['Extensions/Boost/Boostables.js'], _modules['Extensions/Boost/BoostableMap.js']], function (Chart, Point, Series, SeriesRegistry, U, butils, boostable, boostableMap) {
+    _registerModule(_modules, 'Extensions/Boost/BoostOverrides.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js'], _modules['Extensions/Boost/BoostUtils.js'], _modules['Extensions/Boost/Boostables.js'], _modules['Extensions/Boost/BoostableMap.js']], function (Chart, O, Point, Series, SeriesRegistry, U, butils, boostable, boostableMap) {
         /* *
          *
          *  Copyright (c) 2019-2021 Highsoft AS
@@ -3248,10 +3225,10 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var getOptions = O.getOptions;
         var seriesTypes = SeriesRegistry.seriesTypes;
         var addEvent = U.addEvent,
             error = U.error,
-            getOptions = U.getOptions,
             isArray = U.isArray,
             isNumber = U.isNumber,
             pick = U.pick,
@@ -3281,7 +3258,7 @@
         /**
          * Get the clip rectangle for a target, either a series or the chart. For the
          * chart, we need to consider the maximum extent of its Y axes, in case of
-         * Highstock panes and navigator.
+         * Highcharts Stock panes and navigator.
          *
          * @private
          * @function Highcharts.Chart#getBoostClipRect
@@ -3448,7 +3425,6 @@
                     this[method + 'Canvas']();
                 }
             }
-
             wrap(Series.prototype, method, branch);
             // A special case for some types - their translate method is already wrapped
             if (method === 'translate') {
@@ -3472,7 +3448,6 @@
             var series = this,
                 dataToMeasure = this.options.data,
                 firstPoint;
-
             /**
              * Used twice in this function, first on this.options.data, the second
              * time it runs the check again after processedXData is built.
@@ -3483,7 +3458,6 @@
                 return series.chart.isChartSeriesBoosting() || ((data ? data.length : 0) >=
                     (series.options.boostThreshold || Number.MAX_VALUE));
             }
-
             if (boostEnabled(this.chart) && boostableMap[this.type]) {
                 // If there are no extremes given in the options, we also need to
                 // process the data to read the data extremes. If this is a heatmap, do
@@ -3503,9 +3477,11 @@
                 // Enter or exit boost mode
                 if (this.isSeriesBoosting) {
                     // Force turbo-mode:
-                    firstPoint = this.getFirstValidPoint(this.options.data);
-                    if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                        error(12, false, this.chart);
+                    if (this.options.data && this.options.data.length) {
+                        firstPoint = this.getFirstValidPoint(this.options.data);
+                        if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                            error(12, false, this.chart);
+                        }
                     }
                     this.enterBoost();
                 } else if (this.exitBoost) {
@@ -3603,6 +3579,7 @@
          * @function Highcharts.Series#destroyGraphics
          */
         Series.prototype.destroyGraphics = function () {
+            var _this = this;
             var series = this,
                 points = this.points,
                 point,
@@ -3620,6 +3597,15 @@
                     series[prop] = series[prop].destroy();
                 }
             });
+            if (this.getZonesGraphs) {
+                var props = this.getZonesGraphs([['graph', 'highcharts-graph']]);
+                props.forEach(function (prop) {
+                    var zoneGraph = _this[prop[0]];
+                    if (zoneGraph) {
+                        _this[prop[0]] = zoneGraph.destroy();
+                    }
+                });
+            }
         };
         // Set default options
         boostable.forEach(function (type) {

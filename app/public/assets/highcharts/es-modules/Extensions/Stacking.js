@@ -10,13 +10,16 @@
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+
+var format = F.format;
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 
 var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties,
-    format = U.format, isNumber = U.isNumber, pick = U.pick;
+    isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 /**
  * Stack of data points
  *
@@ -107,7 +110,6 @@ var StackItem = /** @class */ (function () {
         this.textAlign = options.textAlign ||
             (inverted ? (isNegative ? 'right' : 'left') : 'center');
     }
-
     /**
      * @private
      * @function Highcharts.StackItem#destroy
@@ -185,7 +187,7 @@ var StackItem = /** @class */ (function () {
             isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', textAlign = stackItem.textAlign,
             visible;
         if (label && stackBox) {
-            var bBox = label.getBBox(), padding = label.padding, boxOffsetX, boxOffsetY;
+            var bBox = label.getBBox(), padding = label.padding, boxOffsetX = void 0, boxOffsetY = void 0;
             if (textAlign === 'left') {
                 boxOffsetX = chart.inverted ? -padding : padding;
             } else if (textAlign === 'right') {
@@ -315,6 +317,7 @@ StackingAxis.compose(Axis);
  * @return {void}
  */
 Series.prototype.setGroupedPoints = function () {
+    var stacking = this.yAxis.stacking;
     if (this.options.centerInCategory &&
         (this.is('column') || this.is('columnrange')) &&
         // With stacking enabled, we already have stacks that we can compute
@@ -323,6 +326,17 @@ Series.prototype.setGroupedPoints = function () {
         // With only one series, we don't need to consider centerInCategory
         this.chart.series.length > 1) {
         Series.prototype.setStackedPoints.call(this, 'group');
+        // After updating, if we now have proper stacks, we must delete the group
+        // pseudo stacks (#14986)
+    } else if (stacking) {
+        objectEach(stacking.stacks, function (type, key) {
+            if (key.slice(-5) === 'group') {
+                objectEach(type, function (stack) {
+                    return stack.destroy();
+                });
+                delete stacking.stacks[key];
+            }
+        });
     }
 };
 /**
@@ -333,9 +347,8 @@ Series.prototype.setGroupedPoints = function () {
  */
 Series.prototype.setStackedPoints = function (stackingParam) {
     var stacking = stackingParam || this.options.stacking;
-    if (!stacking ||
-        (this.visible !== true &&
-            this.chart.options.chart.ignoreHiddenSeries !== false)) {
+    if (!stacking || (this.visible !== true &&
+        this.chart.options.chart.ignoreHiddenSeries !== false)) {
         return;
     }
     var series = this, xData = series.processedXData, yData = series.processedYData, stackedYData = [],
@@ -409,6 +422,9 @@ Series.prototype.setStackedPoints = function (stackingParam) {
                     correctFloat(stack.total + (Math.abs(y) || 0));
             }
         } else if (stacking === 'group') {
+            if (isArray(y)) {
+                y = y[0];
+            }
             // In this stack, the total is the number of valid points
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;

@@ -23,7 +23,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -31,10 +30,8 @@ import palette from '../../../Core/Color/Palette.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge, extend = U.extend;
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /* *
@@ -53,7 +50,6 @@ var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  */
 var PCIndicator = /** @class */ (function (_super) {
     __extends(PCIndicator, _super);
-
     function PCIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -66,7 +62,6 @@ var PCIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
     *
     *  Functions
@@ -121,6 +116,7 @@ var PCIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
+            index: void 0,
             period: 20
         },
         lineWidth: 1,

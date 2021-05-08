@@ -28,19 +28,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
-
 var colorPointMixin = ColorSeriesModule.colorPointMixin;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var Point = SeriesRegistry.series.prototype.pointClass,
     HeatmapPoint = SeriesRegistry.seriesTypes.heatmap.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 /* *
  *
@@ -49,7 +46,6 @@ var extend = U.extend;
  * */
 var TilemapPoint = /** @class */ (function (_super) {
     __extends(TilemapPoint, _super);
-
     function TilemapPoint() {
         /* *
          *
@@ -64,7 +60,6 @@ var TilemapPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

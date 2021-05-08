@@ -10,7 +10,6 @@
 'use strict';
 import Chart from './Chart/Chart.js';
 import U from './Utilities.js';
-
 var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach,
     pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
@@ -222,7 +221,6 @@ Chart.prototype.matchResponsiveRule = function (rule, matches) {
  */
 Chart.prototype.currentOptions = function (options) {
     var chart = this, ret = {};
-
     /**
      * Recurse over a set of options and its current values,
      * and store the current values in the ret object.
@@ -263,7 +261,6 @@ Chart.prototype.currentOptions = function (options) {
             }
         });
     }
-
     getCurrent(options, this.options, ret, 0);
     return ret;
 };

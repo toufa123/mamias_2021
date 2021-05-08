@@ -25,21 +25,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Axis from '../../Core/Axis/Axis.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
-
 var color = Color.parse;
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
 
@@ -55,7 +51,6 @@ import './BubbleLegend.js';
  * */
 var BubbleSeries = /** @class */ (function (_super) {
     __extends(BubbleSeries, _super);
-
     function BubbleSeries() {
         /* *
          *
@@ -79,7 +74,6 @@ var BubbleSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

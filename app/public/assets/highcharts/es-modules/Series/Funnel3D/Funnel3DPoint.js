@@ -29,15 +29,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 /* *
  *
@@ -46,7 +43,6 @@ var extend = U.extend;
  * */
 var Funnel3DPoint = /** @class */ (function (_super) {
     __extends(Funnel3DPoint, _super);
-
     function Funnel3DPoint() {
         /* *
          *
@@ -60,7 +56,6 @@ var Funnel3DPoint = /** @class */ (function (_super) {
         _this.y = void 0;
         return _this;
     }
-
     return Funnel3DPoint;
 }(ColumnSeries.prototype.pointClass));
 extend(Funnel3DPoint.prototype, {

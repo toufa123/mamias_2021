@@ -10,7 +10,6 @@
  *
  * */
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent;
 /* eslint-disable valid-jsdoc */
 var VMLAxis3DAdditions = /** @class */ (function () {
@@ -22,13 +21,11 @@ var VMLAxis3DAdditions = /** @class */ (function () {
     function VMLAxis3DAdditions(axis) {
         this.axis = axis;
     }
-
     return VMLAxis3DAdditions;
 }());
 var VMLAxis3D = /** @class */ (function () {
     function VMLAxis3D() {
     }
-
     /* *
      *
      *  Static Properties

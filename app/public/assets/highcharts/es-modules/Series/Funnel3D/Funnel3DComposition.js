@@ -4,13 +4,10 @@
  *
  * */
 import Color from '../../Core/Color/Color.js';
-
 var color = Color.parse;
 import H from '../../Core/Globals.js';
-
 var charts = H.charts, _a = H.Renderer.prototype, cuboidPath = _a.cuboidPath, Elements3D = _a.elements3d;
 import U from '../../Core/Utilities.js';
-
 var error = U.error, extend = U.extend, merge = U.merge;
 import '../../Core/Renderer/SVG/SVGRenderer.js';
 /* *
@@ -254,7 +251,8 @@ extend(H.Renderer.prototype, {
      * Generates paths and zIndexes.
      * @private
      */
-    funnel3dPath: function (shapeArgs) {
+    funnel3dPath: function (shapeArgs // @todo: Type it. It's an extended SVGAttributes.
+    ) {
         // Check getCylinderEnd for better error message if
         // the cylinder module is missing
         if (!this.getCylinderEnd) {

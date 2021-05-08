@@ -25,12 +25,10 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 /* *
  *
@@ -39,7 +37,6 @@ var ColumnSeries = SeriesRegistry.seriesTypes.column;
  * */
 var OHLCPoint = /** @class */ (function (_super) {
     __extends(OHLCPoint, _super);
-
     function OHLCPoint() {
         /* *
          *
@@ -58,7 +55,6 @@ var OHLCPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

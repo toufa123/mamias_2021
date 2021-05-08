@@ -27,15 +27,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 /* *
  *
@@ -44,7 +41,6 @@ var extend = U.extend;
  * */
 var ItemPoint = /** @class */ (function (_super) {
     __extends(ItemPoint, _super);
-
     function ItemPoint() {
         /* *
          *
@@ -57,7 +53,6 @@ var ItemPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-
     return ItemPoint;
 }(PieSeries.prototype.pointClass));
 extend(ItemPoint.prototype, {

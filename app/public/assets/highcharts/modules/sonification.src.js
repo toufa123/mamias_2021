@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Sonification module
  *
- * (c) 2012-2019 Øystein Moseng
+ * (c) 2012-2021 Øystein Moseng
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/Sonification/Instrument.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
         /* *
          *
@@ -176,7 +174,6 @@
         function Instrument(options) {
             this.init(options);
         }
-
         Instrument.prototype.init = function (options) {
             if (!this.initAudioContext()) {
                 error(29);
@@ -429,17 +426,17 @@
                         currentDurationIx = 0,
                         callbackInterval = instrument.options.playCallbackInterval;
                     if (typeof value === 'function') {
-                        var timer = setInterval(function () {
+                        var timer_1 = setInterval(function () {
                             currentDurationIx++;
                             var curTime = (currentDurationIx * callbackInterval / target);
                             if (curTime >= 1) {
                                 instrument[setter](value(1), setterData);
-                                clearInterval(timer);
+                                clearInterval(timer_1);
                             } else {
                                 instrument[setter](value(curTime), setterData);
                             }
                         }, callbackInterval);
-                        instrument.playCallbackTimers.push(timer);
+                        instrument.playCallbackTimers.push(timer_1);
                     } else {
                         instrument[setter](value, setterData);
                     }
@@ -709,7 +706,6 @@
          *
          * */
         var clamp = U.clamp;
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The SignalHandler class. Stores signal callbacks (event handlers), and
@@ -728,7 +724,6 @@
         function SignalHandler(supportedSignals) {
             this.init(supportedSignals || []);
         }
-
         SignalHandler.prototype.init = function (supportedSignals) {
             this.supportedSignals = supportedSignals;
             this.signals = {};
@@ -985,7 +980,6 @@
         function Earcon(options) {
             this.init(options || {});
         }
-
         Earcon.prototype.init = function (options) {
             this.options = options;
             if (!this.options.id) {
@@ -1278,7 +1272,6 @@
                 minFrequency: 220,
                 maxFrequency: 2200
             };
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * Sonify a single point.
@@ -1298,10 +1291,11 @@
          * @return {void}
          */
         function pointSonify(options) {
-            var _a;
             var point = this,
                 chart = point.series.chart,
-                masterVolume = pick(options.masterVolume, (_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.masterVolume),
+                masterVolume = pick(options.masterVolume,
+                    chart.options.sonification &&
+                    chart.options.sonification.masterVolume),
                 dataExtremes = options.dataExtremes || {},
                 // Get the value to pass to instrument.play from the mapping value
                 // passed in.
@@ -1410,7 +1404,6 @@
                 }
             });
         }
-
         /**
          * Cancel sonification of a point. Calls onEnd functions.
          *
@@ -1561,7 +1554,6 @@
                 timeProp(point) :
                 pick(point[timeProp], point.options[timeProp]);
         }
-
         /**
          * Get the time extremes of this series. This is handled outside of the
          * dataExtremes, as we always want to just sonify the visible points, and we
@@ -1587,7 +1579,6 @@
                 max: -Infinity
             });
         }
-
         /**
          * Calculate value extremes for used instrument data properties on a chart.
          * @private
@@ -1602,9 +1593,9 @@
          * New extremes with data properties mapped to min/max objects.
          */
         function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
-            var _a;
             var allInstrumentDefinitions = (instruments || []).slice(0);
-            var defaultInstrumentDef = (_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.defaultInstrumentOptions;
+            var defaultInstrumentDef = (chart.options.sonification &&
+                chart.options.sonification.defaultInstrumentOptions);
             var optionDefToInstrDef = function (optionDef) {
                 return ({
                     instrumentMapping: optionDef.mapping
@@ -1614,8 +1605,8 @@
                 allInstrumentDefinitions.push(optionDefToInstrDef(defaultInstrumentDef));
             }
             chart.series.forEach(function (series) {
-                var _a;
-                var instrOptions = (_a = series.options.sonification) === null || _a === void 0 ? void 0 : _a.instruments;
+                var instrOptions = (series.options.sonification &&
+                    series.options.sonification.instruments);
                 if (instrOptions) {
                     allInstrumentDefinitions = allInstrumentDefinitions.concat(instrOptions.map(optionDefToInstrDef));
                 }
@@ -1632,7 +1623,6 @@
                 return newExtremes;
             }, merge(dataExtremes));
         }
-
         /**
          * Get earcons for the point if there are any.
          * @private
@@ -1665,7 +1655,6 @@
                 return earcons;
             }, []);
         }
-
         /**
          * Utility function to get a new list of instrument options where all the
          * instrument references are copies.
@@ -1684,7 +1673,6 @@
                 return merge(instrumentDef, {instrument: copy});
             });
         }
-
         /**
          * Utility function to apply a master volume to a list of instrument
          * options.
@@ -1706,7 +1694,6 @@
             });
             return instruments;
         }
-
         /**
          * Utility function to find the duration of the final note in a series.
          * @private
@@ -1730,7 +1717,6 @@
                 return Math.max(duration, instrumentDuration);
             }, 0);
         }
-
         /**
          * Create a TimelinePath from a series. Takes the same options as seriesSonify.
          * To intuitively allow multiple series to play simultaneously we make copies of
@@ -1841,7 +1827,6 @@
                 targetDuration: options.duration
             });
         }
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * Sonify a series.
@@ -1884,7 +1869,6 @@
             });
             chartSonification.timeline.play();
         }
-
         /**
          * Utility function to assemble options for creating a TimelinePath from a
          * series when sonifying an entire chart.
@@ -1899,11 +1883,12 @@
          * Options for buildTimelinePathFromSeries.
          */
         function buildChartSonifySeriesOptions(series, dataExtremes, chartSonifyOptions) {
-            var _a,
-                _b,
-                _c;
             var additionalSeriesOptions = chartSonifyOptions.seriesOptions || {};
-            var pointPlayTime = ((_c = (_b = (_a = series.chart.options.sonification) === null || _a === void 0 ? void 0 : _a.defaultInstrumentOptions) === null || _b === void 0 ? void 0 : _b.mapping) === null || _c === void 0 ? void 0 : _c.pointPlayTime) || 'x';
+            var pointPlayTime = (series.chart.options.sonification &&
+                series.chart.options.sonification.defaultInstrumentOptions &&
+                series.chart.options.sonification.defaultInstrumentOptions.mapping &&
+                series.chart.options.sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
+                'x');
             var configOptions = chartOptionsToSonifySeriesOptions(series);
             return merge(
                 // Options from chart configuration
@@ -1931,7 +1916,6 @@
                     pointPlayTime: pointPlayTime
                 });
         }
-
         /**
          * Utility function to normalize the ordering of timeline paths when sonifying
          * a chart.
@@ -1953,8 +1937,9 @@
             if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
                 // Just add the series from the chart
                 order = chart.series.reduce(function (seriesList, series) {
-                    var _a;
-                    if (series.visible && ((_a = series.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled) !== false) {
+                    if (series.visible &&
+                        (series.options.sonification &&
+                            series.options.sonification.enabled) !== false) {
                         seriesList.push({
                             series: series,
                             seriesOptions: seriesOptionsCallback(series)
@@ -2013,7 +1998,6 @@
             }
             return order;
         }
-
         /**
          * Utility function to add a silent wait after all series.
          * @private
@@ -2045,7 +2029,6 @@
                 return newOrder;
             }, []);
         }
-
         /**
          * Utility function to find the total amout of wait time in the TimelinePaths.
          * @private
@@ -2061,7 +2044,6 @@
                     def[0].options.silentWait || 0);
             }, 0);
         }
-
         /**
          * Utility function to ensure simultaneous paths have start/end events at the
          * same time, to sync them.
@@ -2102,7 +2084,6 @@
                 }
             });
         }
-
         /**
          * Utility function to find the total duration span for all simul path sets
          * that include series.
@@ -2122,7 +2103,6 @@
                 }, 0);
             }, 0);
         }
-
         /**
          * Function to calculate the duration in ms for a series.
          * @private
@@ -2141,7 +2121,6 @@
                 max: totalDurationMs
             });
         }
-
         /**
          * Convert series building objects into paths and return a new list of
          * TimelinePaths.
@@ -2182,7 +2161,6 @@
                 return allPaths;
             }, []);
         }
-
         /**
          * @private
          * @param {Highcharts.Series} series The series to get options for.
@@ -2191,13 +2169,15 @@
          * @returns {Array<Highcharts.PointInstrumentObject>} The merged options.
          */
         function getSeriesInstrumentOptions(series, options) {
-            var _a,
-                _b;
-            if (options === null || options === void 0 ? void 0 : options.instruments) {
+            if (options && options.instruments) {
                 return options.instruments;
             }
-            var defaultInstrOpts = ((_a = series.chart.options.sonification) === null || _a === void 0 ? void 0 : _a.defaultInstrumentOptions) || {};
-            var seriesInstrOpts = ((_b = series.options.sonification) === null || _b === void 0 ? void 0 : _b.instruments) || [{}];
+            var defaultInstrOpts = (series.chart.options.sonification &&
+                series.chart.options.sonification.defaultInstrumentOptions ||
+                {});
+            var seriesInstrOpts = (series.options.sonification &&
+                series.options.sonification.instruments ||
+                [{}]);
             var removeNullsFromObject = function (obj) {
                 objectEach(obj,
                     function (val,
@@ -2226,7 +2206,6 @@
                 };
             });
         }
-
         /**
          * Utility function to translate between options set in chart configuration and
          * a SonifySeriesOptionsObject.
@@ -2235,8 +2214,6 @@
          * @returns {Highcharts.SonifySeriesOptionsObject} Options for chart/series.sonify()
          */
         function chartOptionsToSonifySeriesOptions(series) {
-            var _a,
-                _b;
             var seriesOpts = series.options.sonification || {};
             var chartOpts = series.chart.options.sonification || {};
             var chartEvents = chartOpts.events || {};
@@ -2246,13 +2223,14 @@
                 onStart: seriesEvents.onSeriesStart || chartEvents.onSeriesStart,
                 onPointEnd: seriesEvents.onPointEnd || chartEvents.onPointEnd,
                 onPointStart: seriesEvents.onPointStart || chartEvents.onPointStart,
-                pointPlayTime: (_b = (_a = chartOpts.defaultInstrumentOptions) === null || _a === void 0 ? void 0 : _a.mapping) === null || _b === void 0 ? void 0 : _b.pointPlayTime,
+                pointPlayTime: (chartOpts.defaultInstrumentOptions &&
+                    chartOpts.defaultInstrumentOptions.mapping &&
+                    chartOpts.defaultInstrumentOptions.mapping.pointPlayTime),
                 masterVolume: chartOpts.masterVolume,
                 instruments: getSeriesInstrumentOptions(series),
                 earcons: seriesOpts.earcons || chartOpts.earcons
             };
         }
-
         /**
          * @private
          * @param {Highcharts.Series} series The series to get options for.
@@ -2264,10 +2242,10 @@
             var chartOpts = series.chart.options.sonification;
             var seriesOpts = series.options.sonification;
             return merge({
-                duration: (seriesOpts === null || seriesOpts === void 0 ? void 0 : seriesOpts.duration) || (chartOpts === null || chartOpts === void 0 ? void 0 : chartOpts.duration)
+                duration: ((seriesOpts && seriesOpts.duration) ||
+                    (chartOpts && chartOpts.duration))
             }, chartOptionsToSonifySeriesOptions(series), options);
         }
-
         /**
          * @private
          * @param {Highcharts.Chart} chart The chart to get options for.
@@ -2276,20 +2254,17 @@
          * @returns {Highcharts.SonificationOptions} The merged options.
          */
         function getChartSonifyOptions(chart, options) {
-            var _a,
-                _b,
-                _c,
-                _d,
-                _e;
             var chartOpts = chart.options.sonification || {};
             return merge({
                 duration: chartOpts.duration,
                 afterSeriesWait: chartOpts.afterSeriesWait,
-                pointPlayTime: (_b = (_a = chartOpts.defaultInstrumentOptions) === null || _a === void 0 ? void 0 : _a.mapping) === null || _b === void 0 ? void 0 : _b.pointPlayTime,
+                pointPlayTime: (chartOpts.defaultInstrumentOptions &&
+                    chartOpts.defaultInstrumentOptions.mapping &&
+                    chartOpts.defaultInstrumentOptions.mapping.pointPlayTime),
                 order: chartOpts.order,
-                onSeriesStart: (_c = chartOpts.events) === null || _c === void 0 ? void 0 : _c.onSeriesStart,
-                onSeriesEnd: (_d = chartOpts.events) === null || _d === void 0 ? void 0 : _d.onSeriesEnd,
-                onEnd: (_e = chartOpts.events) === null || _e === void 0 ? void 0 : _e.onEnd
+                onSeriesStart: (chartOpts.events && chartOpts.events.onSeriesStart),
+                onSeriesEnd: (chartOpts.events && chartOpts.events.onSeriesEnd),
+                onEnd: (chartOpts.events && chartOpts.events.onEnd)
             }, options);
         }
 
@@ -2444,7 +2419,6 @@
             });
             this.sonification.timeline.play();
         }
-
         /**
          * Get a list of the points currently under cursor.
          *
@@ -2469,7 +2443,6 @@
             }
             return [];
         }
-
         /**
          * Set the cursor to a point or set of points in different series.
          *
@@ -2492,7 +2465,6 @@
                 });
             }
         }
-
         /**
          * Pause the running sonification.
          *
@@ -2512,7 +2484,6 @@
                 this.sonification.currentlyPlayingPoint.cancelSonify(fadeOut);
             }
         }
-
         /**
          * Resume the currently running sonification. Requires series.sonify or
          * chart.sonify to have been played at some point earlier.
@@ -2531,7 +2502,6 @@
                 this.sonification.timeline.play(onEnd);
             }
         }
-
         /**
          * Play backwards from cursor. Requires series.sonify or chart.sonify to have
          * been played at some point earlier.
@@ -2550,7 +2520,6 @@
                 this.sonification.timeline.rewind(onEnd);
             }
         }
-
         /**
          * Cancel current sonification and reset cursor.
          *
@@ -2567,7 +2536,6 @@
             this.pauseSonify(fadeOut);
             this.resetSonifyCursor();
         }
-
         /**
          * Reset cursor to start. Requires series.sonify or chart.sonify to have been
          * played at some point earlier.
@@ -2583,7 +2551,6 @@
                 this.sonification.timeline.resetCursor();
             }
         }
-
         /**
          * Reset cursor to end. Requires series.sonify or chart.sonify to have been
          * played at some point earlier.
@@ -2599,7 +2566,6 @@
                 this.sonification.timeline.resetCursorEnd();
             }
         }
-
         // Export functions
         var chartSonifyFunctions = {
             chartSonify: chartSonify,
@@ -2681,7 +2647,6 @@
         function TimelineEvent(options) {
             this.init(options || {});
         }
-
         TimelineEvent.prototype.init = function (options) {
             this.options = options;
             this.time = options.time || 0;
@@ -2793,7 +2758,6 @@
         function TimelinePath(options) {
             this.init(options);
         }
-
         TimelinePath.prototype.init = function (options) {
             this.options = options;
             this.id = this.options.id = options.id || uniqueKey();
@@ -3039,7 +3003,6 @@
         function Timeline(options) {
             this.init(options || {});
         }
-
         Timeline.prototype.init = function (options) {
             this.options = options;
             this.cursor = 0;

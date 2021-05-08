@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Exporting module
  *
- * (c) 2010-2019 Torstein Honsi
+ * (c) 2010-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/FullScreen.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Renderer/HTML/AST.js'], _modules['Core/Utilities.js']], function (Chart, H, AST, U) {
         /* *
          * (c) 2009-2021 Rafal Sebestjanski
@@ -109,7 +107,6 @@
                     }
                 }
             }
-
             /* *
              *
              *  Functions
@@ -127,7 +124,8 @@
              */
             Fullscreen.prototype.close = function () {
                 var fullscreen = this,
-                    chart = fullscreen.chart;
+                    chart = fullscreen.chart,
+                    optionsChart = chart.options.chart;
                 // Don't fire exitFullscreen() when user exited using 'Escape' button.
                 if (fullscreen.isOpen &&
                     fullscreen.browserProps &&
@@ -136,8 +134,15 @@
                 }
                 // Unbind event as it's necessary only before exiting from fullscreen.
                 if (fullscreen.unbindFullscreenEvent) {
-                    fullscreen.unbindFullscreenEvent();
+                    fullscreen.unbindFullscreenEvent = fullscreen.unbindFullscreenEvent();
                 }
+                chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
+                fullscreen.origWidth = void 0;
+                fullscreen.origHeight = void 0;
+                optionsChart.width = fullscreen.origWidthOption;
+                optionsChart.height = fullscreen.origHeightOption;
+                fullscreen.origWidthOption = void 0;
+                fullscreen.origHeightOption = void 0;
                 fullscreen.isOpen = false;
                 fullscreen.setButtonText();
             };
@@ -155,20 +160,35 @@
              */
             Fullscreen.prototype.open = function () {
                 var fullscreen = this,
-                    chart = fullscreen.chart;
+                    chart = fullscreen.chart,
+                    optionsChart = chart.options.chart;
+                if (optionsChart) {
+                    fullscreen.origWidthOption = optionsChart.width;
+                    fullscreen.origHeightOption = optionsChart.height;
+                }
+                fullscreen.origWidth = chart.chartWidth;
+                fullscreen.origHeight = chart.chartHeight;
                 // Handle exitFullscreen() method when user clicks 'Escape' button.
                 if (fullscreen.browserProps) {
-                    fullscreen.unbindFullscreenEvent = addEvent(chart.container.ownerDocument, // chart's document
-                        fullscreen.browserProps.fullscreenChange, function () {
+                    var unbindChange_1 = addEvent(chart.container.ownerDocument, // chart's document
+                        fullscreen.browserProps.fullscreenChange,
+                        function () {
                             // Handle lack of async of browser's fullScreenChange event.
                             if (fullscreen.isOpen) {
                                 fullscreen.isOpen = false;
                                 fullscreen.close();
                             } else {
+                                chart.setSize(null, null, false);
                                 fullscreen.isOpen = true;
                                 fullscreen.setButtonText();
                             }
                         });
+                    var unbindDestroy_1 = addEvent(chart, 'destroy',
+                        unbindChange_1);
+                    fullscreen.unbindFullscreenEvent = function () {
+                        unbindChange_1();
+                        unbindDestroy_1();
+                    };
                     var promise = chart.renderTo[fullscreen.browserProps.requestFullscreen]();
                     if (promise) {
                         // No dot notation because of IE8 compatibility
@@ -177,7 +197,6 @@
                                 'Full screen is not supported inside a frame.');
                         });
                     }
-                    addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
                 }
             };
             /**
@@ -192,13 +211,17 @@
              * @return {void}
              */
             Fullscreen.prototype.setButtonText = function () {
-                var _a;
                 var chart = this.chart,
                     exportDivElements = chart.exportDivElements,
                     exportingOptions = chart.options.exporting,
-                    menuItems = (_a = exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.buttons) === null || _a === void 0 ? void 0 : _a.contextButton.menuItems,
+                    menuItems = (exportingOptions &&
+                        exportingOptions.buttons &&
+                        exportingOptions.buttons.contextButton.menuItems),
                     lang = chart.options.lang;
-                if ((exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.menuItemDefinitions) && (lang === null || lang === void 0 ? void 0 : lang.exitFullscreen) &&
+                if (exportingOptions &&
+                    exportingOptions.menuItemDefinitions &&
+                    lang &&
+                    lang.exitFullscreen &&
                     lang.viewFullscreen &&
                     menuItems &&
                     exportDivElements &&
@@ -611,14 +634,14 @@
             }
         });
         // Presentational attributes
-        merge(true, defaultOptions.navigation
+        merge(true, defaultOptions.navigation,
             /**
              * A collection of options for buttons and menus appearing in the exporting
              * module.
              *
              * @optionparent navigation
              */
-            , {
+            {
                 /**
                  * CSS styles for the popup menu appearing by default when the export
                  * icon is clicked. This menu is rendered in HTML.
@@ -1434,10 +1457,20 @@
                         options.series.push(seriesOptions);
                     }
                 });
-                // Assign an internal key to ensure a one-to-one mapping (#5924)
+                var colls = {};
                 chart.axes.forEach(function (axis) {
+                    // Assign an internal key to ensure a one-to-one mapping (#5924)
                     if (!axis.userOptions.internalKey) { // #6444
                         axis.userOptions.internalKey = uniqueKey();
+                    }
+                    if (!axis.options.isInternal) {
+                        if (!colls[axis.coll]) {
+                            colls[axis.coll] = true;
+                            options[axis.coll] = [];
+                        }
+                        options[axis.coll].push(merge(axis.userOptions, {
+                            visible: axis.visible
+                        }));
                     }
                 });
                 // generate the chart copy
@@ -1538,7 +1571,7 @@
              * @sample highcharts/members/chart-exportchart-custom-background/
              *         Different chart background in export
              * @sample stock/members/chart-exportchart/
-             *         Export with Highstock
+             *         Export with Highcharts Stock
              *
              * @function Highcharts.Chart#exportChart
              *
@@ -1776,7 +1809,9 @@
                             button.setState(0);
                         }
                         chart.openMenu = false;
-                        css(chart.renderTo, {overflow: 'hidden'}); // #10361
+                        // #10361, #9998
+                        css(chart.renderTo, {overflow: 'hidden'});
+                        css(chart.container, {overflow: 'hidden'});
                         U.clearTimeout(menu.hideTimer);
                         fireEvent(chart, 'exportMenuHidden');
                     };
@@ -1804,7 +1839,7 @@
                                 .menuItemDefinitions[item];
                         }
                         if (isObject(item, true)) {
-                            var element;
+                            var element = void 0;
                             if (item.separator) {
                                 element = createElement('hr', null, null, innerMenu);
                             } else {
@@ -1865,7 +1900,9 @@
                     menuStyle.top = (y + height - menuPadding) + 'px';
                 }
                 css(menu, menuStyle);
-                css(chart.renderTo, {overflow: ''}); // #10361
+                // #10361, #9998
+                css(chart.renderTo, {overflow: ''});
+                css(chart.container, {overflow: ''});
                 chart.openMenu = true;
                 fireEvent(chart, 'exportMenuShown');
             },
@@ -1896,7 +1933,7 @@
                     chart.exportDivElements = [];
                     chart.exportSVGElements = [];
                 }
-                if (btnOptions.enabled === false) {
+                if (btnOptions.enabled === false || !btnOptions.theme) {
                     return;
                 }
                 var attr = btnOptions.theme,
@@ -2103,7 +2140,6 @@
             iframeDoc.open();
             iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
             iframeDoc.close();
-
             /**
              * Make hyphenated property names out of camelCase
              * @private
@@ -2117,7 +2153,6 @@
                     return '-' + b.toLowerCase();
                 });
             }
-
             /**
              * Call this on all elements and recurse to children
              * @private
@@ -2134,7 +2169,6 @@
                     blacklisted,
                     whitelisted,
                     i;
-
                 /**
                  * Check computed styles and whether they are in the white/blacklist for
                  * styles or atttributes.
@@ -2170,7 +2204,8 @@
                         // If parent node has the same style, it gets inherited, no need
                         // to inline it. Top-level props should be diffed against parent
                         // (#7687).
-                        if ((parentStyles[prop] !== val || node.nodeName === 'svg') &&
+                        if ((parentStyles[prop] !== val ||
+                            node.nodeName === 'svg') &&
                             defaultStyles[node.nodeName][prop] !== val) {
                             // Attributes
                             if (!inlineToAttributes ||
@@ -2185,7 +2220,6 @@
                         }
                     }
                 }
-
                 if (node.nodeType === 1 &&
                     unstyledElements.indexOf(node.nodeName) === -1) {
                     styles = win.getComputedStyle(node, null);
@@ -2238,18 +2272,16 @@
                     [].forEach.call(node.children || node.childNodes, recurse);
                 }
             }
-
             /**
              * Remove the dummy objects used to get defaults
              * @private
              * @return {void}
              */
             function tearDown() {
-                dummySVG.parentNode.remove();
+                dummySVG.parentNode.removeChild(dummySVG);
                 // Remove trash from DOM that stayed after each exporting
-                iframe.remove();
+                iframe.parentNode.removeChild(iframe);
             }
-
             recurse(this.container.querySelector('svg'));
             tearDown();
         };
@@ -2317,7 +2349,6 @@
         // function.
         addEvent(Chart, 'init', function () {
             var chart = this;
-
             /**
              * @private
              * @param {"exporting"|"navigation"} prop
@@ -2335,7 +2366,6 @@
                     chart.redraw();
                 }
             }
-
             chart.exporting = {
                 update: function (options, redraw) {
                     update('exporting', options, redraw);
@@ -2357,18 +2387,16 @@
             // Uncomment this to see a button directly below the chart, for quick
             // testing of export
             /*
-            var button,
-                viewImage,
-                viewSource;
+            let button, viewImage, viewSource;
             if (!chart.renderer.forExport) {
                 viewImage = function () {
-                    var div = doc.createElement('div');
+                    let div = doc.createElement('div');
                     div.innerHTML = chart.getSVGForExport();
                     chart.renderTo.parentNode.appendChild(div);
                 };
 
                 viewSource = function () {
-                    var pre = doc.createElement('pre');
+                    let pre = doc.createElement('pre');
                     pre.innerHTML = chart.getSVGForExport()
                         .replace(/</g, '\n&lt;')
                         .replace(/>/g, '&gt;');

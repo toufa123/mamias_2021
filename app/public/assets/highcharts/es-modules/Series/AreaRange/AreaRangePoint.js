@@ -24,16 +24,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import AreaSeries from '../Area/AreaSeries.js';
 import Point from '../../Core/Series/Point.js';
-
 var pointProto = Point.prototype;
 import U from '../../Core/Utilities.js';
-
 var defined = U.defined, isNumber = U.isNumber;
 /* *
  *
@@ -42,7 +39,6 @@ var defined = U.defined, isNumber = U.isNumber;
  * */
 var AreaRangePoint = /** @class */ (function (_super) {
     __extends(AreaRangePoint, _super);
-
     function AreaRangePoint() {
         /* *
          *
@@ -61,7 +57,6 @@ var AreaRangePoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions

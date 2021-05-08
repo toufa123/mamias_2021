@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
- * (c) 2009-2019 Sebastian Bochan, Rafal Sebestjanski
+ * (c) 2009-2021 Sebastian Bochan, Rafal Sebestjanski
  *
  * License: www.highcharts.com/license
  */
@@ -21,13 +21,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/AreaRange/AreaRangePoint.js', [_modules['Series/Area/AreaSeries.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js']], function (AreaSeries, Point, U) {
         /* *
          *
@@ -72,7 +70,6 @@
          * */
         var AreaRangePoint = /** @class */ (function (_super) {
             __extends(AreaRangePoint, _super);
-
             function AreaRangePoint() {
                 /* *
                  *
@@ -92,7 +89,6 @@
                 _this.series = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions
@@ -218,7 +214,6 @@
          * */
         var DumbbellPoint = /** @class */ (function (_super) {
             __extends(DumbbellPoint, _super);
-
             function DumbbellPoint() {
                 /* *
                  *
@@ -233,7 +228,6 @@
                 _this.pointWidth = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions
@@ -289,6 +283,14 @@
                     }
                 }
                 point.connector[verb](series.getConnectorAttribs(point));
+            };
+            DumbbellPoint.prototype.destroy = function () {
+                // #15560
+                if (!this.graphic) {
+                    this.graphic = this.connector;
+                    this.connector = void 0;
+                }
+                return _super.prototype.destroy.call(this);
             };
             return DumbbellPoint;
         }(AreaRangePoint));
@@ -358,7 +360,6 @@
          */
         var DumbbellSeries = /** @class */ (function (_super) {
             __extends(DumbbellSeries, _super);
-
             function DumbbellSeries() {
                 /* *
                  *
@@ -378,7 +379,6 @@
                 _this.columnMetrics = void 0;
                 return _this;
             }
-
             /**
              *
              *  Functions
@@ -599,8 +599,8 @@
             DumbbellSeries.prototype.markerAttribs = function () {
                 var ret = areaRangeProto.markerAttribs.apply(this,
                     arguments);
-                ret.x = Math.floor(ret.x);
-                ret.y = Math.floor(ret.y);
+                ret.x = Math.floor(ret.x || 0);
+                ret.y = Math.floor(ret.y || 0);
                 return ret;
             };
             /**

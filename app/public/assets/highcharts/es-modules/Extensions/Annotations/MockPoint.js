@@ -146,7 +146,6 @@ var MockPoint = /** @class */ (function () {
          */
         this.applyOptions(this.getOptions());
     }
-
     /**
      * Create a mock point from a real Highcharts point.
      *
@@ -397,7 +396,8 @@ var MockPoint = /** @class */ (function () {
      */
     MockPoint.prototype.rotate = function (cx, cy, radians) {
         if (!this.hasDynamicOptions()) {
-            var cos = Math.cos(radians), sin = Math.sin(radians), x = this.plotX, y = this.plotY, tx, ty;
+            var cos = Math.cos(radians), sin = Math.sin(radians), x = this.plotX, y = this.plotY, tx = void 0,
+                ty = void 0;
             x -= cx;
             y -= cy;
             tx = x * cos - y * sin;

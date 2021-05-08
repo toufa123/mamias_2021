@@ -11,11 +11,9 @@
  * */
 'use strict';
 import Color from '../../Color/Color.js';
-
 var color = Color.parse;
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
-
 var defined = U.defined, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *

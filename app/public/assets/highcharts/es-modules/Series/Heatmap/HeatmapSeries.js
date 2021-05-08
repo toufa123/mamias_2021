@@ -25,15 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -43,10 +40,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column,
     ScatterSeries = _a.scatter;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-
 var symbols = SVGRenderer.prototype.symbols;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 /* *
  *
@@ -62,7 +57,6 @@ var extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U
  */
 var HeatmapSeries = /** @class */ (function (_super) {
     __extends(HeatmapSeries, _super);
-
     function HeatmapSeries() {
         /* *
          *
@@ -84,7 +78,6 @@ var HeatmapSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -153,8 +146,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
         this.yAxis.axisPointRange = options.rowsize || 1;
         // Bind new symbol names
         extend(symbols, {
-            ellipse: symbols.circle,
-            rect: symbols.square
+            ellipse: symbols.circle
         });
     };
     /**
@@ -183,8 +175,10 @@ var HeatmapSeries = /** @class */ (function (_super) {
                     shapeArgs[dimension[0]]) + (pointStateOptions[dimension[0] + 'Plus'] ||
                     seriesStateOptions[dimension[0] + 'Plus'] || 0);
                 // Align marker by a new size.
-                attribs[dimension[1]] = shapeArgs[dimension[1]] +
-                    (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
+                attribs[dimension[1]] =
+                    shapeArgs[dimension[1]] +
+                    (shapeArgs[dimension[0]] -
+                        attribs[dimension[0]]) / 2;
             });
         }
         return state ? attribs : shapeArgs;
@@ -234,7 +228,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
         if (series.options.clip !== false || animation) {
             series.markerGroup
                 .clip((animation || series.clipBox) && series.sharedClipKey ?
-                    chart[series.sharedClipKey] :
+                    chart.sharedClips[series.sharedClipKey] :
                     chart.clipRect);
         }
     };
@@ -243,16 +237,14 @@ var HeatmapSeries = /** @class */ (function (_super) {
      */
     HeatmapSeries.prototype.translate = function () {
         var series = this, options = series.options, symbol = options.marker && options.marker.symbol || '',
-            shape = symbols[symbol] ? symbol : 'rect', options = series.options,
-            hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
+            shape = symbols[symbol] ? symbol : 'rect', hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var pointAttr, sizeDiff, hasImage, cellAttr = point.getCellAttributes(), shapeArgs = {
-                x: Math.min(cellAttr.x1, cellAttr.x2),
-                y: Math.min(cellAttr.y1, cellAttr.y2),
-                width: Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
-                height: Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0)
-            };
+            var pointAttr, sizeDiff, hasImage, cellAttr = point.getCellAttributes(), shapeArgs = {};
+            shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
+            shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
+            shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
+            shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
             hasImage = point.hasImage =
                 (point.marker && point.marker.symbol || symbol || '')
                     .indexOf('url') === 0;
@@ -565,14 +557,8 @@ extend(HeatmapSeries.prototype, {
      * @private
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    /**
-     * @ignore
-     * @deprecated
-     */
-    getBox: noop,
     getExtremesFromAll: true,
     getSymbol: Series.prototype.getSymbol,
-    hasPointSpecificOptions: true,
     parallelArrays: colorMapSeriesMixin.parallelArrays,
     pointArrayMap: ['y', 'value'],
     pointClass: HeatmapPoint,

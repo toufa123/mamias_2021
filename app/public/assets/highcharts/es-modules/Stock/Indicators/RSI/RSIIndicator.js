@@ -23,23 +23,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 
-var isArray = U.isArray, merge = U.merge;
+var isNumber = U.isNumber, merge = U.merge;
 /* eslint-disable require-jsdoc */
-
 // Utils:
 function toFixed(a, n) {
     return parseFloat(a.toFixed(n));
 }
-
 /* eslint-enable require-jsdoc */
 /**
  * The RSI series type.
@@ -52,7 +48,6 @@ function toFixed(a, n) {
  */
 var RSIIndicator = /** @class */ (function (_super) {
     __extends(RSIIndicator, _super);
-
     function RSIIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -65,7 +60,6 @@ var RSIIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -76,16 +70,25 @@ var RSIIndicator = /** @class */ (function (_super) {
             decimals = params.decimals,
             // RSI starts calculations from the second point
             // Cause we need to calculate change between two points
-            range = 1, RSI = [], xData = [], yData = [], index = 3, gain = 0, loss = 0, RSIPoint, change, avgGain,
-            avgLoss, i;
-        // RSI requires close value
-        if ((xVal.length < period) || !isArray(yVal[0]) ||
-            yVal[0].length !== 4) {
+            range = 1, RSI = [], xData = [], yData = [], index = params.index, gain = 0, loss = 0, RSIPoint, change,
+            avgGain, avgLoss, i, values;
+        if ((xVal.length < period)) {
             return;
+        }
+        if (isNumber(yVal[0])) {
+            values = yVal;
+        } else {
+            // in case of the situation, where the series type has data length
+            // longer then 4 (HLC, range), this ensures that we are not trying
+            // to reach the index out of bounds
+            index = Math.min(index, yVal[0].length - 1);
+            values = yVal.map(function (value) {
+                return value[index];
+            });
         }
         // Calculate changes for first N points
         while (range < period) {
-            change = toFixed(yVal[range][index] - yVal[range - 1][index], decimals);
+            change = toFixed(values[range] - values[range - 1], decimals);
             if (change > 0) {
                 gain += change;
             } else {
@@ -97,7 +100,7 @@ var RSIIndicator = /** @class */ (function (_super) {
         avgGain = toFixed(gain / (period - 1), decimals);
         avgLoss = toFixed(loss / (period - 1), decimals);
         for (i = range; i < yValLen; i++) {
-            change = toFixed(yVal[i][index] - yVal[i - 1][index], decimals);
+            change = toFixed(values[i] - values[i - 1], decimals);
             if (change > 0) {
                 gain = change;
                 loss = 0;
@@ -146,8 +149,8 @@ var RSIIndicator = /** @class */ (function (_super) {
      */
     RSIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         params: {
-            period: 14,
-            decimals: 4
+            decimals: 4,
+            index: 3
         }
     });
     return RSIIndicator;

@@ -10,7 +10,6 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-
 /**
  * The default pathfinder algorithm to use for a chart. It is possible to define
  * your own algorithms by adding them to the
@@ -35,15 +34,12 @@ import H from '../Core/Globals.js';
  */
 ''; // detach doclets above
 import O from '../Core/Options.js';
-
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge,
     objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import '../Extensions/ArrowSymbols.js';
-
 var deg2rad = H.deg2rad, max = Math.max, min = Math.min;
 /*
  @todo:
@@ -288,7 +284,6 @@ extend(defaultOptions, {
  * @requires  highcharts-gantt
  * @apioption series.xrange.data.connect
  */
-
 /**
  * The ID of the point to connect to.
  *
@@ -315,10 +310,10 @@ function getPointBB(point) {
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
     // Otherwise use plotX/plotY and bb
@@ -330,7 +325,6 @@ function getPointBB(point) {
         yMax: point.plotY + bb.height / 2
     } : null;
 }
-
 /**
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
@@ -386,7 +380,6 @@ function calculateObstacleMargin(obstacles) {
         ), 1 // 1 is the minimum margin
     );
 }
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Connection class. Used internally to represent a connection between two
@@ -419,7 +412,6 @@ var Connection = /** @class */ (function () {
         this.toPoint = void 0;
         this.init(from, to, options);
     }
-
     /**
      * Initialize the Connection object. Used as constructor only.
      *
@@ -831,7 +823,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         };
     }
 });
-
 /**
  * Warn if using legacy options. Copy the options over. Note that this will
  * still break if using the legacy options in chart.update, addSeries etc.
@@ -851,5 +842,4 @@ function warnLegacy(chart) {
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }
-
 export default Connection;

@@ -59,9 +59,7 @@
 /* eslint-enable max-len */
 'use strict';
 import U from '../../Core/Utilities.js';
-
 var error = U.error, pick = U.pick;
-
 /* eslint-disable valid-jsdoc */
 /**
  * Set a new option on a root prop, where the option is defined as an array of
@@ -80,7 +78,6 @@ function traverseSetOption(root, optionAsArray, val) {
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;
 }
-
 /**
  * If we have a clear root option node for old and new options and a mapping
  * between, we can use this generic function for the copy and warn logic.
@@ -94,7 +91,6 @@ function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNew
             return acc[cur];
         }, root);
     }
-
     var rootOld = getChildProp(chart.options, rootOldAsArray), rootNew = getChildProp(chart.options, rootNewAsArray);
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
         var _a;
@@ -107,12 +103,11 @@ function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNew
         }
     });
 }
-
 /**
  * @private
  */
 function copyDeprecatedChartOptions(chart) {
-    var chartOptions = chart.options.chart || {}, a11yOptions = chart.options.accessibility || {};
+    var chartOptions = chart.options.chart, a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (prop) {
         var _a;
         if (chartOptions[prop]) {
@@ -121,7 +116,6 @@ function copyDeprecatedChartOptions(chart) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -135,7 +129,6 @@ function copyDeprecatedAxisOptions(chart) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -169,7 +162,6 @@ function copyDeprecatedSeriesOptions(chart) {
         });
     });
 }
-
 /**
  * @private
  */
@@ -193,7 +185,6 @@ function copyDeprecatedTopLevelAccessibilityOptions(chart) {
         axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
     });
 }
-
 /**
  * @private
  */
@@ -203,7 +194,6 @@ function copyDeprecatedKeyboardNavigationOptions(chart) {
         mode: ['mode']
     });
 }
-
 /**
  * @private
  */
@@ -224,7 +214,6 @@ function copyDeprecatedLangOptions(chart) {
         tableSummary: ['table', 'tableSummary']
     });
 }
-
 /**
  * Copy options that are deprecated over to new options. Logs warnings to
  * console if deprecated options are used.
@@ -241,5 +230,4 @@ function copyDeprecatedOptions(chart) {
     copyDeprecatedKeyboardNavigationOptions(chart);
     copyDeprecatedLangOptions(chart);
 }
-
 export default copyDeprecatedOptions;

@@ -25,7 +25,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -33,10 +32,8 @@ import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var AreaRangeSeries = SeriesRegistry.seriesTypes.arearange;
 import U from '../../Core/Utilities.js';
-
 var merge = U.merge, extend = U.extend;
 /**
  * Errorbar series type
@@ -50,7 +47,6 @@ var merge = U.merge, extend = U.extend;
  */
 var ErrorBarSeries = /** @class */ (function (_super) {
     __extends(ErrorBarSeries, _super);
-
     function ErrorBarSeries() {
         /* *
          *
@@ -68,7 +64,6 @@ var ErrorBarSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions

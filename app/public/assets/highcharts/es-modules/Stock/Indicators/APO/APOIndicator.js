@@ -23,7 +23,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -31,7 +30,6 @@ var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, error = U.error;
 /* *
  *
@@ -49,7 +47,6 @@ var extend = U.extend, merge = U.merge, error = U.error;
  */
 var APOIndicator = /** @class */ (function (_super) {
     __extends(APOIndicator, _super);
-
     function APOIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -62,7 +59,6 @@ var APOIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
     *
     *  Functions
@@ -112,7 +108,7 @@ var APOIndicator = /** @class */ (function (_super) {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
-
+            return;
         });
     };
     /**
@@ -142,6 +138,7 @@ var APOIndicator = /** @class */ (function (_super) {
          * @excluding period
          */
         params: {
+            period: void 0,
             /**
              * Periods for Absolute Price Oscillator calculations.
              *

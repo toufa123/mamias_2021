@@ -10,11 +10,9 @@
 'use strict';
 import H from '../Globals.js';
 import O from '../Options.js';
-
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import U from '../Utilities.js';
-
 var error = U.error, extendClass = U.extendClass, merge = U.merge;
 /* *
  *
@@ -28,7 +26,11 @@ var SeriesRegistry;
      *  Static Properties
      *
      * */
-    SeriesRegistry.seriesTypes = {};
+    /**
+     * @internal
+     * @todo Move `Globals.seriesTypes` code to her.
+     */
+    SeriesRegistry.seriesTypes = H.seriesTypes;
     /* *
      *
      *  Static Functions
@@ -58,9 +60,7 @@ var SeriesRegistry;
         }
         return series;
     }
-
     SeriesRegistry.getSeries = getSeries;
-
     /**
      * Registers class pattern of a series.
      *
@@ -77,9 +77,7 @@ var SeriesRegistry;
         }
         SeriesRegistry.seriesTypes[seriesType] = seriesClass;
     }
-
     SeriesRegistry.registerSeriesType = registerSeriesType;
-
     /**
      * Old factory to create new series prototypes.
      *
@@ -123,7 +121,6 @@ var SeriesRegistry;
         }
         return SeriesRegistry.seriesTypes[type];
     }
-
     SeriesRegistry.seriesType = seriesType;
     /* eslint-enable valid-jsdoc */
 })(SeriesRegistry || (SeriesRegistry = {}));
@@ -133,7 +130,6 @@ var SeriesRegistry;
  *
  * */
 H.seriesType = SeriesRegistry.seriesType;
-H.seriesTypes = SeriesRegistry.seriesTypes;
 /* *
  *
  *  Export

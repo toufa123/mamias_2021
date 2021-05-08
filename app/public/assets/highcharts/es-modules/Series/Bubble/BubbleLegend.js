@@ -14,16 +14,20 @@ import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 
 var color = Color.parse;
+import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 
 var noop = H.noop;
 import Legend from '../../Core/Legend.js';
+import O from '../../Core/Options.js';
+
+var setOptions = O.setOptions;
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge,
-    objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions, stableSort = U.stableSort, wrap = U.wrap;
+    objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
 /**
  * @interface Highcharts.BubbleLegendFormatterContextObject
  */ /**
@@ -193,9 +197,9 @@ setOptions({
                  */
                 style: {
                     /** @ignore-option */
-                    fontSize: 10,
+                    fontSize: '10px',
                     /** @ignore-option */
-                    color: void 0
+                    color: palette.neutralColor100
                 },
                 /**
                  * The x position offset of the label relative to the
@@ -321,7 +325,6 @@ var BubbleLegend = /** @class */ (function () {
         this.setState = noop;
         this.init(options, legend);
     }
-
     /**
      * Create basic bubbleLegend properties similar to item in legend.
      *
@@ -366,7 +369,7 @@ var BubbleLegend = /** @class */ (function () {
         var chart = this.chart, options = this.options, size, itemDistance = pick(legend.options.itemDistance, 20),
             connectorSpace, ranges = options.ranges, radius, maxLabel, connectorDistance = options.connectorDistance;
         // Predict label dimensions
-        this.fontMetrics = chart.renderer.fontMetrics(options.labels.style.fontSize.toString() + 'px');
+        this.fontMetrics = chart.renderer.fontMetrics(options.labels.style.fontSize);
         // Do not create bubbleLegend now if ranges or ranges valeus are not
         // specified or if are empty array.
         if (!ranges || !ranges.length || !isNumber(ranges[0].value)) {
@@ -403,23 +406,26 @@ var BubbleLegend = /** @class */ (function () {
      */
     BubbleLegend.prototype.setOptions = function () {
         var ranges = this.ranges, options = this.options, series = this.chart.series[options.seriesIndex],
-            baseline = this.legend.baseline, bubbleStyle = {
-                'z-index': options.zIndex,
+            baseline = this.legend.baseline, bubbleAttribs = {
+                zIndex: options.zIndex,
                 'stroke-width': options.borderWidth
-            }, connectorStyle = {
-                'z-index': options.zIndex,
+            }, connectorAttribs = {
+                zIndex: options.zIndex,
                 'stroke-width': options.connectorWidth
-            }, labelStyle = this.getLabelStyles(), fillOpacity = series.options.marker.fillOpacity,
-            styledMode = this.chart.styledMode;
+            }, labelAttribs = {
+                align: (this.legend.options.rtl ||
+                    options.labels.align === 'left') ? 'right' : 'left',
+                zIndex: options.zIndex
+            }, fillOpacity = series.options.marker.fillOpacity, styledMode = this.chart.styledMode;
         // Allow to parts of styles be used individually for range
         ranges.forEach(function (range, i) {
             if (!styledMode) {
-                bubbleStyle.stroke = pick(range.borderColor, options.borderColor, series.color);
-                bubbleStyle.fill = pick(range.color, options.color, fillOpacity !== 1 ?
+                bubbleAttribs.stroke = pick(range.borderColor, options.borderColor, series.color);
+                bubbleAttribs.fill = pick(range.color, options.color, fillOpacity !== 1 ?
                     color(series.color).setOpacity(fillOpacity)
                         .get('rgba') :
                     series.color);
-                connectorStyle.stroke = pick(range.connectorColor, options.connectorColor, series.color);
+                connectorAttribs.stroke = pick(range.connectorColor, options.connectorColor, series.color);
             }
             // Set options needed for rendering each range
             ranges[i].radius = this.getRangeRadius(range.value);
@@ -429,37 +435,12 @@ var BubbleLegend = /** @class */ (function () {
             });
             if (!styledMode) {
                 merge(true, ranges[i], {
-                    bubbleStyle: merge(false, bubbleStyle),
-                    connectorStyle: merge(false, connectorStyle),
-                    labelStyle: labelStyle
+                    bubbleAttribs: merge(bubbleAttribs),
+                    connectorAttribs: merge(connectorAttribs),
+                    labelAttribs: labelAttribs
                 });
             }
         }, this);
-    };
-    /**
-     * Merge options for bubbleLegend labels.
-     *
-     * @private
-     * @function Highcharts.BubbleLegend#getLabelStyles
-     * @return {Highcharts.CSSObject}
-     */
-    BubbleLegend.prototype.getLabelStyles = function () {
-        var options = this.options, additionalLabelsStyle = {}, labelsOnLeft = options.labels.align === 'left',
-            rtl = this.legend.options.rtl;
-        // To separate additional style options
-        objectEach(options.labels.style, function (value, key) {
-            if (key !== 'color' &&
-                key !== 'fontSize' &&
-                key !== 'z-index') {
-                additionalLabelsStyle[key] = value;
-            }
-        });
-        return merge(false, additionalLabelsStyle, {
-            'font-size': options.labels.style.fontSize,
-            fill: pick(options.labels.style.color, palette.neutralColor100),
-            'z-index': options.zIndex,
-            align: rtl || labelsOnLeft ? 'right' : 'left'
-        });
     };
     /**
      * Calculate radius for each bubble range,
@@ -522,32 +503,33 @@ var BubbleLegend = /** @class */ (function () {
      */
     BubbleLegend.prototype.renderRange = function (range) {
         var mainRange = this.ranges[0], legend = this.legend, options = this.options, labelsOptions = options.labels,
-            chart = this.chart, renderer = chart.renderer, symbols = this.symbols, labels = symbols.labels, label,
-            elementCenter = range.center, absoluteRadius = Math.abs(range.radius),
-            connectorDistance = options.connectorDistance || 0, labelsAlign = labelsOptions.align,
-            rtl = legend.options.rtl, fontSize = labelsOptions.style.fontSize,
+            chart = this.chart, bubbleSeries = chart.series[options.seriesIndex], renderer = chart.renderer,
+            symbols = this.symbols, labels = symbols.labels, label, elementCenter = range.center,
+            absoluteRadius = Math.abs(range.radius), connectorDistance = options.connectorDistance || 0,
+            labelsAlign = labelsOptions.align, rtl = legend.options.rtl,
             connectorLength = rtl || labelsAlign === 'left' ?
                 -connectorDistance : connectorDistance, borderWidth = options.borderWidth,
             connectorWidth = options.connectorWidth, posX = mainRange.radius || 0,
             posY = elementCenter - absoluteRadius -
                 borderWidth / 2 + connectorWidth / 2, labelY, labelX, fontMetrics = this.fontMetrics,
-            labelMovement = fontSize / 2 - (fontMetrics.h - fontSize) / 2, crispMovement = (posY % 1 ? 1 : 0.5) -
+            labelMovement = fontMetrics.f / 2 -
+                (fontMetrics.h - fontMetrics.f) / 2, crispMovement = (posY % 1 ? 1 : 0.5) -
             (connectorWidth % 2 ? 0 : 0.5), styledMode = renderer.styledMode;
         // Set options for centered labels
         if (labelsAlign === 'center') {
             connectorLength = 0; // do not use connector
             options.connectorDistance = 0;
-            range.labelStyle.align = 'center';
+            range.labelAttribs.align = 'center';
         }
         labelY = posY + options.labels.y;
         labelX = posX + connectorLength + options.labels.x;
         // Render bubble symbol
         symbols.bubbleItems.push(renderer
             .circle(posX, elementCenter + crispMovement, absoluteRadius)
-            .attr(styledMode ? {} : range.bubbleStyle)
+            .attr(styledMode ? {} : range.bubbleAttribs)
             .addClass((styledMode ?
                 'highcharts-color-' +
-                this.options.seriesIndex + ' ' :
+                bubbleSeries.colorIndex + ' ' :
                 '') +
                 'highcharts-bubble-legend-symbol ' +
                 (options.className || '')).add(this.legendSymbol));
@@ -557,7 +539,7 @@ var BubbleLegend = /** @class */ (function () {
                 ['M', posX, posY],
                 ['L', posX + connectorLength, posY]
             ], options.connectorWidth))
-            .attr(styledMode ? {} : range.connectorStyle)
+            .attr((styledMode ? {} : range.connectorAttribs))
             .addClass((styledMode ?
                 'highcharts-color-' +
                 this.options.seriesIndex + ' ' : '') +
@@ -566,7 +548,8 @@ var BubbleLegend = /** @class */ (function () {
         // Render label
         label = renderer
             .text(this.formatLabel(range), labelX, labelY + labelMovement)
-            .attr(styledMode ? {} : range.labelStyle)
+            .attr((styledMode ? {} : range.labelAttribs))
+            .css(styledMode ? {} : labelsOptions.style)
             .addClass('highcharts-bubble-legend-labels ' +
                 (options.labels.className || '')).add(this.legendSymbol);
         labels.push(label);
@@ -610,7 +593,7 @@ var BubbleLegend = /** @class */ (function () {
     BubbleLegend.prototype.formatLabel = function (range) {
         var options = this.options, formatter = options.labels.formatter, format = options.labels.format;
         var numberFormatter = this.chart.numberFormatter;
-        return format ? U.format(format, range) :
+        return format ? F.format(format, range) :
             formatter ? formatter.call(range) :
                 numberFormatter(range.value, 1);
     };
@@ -677,7 +660,7 @@ var BubbleLegend = /** @class */ (function () {
         // Merge ranges values with user options
         ranges.forEach(function (range, i) {
             if (rangesOptions && rangesOptions[i]) {
-                ranges[i] = merge(false, rangesOptions[i], range);
+                ranges[i] = merge(rangesOptions[i], range);
             }
         });
         return ranges;

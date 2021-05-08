@@ -12,17 +12,13 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
-
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-
 var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Get the wrapped export button element of a chart.
@@ -34,7 +30,6 @@ var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtiliti
 function getExportMenuButtonElement(chart) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
-
 /**
  * Show the export menu and focus the first item (if exists).
  *
@@ -123,7 +118,6 @@ H.Chart.prototype.highlightLastExportItem = function () {
     }
     return false;
 };
-
 /**
  * @private
  * @param {Highcharts.Chart} chart
@@ -137,7 +131,6 @@ function exportingShouldHaveA11y(chart) {
         exportButton &&
         exportButton.element);
 }
-
 /**
  * The MenuComponent class
  *
@@ -214,7 +207,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             var button = getExportMenuButtonElement(this.chart);
             this.exportButtonProxy = this.createProxyButton(button, this.exportProxyGroup, {
                 'aria-label': chart.langFormat('accessibility.exporting.menuButtonLabel', {chart: chart}),
-                'aria-expanded': 'false'
+                'aria-expanded': false
             });
         }
     },

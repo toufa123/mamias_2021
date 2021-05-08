@@ -2166,7 +2166,7 @@
                     // help
                     this.getHelpXML = function () {
 
-                        var examples = [];
+                        var examples = new Array();
                         // add regexps
                         for (var i = 0; i < color_defs.length; i++) {
                             var example = color_defs[i].example;

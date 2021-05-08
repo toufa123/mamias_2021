@@ -4,10 +4,8 @@
  *
  * */
 import H from '../../Core/Globals.js';
-
 var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-
 var symbols = SVGRenderer.prototype.symbols;
 /* *
  *
@@ -23,7 +21,6 @@ symbols.flag = function (x, y, w, h, options) {
     path.push(['M', anchorX, anchorY], ['L', x, y + h], ['L', x, y], ['L', x + w, y], ['L', x + w, y + h], ['L', x, y + h], ['Z']);
     return path;
 };
-
 /**
  * Create the circlepin and squarepin icons with anchor.
  * @private
@@ -71,7 +68,6 @@ function createPinSymbol(shape) {
         return path;
     };
 }
-
 createPinSymbol('circle');
 createPinSymbol('square');
 /**

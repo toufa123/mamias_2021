@@ -11,12 +11,15 @@
  * */
 import H from '../../Core/Globals.js';
 
-var isFirefox = H.isFirefox;
+var doc = H.doc, isFirefox = H.isFirefox;
 import NavigationBindings from './NavigationBindings.js';
+import O from '../../Core/Options.js';
+
+var getOptions = O.getOptions;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 
-var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, getOptions = U.getOptions,
+var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, fireEvent = U.fireEvent,
     isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick,
     stableSort = U.stableSort, wrap = U.wrap;
 var indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button',
@@ -32,8 +35,8 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
-H.Popup = function (parentDiv, iconsURL) {
-    this.init(parentDiv, iconsURL);
+H.Popup = function (parentDiv, iconsURL, chart) {
+    this.init(parentDiv, iconsURL, chart);
 };
 H.Popup.prototype = {
     /**
@@ -44,7 +47,8 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv, iconsURL) {
+    init: function (parentDiv, iconsURL, chart) {
+        this.chart = chart;
         // create popup div
         this.container = createElement(DIV, {
             className: PREFIX + 'popup'
@@ -68,7 +72,7 @@ H.Popup.prototype = {
             this.iconsURL + 'close.svg)';
         ['click', 'touchstart'].forEach(function (eventName) {
             addEvent(closeBtn, eventName, function () {
-                _self.closePopup();
+                fireEvent(_self.chart.navigationBindings, 'closePopup');
             });
         });
     },
@@ -118,9 +122,8 @@ H.Popup.prototype = {
         if (!inputName.match(indexFilter)) {
             // add label
             createElement(LABEL, {
-                innerHTML: lang[optionName] || optionName,
                 htmlFor: inputName
-            }, null, parentDiv);
+            }, void 0, parentDiv).appendChild(doc.createTextNode(lang[optionName] || optionName));
         }
         // add input
         createElement(INPUT, {
@@ -128,7 +131,7 @@ H.Popup.prototype = {
             value: value[0],
             type: value[1],
             className: PREFIX + 'popup-field'
-        }, null, parentDiv).setAttribute(PREFIX + 'data-name', option);
+        }, void 0, parentDiv).setAttribute(PREFIX + 'data-name', option);
     },
     /**
      * Create button.
@@ -148,9 +151,8 @@ H.Popup.prototype = {
      */
     addButton: function (parentDiv, label, type, callback, fieldsDiv) {
         var _self = this, closePopup = this.closePopup, getFields = this.getFields, button;
-        button = createElement(BUTTON, {
-            innerHTML: label
-        }, null, parentDiv);
+        button = createElement(BUTTON, void 0, void 0, parentDiv);
+        button.appendChild(doc.createTextNode(label));
         ['click', 'touchstart'].forEach(function (eventName) {
             addEvent(button, eventName, function () {
                 closePopup.call(_self);
@@ -277,13 +279,11 @@ H.Popup.prototype = {
             // set position
             popupDiv.style.top = chart.plotTop + 10 + 'px';
             // create label
-            createElement(SPAN, {
-                innerHTML: pick(
-                    // Advanced annotations:
-                    lang[options.langKey] || options.langKey,
-                    // Basic shapes:
-                    options.shapes && options.shapes[0].type)
-            }, null, popupDiv);
+            createElement(SPAN, void 0, void 0, popupDiv).appendChild(doc.createTextNode(pick(
+                // Advanced annotations:
+                lang[options.langKey] || options.langKey,
+                // Basic shapes:
+                options.shapes && options.shapes[0].type)));
             // add buttons
             button = this.addButton(popupDiv, lang.removeButton || 'remove', 'remove', callback, popupDiv);
             button.className += ' ' + PREFIX + 'annotation-remove-button';
@@ -313,9 +313,9 @@ H.Popup.prototype = {
             var popupDiv = this.popup.container, lang = this.lang, bottomRow, lhsCol;
             // create title of annotations
             lhsCol = createElement('h2', {
-                innerHTML: lang[options.langKey] || options.langKey,
                 className: PREFIX + 'popup-main-title'
-            }, null, popupDiv);
+            }, void 0, popupDiv);
+            lhsCol.appendChild(doc.createTextNode(lang[options.langKey] || options.langKey || ''));
             // left column
             lhsCol = createElement(DIV, {
                 className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
@@ -387,9 +387,8 @@ H.Popup.prototype = {
                 storage.forEach(function (genInput) {
                     if (genInput[0] === true) {
                         createElement(SPAN, {
-                            className: PREFIX + 'annotation-title',
-                            innerHTML: genInput[1]
-                        }, null, genInput[2]);
+                            className: PREFIX + 'annotation-title'
+                        }, void 0, genInput[2]).appendChild(doc.createTextNode(genInput[1]));
                     } else {
                         addInput.apply(genInput[0], genInput.splice(1));
                     }
@@ -446,20 +445,20 @@ H.Popup.prototype = {
                 var seriesOptions = serie.options;
                 if (serie.params ||
                     seriesOptions && seriesOptions.params) {
-                    var indicatorNameType = _self.indicators.getNameType(serie, value),
-                        indicatorType = indicatorNameType.type;
+                    var indicatorNameType_1 = _self.indicators.getNameType(serie, value),
+                        indicatorType_1 = indicatorNameType_1.type;
                     item = createElement(LI, {
-                        className: PREFIX + 'indicator-list',
-                        innerHTML: indicatorNameType.name
-                    }, null, indicatorList);
+                        className: PREFIX + 'indicator-list'
+                    }, void 0, indicatorList);
+                    item.appendChild(doc.createTextNode(indicatorNameType_1.name));
                     ['click', 'touchstart'].forEach(function (eventName) {
                         addEvent(item, eventName, function () {
-                            addFormFields.call(_self, chart, isEdit ? serie : series[indicatorType], indicatorNameType.type, rhsColWrapper);
+                            addFormFields.call(_self, chart, isEdit ? serie : series[indicatorType_1], indicatorNameType_1.type, rhsColWrapper);
                             // add hidden input with series.id
                             if (isEdit && serie.options) {
                                 createElement(INPUT, {
                                     type: 'hidden',
-                                    name: PREFIX + 'id-' + indicatorType,
+                                    name: PREFIX + 'id-' + indicatorType_1,
                                     value: serie.options.id
                                 }, null, rhsColWrapper)
                                     .setAttribute(PREFIX + 'data-series-id', serie.options.id);
@@ -515,9 +514,8 @@ H.Popup.prototype = {
         listAllSeries: function (type, optionName, chart, parentDiv, selectedOption) {
             var selectName = PREFIX + optionName + '-type-' + type, lang = this.lang, selectBox, seriesOptions;
             createElement(LABEL, {
-                innerHTML: lang[optionName] || optionName,
                 htmlFor: selectName
-            }, null, parentDiv);
+            }, null, parentDiv).appendChild(doc.createTextNode(lang[optionName] || optionName));
             // select type
             selectBox = createElement(SELECT, {
                 name: selectName,
@@ -531,9 +529,8 @@ H.Popup.prototype = {
                     seriesOptions.id &&
                     seriesOptions.id !== PREFIX + 'navigator-series') {
                     createElement(OPTION, {
-                        innerHTML: seriesOptions.name || seriesOptions.id,
                         value: seriesOptions.id
-                    }, null, selectBox);
+                    }, null, selectBox).appendChild(doc.createTextNode(seriesOptions.name || seriesOptions.id));
                 }
             });
             if (defined(selectedOption)) {
@@ -562,9 +559,8 @@ H.Popup.prototype = {
             rhsColWrapper.innerHTML = '';
             // create title (indicator name in the right column)
             createElement(H3, {
-                className: PREFIX + 'indicator-title',
-                innerHTML: getNameType(series, seriesType).name
-            }, null, rhsColWrapper);
+                className: PREFIX + 'indicator-title'
+            }, void 0, rhsColWrapper).appendChild(doc.createTextNode(getNameType(series, seriesType).name));
             // input type
             createElement(INPUT, {
                 type: 'hidden',
@@ -600,13 +596,15 @@ H.Popup.prototype = {
             objectEach(fields, function (value, fieldName) {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
-                if (isObject(value)) {
-                    addParamInputs.call(_self, chart, parentFullName, value, type, parentDiv);
-                } else if (
-                    // skip volume field which is created by addFormFields
-                    parentFullName !== 'params.volumeSeriesID') {
-                    addInput.call(_self, parentFullName, type, parentDiv, [value, 'text'] // all inputs are text type
-                    );
+                if (value !== void 0) { // skip if field is unnecessary, #15362
+                    if (isObject(value)) {
+                        addParamInputs.call(_self, chart, parentFullName, value, type, parentDiv);
+                    } else if (
+                        // skip volume field which is created by addFormFields
+                        parentFullName !== 'params.volumeSeriesID') {
+                        addInput.call(_self, parentFullName, type, parentDiv, [value, 'text'] // all inputs are text type
+                        );
+                    }
                 }
             });
         },
@@ -663,9 +661,9 @@ H.Popup.prototype = {
             }
             // tab 1
             menuItem = createElement(SPAN, {
-                innerHTML: lang[tabName + 'Button'] || tabName,
                 className: className
-            }, null, popupDiv);
+            }, void 0, popupDiv);
+            menuItem.appendChild(doc.createTextNode(lang[tabName + 'Button'] || tabName));
             menuItem.setAttribute(PREFIX + 'data-tab-type', tabName);
             return menuItem;
         },
@@ -677,7 +675,7 @@ H.Popup.prototype = {
         addContentItem: function () {
             var popupDiv = this.popup.container;
             return createElement(DIV, {
-                className: PREFIX + 'tab-item-content'
+                className: PREFIX + 'tab-item-content ' + PREFIX + 'no-mousewheel' // #12100
             }, null, popupDiv);
         },
         /**
@@ -736,7 +734,7 @@ addEvent(NavigationBindings, 'showPopup', function (config) {
         this.popup = new H.Popup(this.chart.container, (this.chart.options.navigation.iconsURL ||
             (this.chart.options.stockTools &&
                 this.chart.options.stockTools.gui.iconsURL) ||
-            'https://code.highcharts.com/9.0.0/gfx/stock-icons/'));
+            'https://code.highcharts.com/9.1.0/gfx/stock-icons/'), this.chart);
     }
     this.popup.showForm(config.formType, this.chart, config.options, config.onSubmit);
 });

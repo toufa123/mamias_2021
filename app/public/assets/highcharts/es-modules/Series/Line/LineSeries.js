@@ -25,7 +25,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -33,7 +32,6 @@ import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var defined = U.defined, merge = U.merge;
 /* *
  *
@@ -47,7 +45,6 @@ var defined = U.defined, merge = U.merge;
  */
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
-
     function LineSeries() {
         /* *
          *
@@ -65,7 +62,6 @@ var LineSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions

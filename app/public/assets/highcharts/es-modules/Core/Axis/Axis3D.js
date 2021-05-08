@@ -12,12 +12,10 @@
 'use strict';
 import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective, perspective3D = Math3D.perspective3D, shapeArea = Math3D.shapeArea;
 import Tick from './Tick.js';
 import Tick3D from './Tick3D.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, wrap = U.wrap;
 var deg2rad = H.deg2rad;
 /* eslint-disable valid-jsdoc */
@@ -38,7 +36,6 @@ var Axis3DAdditions = /** @class */ (function () {
     function Axis3DAdditions(axis) {
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -246,7 +243,6 @@ var Axis3DAdditions = /** @class */ (function () {
 var Axis3D = /** @class */ (function () {
     function Axis3D() {
     }
-
     /* *
      *
      *  Static Functions
@@ -441,13 +437,13 @@ var Axis3D = /** @class */ (function () {
             tick &&
             tick.label) {
             var firstGridLine = gridGroup.element.childNodes[0].getBBox(),
-                frame3DLeft = chart.frameShapes.left.getBBox(), options3d = chart.options.chart.options3d, origin = {
+                frame3DLeft = chart.frameShapes.left.getBBox(), options3d = chart.options.chart.options3d, origin_1 = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,
                     z: options3d.depth / 2,
                     vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
-                }, labelPos, prevLabelPos, nextLabelPos, slotWidth, tickId = tick.pos, prevTick = ticks[tickId - 1],
-                nextTick = ticks[tickId + 1];
+                }, labelPos = void 0, prevLabelPos = void 0, nextLabelPos = void 0, slotWidth = void 0, tickId = tick.pos,
+                prevTick = ticks[tickId - 1], nextTick = ticks[tickId + 1];
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
             if (tickId !== 0 && prevTick && prevTick.label && prevTick.label.xy) {
@@ -455,7 +451,7 @@ var Axis3D = /** @class */ (function () {
                     x: prevTick.label.xy.x,
                     y: prevTick.label.xy.y,
                     z: null
-                }, origin, origin.vd);
+                }, origin_1, origin_1.vd);
             }
             // If next label position is defined, then recalculate its position
             // basing on the perspective.
@@ -464,14 +460,14 @@ var Axis3D = /** @class */ (function () {
                     x: nextTick.label.xy.x,
                     y: nextTick.label.xy.y,
                     z: null
-                }, origin, origin.vd);
+                }, origin_1, origin_1.vd);
             }
             labelPos = {
                 x: tick.label.xy.x,
                 y: tick.label.xy.y,
                 z: null
             };
-            labelPos = perspective3D(labelPos, origin, origin.vd);
+            labelPos = perspective3D(labelPos, origin_1, origin_1.vd);
             // If tick is first one, check whether next label position is
             // already calculated, then return difference between the first and
             // the second label. If there is no next label position calculated,

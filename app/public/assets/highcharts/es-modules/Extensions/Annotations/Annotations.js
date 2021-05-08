@@ -9,10 +9,8 @@
  * */
 'use strict';
 import A from '../../Core/Animation/AnimationUtilities.js';
-
 var getDeferredAnimation = A.getDeferredAnimation;
 import Chart from '../../Core/Chart/Chart.js';
-
 var chartProto = Chart.prototype;
 import ControllableMixin from './Mixins/ControllableMixin.js';
 import ControllableRect from './Controllables/ControllableRect.js';
@@ -26,6 +24,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
 
 var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase,
     extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat,
@@ -183,7 +182,6 @@ var Annotation = /** @class */ (function () {
          */
         this.init(chart, this.options);
     }
-
     /**
      * Initialize the annotation.
      * @private
@@ -664,7 +662,7 @@ merge(true, Annotation.prototype, ControllableMixin, EventEmitterMixin,
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: 'black',
+                    borderColor: palette.neutralColor100,
                     /**
                      * The border radius in pixels for the annotaiton's label.
                      *
@@ -1082,9 +1080,9 @@ merge(true, Annotation.prototype, ControllableMixin, EventEmitterMixin,
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: 'black',
+                        stroke: palette.neutralColor100,
                         'stroke-width': 2,
-                        fill: 'white'
+                        fill: palette.backgroundColor
                     },
                     visible: false,
                     events: {}
@@ -1125,7 +1123,7 @@ merge(true, Annotation.prototype, ControllableMixin, EventEmitterMixin,
         }));
 H.extendAnnotation = function (Constructor, BaseConstructor, prototype, defaultOptions) {
     BaseConstructor = BaseConstructor || Annotation;
-    merge(true, Constructor.prototype, BaseConstructor.prototype, prototype);
+    extend(Constructor.prototype, merge(BaseConstructor.prototype, prototype));
     Constructor.prototype.defaultOptions = merge(Constructor.prototype.defaultOptions, defaultOptions || {});
 };
 /* *********************************************************************
@@ -1224,15 +1222,14 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
     addEvent(chart, 'exportData', function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
         var annotations = chart.annotations, csvColumnHeaderFormatter = ((this.options.exporting &&
             this.options.exporting.csv) ||
             {}).columnHeaderFormatter,
             // If second row doesn't have xValues
             // then it is a title row thus multiple level header is in use.
-            multiLevelHeaders = !event.dataRows[1].xValues,
-            annotationHeader = (_b = (_a = chart.options.lang) === null || _a === void 0 ? void 0 : _a.exportData) === null || _b === void 0 ? void 0 : _b.annotationHeader,
-            columnHeaderFormatter = function (index) {
+            multiLevelHeaders = !event.dataRows[1].xValues, annotationHeader = (chart.options.lang &&
+            chart.options.lang.exportData &&
+            chart.options.lang.exportData.annotationHeader), columnHeaderFormatter = function (index) {
                 var s;
                 if (csvColumnHeaderFormatter) {
                     s = csvColumnHeaderFormatter(index);
@@ -1248,9 +1245,13 @@ chartProto.callbacks.push(function (chart) {
                     };
                 }
                 return s;
-            }, startRowLength = event.dataRows[0].length,
-            annotationSeparator = (_e = (_d = (_c = chart.options.exporting) === null || _c === void 0 ? void 0 : _c.csv) === null || _d === void 0 ? void 0 : _d.annotations) === null || _e === void 0 ? void 0 : _e.itemDelimiter,
-            joinAnnotations = (_h = (_g = (_f = chart.options.exporting) === null || _f === void 0 ? void 0 : _f.csv) === null || _g === void 0 ? void 0 : _g.annotations) === null || _h === void 0 ? void 0 : _h.join;
+            }, startRowLength = event.dataRows[0].length, annotationSeparator = (chart.options.exporting &&
+            chart.options.exporting.csv &&
+            chart.options.exporting.csv.annotations &&
+            chart.options.exporting.csv.annotations.itemDelimiter), joinAnnotations = (chart.options.exporting &&
+            chart.options.exporting.csv &&
+            chart.options.exporting.csv.annotations &&
+            chart.options.exporting.csv.annotations.join);
         annotations.forEach(function (annotation) {
             if (annotation.options.labelOptions.includeInDataExport) {
                 annotation.labels.forEach(function (label) {

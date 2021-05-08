@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Support for parallel coordinates in Highcharts
  *
- * (c) 2010-2019 Pawel Fus
+ * (c) 2010-2021 Pawel Fus
  *
  * License: www.highcharts.com/license
  */
@@ -23,14 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/ParallelCoordinates.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (Axis, Chart, H, Series, U) {
+    _registerModule(_modules, 'Extensions/ParallelCoordinates.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/FormatUtilities.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (Axis, Chart, F, H, O, Series, U) {
         /* *
          *
          *  Parallel coordinates module
@@ -42,16 +41,16 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var format = F.format;
+        var setOptions = O.setOptions;
         var addEvent = U.addEvent,
             arrayMax = U.arrayMax,
             arrayMin = U.arrayMin,
             defined = U.defined,
             erase = U.erase,
             extend = U.extend,
-            format = U.format,
             merge = U.merge,
             pick = U.pick,
-            setOptions = U.setOptions,
             splat = U.splat,
             wrap = U.wrap;
         // Extensions for parallel coordinates plot.
@@ -277,13 +276,13 @@
         // calculate extremes.
         addEvent(Series, 'bindAxes', function (e) {
             if (this.chart.hasParallelCoordinates) {
-                var series = this;
+                var series_1 = this;
                 this.chart.axes.forEach(function (axis) {
-                    series.insert(axis.series);
+                    series_1.insert(axis.series);
                     axis.isDirty = true;
                 });
-                series.xAxis = this.chart.xAxis[0];
-                series.yAxis = this.chart.yAxis[0];
+                series_1.xAxis = this.chart.xAxis[0];
+                series_1.yAxis = this.chart.yAxis[0];
                 e.preventDefault();
             }
         });
@@ -317,7 +316,7 @@
                             closestPointRangePx = Math.min(closestPointRangePx, Math.abs(point.plotX - lastPlotX));
                         }
                         lastPlotX = point.plotX;
-                        point.isInside = chart.isInsidePlot(point.plotX, point.plotY, chart.inverted);
+                        point.isInside = chart.isInsidePlot(point.plotX, point.plotY, {inverted: chart.inverted});
                     } else {
                         point.isNull = true;
                     }
@@ -336,7 +335,6 @@
                 }, this);
             }
         });
-
         /**
          * @private
          */
@@ -396,7 +394,6 @@
             }
             return config;
         }
-
         ['line', 'spline'].forEach(function (seriesName) {
             wrap(H.seriesTypes[seriesName].prototype.pointClass.prototype, 'getLabelConfig', addFormattedValue);
         });
@@ -468,9 +465,7 @@
                 addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
                 addEvent(AxisClass, 'getSeriesExtremes', onGetSeriesExtremes);
             }
-
             ParallelAxis.compose = compose;
-
             /**
              * Update default options with predefined for a parallel coords.
              * @private
@@ -496,7 +491,6 @@
                     }
                 }
             }
-
             /**
              * Each axis should gather extremes from points on a particular position in
              * series.data. Not like the default one, which gathers extremes from all
@@ -512,21 +506,20 @@
                     return;
                 }
                 if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-                    var index = parallelCoordinates.position,
-                        currentPoints = [];
+                    var index_1 = parallelCoordinates.position,
+                        currentPoints_1 = [];
                     axis.series.forEach(function (series) {
                         if (series.visible &&
-                            defined(series.yData[index])) {
+                            defined(series.yData[index_1])) {
                             // We need to use push() beacause of null points
-                            currentPoints.push(series.yData[index]);
+                            currentPoints_1.push(series.yData[index_1]);
                         }
                     });
-                    axis.dataMin = arrayMin(currentPoints);
-                    axis.dataMax = arrayMax(currentPoints);
+                    axis.dataMin = arrayMin(currentPoints_1);
+                    axis.dataMax = arrayMax(currentPoints_1);
                     e.preventDefault();
                 }
             }
-
             /**
              * Add parallel addition
              * @private

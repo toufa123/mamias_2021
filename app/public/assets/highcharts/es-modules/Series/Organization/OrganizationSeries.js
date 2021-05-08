@@ -27,17 +27,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var SankeySeries = SeriesRegistry.seriesTypes.sankey;
 import U from '../../Core/Utilities.js';
-
 var css = U.css, extend = U.extend, merge = U.merge, pick = U.pick, wrap = U.wrap;
 /* *
  *
@@ -53,7 +50,6 @@ var css = U.css, extend = U.extend, merge = U.merge, pick = U.pick, wrap = U.wra
  */
 var OrganizationSeries = /** @class */ (function (_super) {
     __extends(OrganizationSeries, _super);
-
     function OrganizationSeries() {
         /* *
          *
@@ -73,7 +69,6 @@ var OrganizationSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Static Functions
@@ -142,20 +137,21 @@ var OrganizationSeries = /** @class */ (function (_super) {
     OrganizationSeries.prototype.alignDataLabel = function (point, dataLabel, options) {
         // Align the data label to the point graphic
         if (options.useHTML) {
-            var width = point.shapeArgs.width, height = point.shapeArgs.height, padjust = (this.options.borderWidth +
-                2 * this.options.dataLabels.padding);
+            var width_1 = point.shapeArgs.width, height_1 = point.shapeArgs.height,
+                padjust = (this.options.borderWidth +
+                    2 * this.options.dataLabels.padding);
             if (this.chart.inverted) {
-                width = height;
-                height = point.shapeArgs.width;
+                width_1 = height_1;
+                height_1 = point.shapeArgs.width;
             }
-            height -= padjust;
-            width -= padjust;
+            height_1 -= padjust;
+            width_1 -= padjust;
             // Set the size of the surrounding div emulating `g`
             var text = dataLabel.text;
             if (text) {
                 css(text.element.parentNode, {
-                    width: width + 'px',
-                    height: height + 'px'
+                    width: width_1 + 'px',
+                    height: height_1 + 'px'
                 });
                 // Set properties for the span emulating `text`
                 css(text.element, {
@@ -170,13 +166,13 @@ var OrganizationSeries = /** @class */ (function (_super) {
             // inside the box
             dataLabel.getBBox = function () {
                 return {
-                    width: width,
-                    height: height
+                    width: width_1,
+                    height: height_1
                 };
             };
             // Overwrite dataLabel dimensions (#13100).
-            dataLabel.width = width;
-            dataLabel.height = height;
+            dataLabel.width = width_1;
+            dataLabel.height = height_1;
         }
         _super.prototype.alignDataLabel.apply(this, arguments);
     };
@@ -383,7 +379,6 @@ var OrganizationSeries = /** @class */ (function (_super) {
                     opacity: 0.75,
                     margin: '5px'
                 };
-
                 // eslint-disable-next-line valid-jsdoc
                 /**
                  * @private
@@ -393,7 +388,6 @@ var OrganizationSeries = /** @class */ (function (_super) {
                         return str + key + ':' + style[key] + ';';
                     }, 'style="') + '"';
                 }
-
                 if (this.point.image) {
                     imageStyle['max-width'] = '30%';
                     innerStyle.width = '70%';

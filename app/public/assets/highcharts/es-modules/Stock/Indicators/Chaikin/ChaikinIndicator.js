@@ -23,7 +23,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -32,7 +31,6 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import '../AD/ADIndicator.js'; // For historic reasons, AD i built into Chaikin
 var _a = SeriesRegistry.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
 /* *
  *
@@ -50,7 +48,6 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U
  */
 var ChaikinIndicator = /** @class */ (function (_super) {
     __extends(ChaikinIndicator, _super);
-
     function ChaikinIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -63,7 +60,6 @@ var ChaikinIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -73,7 +69,7 @@ var ChaikinIndicator = /** @class */ (function (_super) {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
-
+            return;
         });
     };
     ChaikinIndicator.prototype.getValues = function (series, params) {
@@ -148,15 +144,22 @@ var ChaikinIndicator = /** @class */ (function (_super) {
          * Paramters used in calculation of Chaikin Oscillator
          * series points.
          *
-         * @excluding index, period
+         * @excluding index
          */
         params: {
+            index: void 0,
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
              */
             volumeSeriesID: 'volume',
+            /**
+             * Parameter used indirectly for calculating the `AD` indicator.
+             * Decides about the number of data points that are taken
+             * into account for the indicator calculations.
+             */
+            period: 9,
             /**
              * Periods for Chaikin Oscillator calculations.
              *

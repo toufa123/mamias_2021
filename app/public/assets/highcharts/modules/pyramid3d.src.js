@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.1.0 (2021-05-03)
  *
  * Highcharts 3D funnel module
  *
- * (c) 2010-2019 Kacper Madej
+ * (c) 2010-2021 Kacper Madej
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/Pyramid3D/Pyramid3DSeries.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -86,7 +84,6 @@
          */
         var Pyramid3DSeries = /** @class */ (function (_super) {
             __extends(Pyramid3DSeries, _super);
-
             function Pyramid3DSeries() {
                 /* *
                  *
@@ -105,7 +102,6 @@
                 _this.points = void 0;
                 return _this;
             }
-
             /**
              * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
              * a type of chart often used to visualize stages in a sales project,
