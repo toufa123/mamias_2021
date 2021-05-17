@@ -30,12 +30,20 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @final since sonata-project/admin-bundle 3.52
  *
+ * NEXT_MAJOR: Remove the "since" part of the internal annotation.
+ *
+ * @internal since sonata-project/admin-bundle version 4.0
+ *
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
  */
 class AddDependencyCallsCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        if (!$container->has('sonata.admin.pool')) {
+            return;
+        }
+
         // check if translator service exist
         if (!$container->has('translator')) {
             throw new \RuntimeException('The "translator" service is not yet enabled.
@@ -238,9 +246,6 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
         $pool->replaceArgument(1, $admins);
         $pool->replaceArgument(2, $groups);
         $pool->replaceArgument(3, $classes);
-
-        $routeLoader = $container->getDefinition('sonata.admin.route_loader');
-        $routeLoader->replaceArgument(1, $admins);
     }
 
     /**
@@ -260,7 +265,7 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
             'datagrid_builder',
             'translator',
             'configuration_pool',
-            'router',
+            'route_generator',
             'validator', // NEXT_MAJOR: Remove this line
             'security_handler',
             'menu_factory',
@@ -291,13 +296,16 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
     public function applyDefaults(ContainerBuilder $container, $serviceId, array $attributes = [])
     {
         $definition = $container->getDefinition($serviceId);
+        // NEXT_MAJOR: Remove this line.
         $settings = $container->getParameter('sonata.admin.configuration.admin_services');
 
         $definition->setShared(false);
 
         $managerType = $attributes['manager_type'];
 
-        $overwriteAdminConfiguration = $settings[$serviceId] ?? [];
+        // NEXT_MAJOR: Remove this line and uncomment the following
+        $overwriteAdminConfiguration = $settings[$serviceId] ?? $container->getParameter('sonata.admin.configuration.default_admin_services');
+//        $overwriteAdminConfiguration = $container->getParameter('sonata.admin.configuration.default_admin_services');
 
         $defaultAddServices = [
             'model_manager' => sprintf('sonata.admin.manager.%s', $managerType),
@@ -333,7 +341,7 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
 
             $method = $this->generateSetterMethodName($attr);
 
-            if (isset($overwriteAdminConfiguration[$attr]) || !$definition->hasMethodCall($method)) {
+            if (!$definition->hasMethodCall($method)) {
                 $args = [new Reference($overwriteAdminConfiguration[$attr] ?? $addServiceId)];
                 if ('translator' === $attr) {
                     $args[] = false;
@@ -363,7 +371,12 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
         $showMosaicButton = $overwriteAdminConfiguration['show_mosaic_button']
             ?? $attributes['show_mosaic_button']
             ?? $container->getParameter('sonata.admin.configuration.show.mosaic.button');
-        $definition->addMethodCall('showMosaicButton', [$showMosaicButton]);
+
+        $listModes = TaggedAdminInterface::DEFAULT_LIST_MODES;
+        if (!$showMosaicButton) {
+            unset($listModes['mosaic']);
+        }
+        $definition->addMethodCall('setListModes', [$listModes]);
 
         $this->fixTemplates(
             $serviceId,
@@ -376,7 +389,21 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
             $definition->addMethodCall('setSecurityInformation', ['%sonata.admin.configuration.security.information%']);
         }
 
-        $definition->addMethodCall('initialize');
+        $defaultTemplates = $container->getParameter('sonata.admin.configuration.templates');
+        \assert(\is_array($defaultTemplates));
+
+        if (!$definition->hasMethodCall('setFormTheme')) {
+            // NEXT_MAJOR: Remove this line and uncomment the following one.
+            $formTheme = $overwriteAdminConfiguration['templates']['form'] ?? $defaultTemplates['form_theme'] ?? [];
+//            $formTheme = $defaultTemplates['form_theme'] ?? [];
+            $definition->addMethodCall('setFormTheme', [$formTheme]);
+        }
+        if (!$definition->hasMethodCall('setFilterTheme')) {
+            // NEXT_MAJOR: Remove this line and uncomment the following one.
+            $filterTheme = $overwriteAdminConfiguration['templates']['filter'] ?? $defaultTemplates['filter_theme'] ?? [];
+//            $filterTheme = $defaultTemplates['filter_theme'] ?? [];
+            $definition->addMethodCall('setFilterTheme', [$filterTheme]);
+        }
 
         return $definition;
     }

@@ -38,7 +38,7 @@ services:
       dockerfile: Postgres.Dockerfile
     #    dockerfile: Postgres-9.5.Dockerfile
     ports:
-      - 25432:5432
+      - 85432:5432
     volumes:
       #  - solr:/opt/solr/server/solr/data
       - ${name}_data:/var/lib/postgresql/data

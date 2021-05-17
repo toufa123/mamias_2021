@@ -11,7 +11,9 @@
 
 namespace Symfony\Component\Security\Acl\Tests\Dbal;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Acl\Dbal\AclProvider;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Dbal\Schema;
@@ -30,9 +32,9 @@ use Symfony\Component\Security\Acl\Model\FieldEntryInterface;
 /**
  * @requires extension pdo_sqlite
  */
-class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
+class MutableAclProviderTest extends TestCase
 {
-    protected $con;
+    protected $connection;
 
     public static function assertAceEquals(EntryInterface $a, EntryInterface $b)
     {
@@ -103,11 +105,10 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
         $provider->updateAcl($acl);
         $provider->deleteAcl($parentAcl->getObjectIdentity());
 
-        try {
-            $provider->findAcl(new ObjectIdentity(1, 'Foo'));
-            $this->fail('Child-ACLs have not been deleted.');
-        } catch (AclNotFoundException $e) {
-        }
+        $this->expectException(AclNotFoundException::class);
+        $this->expectExceptionMessage('There is no ACL for the given object identity.');
+
+        $provider->findAcl(new ObjectIdentity(1, 'Foo'));
     }
 
     public function testFindAclsAddsPropertyListener()
@@ -252,7 +253,8 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateDoesNothingWhenThereAreNoChanges()
     {
-        $con = $this->getMock('Doctrine\DBAL\Connection', [], [], '', false);
+        $con = $this->createMock(Connection::class);
+
         $con
             ->expects($this->never())
             ->method('beginTransaction')
@@ -287,11 +289,11 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
 
         $acl1->insertClassAce($sid, 3);
         $acl2->insertClassAce($sid, 5);
-        try {
-            $provider->updateAcl($acl1);
-            $this->fail('Provider failed to detect a concurrent modification.');
-        } catch (ConcurrentModificationException $e) {
-        }
+
+        $this->expectException(ConcurrentModificationException::class);
+        $this->expectExceptionMessage('The "classAces" property has been modified concurrently.');
+
+        $provider->updateAcl($acl1);
     }
 
     public function testUpdateAcl()
@@ -382,6 +384,9 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
         $acl = $provider->findAcl($oid);
         $acl->insertObjectFieldAce($fieldName, $sid3, 4);
         $provider->updateAcl($acl);
+
+        $acls = $provider->findAcl($oid);
+        $this->assertCount(3, $acls->getObjectFieldAces($fieldName));
     }
 
     public function testUpdateAclDeletingObjectFieldAcesThrowsDBConstraintViolations()
@@ -408,6 +413,9 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
         $acl = $provider->findAcl($oid);
         $acl->insertObjectFieldAce($fieldName, $sid3, 4);
         $provider->updateAcl($acl);
+
+        $acls = $provider->findAcl($oid);
+        $this->assertCount(2, $acls->getObjectFieldAces($fieldName));
     }
 
     public function testUpdateUserSecurityIdentity()
@@ -471,12 +479,12 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
                 $aclIds[$name] = $aclId;
 
                 $sql = $this->callMethod($provider, 'getInsertObjectIdentityRelationSql', [$aclId, $aclId]);
-                $con->executeUpdate($sql);
+                $con->executeStatement($sql);
 
                 if (isset($aclData['parent_acl'])) {
                     if (isset($aclIds[$aclData['parent_acl']])) {
-                        $con->executeUpdate('UPDATE acl_object_identities SET parent_object_identity_id = '.$aclIds[$aclData['parent_acl']].' WHERE id = '.$aclId);
-                        $con->executeUpdate($this->callMethod($provider, 'getInsertObjectIdentityRelationSql', [$aclId, $aclIds[$aclData['parent_acl']]]));
+                        $con->executeStatement('UPDATE acl_object_identities SET parent_object_identity_id = '.$aclIds[$aclData['parent_acl']].' WHERE id = '.$aclId);
+                        $con->executeStatement($this->callMethod($provider, 'getInsertObjectIdentityRelationSql', [$aclId, $aclIds[$aclData['parent_acl']]]));
                     } else {
                         $parentAcls[$aclId] = $aclData['parent_acl'];
                     }
@@ -488,8 +496,8 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
                     throw new \InvalidArgumentException(sprintf('"%s" does not exist.', $name));
                 }
 
-                $con->executeUpdate(sprintf('UPDATE acl_object_identities SET parent_object_identity_id = %d WHERE id = %d', $aclIds[$name], $aclId));
-                $con->executeUpdate($this->callMethod($provider, 'getInsertObjectIdentityRelationSql', [$aclId, $aclIds[$name]]));
+                $con->executeStatement(sprintf('UPDATE acl_object_identities SET parent_object_identity_id = %d WHERE id = %d', $aclIds[$name], $aclId));
+                $con->executeStatement($this->callMethod($provider, 'getInsertObjectIdentityRelationSql', [$aclId, $aclIds[$name]]));
             }
 
             $con->commit();
@@ -510,21 +518,21 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->con = DriverManager::getConnection([
+        $this->connection = DriverManager::getConnection([
             'driver' => 'pdo_sqlite',
             'memory' => true,
         ]);
 
         // import the schema
         $schema = new Schema($this->getOptions());
-        foreach ($schema->toSql($this->con->getDatabasePlatform()) as $sql) {
-            $this->con->exec($sql);
+        foreach ($schema->toSql($this->connection->getDatabasePlatform()) as $sql) {
+            $this->connection->executeStatement($sql);
         }
     }
 
     protected function tearDown(): void
     {
-        $this->con = null;
+        $this->connection = null;
     }
 
     protected function getField($object, $field)
@@ -561,6 +569,6 @@ class MutableAclProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function getProvider($cache = null)
     {
-        return new MutableAclProvider($this->con, $this->getStrategy(), $this->getOptions(), $cache);
+        return new MutableAclProvider($this->connection, $this->getStrategy(), $this->getOptions(), $cache);
     }
 }

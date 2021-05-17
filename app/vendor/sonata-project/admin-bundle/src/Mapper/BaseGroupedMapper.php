@@ -16,11 +16,13 @@ namespace Sonata\AdminBundle\Mapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 
 /**
+ * NEXT_MAJOR: Stop extending BaseMapper.
+ *
  * This class is used to simulate the Form API.
  *
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
  */
-abstract class BaseGroupedMapper extends BaseMapper
+abstract class BaseGroupedMapper extends BaseMapper implements MapperInterface
 {
     /**
      * @var string|null
@@ -38,6 +40,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     protected $apply = [];
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Add new group or tab (if parameter "tab=true" is available in options).
      *
      * @param string               $name
@@ -78,7 +82,7 @@ abstract class BaseGroupedMapper extends BaseMapper
             'class' => false,
             'description' => false,
             'label' => $name, // NEXT_MAJOR: Remove this line and uncomment the next one
-//            'label' => $this->admin->getLabelTranslatorStrategy()->getLabel($name, $this->getName(), 'group'),
+//            'label' => $this->getAdmin()->getLabelTranslatorStrategy()->getLabel($name, $this->getName(), 'group'),
             'translation_domain' => null,
             'name' => $name,
             'box_class' => 'box box-primary',
@@ -173,6 +177,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Only nested add if the condition match true.
      *
      * @param bool $bool
@@ -187,6 +193,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Only nested add if the condition match false.
      *
      * @param bool $bool
@@ -201,6 +209,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * @throws \LogicException
      *
      * @return static
@@ -217,6 +227,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Add new tab.
      *
      * @param string               $name
@@ -230,6 +242,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Close the current group or tab.
      *
      * @throws \LogicException
@@ -254,6 +268,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Returns a boolean indicating if there is an open tab at the moment.
      *
      * @return bool
@@ -264,6 +280,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Removes a group.
      *
      * @param string $group          The group to delete
@@ -305,6 +323,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Removes a tab.
      *
      * @return static
@@ -368,6 +388,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Add the field name to the current group.
      *
      * @param string $fieldName
@@ -387,6 +409,8 @@ abstract class BaseGroupedMapper extends BaseMapper
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * Return the name of the currently selected group. The method also makes
      * sure a valid group name is currently selected.
      *
@@ -398,14 +422,14 @@ abstract class BaseGroupedMapper extends BaseMapper
     protected function getCurrentGroupName()
     {
         if (!$this->currentGroup) {
-            $label = $this->admin->getLabel();
+            $label = $this->getAdmin()->getLabel();
 
             if (null === $label) {
                 $this->with('default', ['auto_created' => true]);
             } else {
                 $this->with($label, [
                     'auto_created' => true,
-                    'translation_domain' => $this->admin->getTranslationDomain(),
+                    'translation_domain' => $this->getAdmin()->getTranslationDomain(),
                 ]);
             }
         }

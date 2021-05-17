@@ -28,17 +28,25 @@ abstract class AbstractTemplateRegistry implements TemplateRegistryInterface
         $this->templates = $templates;
     }
 
+    /**
+     * @final since sonata-project/admin-bundle 3.99.
+     */
     public function getTemplates(): array
     {
         return $this->templates;
     }
 
+    /**
+     * @final since sonata-project/admin-bundle 3.99.
+     */
     public function hasTemplate(string $name): bool
     {
         return isset($this->templates[$name]);
     }
 
     /**
+     * @final since sonata-project/admin-bundle 3.99.
+     *
      * NEXT_MAJOR: add type hint.
      *
      * @param string $name

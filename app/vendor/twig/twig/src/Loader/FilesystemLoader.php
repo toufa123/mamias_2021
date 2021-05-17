@@ -22,7 +22,7 @@ use Twig\Source;
 class FilesystemLoader implements LoaderInterface, ExistsLoaderInterface, SourceContextLoaderInterface
 {
     /** Identifier of the main namespace. */
-    const MAIN_NAMESPACE = '__main__';
+    public const MAIN_NAMESPACE = '__main__';
 
     protected $paths = [];
     protected $cache = [];
@@ -37,7 +37,7 @@ class FilesystemLoader implements LoaderInterface, ExistsLoaderInterface, Source
     public function __construct($paths = [], string $rootPath = null)
     {
         $this->rootPath = (null === $rootPath ? getcwd() : $rootPath).\DIRECTORY_SEPARATOR;
-        if (false !== $realPath = realpath($rootPath)) {
+        if (null !== $rootPath && false !== ($realPath = realpath($rootPath))) {
             $this->rootPath = $realPath.\DIRECTORY_SEPARATOR;
         }
 
@@ -252,7 +252,7 @@ class FilesystemLoader implements LoaderInterface, ExistsLoaderInterface, Source
 
     private function normalizeName($name)
     {
-        return preg_replace('#/{2,}#', '/', str_replace('\\', '/', $name));
+        return preg_replace('#/{2,}#', '/', str_replace('\\', '/', (string) $name));
     }
 
     private function parseName($name, $default = self::MAIN_NAMESPACE)
@@ -275,6 +275,10 @@ class FilesystemLoader implements LoaderInterface, ExistsLoaderInterface, Source
     {
         if (false !== strpos($name, "\0")) {
             throw new LoaderError('A template name cannot contain NUL bytes.');
+        }
+
+        if ($this->isAbsolutePath($name)) {
+            throw new LoaderError(sprintf('A template name cannot be an absolute path (%s).', $name));
         }
 
         $name = ltrim($name, '/');
@@ -300,7 +304,7 @@ class FilesystemLoader implements LoaderInterface, ExistsLoaderInterface, Source
                 && ':' === $file[1]
                 && strspn($file, '/\\', 2, 1)
             )
-            || null !== parse_url($file, PHP_URL_SCHEME)
+            || null !== parse_url($file, \PHP_URL_SCHEME)
         ;
     }
 }

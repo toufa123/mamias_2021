@@ -34,6 +34,16 @@ html {
     min-height: 100%;
 }
 
+.customTooltip * {
+    font-size: 14px;
+    font-family: Roboto;
+}
+
+.customTooltip .introjs-tooltip-title {
+    color: #00aeef;
+
+}
+
 .h1,
 .h2,
 .h3,
@@ -47,7 +57,7 @@ h4,
 h5,
 h6 {
     color: #505458;
-    font-family: 'Hind Madurai', sans-serif;
+    font-family: 'Medium', sans-serif;
     margin: 10px 0;
 }
 

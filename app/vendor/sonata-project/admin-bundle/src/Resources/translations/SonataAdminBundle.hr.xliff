@@ -466,6 +466,10 @@
                 <source>stats_view_more</source>
                 <target>Vidi više</target>
             </trans-unit>
+            <trans-unit id="preview_view_more">
+                <source>preview_view_more</source>
+                <target>Vidi više</target>
+            </trans-unit>
             <trans-unit id="title_select_subclass">
                 <source>title_select_subclass</source>
                 <target>Odaberite vrstu objekta</target>
@@ -498,8 +502,8 @@
                 <source>label_type_ends_with</source>
                 <target>završava sa</target>
             </trans-unit>
-            <trans-unit id="go_to_first_page">
-                <source>go_to_first_page</source>
+            <trans-unit id="go_to_the_first_page">
+                <source>go_to_the_first_page</source>
                 <target>Idite na prvu stranicu</target>
             </trans-unit>
         </body>

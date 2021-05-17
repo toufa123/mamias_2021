@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\Datagrid;
 
-use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
-use Sonata\AdminBundle\Admin\FieldDescriptionInterface;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionCollection;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Filter\FilterInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -23,16 +23,27 @@ use Symfony\Component\Form\FormInterface;
  *
  * @method array getSortParameters(FieldDescriptionInterface $fieldDescription)
  * @method array getPaginationParameters(int $page)
+ *
+ * @phpstan-template T of ProxyQueryInterface
  */
 interface DatagridInterface
 {
+    public const SORT_ORDER = '_sort_order';
+    public const SORT_BY = '_sort_by';
+    public const PAGE = '_page';
+    public const PER_PAGE = '_per_page';
+
     /**
      * @return PagerInterface
+     *
+     * @phpstan-return PagerInterface<T>
      */
     public function getPager();
 
     /**
      * @return ProxyQueryInterface
+     *
+     * @phpstan-return T
      */
     public function getQuery();
 
@@ -116,3 +127,6 @@ interface DatagridInterface
      * public function getPaginationParameters(int $page): array;
      */
 }
+
+// NEXT_MAJOR: Remove next line.
+interface_exists(FieldDescriptionInterface::class);

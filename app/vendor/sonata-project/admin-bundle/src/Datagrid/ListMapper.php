@@ -14,20 +14,30 @@ declare(strict_types=1);
 namespace Sonata\AdminBundle\Datagrid;
 
 use Sonata\AdminBundle\Admin\AdminInterface;
-use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
-use Sonata\AdminBundle\Admin\FieldDescriptionInterface;
 use Sonata\AdminBundle\Builder\ListBuilderInterface;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionCollection;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Mapper\BaseMapper;
+use Sonata\AdminBundle\Mapper\MapperInterface;
 
 /**
+ * NEXT_MAJOR: Stop extending BaseMapper.
+ *
  * This class is used to simulate the Form API.
  *
  * @final since sonata-project/admin-bundle 3.52
  *
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
  */
-class ListMapper extends BaseMapper
+class ListMapper extends BaseMapper implements MapperInterface
 {
+    // NEXT_MAJOR: Change for '_actions' and add an UPGRADE NOTE.
+    public const NAME_ACTIONS = '_action';
+    // NEXT_MAJOR: Change for '_batch' and add an UPGRADE NOTE.
+    public const NAME_BATCH = 'batch';
+    // NEXT_MAJOR: Change for '_select' and add an UPGRADE NOTE.
+    public const NAME_SELECT = 'select';
+
     public const TYPE_ACTIONS = 'actions';
     public const TYPE_BATCH = 'batch';
     public const TYPE_SELECT = 'select';
@@ -42,13 +52,26 @@ class ListMapper extends BaseMapper
      */
     protected $builder;
 
+    /**
+     * NEXT_MAJOR: Make the property private.
+     *
+     * @var AdminInterface
+     */
+    protected $admin;
+
     public function __construct(
         ListBuilderInterface $listBuilder,
         FieldDescriptionCollection $list,
         AdminInterface $admin
     ) {
-        parent::__construct($listBuilder, $admin);
+        $this->admin = $admin;
+        $this->builder = $listBuilder;
         $this->list = $list;
+    }
+
+    public function getAdmin()
+    {
+        return $this->admin;
     }
 
     /**
@@ -62,7 +85,7 @@ class ListMapper extends BaseMapper
         $fieldDescriptionOptions['identifier'] = true;
 
         if (!isset($fieldDescriptionOptions['route']['name'])) {
-            $routeName = ($this->admin->hasAccess('edit') && $this->admin->hasRoute('edit')) ? 'edit' : 'show';
+            $routeName = ($this->getAdmin()->hasAccess('edit') && $this->getAdmin()->hasRoute('edit')) ? 'edit' : 'show';
             $fieldDescriptionOptions['route']['name'] = $routeName;
         }
 
@@ -101,12 +124,12 @@ class ListMapper extends BaseMapper
         }
 
         // Type-guess the action field here because it is not a model property.
-        if ('_action' === $name && null === $type) {
+        if (self::NAME_ACTIONS === $name && null === $type) {
             $type = self::TYPE_ACTIONS;
         }
 
         // Change deprecated inline action "view" to "show"
-        if ('_action' === $name && self::TYPE_ACTIONS === $type) {
+        if (self::NAME_ACTIONS === $name && self::TYPE_ACTIONS === $type) {
             if (isset($fieldDescriptionOptions['actions']['view'])) {
                 @trigger_error(
                     'Inline action "view" is deprecated since version 2.2.4 and will be removed in 4.0. Use inline action "show" instead.',
@@ -137,7 +160,7 @@ class ListMapper extends BaseMapper
             $fieldDescription = $name;
             $fieldDescription->mergeOptions($fieldDescriptionOptions);
         } elseif (\is_string($name)) {
-            if ($this->admin->hasListFieldDescription($name)) {
+            if ($this->getAdmin()->hasListFieldDescription($name)) {
                 throw new \LogicException(sprintf(
                     'Duplicate field name "%s" in list mapper. Names should be unique.',
                     $name
@@ -145,14 +168,14 @@ class ListMapper extends BaseMapper
             }
 
             // NEXT_MAJOR: Remove the check and use `createFieldDescription`.
-            if (method_exists($this->admin, 'createFieldDescription')) {
-                $fieldDescription = $this->admin->createFieldDescription(
+            if (method_exists($this->getAdmin(), 'createFieldDescription')) {
+                $fieldDescription = $this->getAdmin()->createFieldDescription(
                     $name,
                     $fieldDescriptionOptions
                 );
             } else {
-                $fieldDescription = $this->admin->getModelManager()->getNewFieldDescriptionInstance(
-                    $this->admin->getClass(),
+                $fieldDescription = $this->getAdmin()->getModelManager()->getNewFieldDescriptionInstance(
+                    $this->getAdmin()->getClass(),
                     $name,
                     $fieldDescriptionOptions
                 );
@@ -168,7 +191,7 @@ class ListMapper extends BaseMapper
         if (null === $fieldDescription->getLabel('sonata_deprecation_mute')) {
             $fieldDescription->setOption(
                 'label',
-                $this->admin->getLabelTranslatorStrategy()->getLabel($fieldDescription->getName(), 'list', 'label')
+                $this->getAdmin()->getLabelTranslatorStrategy()->getLabel($fieldDescription->getName(), 'list', 'label')
             );
         }
 
@@ -179,9 +202,9 @@ class ListMapper extends BaseMapper
             );
         }
 
-        if (!isset($fieldDescriptionOptions['role']) || $this->admin->isGranted($fieldDescriptionOptions['role'])) {
+        if (!isset($fieldDescriptionOptions['role']) || $this->getAdmin()->isGranted($fieldDescriptionOptions['role'])) {
             // add the field with the FormBuilder
-            $this->builder->addField($this->list, $type, $fieldDescription, $this->admin);
+            $this->builder->addField($this->list, $type, $fieldDescription, $this->getAdmin());
 
             // Ensure batch and action pseudo-fields are tagged as virtual
             if (\in_array($fieldDescription->getType(), [self::TYPE_ACTIONS, self::TYPE_BATCH, self::TYPE_SELECT], true)) {
@@ -204,7 +227,7 @@ class ListMapper extends BaseMapper
 
     public function remove($key)
     {
-        $this->admin->removeListFieldDescription($key);
+        $this->getAdmin()->removeListFieldDescription($key);
         $this->list->remove($key);
 
         return $this;
@@ -222,3 +245,6 @@ class ListMapper extends BaseMapper
         return $this;
     }
 }
+
+// NEXT_MAJOR: Remove next line.
+interface_exists(FieldDescriptionInterface::class);

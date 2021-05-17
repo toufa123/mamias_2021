@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\Datagrid;
 
-use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
-use Sonata\AdminBundle\Admin\FieldDescriptionInterface;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionCollection;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Filter\FilterInterface;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -27,6 +27,9 @@ use Symfony\Component\Form\FormInterface;
  * @final since sonata-project/admin-bundle 3.52
  *
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
+ *
+ * @phpstan-template T of ProxyQueryInterface
+ * @phpstan-implements DatagridInterface<T>
  */
 class Datagrid implements DatagridInterface
 {
@@ -49,6 +52,7 @@ class Datagrid implements DatagridInterface
 
     /**
      * @var PagerInterface
+     * @phpstan-var PagerInterface<T>
      */
     protected $pager;
 
@@ -59,6 +63,7 @@ class Datagrid implements DatagridInterface
 
     /**
      * @var ProxyQueryInterface
+     * @phpstan-var T
      */
     protected $query;
 
@@ -77,6 +82,10 @@ class Datagrid implements DatagridInterface
      */
     protected $results;
 
+    /**
+     * @phpstan-param T                 $query
+     * @phpstan-param PagerInterface<T> $pager
+     */
     public function __construct(
         ProxyQueryInterface $query,
         FieldDescriptionCollection $columns,
@@ -131,8 +140,8 @@ class Datagrid implements DatagridInterface
 
         $hiddenType = HiddenType::class;
 
-        $this->formBuilder->add('_sort_by', $hiddenType);
-        $this->formBuilder->get('_sort_by')->addViewTransformer(new CallbackTransformer(
+        $this->formBuilder->add(DatagridInterface::SORT_BY, $hiddenType);
+        $this->formBuilder->get(DatagridInterface::SORT_BY)->addViewTransformer(new CallbackTransformer(
             static function ($value) {
                 return $value;
             },
@@ -141,16 +150,16 @@ class Datagrid implements DatagridInterface
             }
         ));
 
-        $this->formBuilder->add('_sort_order', $hiddenType);
-        $this->formBuilder->add('_page', $hiddenType);
+        $this->formBuilder->add(DatagridInterface::SORT_ORDER, $hiddenType);
+        $this->formBuilder->add(DatagridInterface::PAGE, $hiddenType);
 
-        if (isset($this->values['_per_page']) && \is_array($this->values['_per_page'])) {
-            $this->formBuilder->add('_per_page', CollectionType::class, [
+        if (isset($this->values[DatagridInterface::PER_PAGE]) && \is_array($this->values[DatagridInterface::PER_PAGE])) {
+            $this->formBuilder->add(DatagridInterface::PER_PAGE, CollectionType::class, [
                 'entry_type' => $hiddenType,
                 'allow_add' => true,
             ]);
         } else {
-            $this->formBuilder->add('_per_page', $hiddenType);
+            $this->formBuilder->add(DatagridInterface::PER_PAGE, $hiddenType);
         }
 
         $this->form = $this->formBuilder->getForm();
@@ -273,16 +282,16 @@ class Datagrid implements DatagridInterface
         $values = $this->getValues();
 
         if ($this->isFieldAlreadySorted($fieldDescription)) {
-            if ('ASC' === $values['_sort_order']) {
-                $values['_sort_order'] = 'DESC';
+            if ('ASC' === $values[DatagridInterface::SORT_ORDER]) {
+                $values[DatagridInterface::SORT_ORDER] = 'DESC';
             } else {
-                $values['_sort_order'] = 'ASC';
+                $values[DatagridInterface::SORT_ORDER] = 'ASC';
             }
         } else {
-            $values['_sort_order'] = 'ASC';
+            $values[DatagridInterface::SORT_ORDER] = 'ASC';
         }
 
-        $values['_sort_by'] = \is_string($fieldDescription->getOption('sortable'))
+        $values[DatagridInterface::SORT_BY] = \is_string($fieldDescription->getOption('sortable'))
             ? $fieldDescription->getOption('sortable')
             : $fieldDescription->getName();
 
@@ -293,10 +302,10 @@ class Datagrid implements DatagridInterface
     {
         $values = $this->getValues();
 
-        if (isset($values['_sort_by']) && $values['_sort_by'] instanceof FieldDescriptionInterface) {
-            $values['_sort_by'] = $values['_sort_by']->getName();
+        if (isset($values[DatagridInterface::SORT_BY]) && $values[DatagridInterface::SORT_BY] instanceof FieldDescriptionInterface) {
+            $values[DatagridInterface::SORT_BY] = $values[DatagridInterface::SORT_BY]->getName();
         }
-        $values['_page'] = $page;
+        $values[DatagridInterface::PAGE] = $page;
 
         return ['filter' => $values];
     }
@@ -318,62 +327,65 @@ class Datagrid implements DatagridInterface
 
     private function applySorting(): void
     {
-        if (!isset($this->values['_sort_by'])) {
+        if (!isset($this->values[DatagridInterface::SORT_BY])) {
             return;
         }
 
-        if (!$this->values['_sort_by'] instanceof FieldDescriptionInterface) {
-            throw new UnexpectedTypeException($this->values['_sort_by'], FieldDescriptionInterface::class);
+        if (!$this->values[DatagridInterface::SORT_BY] instanceof FieldDescriptionInterface) {
+            throw new UnexpectedTypeException($this->values[DatagridInterface::SORT_BY], FieldDescriptionInterface::class);
         }
 
-        if (!$this->values['_sort_by']->isSortable()) {
+        if (!$this->values[DatagridInterface::SORT_BY]->isSortable()) {
             return;
         }
 
         $this->query->setSortBy(
-            $this->values['_sort_by']->getSortParentAssociationMapping(),
-            $this->values['_sort_by']->getSortFieldMapping()
+            $this->values[DatagridInterface::SORT_BY]->getSortParentAssociationMapping(),
+            $this->values[DatagridInterface::SORT_BY]->getSortFieldMapping()
         );
 
-        $this->values['_sort_order'] = $this->values['_sort_order'] ?? 'ASC';
-        $this->query->setSortOrder($this->values['_sort_order']);
+        $this->values[DatagridInterface::SORT_ORDER] = $this->values[DatagridInterface::SORT_ORDER] ?? 'ASC';
+        $this->query->setSortOrder($this->values[DatagridInterface::SORT_ORDER]);
     }
 
     private function getMaxPerPage(int $default): int
     {
-        if (!isset($this->values['_per_page'])) {
+        if (!isset($this->values[DatagridInterface::PER_PAGE])) {
             return $default;
         }
 
-        if (isset($this->values['_per_page']['value'])) {
-            return (int) $this->values['_per_page']['value'];
+        if (isset($this->values[DatagridInterface::PER_PAGE]['value'])) {
+            return (int) $this->values[DatagridInterface::PER_PAGE]['value'];
         }
 
-        return (int) $this->values['_per_page'];
+        return (int) $this->values[DatagridInterface::PER_PAGE];
     }
 
     private function getPage(int $default): int
     {
-        if (!isset($this->values['_page'])) {
+        if (!isset($this->values[DatagridInterface::PAGE])) {
             return $default;
         }
 
-        if (isset($this->values['_page']['value'])) {
-            return (int) $this->values['_page']['value'];
+        if (isset($this->values[DatagridInterface::PAGE]['value'])) {
+            return (int) $this->values[DatagridInterface::PAGE]['value'];
         }
 
-        return (int) $this->values['_page'];
+        return (int) $this->values[DatagridInterface::PAGE];
     }
 
     private function isFieldAlreadySorted(FieldDescriptionInterface $fieldDescription): bool
     {
         $values = $this->getValues();
 
-        if (!isset($values['_sort_by']) || !$values['_sort_by'] instanceof FieldDescriptionInterface) {
+        if (!isset($values[DatagridInterface::SORT_BY]) || !$values[DatagridInterface::SORT_BY] instanceof FieldDescriptionInterface) {
             return false;
         }
 
-        return $values['_sort_by']->getName() === $fieldDescription->getName()
-            || $values['_sort_by']->getName() === $fieldDescription->getOption('sortable');
+        return $values[DatagridInterface::SORT_BY]->getName() === $fieldDescription->getName()
+            || $values[DatagridInterface::SORT_BY]->getName() === $fieldDescription->getOption('sortable');
     }
 }
+
+// NEXT_MAJOR: Remove next line.
+interface_exists(FieldDescriptionInterface::class);

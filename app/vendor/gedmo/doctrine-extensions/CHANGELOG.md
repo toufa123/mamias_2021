@@ -20,6 +20,10 @@ a release.
 
 ## [Unreleased]
 
+## [3.0.4] - 2021-03-27
+### Fixed
+- Add hacky measure to resolve incompatibility with DoctrineBundle 2.3 [#2211](https://github.com/doctrine-extensions/DoctrineExtensions/pull/2211)
+
 ## [3.0.3] - 2021-01-23
 ### Fixed
 - Add PHP 8 compatibility to `composer.json`, resolving minor function parameter deprecations [#2194](https://github.com/Atlantic18/DoctrineExtensions/pull/2194)

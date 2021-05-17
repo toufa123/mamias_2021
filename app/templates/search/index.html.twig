@@ -15,8 +15,6 @@
           type="text/css"/>
     <link href="{{ asset('assets/plugins/datatables2/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
           type="text/css"/>
-
-
     <!-- select2 -->
     <link href="{{ asset('assets/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css') }}" rel="stylesheet"
           type="text/css"/>
@@ -52,11 +50,12 @@
                                 </div>
                                 <div class="col-md-4">
                                     {{ form_errors(form.speciesName ) }}
-                                    {{ form_widget(form.speciesName,{'attr': {'class': 'form-control select2' }}) }}
+                                    {{ form_widget(form.speciesName,{'attr': {'class': 'form-control select2 select2-speciesName-container'}}) }}
                                     <div class="row m-t-10">
                                         <div class="col-md-2">
-                                            <input type="checkbox" id="switch1" data-switch="none"/>
-                                            <label for="switch1" data-on-label="On"
+                                            <input type="checkbox" id="switch1" data-switch="none" data-title="Welcome!"
+                                                   data-intro="Hello World! 👋" class="card-demo"/>
+                                            <label for="switch1" class="switch1" data-on-label="On"
                                                    data-off-label="Off"></label>
                                         </div>
                                         <div class="col-md-10"> More searching Criteria (Advanced Searching)
@@ -85,8 +84,9 @@
                                     </div>-->
 
                                 </div>
+
                                 <div class="col-md-4">
-                                    <a href="#help" data-toggle="modal" data-target=".help"
+                                    <a href="javascript:void(0);" onclick="startIntro();"
                                        class="card-link-f text-custom btn btn-primary waves-effect waves-light m-b-5 float-right">&nbsp;<i
                                             class="fas fa-question"></i> </a>
 
@@ -455,7 +455,6 @@
                 // return selection template
                 return $('<i>' + item.text + '</i>');
             }
-
             $("#speciesName").select2({
                 // Specify format function for dropdown item
                 templateResult: formatResult,
@@ -466,19 +465,21 @@
 
             });
 
-
             $("#switch1").click(function () {
                 $("#panel").slideToggle();
                 $.cookie('switch1', true);
+                alert($.cookie("switch1"));
                 $("#speciesName").prop("disabled", true);
 
             });
             if ($.cookie('switch1') === 'true') {
                 $('#switch1').click();
-            } else {
+                alert($.cookie("switch1"));
+            }
+            if ($.cookie('switch1') === 'false') {
+                alert($.cookie("switch1"));
                 $("#panel").hide();
                 $("#speciesName").prop("disabled", false);
-
             }
 
             $("#reset").click(function () {
@@ -494,11 +495,65 @@
                 $('#vectorName').val(null).trigger('change');
                 $('#panel').hide();
                 $.cookie('switch1', false);
-                //$('#datatable-buttons').DataTable().clear().draw();
-                //$('#datatable-buttons').table.table().draw();
-                window.location.reload(true);
+                $('#datatable-buttons').DataTable().clear().draw();
+                $('#datatable-buttons').table.table().draw();
+                //location.reload(true);
+                window.location.href = window.location.href;
             })
         });
 
+
+    </script>
+
+    <script type="text/javascript">
+        function startIntro() {
+            var intro = introJs();
+            intro.setOptions({
+                disableInteraction: true,
+                tooltipClass: 'customTooltip',
+                showProgress: true,
+                showBullets: false,
+                exitOnEsc: true,
+                exitOnOverlayClick: true,
+                showStepNumbers: true,
+                steps: [
+                    {
+                        title: 'Searching Help',
+                        intro: ''
+                    },
+                    {
+                        title: 'Searching Help',
+                        element: document.querySelector('.select2-speciesName-container'),
+                        intro: "<p>To Select a species Please scroll the dopdownlist or type the three first Charcaters</p>"
+                    },
+                    {
+
+                        title: 'Searching Help',
+                        element: document.querySelectorAll('.switch1')[0],
+                        intro: "Ok, wasn't that fun?",
+                        position: 'right'
+                    },
+                    {
+                        title: 'Searching Help',
+                        element: '#step3',
+                        intro: 'More features, more fun.',
+                        position: 'left'
+                    },
+                    {
+                        title: 'Searching Help',
+                        element: '#step4',
+                        intro: "Another step.",
+                        position: 'bottom'
+                    },
+                    {
+                        title: 'Searching Help',
+                        element: '#step5',
+                        intro: 'Get it, use it.'
+                    }
+                ]
+            });
+
+            intro.start();
+        }
     </script>
 {% endblock %}

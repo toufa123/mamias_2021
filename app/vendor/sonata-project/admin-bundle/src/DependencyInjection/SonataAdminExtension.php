@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\DependencyInjection;
 
+use Sonata\AdminBundle\DependencyInjection\Compiler\AddAuditReadersCompilerPass;
 use Sonata\AdminBundle\DependencyInjection\Compiler\ModelManagerCompilerPass;
+use Sonata\AdminBundle\Model\AuditReaderInterface;
 use Sonata\AdminBundle\Model\ModelManagerInterface;
 // NEXT_MAJOR: Uncomment this line.
 //use Sonata\AdminBundle\Util\AdminAclUserManagerInterface;
@@ -71,6 +73,7 @@ class SonataAdminExtension extends Extension implements PrependExtensionInterfac
         $loader->load('menu.php');
         $loader->load('route.php');
         $loader->load('twig.php');
+        // NEXT_MAJOR: Remove next line.
         $loader->load('validator.php');
 
         if (isset($bundles['MakerBundle'])) {
@@ -79,6 +82,10 @@ class SonataAdminExtension extends Extension implements PrependExtensionInterfac
 
         if (isset($bundles['SonataExporterBundle'])) {
             $loader->load('exporter.php');
+        }
+
+        if (isset($bundles['SensioFrameworkExtraBundle'])) {
+            $loader->load('param_converter.php');
         }
 
         $configuration = $this->getConfiguration($configs, $container);
@@ -115,6 +122,8 @@ class SonataAdminExtension extends Extension implements PrependExtensionInterfac
         $container->setParameter('sonata.admin.configuration.global_search.empty_boxes', $config['global_search']['empty_boxes']);
         $container->setParameter('sonata.admin.configuration.global_search.case_sensitive', $config['global_search']['case_sensitive']);
         $container->setParameter('sonata.admin.configuration.templates', $config['templates']);
+        $container->setParameter('sonata.admin.configuration.default_admin_services', $config['default_admin_services']);
+        // NEXT_MAJOR: Remove this line.
         $container->setParameter('sonata.admin.configuration.admin_services', $config['admin_services']);
         $container->setParameter('sonata.admin.configuration.default_controller', $config['default_controller']);
         $container->setParameter('sonata.admin.configuration.dashboard_groups', $config['dashboard']['groups']);
@@ -224,6 +233,10 @@ class SonataAdminExtension extends Extension implements PrependExtensionInterfac
         $container
             ->registerForAutoconfiguration(ModelManagerInterface::class)
             ->addTag(ModelManagerCompilerPass::MANAGER_TAG);
+
+        $container
+            ->registerForAutoconfiguration(AuditReaderInterface::class)
+            ->addTag(AddAuditReadersCompilerPass::AUDIT_READER_TAG);
     }
 
     /**

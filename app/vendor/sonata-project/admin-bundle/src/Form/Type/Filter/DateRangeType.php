@@ -74,8 +74,7 @@ class DateRangeType extends AbstractType
     {
         $builder
             ->add('type', DateRangeOperatorType::class, ['required' => false])
-            ->add('value', $options['field_type'], $options['field_options'])
-        ;
+            ->add('value', $options['field_type'], $options['field_options']);
     }
 
     /**
@@ -85,7 +84,11 @@ class DateRangeType extends AbstractType
     {
         $resolver->setDefaults([
             'field_type' => FormDateRangeType::class,
-            'field_options' => ['format' => DateType::HTML5_FORMAT],
+            'field_options' => [
+                'field_options' => [
+                    'format' => DateType::HTML5_FORMAT,
+                ],
+            ],
         ]);
     }
 }

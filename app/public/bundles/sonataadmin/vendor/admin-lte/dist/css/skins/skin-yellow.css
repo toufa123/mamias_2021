@@ -67,38 +67,50 @@
 }
 .skin-yellow .sidebar-menu > li.header {
   color: #4b646f;
-  background: #1a2226;
+    background: #1a2226;
 }
+
 .skin-yellow .sidebar-menu > li > a {
-  border-left: 3px solid transparent;
+    border-left: 3px solid transparent;
 }
+
 .skin-yellow .sidebar-menu > li:hover > a,
+.skin-yellow .sidebar-menu > li.active > a,
+.skin-yellow .sidebar-menu > li.menu-open > a {
+    color: #ffffff;
+    background: #1e282c;
+}
+
 .skin-yellow .sidebar-menu > li.active > a {
-  color: #ffffff;
-  background: #1e282c;
-  border-left-color: #f39c12;
+    border-left-color: #f39c12;
 }
+
 .skin-yellow .sidebar-menu > li > .treeview-menu {
-  margin: 0 1px;
-  background: #2c3b41;
+    margin: 0 1px;
+    background: #2c3b41;
 }
+
 .skin-yellow .sidebar a {
-  color: #b8c7ce;
+    color: #b8c7ce;
 }
+
 .skin-yellow .sidebar a:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
-.skin-yellow .treeview-menu > li > a {
-  color: #8aa4af;
+
+.skin-yellow .sidebar-menu .treeview-menu > li > a {
+    color: #8aa4af;
 }
-.skin-yellow .treeview-menu > li.active > a,
-.skin-yellow .treeview-menu > li > a:hover {
-  color: #ffffff;
+
+.skin-yellow .sidebar-menu .treeview-menu > li.active > a,
+.skin-yellow .sidebar-menu .treeview-menu > li > a:hover {
+    color: #ffffff;
 }
+
 .skin-yellow .sidebar-form {
-  border-radius: 3px;
-  border: 1px solid #374850;
-  margin: 10px 10px;
+    border-radius: 3px;
+    border: 1px solid #374850;
+    margin: 10px 10px;
 }
 .skin-yellow .sidebar-form input[type="text"],
 .skin-yellow .sidebar-form .btn {

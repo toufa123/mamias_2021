@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\Form\Extension\Field\Type;
 
-use Sonata\AdminBundle\Admin\FieldDescriptionInterface;
 use Sonata\AdminBundle\Exception\NoValueException;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -153,6 +153,7 @@ class FormTypeFieldExtension extends AbstractTypeExtension
             $view->vars['sonata_admin_enabled'] = true;
             $view->vars['sonata_admin'] = $sonataAdmin;
             $view->vars['sonata_admin_code'] = $sonataAdmin['admin']->getCode();
+            $view->vars['sonata_admin_translation_domain'] = $sonataAdmin['admin']->getTranslationDomain();
 
             $attr = $view->vars['attr'];
 
@@ -282,3 +283,6 @@ class FormTypeFieldExtension extends AbstractTypeExtension
         return $types;
     }
 }
+
+// NEXT_MAJOR: Remove next line.
+interface_exists(FieldDescriptionInterface::class);

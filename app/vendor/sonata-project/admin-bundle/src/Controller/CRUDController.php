@@ -18,10 +18,10 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
-use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Exception\LockException;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionCollection;
 use Sonata\AdminBundle\Templating\TemplateRegistryInterface;
 use Sonata\AdminBundle\Util\AdminObjectAclData;
 use Sonata\AdminBundle\Util\AdminObjectAclManipulator;
@@ -163,10 +163,10 @@ class CRUDController implements ContainerAwareInterface
             'form' => $formView,
             'datagrid' => $datagrid,
             'csrf_token' => $this->getCsrfToken('sonata.batch'),
-            'export_formats' => $this->has('sonata.admin.admin_exporter') ?
-                $this->get('sonata.admin.admin_exporter')->getAvailableFormats($this->admin) :
+            'export_formats' => $this->has('sonata.admin.admin_exporter.do-not-use') ?
+                $this->get('sonata.admin.admin_exporter.do-not-use')->getAvailableFormats($this->admin) :
                 $this->admin->getExportFormats(),
-        ], null);
+        ]);
     }
 
     /**
@@ -275,7 +275,7 @@ class CRUDController implements ContainerAwareInterface
             'object' => $object,
             'action' => 'delete',
             'csrf_token' => $this->getCsrfToken('sonata.delete'),
-        ], null);
+        ]);
     }
 
     /**
@@ -399,7 +399,7 @@ class CRUDController implements ContainerAwareInterface
             'form' => $formView,
             'object' => $existingObject,
             'objectId' => $objectId,
-        ], null);
+        ]);
     }
 
     /**
@@ -522,7 +522,7 @@ class CRUDController implements ContainerAwareInterface
                 'form' => $formView,
                 'data' => $data,
                 'csrf_token' => $this->getCsrfToken('sonata.batch'),
-            ], null);
+            ]);
         }
 
         // execute the action, batchActionXxxxx
@@ -667,7 +667,7 @@ class CRUDController implements ContainerAwareInterface
             'form' => $formView,
             'object' => $newObject,
             'objectId' => null,
-        ], null);
+        ]);
     }
 
     /**
@@ -719,7 +719,7 @@ class CRUDController implements ContainerAwareInterface
             'action' => 'show',
             'object' => $object,
             'elements' => $fields,
-        ], null);
+        ]);
     }
 
     /**
@@ -751,7 +751,7 @@ class CRUDController implements ContainerAwareInterface
 
         $this->admin->checkAccess('history', $object);
 
-        $manager = $this->get('sonata.admin.audit.manager');
+        $manager = $this->get('sonata.admin.audit.manager.do-not-use');
 
         if (!$manager->hasReader($this->admin->getClass())) {
             throw $this->createNotFoundException(sprintf(
@@ -773,7 +773,7 @@ class CRUDController implements ContainerAwareInterface
             'object' => $object,
             'revisions' => $revisions,
             'currentRevision' => $revisions ? current($revisions) : false,
-        ], null);
+        ]);
     }
 
     /**
@@ -797,7 +797,7 @@ class CRUDController implements ContainerAwareInterface
 
         $this->admin->checkAccess('historyViewRevision', $object);
 
-        $manager = $this->get('sonata.admin.audit.manager');
+        $manager = $this->get('sonata.admin.audit.manager.do-not-use');
 
         if (!$manager->hasReader($this->admin->getClass())) {
             throw $this->createNotFoundException(sprintf(
@@ -830,7 +830,7 @@ class CRUDController implements ContainerAwareInterface
             'action' => 'show',
             'object' => $object,
             'elements' => $this->admin->getShow(),
-        ], null);
+        ]);
     }
 
     /**
@@ -851,11 +851,10 @@ class CRUDController implements ContainerAwareInterface
 
         $request = $this->getRequest();
         $id = $request->get($this->admin->getIdParameter());
-        $object = $this->admin->getObject($id);
 
         $this->assertObjectExists($request);
 
-        $manager = $this->get('sonata.admin.audit.manager');
+        $manager = $this->get('sonata.admin.audit.manager.do-not-use');
 
         if (!$manager->hasReader($this->admin->getClass())) {
             throw $this->createNotFoundException(sprintf(
@@ -923,7 +922,7 @@ class CRUDController implements ContainerAwareInterface
             'object' => $baseObject,
             'object_compare' => $compareObject,
             'elements' => $this->admin->getShow(),
-        ], null);
+        ]);
     }
 
     /**
@@ -941,7 +940,7 @@ class CRUDController implements ContainerAwareInterface
         $format = $request->get('format');
 
         // NEXT_MAJOR: remove the check
-        if (!$this->has('sonata.admin.admin_exporter')) {
+        if (!$this->has('sonata.admin.admin_exporter.do-not-use')) {
             @trigger_error(
                 'Not registering the exporter bundle is deprecated since version 3.14. You must register it to be able to use the export action in 4.0.',
                 \E_USER_DEPRECATED
@@ -955,9 +954,9 @@ class CRUDController implements ContainerAwareInterface
                 date('Y_m_d_H_i_s', strtotime('now')),
                 $format
             );
-            $exporter = $this->get('sonata.admin.exporter');
+            $exporter = $this->get('sonata.admin.exporter.do-not-use');
         } else {
-            $adminExporter = $this->get('sonata.admin.admin_exporter');
+            $adminExporter = $this->get('sonata.admin.admin_exporter.do-not-use');
             $allowedExportFormats = $adminExporter->getAvailableFormats($this->admin);
             $filename = $adminExporter->getExportFilename($this->admin, $format);
             $exporter = $this->get('sonata.exporter.exporter');
@@ -1026,7 +1025,7 @@ class CRUDController implements ContainerAwareInterface
         $aclUsers = $this->getAclUsers();
         $aclRoles = $this->getAclRoles();
 
-        $adminObjectAclManipulator = $this->get('sonata.admin.object.manipulator.acl.admin');
+        $adminObjectAclManipulator = $this->get('sonata.admin.object.manipulator.acl.admin.do-not-use');
         $adminObjectAclData = new AdminObjectAclData(
             $this->admin,
             $object,
@@ -1074,7 +1073,7 @@ class CRUDController implements ContainerAwareInterface
             'roles' => $aclRoles,
             'aclUsersForm' => $aclUsersForm->createView(),
             'aclRolesForm' => $aclRolesForm->createView(),
-        ], null);
+        ]);
     }
 
     /**
@@ -1105,7 +1104,7 @@ class CRUDController implements ContainerAwareInterface
             ));
         }
 
-        $this->admin = $this->container->get('sonata.admin.pool')->getAdminByAdminCode($adminCode);
+        $this->admin = $this->container->get('sonata.admin.pool.do-not-use')->getAdminByAdminCode($adminCode);
 
         if (null === $this->admin) {
             throw new \RuntimeException(sprintf(
@@ -1143,14 +1142,15 @@ class CRUDController implements ContainerAwareInterface
      */
     protected function addRenderExtraParams(array $parameters = []): array
     {
+        // NEXT_MAJOR: Remove the entire if block.
         if (!$this->isXmlHttpRequest()) {
-            $parameters['breadcrumbs_builder'] = $this->get('sonata.admin.breadcrumbs_builder');
+            $parameters['breadcrumbs_builder'] = $this->get('sonata.admin.breadcrumbs_builder.do-not-use');
         }
 
         $parameters['admin'] = $parameters['admin'] ?? $this->admin;
         $parameters['base_template'] = $parameters['base_template'] ?? $this->getBaseTemplate();
         // NEXT_MAJOR: Remove next line.
-        $parameters['admin_pool'] = $this->get('sonata.admin.pool');
+        $parameters['admin_pool'] = $this->get('sonata.admin.pool.do-not-use');
 
         return $parameters;
     }
@@ -1447,7 +1447,7 @@ class CRUDController implements ContainerAwareInterface
     {
         $aclRoles = [];
         $roleHierarchy = $this->container->getParameter('security.role_hierarchy.roles');
-        $pool = $this->container->get('sonata.admin.pool');
+        $pool = $this->container->get('sonata.admin.pool.do-not-use');
 
         foreach ($pool->getAdminServiceIds() as $id) {
             try {

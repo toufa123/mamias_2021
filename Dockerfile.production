@@ -49,9 +49,9 @@
 #
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-nginx:7.3
+FROM webdevops/php-nginx:7.4
 
-ENV PROVISION_CONTEXT "development"
+ENV PROVISION_CONTEXT "production"
 
 # Deploy scripts/configurations
 COPY etc/             /opt/docker/etc/

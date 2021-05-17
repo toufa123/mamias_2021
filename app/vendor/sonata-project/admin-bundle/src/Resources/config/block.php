@@ -12,6 +12,7 @@ declare(strict_types=1);
  */
 
 use Sonata\AdminBundle\Block\AdminListBlockService;
+use Sonata\AdminBundle\Block\AdminPreviewBlockService;
 use Sonata\AdminBundle\Block\AdminSearchBlockService;
 use Sonata\AdminBundle\Block\AdminStatsBlockService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -48,5 +49,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 new ReferenceConfigurator('twig'),
                 new ReferenceConfigurator('sonata.admin.pool'),
             ])
-    ;
+
+        ->set('sonata.admin.block.admin_preview', AdminPreviewBlockService::class)
+            ->public()
+            ->tag('sonata.block')
+            ->args([
+                new ReferenceConfigurator('twig'),
+                new ReferenceConfigurator('sonata.admin.pool'),
+            ]);
 };

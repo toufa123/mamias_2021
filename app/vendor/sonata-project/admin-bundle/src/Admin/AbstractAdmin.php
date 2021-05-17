@@ -22,6 +22,8 @@ use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\DependencyInjection\Admin\AbstractTaggedAdmin;
 use Sonata\AdminBundle\Exception\AdminClassNotFoundException;
 use Sonata\AdminBundle\Exporter\DataSourceInterface;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionCollection;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelHiddenType;
 use Sonata\AdminBundle\Manipulator\ObjectManipulator;
@@ -53,6 +55,8 @@ use Symfony\Component\Validator\Mapping\GenericMetadata;
 /**
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
  *
+ * @phpstan-import-type FieldDescriptionOptions from FieldDescriptionInterface
+ *
  * @phpstan-template T of object
  * @phpstan-extends AbstractTaggedAdmin<T>
  * @phpstan-implements AdminInterface<T>
@@ -71,6 +75,35 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
             Entity|Document|Model|PHPCR|CouchDocument|Phpcr|
             Doctrine\\\Orm|Doctrine\\\Phpcr|Doctrine\\\MongoDB|Doctrine\\\CouchDB
         )\\\(.*)@x';
+
+    private const ACTION_TREE = 1;
+    private const ACTION_SHOW = 2;
+    private const ACTION_EDIT = 4;
+    private const ACTION_DELETE = 8;
+    private const ACTION_ACL = 16;
+    private const ACTION_HISTORY = 32;
+    private const ACTION_LIST = 64;
+    private const ACTION_BATCH = 128;
+    private const INTERNAL_ACTIONS = [
+        'tree' => self::ACTION_TREE,
+        'show' => self::ACTION_SHOW,
+        'edit' => self::ACTION_EDIT,
+        'delete' => self::ACTION_DELETE,
+        'acl' => self::ACTION_ACL,
+        'history' => self::ACTION_HISTORY,
+        'list' => self::ACTION_LIST,
+        'batch' => self::ACTION_BATCH,
+    ];
+    private const MASK_OF_ACTION_CREATE = self::ACTION_TREE | self::ACTION_SHOW | self::ACTION_EDIT | self::ACTION_DELETE | self::ACTION_LIST | self::ACTION_BATCH;
+    private const MASK_OF_ACTION_SHOW = self::ACTION_EDIT | self::ACTION_HISTORY | self::ACTION_ACL;
+    private const MASK_OF_ACTION_EDIT = self::ACTION_SHOW | self::ACTION_DELETE | self::ACTION_ACL | self::ACTION_HISTORY;
+    private const MASK_OF_ACTION_HISTORY = self::ACTION_SHOW | self::ACTION_EDIT | self::ACTION_ACL;
+    private const MASK_OF_ACTION_ACL = self::ACTION_EDIT | self::ACTION_HISTORY;
+    private const MASK_OF_ACTION_LIST = self::ACTION_SHOW | self::ACTION_EDIT | self::ACTION_DELETE | self::ACTION_ACL | self::ACTION_BATCH;
+    private const MASK_OF_ACTIONS_USING_OBJECT = self::MASK_OF_ACTION_SHOW | self::MASK_OF_ACTION_EDIT | self::MASK_OF_ACTION_HISTORY | self::MASK_OF_ACTION_ACL;
+
+    private const DEFAULT_LIST_PER_PAGE_RESULTS = 32;
+    private const DEFAULT_LIST_PER_PAGE_OPTIONS = [16, 32, 64, 128, 256];
 
     /**
      * The list FieldDescription constructed from the configureListField method.
@@ -109,7 +142,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
      *
      * @var int
      */
-    protected $maxPerPage = 32;
+    protected $maxPerPage = self::DEFAULT_LIST_PER_PAGE_RESULTS;
 
     /**
      * The maximum number of page numbers to display in the list.
@@ -165,8 +198,8 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
      * @var array
      */
     protected $datagridValues = [
-        '_page' => 1,
-        '_per_page' => 32,
+        DatagridInterface::PAGE => 1,
+        DatagridInterface::PER_PAGE => self::DEFAULT_LIST_PER_PAGE_RESULTS,
     ];
 
     /**
@@ -178,7 +211,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
      *
      * @var array
      */
-    protected $perPageOptions = [16, 32, 64, 128, 256];
+    protected $perPageOptions = self::DEFAULT_LIST_PER_PAGE_OPTIONS;
 
     /**
      * Array of routes related to this admin.
@@ -446,7 +479,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         $this->predefinePerPageOptions();
 
         // NEXT_MAJOR: Remove this line.
-        $this->datagridValues['_per_page'] = $this->maxPerPage;
+        $this->datagridValues[DatagridInterface::PER_PAGE] = $this->maxPerPage;
     }
 
     /**
@@ -548,6 +581,13 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         $this->baseCodeRoute = $this->getCode();
 
         $this->configure();
+
+        foreach ($this->getExtensions() as $extension) {
+            // NEXT_MAJOR: remove method_exists check
+            if (method_exists($extension, 'configure')) {
+                $extension->configure($this);
+            }
+        }
     }
 
     /**
@@ -618,9 +658,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
     }
 
     /**
-     * NEXT_MAJOR: Remove this method.
-     *
-     * @deprecated since sonata-project/admin-bundle 3.82, will be removed in 4.0.
+     * NEXT_MAJOR: Change visibility to protected.
      *
      * @param object $object
      *
@@ -628,12 +666,6 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
      */
     public function preValidate($object)
     {
-        if ('sonata_deprecation_mute' !== \func_get_args()[1] ?? null) {
-            @trigger_error(sprintf(
-                'The %s method is deprecated since version 3.82 and will be removed in 4.0.',
-                __METHOD__
-            ), \E_USER_DEPRECATED);
-        }
     }
 
     public function preUpdate($object)
@@ -667,7 +699,8 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
     final public function getDefaultFilterParameters(): array
     {
         return array_merge(
-            $this->getModelManager()->getDefaultSortValues($this->getClass()), // NEXT_MAJOR: Remove this line.
+            /* @phpstan-ignore-next-line */
+            $this->getModelManager()->getDefaultSortValues($this->getClass(), 'sonata_deprecation_mute'), // NEXT_MAJOR: Remove this line.
             $this->datagridValues, // NEXT_MAJOR: Remove this line.
             $this->getDefaultSortValues(),
             $this->getDefaultFilterValues()
@@ -691,11 +724,11 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
             } else {
                 $filters = $bag->get('filter', []);
             }
-            if (isset($filters['_page'])) {
-                $filters['_page'] = (int) $filters['_page'];
+            if (isset($filters[DatagridInterface::PAGE])) {
+                $filters[DatagridInterface::PAGE] = (int) $filters[DatagridInterface::PAGE];
             }
-            if (isset($filters['_per_page'])) {
-                $filters['_per_page'] = (int) $filters['_per_page'];
+            if (isset($filters[DatagridInterface::PER_PAGE])) {
+                $filters[DatagridInterface::PER_PAGE] = (int) $filters[DatagridInterface::PER_PAGE];
             }
 
             // if filter persistence is configured
@@ -724,8 +757,8 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
             }
         }
 
-        if (!isset($parameters['_per_page']) || !$this->determinedPerPageValue($parameters['_per_page'])) {
-            $parameters['_per_page'] = $this->getMaxPerPage();
+        if (!isset($parameters[DatagridInterface::PER_PAGE]) || !$this->determinedPerPageValue($parameters[DatagridInterface::PER_PAGE])) {
+            $parameters[DatagridInterface::PER_PAGE] = $this->getMaxPerPage();
         }
 
         $parameters = $this->configureFilterParameters($parameters);
@@ -761,16 +794,16 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
 
         $filterParameters = $this->getFilterParameters();
 
-        // transform _sort_by from a string to a FieldDescriptionInterface for the datagrid.
-        if (isset($filterParameters['_sort_by']) && \is_string($filterParameters['_sort_by'])) {
-            if ($this->hasListFieldDescription($filterParameters['_sort_by'])) {
-                $filterParameters['_sort_by'] = $this->getListFieldDescription($filterParameters['_sort_by']);
+        // transform DatagridInterface::SORT_BY from a string to a FieldDescriptionInterface for the datagrid.
+        if (isset($filterParameters[DatagridInterface::SORT_BY]) && \is_string($filterParameters[DatagridInterface::SORT_BY])) {
+            if ($this->hasListFieldDescription($filterParameters[DatagridInterface::SORT_BY])) {
+                $filterParameters[DatagridInterface::SORT_BY] = $this->getListFieldDescription($filterParameters[DatagridInterface::SORT_BY]);
             } else {
-                $filterParameters['_sort_by'] = $this->createFieldDescription(
-                    $filterParameters['_sort_by']
+                $filterParameters[DatagridInterface::SORT_BY] = $this->createFieldDescription(
+                    $filterParameters[DatagridInterface::SORT_BY]
                 );
 
-                $this->getListBuilder()->buildField(null, $filterParameters['_sort_by'], $this);
+                $this->getListBuilder()->buildField(null, $filterParameters[DatagridInterface::SORT_BY], $this);
             }
         }
 
@@ -1000,7 +1033,10 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         // Do not use `$this->hasSubject()` and `$this->getSubject()` here to avoid infinite loop.
         // `getSubject` use `hasSubject()` which use `getObject()` which use `getClass()`.
         if (null !== $this->subject) {
-            return ClassUtils::getClass($this->subject);
+            /** @phpstan-var class-string<T> $class */
+            $class = ClassUtils::getClass($this->subject);
+
+            return $class;
         }
 
         return $this->class;
@@ -1205,7 +1241,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
 
     public function generateObjectUrl($name, $object, array $parameters = [], $referenceType = RoutingUrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        $parameters['id'] = $this->getUrlSafeIdentifier($object);
+        $parameters[$this->getIdParameter()] = $this->getUrlSafeIdentifier($object);
 
         return $this->generateUrl($name, $parameters, $referenceType);
     }
@@ -1419,8 +1455,20 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         return $this->datagrid;
     }
 
+    /**
+     * NEXT_MAJOR: Change the visibility to private and return type to void.
+     *
+     * @deprecated since sonata-project/admin-bundle 3.95
+     */
     public function buildTabMenu($action, ?AdminInterface $childAdmin = null)
     {
+        if ('sonata_deprecation_mute' !== (\func_get_args()[2] ?? null)) {
+            @trigger_error(sprintf(
+                'The "%s()" method is deprecated since sonata-project/admin-bundle 3.95 and will be removed in version 4.0.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
         if ($this->loaded['tab_menu']) {
             return $this->menu;
         }
@@ -1447,9 +1495,21 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         return $this->menu;
     }
 
+    /**
+     * NEXT_MAJOR: Remove this method.
+     *
+     * @deprecated since sonata-project/admin-bundle 3.95
+     */
     public function buildSideMenu($action, ?AdminInterface $childAdmin = null)
     {
-        return $this->buildTabMenu($action, $childAdmin);
+        if ('sonata_deprecation_mute' !== (\func_get_args()[2] ?? null)) {
+            @trigger_error(sprintf(
+                'The "%s()" method is deprecated since sonata-project/admin-bundle 3.95 and will be removed in version 4.0.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
+        return $this->buildTabMenu($action, $childAdmin, 'sonata_deprecation_mute');
     }
 
     /**
@@ -1465,7 +1525,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
             return $this->getParent()->getSideMenu($action, $this);
         }
 
-        $this->buildSideMenu($action, $childAdmin);
+        $this->buildSideMenu($action, $childAdmin, 'sonata_deprecation_mute');
 
         return $this->menu;
     }
@@ -1547,7 +1607,7 @@ abstract class AbstractAdmin extends AbstractTaggedAdmin implements AdminInterfa
         return $this->maxPerPage;
         // $sortValues = $this->getDefaultSortValues();
 
-        // return $sortValues['_per_page'] ?? 25;
+        // return $sortValues[DatagridInterface::PER_PAGE] ?? self::DEFAULT_LIST_PER_PAGE_RESULTS;
     }
 
     /**
@@ -2598,7 +2658,7 @@ EOT;
     {
         // NEXT_MAJOR: Remove this line and uncomment the following
         return $this->perPageOptions;
-//        $perPageOptions = [10, 25, 50, 100, 250];
+//        $perPageOptions = self::DEFAULT_LIST_PER_PAGE_OPTIONS;
 //        $perPageOptions[] = $this->getMaxPerPage();
 //
 //        $perPageOptions = array_unique($perPageOptions);
@@ -2636,7 +2696,7 @@ EOT;
 
     public function getListMode()
     {
-        if (!$this->hasRequest()) {
+        if (!$this->hasRequest() || !$this->getRequest()->hasSession()) {
             return 'list';
         }
 
@@ -2712,9 +2772,16 @@ EOT;
      */
     public function configureActionButtons($action, $object = null)
     {
+        // nothing to do for non-internal actions
+        if (!isset(self::INTERNAL_ACTIONS[$action])) {
+            return [];
+        }
+
+        $actionBit = self::INTERNAL_ACTIONS[$action];
+
         $list = [];
 
-        if (\in_array($action, ['tree', 'show', 'edit', 'delete', 'list', 'batch'], true)
+        if (self::MASK_OF_ACTION_CREATE & $actionBit
             && $this->hasRoute('create')
             && $this->hasAccess('create')
         ) {
@@ -2725,10 +2792,11 @@ EOT;
             ];
         }
 
-        if (\in_array($action, ['show', 'delete', 'acl', 'history'], true)
+        $canAccessObject = self::MASK_OF_ACTIONS_USING_OBJECT & $actionBit && null !== $object && null !== $this->id($object);
+
+        if ($canAccessObject
+            && self::MASK_OF_ACTION_EDIT & $actionBit
             && $this->hasRoute('edit')
-            && null !== $object
-            && null !== $this->id($object)
             // NEXT_MAJOR: Replace by `$this->hasAccess`
             && $this->canAccessObject('edit', $object, 'sonata_deprecation_mute')
         ) {
@@ -2739,10 +2807,9 @@ EOT;
             ];
         }
 
-        if (\in_array($action, ['show', 'edit', 'acl'], true)
+        if ($canAccessObject
+            && self::MASK_OF_ACTION_HISTORY & $actionBit
             && $this->hasRoute('history')
-            && null !== $object
-            && null !== $this->id($object)
             // NEXT_MAJOR: Replace by `$this->hasAccess`
             && $this->canAccessObject('history', $object, 'sonata_deprecation_mute')
         ) {
@@ -2753,11 +2820,10 @@ EOT;
             ];
         }
 
-        if (\in_array($action, ['edit', 'history'], true)
+        if ($canAccessObject
+            && self::MASK_OF_ACTION_ACL & $actionBit
             && $this->isAclEnabled()
             && $this->hasRoute('acl')
-            && null !== $object
-            && null !== $this->id($object)
             // NEXT_MAJOR: Replace by `$this->hasAccess`
             && $this->canAccessObject('acl', $object, 'sonata_deprecation_mute')
         ) {
@@ -2768,10 +2834,9 @@ EOT;
             ];
         }
 
-        if (\in_array($action, ['edit', 'history', 'acl'], true)
+        if ($canAccessObject
+            && self::MASK_OF_ACTION_SHOW & $actionBit
             && $this->hasRoute('show')
-            && null !== $object
-            && null !== $this->id($object)
             // NEXT_MAJOR: Replace by `$this->hasAccess`
             && $this->canAccessObject('show', $object, 'sonata_deprecation_mute')
             && \count($this->getShow()) > 0
@@ -2783,7 +2848,7 @@ EOT;
             ];
         }
 
-        if (\in_array($action, ['show', 'edit', 'delete', 'acl', 'batch'], true)
+        if (self::MASK_OF_ACTION_LIST & $actionBit
             && $this->hasRoute('list')
             && $this->hasAccess('list')
         ) {
@@ -2851,12 +2916,38 @@ EOT;
             ];
         }
 
-        $actions = $this->configureDashboardButtons($actions);
+        $actions = $this->configureDashboardActions($actions);
+
+        // NEXT_MAJOR: Remove this code.
+        $newActions = $this->configureDashboardButtons($actions);
+        if ($newActions !== $actions) {
+            @trigger_error(sprintf(
+                'The "%s::configureDashboardButtons()" method is deprecated since sonata-project/admin-bundle 3.94'
+                .' and will not be used in version 4.0. Use "configureDashboardActions()" instead.',
+                __CLASS__
+            ), \E_USER_DEPRECATED);
+
+            $actions = $newActions;
+        }
 
         foreach ($this->getExtensions() as $extension) {
             // NEXT_MAJOR: remove method check
+            if (method_exists($extension, 'configureDashboardActions')) {
+                $actions = $extension->configureDashboardActions($this, $actions);
+            }
+            // NEXT_MAJOR: remove this code.
             if (method_exists($extension, 'configureDashboardButtons')) {
-                $actions = $extension->configureDashboardButtons($this, $actions);
+                $newActions = $extension->configureDashboardButtons($this, $actions);
+
+                if ($newActions !== $actions) {
+                    @trigger_error(
+                        'configureDashboardButtons() is deprecated since sonata-project/admin-bundle 3.94'
+                        .' and will not be used in version 4.0. Use configureDashboardActions() instead.',
+                        \E_USER_DEPRECATED
+                    );
+
+                    $actions = $newActions;
+                }
             }
         }
 
@@ -2961,6 +3052,11 @@ EOT;
         return null !== $this->templateRegistry;
     }
 
+    /**
+     * NEXT_MAJOR: Move this phpdoc to the interface.
+     *
+     * @phpstan-param FieldDescriptionOptions $options
+     */
     final public function createFieldDescription(string $propertyName, array $options = []): FieldDescriptionInterface
     {
         $fieldDescriptionFactory = $this->getFieldDescriptionFactory();
@@ -3040,13 +3136,18 @@ EOT;
     /**
      * Returns a list of default sort values.
      *
-     * @return array{_page?: int, _per_page?: int, _sort_by?: string, _sort_order?: string}
+     * @phpstan-return array{
+     *     _page?: int,
+     *     _per_page?: int,
+     *     _sort_by?: string,
+     *     _sort_order?: string
+     * }
      */
     final protected function getDefaultSortValues(): array
     {
         // NEXT_MAJOR: Use the next line instead.
         $defaultSortValues = [];
-        // $defaultSortValues = ['_page' => 1, '_per_page' => 25];
+        // $defaultSortValues = [DatagridInterface::PAGE => 1, DatagridInterface::PER_PAGE => self::DEFAULT_LIST_PER_PAGE_RESULTS];
 
         $this->configureDefaultSortValues($defaultSortValues);
 
@@ -3139,6 +3240,18 @@ EOT;
      *
      * @return array<string, array<string, mixed>>
      */
+    protected function configureDashboardActions(array $actions): array
+    {
+        return $actions;
+    }
+
+    /**
+     * NEXT_MAJOR: Remove this method.
+     *
+     * @param array<string, array<string, mixed>> $actions
+     *
+     * @return array<string, array<string, mixed>>
+     */
     protected function configureDashboardButtons(array $actions): array
     {
         return $actions;
@@ -3224,9 +3337,10 @@ EOT;
 
         if (\count($this->getBatchActions()) > 0 && $this->hasRequest() && !$this->getRequest()->isXmlHttpRequest()) {
             $fieldDescription = $this->createFieldDescription(
-                'batch',
+                ListMapper::NAME_BATCH,
                 [
                     'label' => 'batch',
+                    // NEXT_MAJOR: Remove this code.
                     'code' => '_batch',
                     'sortable' => false,
                     'virtual_field' => true,
@@ -3248,9 +3362,10 @@ EOT;
 
         if ($this->hasRequest() && $this->getRequest()->isXmlHttpRequest()) {
             $fieldDescription = $this->createFieldDescription(
-                'select',
+                ListMapper::NAME_SELECT,
                 [
                     'label' => false,
+                    // NEXT_MAJOR: Remove this code.
                     'code' => '_select',
                     'sortable' => false,
                     'virtual_field' => false,
@@ -3287,9 +3402,8 @@ EOT;
         $this->loaded['form'] = true;
 
         $formBuilder = $this->getFormBuilder();
-        // NEXT_MAJOR: Remove this call.
         $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            $this->preValidate($event->getData(), 'sonata_deprecation_mute');
+            $this->preValidate($event->getData());
         }, 100);
 
         $this->form = $formBuilder->getForm();
@@ -3434,10 +3548,15 @@ EOT;
      * Configures a list of default sort values.
      *
      * Example:
-     *   $sortValues['_sort_by'] = 'foo'
-     *   $sortValues['_sort_order'] = 'DESC'
+     *   $sortValues[DatagridInterface::SORT_BY] = 'foo'
+     *   $sortValues[DatagridInterface::SORT_ORDER] = 'DESC'
      *
-     * @phpstan-param array{_page?: int, _per_page?: int, _sort_by?: string, _sort_order?: string} $sortValues
+     * @phpstan-param array{
+     *     _page?: int,
+     *     _per_page?: int,
+     *     _sort_by?: string,
+     *     _sort_order?: string
+     * } $sortValues
      */
     protected function configureDefaultSortValues(array &$sortValues)
     {
@@ -3506,3 +3625,5 @@ EOT;
 }
 
 class_exists(\Sonata\Form\Validator\ErrorElement::class);
+// NEXT_MAJOR: Remove next line.
+class_exists(\Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface::class);

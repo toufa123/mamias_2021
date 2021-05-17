@@ -466,6 +466,10 @@
                 <source>stats_view_more</source>
                 <target>Bekijk meer</target>
             </trans-unit>
+            <trans-unit id="preview_view_more">
+                <source>preview_view_more</source>
+                <target>Bekijk meer</target>
+            </trans-unit>
             <trans-unit id="title_select_subclass">
                 <source>title_select_subclass</source>
                 <target>Selecteer object type</target>
@@ -498,8 +502,8 @@
                 <source>label_type_ends_with</source>
                 <target>eindigt met</target>
             </trans-unit>
-            <trans-unit id="go_to_first_page">
-                <source>go_to_first_page</source>
+            <trans-unit id="go_to_the_first_page">
+                <source>go_to_the_first_page</source>
                 <target>Ga naar de eerste pagina</target>
             </trans-unit>
         </body>

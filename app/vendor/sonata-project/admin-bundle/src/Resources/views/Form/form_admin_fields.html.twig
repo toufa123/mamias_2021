@@ -34,6 +34,9 @@ file that was distributed with this source code.
 {% endblock %}
 
 {% block form_help -%}
+    {% if sonata_admin_translation_domain is defined and translation_domain is null %}
+        {% set translation_domain = sonata_admin_translation_domain %}
+    {% endif %}
     {% if help is not empty %}
         {# NEXT_MAJOR: Remove class sonata-ba-field-widget-help #}
         {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' help-block sonata-ba-field-widget-help sonata-ba-field-help')}) %}
@@ -160,7 +163,8 @@ file that was distributed with this source code.
             {%- elseif not sonata_admin.admin -%}
                 {{- label|trans(label_translation_parameters, translation_domain) -}}
             {%- else -%}
-                {{- label|trans(label_translation_parameters, sonata_admin.field_description.translationDomain ?: admin.translationDomain) -}}
+                {# NEXT_MAJOR: Remove "admin.translationDomain" #}
+                {{- label|trans(label_translation_parameters, sonata_admin.field_description.translationDomain|default(admin.translationDomain|default(sonata_admin.admin.translationDomain))) -}}
             {%- endif -%}
         </label>
     {% endif %}
@@ -361,9 +365,9 @@ file that was distributed with this source code.
     {% set row_class = (row_attr.class|default('') ~ ' form-group' ~ (errors|length > 0 ? ' has-error'))|trim %}
     <div{% with {attr: row_attr|merge({id: row_id, class: row_class})} %}{{ block('attributes') }}{% endwith %}>
         {# NEXT_MAJOR: Remove this block #}
-        {% if sonata_admin.field_description.options.name is defined %}
+        {% if sonata_admin.field_description|default(null) is not null and sonata_admin.field_description.option('name') %}
             {% deprecated 'The "name" option is deprecated in field description since sonata-project/admin-bundle 3.91, to be removed in 4.0.' %}
-            {% set label = sonata_admin.field_description.options.name|default(label) %}
+            {% set label = sonata_admin.field_description.option('name', label) %}
         {% endif %}
 
         {% set div_class = 'sonata-ba-field' %}
@@ -586,4 +590,101 @@ file that was distributed with this source code.
             Admin.setup_sortable_select2(jQuery('#{{ id }}'), {{ form.vars.choices|json_encode|raw }}, options);
         });
     </script>
+{% endblock %}
+
+{% block sonata_type_model_list_widget %}
+    <div id="field_container_{{ id }}" class="field-container">
+        <span id="field_widget_{{ id }}" class="field-short-description">
+            {% if sonata_admin.value and sonata_admin.field_description.associationadmin.urlSafeIdentifier(sonata_admin.value) is not null %}
+                {{ render(path('sonata_admin_short_object_information', {
+                    'code': sonata_admin.field_description.associationadmin.code,
+                    'objectId': sonata_admin.field_description.associationadmin.urlSafeIdentifier(sonata_admin.value),
+                    'uniqid': sonata_admin.field_description.associationadmin.uniqid,
+                    'linkParameters': sonata_admin.field_description.option('link_parameters', {})
+                })) }}
+            {% elseif sonata_admin.field_description.option('placeholder', 'short_object_description_placeholder') %}
+                <span class="inner-field-short-description">
+                    {{ sonata_admin.field_description.option('placeholder', 'short_object_description_placeholder')|trans({}, 'SonataAdminBundle') }}
+                </span>
+            {% endif %}
+        </span>
+        <span id="field_actions_{{ id }}" class="field-actions">
+            <span class="btn-group">
+                {% if sonata_admin.field_description.associationadmin.hasroute('list') and sonata_admin.field_description.associationadmin.hasAccess('list') and btn_list %}
+                    <a href="{{ sonata_admin.field_description.associationadmin.generateUrl('list') }}"
+                       onclick="return start_field_dialog_form_list_{{ id }}(this);"
+                       class="btn btn-info btn-sm sonata-ba-action"
+                       title="{{ btn_list|trans({}, btn_catalogue) }}"
+                    >
+                        <i class="fa fa-list"></i>
+                        {{ btn_list|trans({}, btn_catalogue) }}
+                    </a>
+                {% endif %}
+
+                {% if sonata_admin.field_description.associationadmin.hasroute('create')
+                    and sonata_admin.field_description.associationadmin.hasAccess('create')
+                    and btn_add
+                %}
+                    <a href="{{ sonata_admin.field_description.associationadmin.generateUrl('create') }}"
+                       onclick="return start_field_dialog_form_add_{{ id }}(this);"
+                       class="btn btn-success btn-sm sonata-ba-action"
+                       title="{{ btn_add|trans({}, btn_catalogue) }}"
+                    >
+                        <i class="fa fa-plus-circle"></i>
+                        {{ btn_add|trans({}, btn_catalogue) }}
+                    </a>
+                {% endif %}
+                {% if sonata_admin.field_description.associationadmin.hasroute('edit')
+                    and sonata_admin.field_description.associationadmin.hasAccess('edit')
+                    and btn_edit
+                %}
+                    <a href="{{ sonata_admin.value == null ? '' : sonata_admin.field_description.associationadmin.generateUrl('edit', {
+                        (sonata_admin.field_description.associationadmin.idParameter) : sonata_admin.field_description.associationadmin.urlSafeIdentifier(sonata_admin.value)})
+                    }}"
+                       onclick="return start_field_dialog_form_edit_{{ id }}(this);"
+                       class="btn btn-warning btn-sm sonata-ba-action {% if sonata_admin.value == null %}hidden{% endif %}"
+                       title="{{ btn_edit|trans({}, btn_catalogue) }}"
+                    >
+                        <i class="fa fa-pencil"></i>
+                        {{ btn_edit|trans({}, btn_catalogue) }}
+                    </a>
+                {% endif %}
+            </span>
+
+            <span class="btn-group">
+                {% if btn_delete %}
+                    <button
+                        onclick="return remove_selected_element_{{ id }}(this);"
+                        class="btn btn-danger btn-sm sonata-ba-action"
+                        title="{{ btn_delete|trans({}, btn_catalogue) }}"
+                    >
+                        <i class="fa fa-minus-circle"></i>
+                        {{ btn_delete|trans({}, btn_catalogue) }}
+                    </button>
+                {% endif %}
+            </span>
+        </span>
+
+        <span style="display: none" >
+            {# Hidden text input cannot be required, because browser will throw error "An invalid form control with name='' is not focusable"  #}
+            {{ form_widget(form, {'required':false}) }}
+        </span>
+
+        {{ block('sonata_help') }}
+
+        <div class="modal fade" id="field_dialog_{{ id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include '@SonataAdmin/CRUD/Association/edit_many_script.html.twig' %}
 {% endblock %}

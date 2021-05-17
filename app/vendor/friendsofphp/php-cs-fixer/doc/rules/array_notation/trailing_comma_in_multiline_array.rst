@@ -2,6 +2,10 @@
 Rule ``trailing_comma_in_multiline_array``
 ==========================================
 
+.. warning:: This rule is deprecated and will be removed on next major version.
+
+   You should use ``trailing_comma_in_multiline`` instead.
+
 PHP multi-line arrays should have a trailing comma.
 
 Configuration
@@ -28,7 +32,6 @@ Example #1
 
    --- Original
    +++ New
-   @@ -1,5 +1,5 @@
     <?php
     array(
         1,
@@ -45,36 +48,11 @@ With configuration: ``['after_heredoc' => true]``.
 
    --- Original
    +++ New
-   @@ -3,5 +3,5 @@
+    <?php
+        $x = [
             'foo',
             <<<EOD
                 bar
    -            EOD
    +            EOD,
         ];
-
-Rule sets
----------
-
-The rule is part of the following rule sets:
-
-@PHP73Migration
-  Using the `@PHP73Migration <./../../ruleSets/PHP73Migration.rst>`_ rule set will enable the ``trailing_comma_in_multiline_array`` rule with the config below:
-
-  ``['after_heredoc' => true]``
-
-@PHP74Migration
-  Using the `@PHP74Migration <./../../ruleSets/PHP74Migration.rst>`_ rule set will enable the ``trailing_comma_in_multiline_array`` rule with the config below:
-
-  ``['after_heredoc' => true]``
-
-@PHP80Migration
-  Using the `@PHP80Migration <./../../ruleSets/PHP80Migration.rst>`_ rule set will enable the ``trailing_comma_in_multiline_array`` rule with the config below:
-
-  ``['after_heredoc' => true]``
-
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``trailing_comma_in_multiline_array`` rule with the default config.
-
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``trailing_comma_in_multiline_array`` rule with the default config.

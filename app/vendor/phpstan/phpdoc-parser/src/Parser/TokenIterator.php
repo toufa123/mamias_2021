@@ -90,6 +90,7 @@ class TokenIterator
 	}
 
 
+	/** @phpstan-impure */
 	public function tryConsumeTokenValue(string $tokenValue): bool
 	{
 		if ($this->tokens[$this->index][Lexer::VALUE_OFFSET] !== $tokenValue) {
@@ -106,6 +107,7 @@ class TokenIterator
 	}
 
 
+	/** @phpstan-impure */
 	public function tryConsumeTokenType(int $tokenType): bool
 	{
 		if ($this->tokens[$this->index][Lexer::TYPE_OFFSET] !== $tokenType) {
@@ -132,6 +134,7 @@ class TokenIterator
 	}
 
 
+	/** @phpstan-impure */
 	public function joinUntil(int ...$tokenType): string
 	{
 		$s = '';
@@ -151,6 +154,13 @@ class TokenIterator
 		}
 
 		$this->index++;
+	}
+
+	/** @phpstan-impure */
+	public function forwardToTheEnd(): void
+	{
+		$lastToken = count($this->tokens) - 1;
+		$this->index = $lastToken;
 	}
 
 
