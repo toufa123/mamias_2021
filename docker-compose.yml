@@ -27,9 +27,9 @@ services:
       - etc/environment.development.yml
     labels:
       - "traefik.http.routers.${name}.rule=Host(`${name}.docker.localhost`)"
-  #######################################
-  # PostgreSQL server
-  #######################################
+#######################################
+# PostgreSQL server
+#######################################
   postgres:
     container_name: "${name}_database"
     restart: on-failure
@@ -56,10 +56,10 @@ services:
       - etc/environment.yml
       - etc/environment.production.yml
     command: bash -c "while [ ! -f /docker-entrypoin-initdb.d/public.sql ]; do sleep 1; done && /docker-entrypoint.sh"
-    #######################################
-    # Postgresql Backup
-    #######################################
-    dbbackups:
+ #######################################
+ # Postgresql Backup
+ #######################################
+  dbbackups:
       image: kartoza/pg-backup:12.0
       volumes:
         - /backup:/backups
@@ -67,13 +67,13 @@ services:
         - postgres
       environment:
         - DUMPPREFIX=mamias
-        - POSTGRES_HOST=postgres
+        - POSTGRES_HOST=127.0.0.1
         - POSTGRES_USER=admin
         - POSTGRES_PASS=postgres
-        - POSTGRES_PORT=5432
+        - POSTGRES_PORT=8432
         - STORAGE_BACKEND="FILE"
         - DUMP_ARGS="-Fc"
-        #- DB_TABLES=yes
+        - DB_TABLES=yes
         # Add a custom archive so that it can be used to restore as a test
         - ARCHIVE_FILENAME=latest
         # For restore script
@@ -82,8 +82,8 @@ services:
         #- TARGET_ARCHIVE=/backups/latest.gis.dmp
       restart: on-failure
       depends_on:
-        db:
-          condition: service_healthy
+        - postgres
+          
 
     #######################################
     # Memcached
