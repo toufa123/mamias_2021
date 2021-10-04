@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 
 use Knp\Menu\MenuItem;
-use Sonata\AdminBundle\DependencyInjection\Compiler\AliasDeprecatedPublicServicesCompilerPass;
 use Sonata\AdminBundle\Menu\Matcher\Voter\ActiveVoter;
 use Sonata\AdminBundle\Menu\Matcher\Voter\AdminVoter;
 use Sonata\AdminBundle\Menu\Matcher\Voter\ChildrenVoter;
@@ -28,9 +27,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->services()
 
         ->set('sonata.admin.menu_builder', MenuBuilder::class)
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->args([
                 new ReferenceConfigurator('sonata.admin.pool'),
                 new ReferenceConfigurator('knp_menu.factory'),
@@ -39,9 +36,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ])
 
         ->set('sonata.admin.sidebar_menu', MenuItem::class)
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->tag('knp_menu.menu', ['alias' => 'sonata_admin_sidebar'])
             ->factory([
                 new ReferenceConfigurator('sonata.admin.menu_builder'),
@@ -57,9 +52,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ])
 
         ->set('sonata.admin.menu.matcher.voter.admin', AdminVoter::class)
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->tag('knp_menu.voter')
             ->args([
                 new ReferenceConfigurator('request_stack'),
@@ -67,9 +60,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
         // NEXT_MAJOR: Remove this service.
         ->set('sonata.admin.menu.matcher.voter.children', ChildrenVoter::class)
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->deprecate(...BCDeprecationParameters::forConfig(
                 'The "%service_id%" service is deprecated since sonata-project/admin-bundle 3.28 and will be removed in 4.0.',
                 '3.28'
@@ -79,8 +70,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ])
 
         ->set('sonata.admin.menu.matcher.voter.active', ActiveVoter::class)
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
-            ->tag('knp_menu.voter');
+            ->tag('knp_menu.voter')
+    ;
 };

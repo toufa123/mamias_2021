@@ -19,13 +19,10 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import H from '../Core/Globals.js';
 
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
-import O from '../Core/Options.js';
-
-var getOptions = O.getOptions, setOptions = O.setOptions;
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent,
-    isNumber = U.isNumber, pick = U.pick;
+    getOptions = U.getOptions, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions;
 /**
  * Function callback to execute while data rows are processed for exporting.
  * This allows the modification of data rows before processed into the final
@@ -50,7 +47,9 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
  * @type {Array<Array<string>>}
  */
 import DownloadURL from '../Extensions/DownloadURL.js';
+
 var downloadURL = DownloadURL.downloadURL;
+
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -67,6 +66,7 @@ function htmlencode(html) {
         .replace(/'/g, '&#x27;')
         .replace(/\//g, '&#x2F;');
 }
+
 setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
@@ -120,7 +120,7 @@ setOptions({
          * converter, as demonstrated in the sample below.
          *
          * @sample  highcharts/export-data/categorized/ Categorized data
-         * @sample  highcharts/export-data/stock-timeaxis/ Highcharts Stock time axis
+         * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
          * @sample  highcharts/export-data/xlsx/
          *          Using a third party XLSX converter
          *
@@ -651,8 +651,7 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         var html = "<" + node.tagName;
         if (attributes) {
             Object.keys(attributes).forEach(function (key) {
-                var value = attributes[key];
-                html += " " + key + "=\"" + value + "\"";
+                html += " " + key + "=\"" + attributes[key] + "\"";
             });
         }
         html += '>';
@@ -841,6 +840,7 @@ Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
     fireEvent(this, 'aftergetTableAST', e);
     return e.tree;
 };
+
 /**
  * Get a blob object from content, if blob is supported
  *
@@ -872,6 +872,7 @@ function getBlobFromContent(content, type) {
         // Ignore
     }
 }
+
 /**
  * Generates a data URL of CSV for local download in the browser. This is the
  * default action for a click on the 'Download CSV' button.
@@ -966,9 +967,7 @@ Chart.prototype.toggleDataTable = function (show) {
         options.buttons &&
         options.buttons.contextButton.menuItems, lang = this.options.lang;
     if (exportingOptions &&
-        exportingOptions.menuItemDefinitions &&
-        lang &&
-        lang.viewData &&
+        exportingOptions.menuItemDefinitions && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
         lang.hideData &&
         menuItems &&
         exportDivElements &&

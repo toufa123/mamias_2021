@@ -12,6 +12,7 @@ import Axis from './Axis.js';
 import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
+
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber,
     pick = U.pick;
 /* eslint-disable valid-jsdoc */
@@ -30,6 +31,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
         this.hasBreaks = false;
         this.axis = axis;
     }
+
     /* *
      *
      *  Static Functions
@@ -56,7 +58,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
         var axis = this;
         var brokenAxis = axis.brokenAxis;
         var breakArray = brokenAxis && brokenAxis.breakArray;
-        if (!breakArray || !isNumber(val)) {
+        if (!breakArray) {
             return val;
         }
         var nval = val, brk, i;
@@ -79,7 +81,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
         var axis = this;
         var brokenAxis = axis.brokenAxis;
         var breakArray = brokenAxis && brokenAxis.breakArray;
-        if (!breakArray || !isNumber(val)) {
+        if (!breakArray) {
             return val;
         }
         var nval = val, brk, i;
@@ -126,8 +128,8 @@ var BrokenAxisAdditions = /** @class */ (function () {
     BrokenAxisAdditions.prototype.isInAnyBreak = function (val, testKeep) {
         var brokenAxis = this;
         var axis = brokenAxis.axis;
-        var breaks = axis.options.breaks || [], i = breaks.length, inbrk, keep, ret;
-        if (i && isNumber(val)) {
+        var breaks = axis.options.breaks, i = breaks && breaks.length, inbrk, keep, ret;
+        if (i) {
             while (i--) {
                 if (BrokenAxisAdditions.isInBreak(breaks[i], val)) {
                     inbrk = true;
@@ -184,11 +186,11 @@ var BrokenAxisAdditions = /** @class */ (function () {
                 // If trying to set extremes inside a break, extend min to
                 // after, and max to before the break ( #3857 )
                 if (brokenAxis.hasBreaks) {
-                    var axisBreak = void 0, breaks_1 = this.options.breaks;
-                    while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks_1))) {
+                    var axisBreak, breaks = this.options.breaks;
+                    while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
                         newMin = axisBreak.to;
                     }
-                    while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks_1))) {
+                    while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks))) {
                         newMax = axisBreak.from;
                     }
                     // If both min and max is within the same break.
@@ -200,93 +202,95 @@ var BrokenAxisAdditions = /** @class */ (function () {
             };
             axis.setAxisTranslation = function () {
                 Axis.prototype.setAxisTranslation.call(this);
-                brokenAxis.unitLength = void 0;
+                brokenAxis.unitLength = null;
                 if (brokenAxis.hasBreaks) {
-                    var breaks_2 = axis.options.breaks || [],
+                    var breaks = axis.options.breaks || [],
                         // Temporary one:
-                        breakArrayT_1 = [], breakArray_1 = [], length_1 = 0, inBrk_1, repeat_1,
-                        min_1 = axis.userMin || axis.min, max_1 = axis.userMax || axis.max,
-                        pointRangePadding = pick(axis.pointRangePadding, 0), start_1, i_1;
+                        breakArrayT = [], breakArray = [], length = 0, inBrk, repeat, min = axis.userMin || axis.min,
+                        max = axis.userMax || axis.max, pointRangePadding = pick(axis.pointRangePadding, 0), start, i;
                     // Min & max check (#4247)
-                    breaks_2.forEach(function (brk) {
-                        repeat_1 = brk.repeat || Infinity;
-                        if (isNumber(min_1) && isNumber(max_1)) {
-                            if (BrokenAxisAdditions.isInBreak(brk, min_1)) {
-                                min_1 += (brk.to % repeat_1) - (min_1 % repeat_1);
-                            }
-                            if (BrokenAxisAdditions.isInBreak(brk, max_1)) {
-                                max_1 -= (max_1 % repeat_1) - (brk.from % repeat_1);
-                            }
+                    breaks.forEach(function (brk) {
+                        repeat = brk.repeat || Infinity;
+                        if (BrokenAxisAdditions.isInBreak(brk, min)) {
+                            min +=
+                                (brk.to % repeat) -
+                                (min % repeat);
+                        }
+                        if (BrokenAxisAdditions.isInBreak(brk, max)) {
+                            max -=
+                                (max % repeat) -
+                                (brk.from % repeat);
                         }
                     });
                     // Construct an array holding all breaks in the axis
-                    breaks_2.forEach(function (brk) {
-                        start_1 = brk.from;
-                        repeat_1 = brk.repeat || Infinity;
-                        if (isNumber(min_1) && isNumber(max_1)) {
-                            while (start_1 - repeat_1 > min_1) {
-                                start_1 -= repeat_1;
-                            }
-                            while (start_1 < min_1) {
-                                start_1 += repeat_1;
-                            }
-                            for (i_1 = start_1; i_1 < max_1; i_1 += repeat_1) {
-                                breakArrayT_1.push({
-                                    value: i_1,
-                                    move: 'in'
-                                });
-                                breakArrayT_1.push({
-                                    value: i_1 + brk.to - brk.from,
-                                    move: 'out',
-                                    size: brk.breakSize
-                                });
-                            }
+                    breaks.forEach(function (brk) {
+                        start = brk.from;
+                        repeat = brk.repeat || Infinity;
+                        while (start - repeat > min) {
+                            start -= repeat;
+                        }
+                        while (start < min) {
+                            start += repeat;
+                        }
+                        for (i = start; i < max; i += repeat) {
+                            breakArrayT.push({
+                                value: i,
+                                move: 'in'
+                            });
+                            breakArrayT.push({
+                                value: i + (brk.to - brk.from),
+                                move: 'out',
+                                size: brk.breakSize
+                            });
                         }
                     });
-                    breakArrayT_1.sort(function (a, b) {
+                    breakArrayT.sort(function (a, b) {
                         return ((a.value === b.value) ?
                             ((a.move === 'in' ? 0 : 1) -
                                 (b.move === 'in' ? 0 : 1)) :
                             a.value - b.value);
                     });
                     // Simplify the breaks
-                    inBrk_1 = 0;
-                    start_1 = min_1;
-                    breakArrayT_1.forEach(function (brk) {
-                        inBrk_1 += (brk.move === 'in' ? 1 : -1);
-                        if (inBrk_1 === 1 && brk.move === 'in') {
-                            start_1 = brk.value;
+                    inBrk = 0;
+                    start = min;
+                    breakArrayT.forEach(function (brk) {
+                        inBrk += (brk.move === 'in' ? 1 : -1);
+                        if (inBrk === 1 && brk.move === 'in') {
+                            start = brk.value;
                         }
-                        if (inBrk_1 === 0 && isNumber(start_1)) {
-                            breakArray_1.push({
-                                from: start_1,
+                        if (inBrk === 0) {
+                            breakArray.push({
+                                from: start,
                                 to: brk.value,
-                                len: brk.value - start_1 - (brk.size || 0)
+                                len: brk.value - start - (brk.size || 0)
                             });
-                            length_1 += brk.value - start_1 - (brk.size || 0);
+                            length += brk.value - start - (brk.size || 0);
                         }
                     });
-                    brokenAxis.breakArray = breakArray_1;
+                    /**
+                     * HC <= 8 backwards compatibility, used by demo samples.
+                     * @deprecated
+                     * @private
+                     * @requires modules/broken-axis
+                     */
+                    axis.breakArray = brokenAxis.breakArray = breakArray;
                     // Used with staticScale, and below the actual axis length,
                     // when breaks are substracted.
-                    if (isNumber(min_1) && isNumber(max_1) && isNumber(axis.min)) {
-                        brokenAxis.unitLength = max_1 - min_1 - length_1 +
-                            pointRangePadding;
-                        fireEvent(axis, 'afterBreaks');
-                        if (axis.staticScale) {
-                            axis.transA = axis.staticScale;
-                        } else if (brokenAxis.unitLength) {
-                            axis.transA *=
-                                (max_1 - axis.min + pointRangePadding) /
-                                brokenAxis.unitLength;
-                        }
-                        if (pointRangePadding) {
-                            axis.minPixelPadding =
-                                axis.transA * (axis.minPointOffset || 0);
-                        }
-                        axis.min = min_1;
-                        axis.max = max_1;
+                    brokenAxis.unitLength = max - min - length + pointRangePadding;
+                    fireEvent(axis, 'afterBreaks');
+                    if (axis.staticScale) {
+                        axis.transA = axis.staticScale;
+                    } else if (brokenAxis.unitLength) {
+                        axis.transA *=
+                            (max - axis.min + pointRangePadding) /
+                            brokenAxis.unitLength;
                     }
+                    if (pointRangePadding) {
+                        axis.minPixelPadding =
+                            axis.transA * axis.minPointOffset;
+                    }
+                    axis.min = min;
+                    axis.max = max;
                 }
             };
         }
@@ -304,6 +308,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
 var BrokenAxis = /** @class */ (function () {
     function BrokenAxis() {
     }
+
     /**
      * Adds support for broken axes.
      * @private
@@ -476,7 +481,7 @@ var BrokenAxis = /** @class */ (function () {
             var brokenAxis = axis.brokenAxis;
             if (brokenAxis &&
                 brokenAxis.hasBreaks) {
-                var tickPositions = this.tickPositions, info = this.tickPositions.info, newPositions = [], i = void 0;
+                var tickPositions = this.tickPositions, info = this.tickPositions.info, newPositions = [], i;
                 for (i = 0; i < tickPositions.length; i++) {
                     if (!brokenAxis.isInAnyBreak(tickPositions[i])) {
                         newPositions.push(tickPositions[i]);

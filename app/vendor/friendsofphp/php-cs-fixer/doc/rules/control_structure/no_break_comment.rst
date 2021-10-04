@@ -35,7 +35,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,10 +2,10 @@
     switch ($foo) {
         case 1:
             foo();
@@ -57,7 +57,7 @@ With configuration: ``['comment_text' => 'some comment']``.
 
    --- Original
    +++ New
-    <?php
+   @@ -2,6 +2,7 @@
     switch ($foo) {
         case 1:
             foo();

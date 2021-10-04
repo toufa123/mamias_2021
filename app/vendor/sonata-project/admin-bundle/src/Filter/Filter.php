@@ -49,26 +49,17 @@ abstract class Filter implements FilterInterface
      */
     private $active = false;
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function initialize($name, array $options = [])
     {
         $this->name = $name;
         $this->setOptions($options);
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getFormName()
     {
         /*
@@ -81,9 +72,6 @@ abstract class Filter implements FilterInterface
         return str_replace('.', '__', $this->name);
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getOption($name, $default = null)
     {
         if (\array_key_exists($name, $this->options)) {
@@ -93,33 +81,21 @@ abstract class Filter implements FilterInterface
         return $default;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function setOption($name, $value)
     {
         $this->options[$name] = $value;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getFieldType()
     {
         return $this->getOption('field_type', TextType::class);
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getFieldOptions()
     {
         return $this->getOption('field_options', ['required' => false]);
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getFieldOption($name, $default = null)
     {
         if (isset($this->options['field_options'][$name]) && \is_array($this->options['field_options'])) {
@@ -129,33 +105,21 @@ abstract class Filter implements FilterInterface
         return $default;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function setFieldOption($name, $value)
     {
         $this->options['field_options'][$name] = $value;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getLabel()
     {
         return $this->getOption('label');
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function setLabel($label)
     {
         $this->setOption('label', $label);
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getFieldName()
     {
         $fieldName = $this->getOption('field_name');
@@ -170,17 +134,11 @@ abstract class Filter implements FilterInterface
         return $fieldName;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getParentAssociationMappings()
     {
         return $this->getOption('parent_association_mappings', []);
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getFieldMapping()
     {
         $fieldMapping = $this->getOption('field_mapping');
@@ -195,9 +153,6 @@ abstract class Filter implements FilterInterface
         return $fieldMapping;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getAssociationMapping()
     {
         $associationMapping = $this->getOption('association_mapping');
@@ -213,7 +168,7 @@ abstract class Filter implements FilterInterface
     }
 
     /**
-     * @final since sonata-project/admin-bundle 3.99.
+     * Set options.
      */
     public function setOptions(array $options)
     {
@@ -225,7 +180,7 @@ abstract class Filter implements FilterInterface
     }
 
     /**
-     * @final since sonata-project/admin-bundle 3.99.
+     * Get options.
      *
      * @return array<string, mixed>
      */
@@ -268,9 +223,6 @@ abstract class Filter implements FilterInterface
         return $this->value;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function isActive()
     {
         $values = $this->value;
@@ -280,33 +232,21 @@ abstract class Filter implements FilterInterface
             || isset($values['value']) && false !== $values['value'] && '' !== $values['value'];
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function setCondition($condition)
     {
         $this->condition = $condition;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getCondition()
     {
         return $this->condition;
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     public function getTranslationDomain()
     {
         return $this->getOption('translation_domain');
     }
 
-    /**
-     * @final since sonata-project/admin-bundle 3.99.
-     */
     protected function setActive(bool $active): void
     {
         $this->active = $active;

@@ -74,7 +74,7 @@ class LongVariable extends AbstractRule implements ClassAware, MethodAware, Func
             $this->checkNodeImage($declarator);
         }
 
-        $variables = $node->findChildrenOfTypeVariable();
+        $variables = $node->findChildrenOfType('Variable');
         foreach ($variables as $variable) {
             $this->checkNodeImage($variable);
         }

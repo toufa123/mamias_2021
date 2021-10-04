@@ -23,15 +23,18 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../../Core/Globals.js';
+
 var noop = H.noop;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
-var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, ColumnSeries = _a.column;
+var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ColumnSeries = _a.column;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, correctFloat = U.correctFloat, defined = U.defined, merge = U.merge;
 /**
  *
@@ -49,6 +52,7 @@ var extend = U.extend, correctFloat = U.correctFloat, defined = U.defined, merge
  */
 var MACDIndicator = /** @class */ (function (_super) {
     __extends(MACDIndicator, _super);
+
     function MACDIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -66,6 +70,7 @@ var MACDIndicator = /** @class */ (function (_super) {
         _this.signalZones = void 0;
         return _this;
     }
+
     /**
      *
      * Functions
@@ -196,36 +201,33 @@ var MACDIndicator = /** @class */ (function (_super) {
         this.zones = histogramZones;
     };
     MACDIndicator.prototype.getValues = function (series, params) {
-        var indexToShift = params.longPeriod - params.shortPeriod, // #14197
-            j = 0, MACD = [], xMACD = [], yMACD = [], signalLine = [], shortEMA, longEMA, i;
+        var j = 0, MACD = [], xMACD = [], yMACD = [], signalLine = [], shortEMA, longEMA, i;
         if (series.xData.length <
             params.longPeriod + params.signalPeriod) {
             return;
         }
         // Calculating the short and long EMA used when calculating the MACD
         shortEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
-            period: params.shortPeriod,
-            index: params.index
+            period: params.shortPeriod
         });
         longEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
-            period: params.longPeriod,
-            index: params.index
+            period: params.longPeriod
         });
         shortEMA = shortEMA.values;
         longEMA = longEMA.values;
         // Subtract each Y value from the EMA's and create the new dataset
         // (MACD)
-        for (i = 0; i <= shortEMA.length; i++) {
-            if (defined(longEMA[i]) &&
-                defined(longEMA[i][1]) &&
-                defined(shortEMA[i + indexToShift]) &&
-                defined(shortEMA[i + indexToShift][0])) {
+        for (i = 1; i <= shortEMA.length; i++) {
+            if (defined(longEMA[i - 1]) &&
+                defined(longEMA[i - 1][1]) &&
+                defined(shortEMA[i + params.shortPeriod + 1]) &&
+                defined(shortEMA[i + params.shortPeriod + 1][0])) {
                 MACD.push([
-                    shortEMA[i + indexToShift][0],
+                    shortEMA[i + params.shortPeriod + 1][0],
                     0,
                     null,
-                    shortEMA[i + indexToShift][1] -
-                    longEMA[i][1]
+                    shortEMA[i + params.shortPeriod + 1][1] -
+                    longEMA[i - 1][1]
                 ]);
             }
         }

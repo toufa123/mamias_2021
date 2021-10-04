@@ -23,12 +23,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Price Envelopes series type.
@@ -41,6 +44,7 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
  */
 var PriceEnvelopesIndicator = /** @class */ (function (_super) {
     __extends(PriceEnvelopesIndicator, _super);
+
     function PriceEnvelopesIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -48,6 +52,7 @@ var PriceEnvelopesIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     PriceEnvelopesIndicator.prototype.init = function () {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:

@@ -24,6 +24,11 @@ namespace PhpCsFixer;
 final class FileReader
 {
     /**
+     * @var null|self
+     */
+    private static $instance;
+
+    /**
      * @var null|string
      */
     private $stdinContent;
@@ -33,13 +38,11 @@ final class FileReader
      */
     public static function createSingleton()
     {
-        static $instance = null;
-
-        if (!$instance) {
-            $instance = new self();
+        if (null === self::$instance) {
+            self::$instance = new self();
         }
 
-        return $instance;
+        return self::$instance;
     }
 
     /**

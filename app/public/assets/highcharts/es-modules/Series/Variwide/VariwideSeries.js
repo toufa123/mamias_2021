@@ -27,13 +27,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import './VariwideComposition.js';
 /* *
@@ -50,6 +53,7 @@ import './VariwideComposition.js';
  */
 var VariwideSeries = /** @class */ (function (_super) {
     __extends(VariwideSeries, _super);
+
     function VariwideSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -65,6 +69,7 @@ var VariwideSeries = /** @class */ (function (_super) {
         _this.zData = void 0;
         return _this;
     }
+
     /* *
      *
      * Functions
@@ -84,7 +89,7 @@ var VariwideSeries = /** @class */ (function (_super) {
             this.xAxis.variwide = true;
             this.xAxis.zData = this.zData; // Used for label rank
         }
-        return;
+
     };
     /* eslint-disable valid-jsdoc */
     /**

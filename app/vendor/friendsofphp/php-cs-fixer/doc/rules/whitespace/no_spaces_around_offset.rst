@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$sample = $b [ 'a' ] [ 'b' ];
    +$sample = $b['a']['b'];
@@ -41,6 +42,7 @@ With configuration: ``['positions' => ['inside']]``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$sample = $b [ 'a' ] [ 'b' ];
    +$sample = $b ['a'] ['b'];
@@ -54,6 +56,7 @@ With configuration: ``['positions' => ['outside']]``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$sample = $b [ 'a' ] [ 'b' ];
    +$sample = $b[ 'a' ][ 'b' ];

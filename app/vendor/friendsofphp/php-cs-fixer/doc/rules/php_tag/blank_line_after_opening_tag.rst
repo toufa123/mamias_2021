@@ -15,6 +15,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,4 @@
    -<?php $a = 1;
    +<?php
    +

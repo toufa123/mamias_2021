@@ -29,6 +29,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,9 +1,9 @@
    -<?php {
    +<?php 
         echo 1;
@@ -52,6 +53,7 @@ With configuration: ``['namespaces' => true]``.
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
    -namespace Foo {
    +namespace Foo;

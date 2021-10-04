@@ -15,6 +15,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,5 +1,5 @@
     <?php
    -echo $$foo;
    -echo $$foo['bar'];

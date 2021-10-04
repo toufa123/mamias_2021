@@ -17,8 +17,6 @@
 
 namespace PHPMD;
 
-use RuntimeException;
-
 /**
  * This factory class is used to create the {@link \PHPMD\RuleSet} instance
  * that PHPMD will use to analyze the source code.
@@ -186,7 +184,7 @@ class RuleSetFactory
      *
      * @param string $fileName
      * @return \PHPMD\RuleSet
-     * @throws RuntimeException When loading the XML file fails.
+     * @throws \RuntimeException When loading the XML file fails.
      */
     private function parseRuleSetNode($fileName)
     {
@@ -198,7 +196,7 @@ class RuleSetFactory
             // Reset error handling to previous setting
             libxml_use_internal_errors($libxml);
 
-            throw new RuntimeException(trim(libxml_get_last_error()->message));
+            throw new \RuntimeException(trim(libxml_get_last_error()->message));
         }
 
         $ruleSet = new RuleSet();
@@ -507,7 +505,7 @@ class RuleSetFactory
      *
      * @param string $fileName The filename of a rule-set definition.
      * @return array|null
-     * @throws RuntimeException Thrown if file is not proper xml
+     * @throws \RuntimeException Thrown if file is not proper xml
      */
     public function getIgnorePattern($fileName)
     {
@@ -523,7 +521,7 @@ class RuleSetFactory
                 // Reset error handling to previous setting
                 libxml_use_internal_errors($libxml);
 
-                throw new RuntimeException(trim(libxml_get_last_error()->message));
+                throw new \RuntimeException(trim(libxml_get_last_error()->message));
             }
 
             foreach ($xml->children() as $node) {

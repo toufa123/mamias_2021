@@ -40,12 +40,12 @@ This configuration sets a maximum quality factor of 70 for the resulting image b
 Options
 -------
 
-**quality:** ``int``
+:strong:`quality:` ``int``
     Sets the image quality factor.
 
 
 Parameters
 ----------
 
-**liip_imagine.mozjpeg.binary:** ``string``
+:strong:`liip_imagine.mozjpeg.binary:` ``string``
     Sets the location of the ``cjpeg`` executable. Default is ``/opt/mozjpeg/bin/cjpeg``.

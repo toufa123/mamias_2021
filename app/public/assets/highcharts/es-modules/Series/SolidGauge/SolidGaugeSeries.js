@@ -27,16 +27,20 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var _a = SeriesRegistry.seriesTypes, GaugeSeries = _a.gauge, pieProto = _a.pie.prototype;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import U from '../../Core/Utilities.js';
+
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import './SolidGaugeComposition.js';
+
 /**
  * A solid gauge is a circular gauge where the value is indicated by a filled
  * arc, and the color of the arc may variate with the value.
@@ -149,6 +153,7 @@ var solidGaugeOptions = {
  */
 var SolidGaugeSeries = /** @class */ (function (_super) {
     __extends(SolidGaugeSeries, _super);
+
     function SolidGaugeSeries() {
         /* *
          *
@@ -170,6 +175,7 @@ var SolidGaugeSeries = /** @class */ (function (_super) {
         _this.thresholdAngleRad = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -203,13 +209,12 @@ var SolidGaugeSeries = /** @class */ (function (_super) {
             // #10630 null point should not be draw
             if (!point.isNull) { // condition like in pie chart
                 var graphic = point.graphic, rotation = (yAxis.startAngleRad +
-                    yAxis.translate(point.y, null, null, null, true)),
+                        yAxis.translate(point.y, null, null, null, true)),
                     radius = ((pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200),
                     innerRadius = ((pInt(pick(point.options.innerRadius, options.innerRadius, 60)) * center[2]) / 200),
-                    shapeArgs = void 0, d = void 0, toColor = yAxis.toColor(point.y, point),
+                    shapeArgs, d, toColor = yAxis.toColor(point.y, point),
                     axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
-                    axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad), minAngle = void 0,
-                    maxAngle = void 0;
+                    axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad), minAngle, maxAngle;
                 if (toColor === 'none') { // #3708
                     toColor = point.color || series.color || 'none';
                 }

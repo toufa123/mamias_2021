@@ -16,6 +16,7 @@
  *
  * */
 import U from '../../Core/Utilities.js';
+
 var objectEach = U.objectEach;
 /* *
  *
@@ -25,6 +26,7 @@ var objectEach = U.objectEach;
 var TreemapUtilities;
 (function (TreemapUtilities) {
     TreemapUtilities.AXIS_MAX = 100;
+
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * @todo Similar to eachObject, this function is likely redundant
@@ -32,7 +34,9 @@ var TreemapUtilities;
     function isBoolean(x) {
         return typeof x === 'boolean';
     }
+
     TreemapUtilities.isBoolean = isBoolean;
+
     /**
      * @todo Similar to recursive, this function is likely redundant
      */
@@ -42,7 +46,9 @@ var TreemapUtilities;
             func.call(context, val, key, list);
         });
     }
+
     TreemapUtilities.eachObject = eachObject;
+
     /**
      * @todo find correct name for this function.
      * @todo Similar to reduce, this function is likely redundant
@@ -57,6 +63,7 @@ var TreemapUtilities;
             recursive(next, func, context);
         }
     }
+
     TreemapUtilities.recursive = recursive;
 })(TreemapUtilities || (TreemapUtilities = {}));
 /* *

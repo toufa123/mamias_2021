@@ -25,6 +25,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -34,6 +35,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var _a = SeriesRegistry.seriesTypes, areaProto = _a.area.prototype, colProto = _a.column.prototype,
     DumbbellSeries = _a.dumbbell;
 import U from '../../Core/Utilities.js';
+
 var pick = U.pick, merge = U.merge, extend = U.extend;
 /* *
  *
@@ -52,6 +54,7 @@ var pick = U.pick, merge = U.merge, extend = U.extend;
  */
 var LollipopSeries = /** @class */ (function (_super) {
     __extends(LollipopSeries, _super);
+
     function LollipopSeries() {
         /* *
          *
@@ -69,6 +72,7 @@ var LollipopSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     LollipopSeries.prototype.toYData = function (point) {
         return [pick(point.y, point.low)];
     };

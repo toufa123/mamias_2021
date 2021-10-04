@@ -38,6 +38,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
     namespace PhpCsFixer\FIXER\Basic;
    -class InvalidName {}
@@ -52,6 +53,7 @@ With configuration: ``['dir' => './src']``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -namespace PhpCsFixer\FIXER\Basic;
    -class InvalidName {}

@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Wind barb series module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Mixins/OnSeries.js', [_modules['Series/Column/ColumnSeries.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (ColumnSeries, Series, U) {
         /* *
          *
@@ -229,6 +231,7 @@
          * */
         var WindbarbPoint = /** @class */ (function (_super) {
             __extends(WindbarbPoint, _super);
+
             function WindbarbPoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -244,6 +247,7 @@
                 _this.series = void 0;
                 return _this;
             }
+
             /* *
              *
              * Functions
@@ -314,6 +318,7 @@
          */
         var WindbarbSeries = /** @class */ (function (_super) {
             __extends(WindbarbSeries, _super);
+
             function WindbarbSeries() {
                 /* *
                  *
@@ -332,6 +337,7 @@
                 _this.points = void 0;
                 return _this;
             }
+
             /* *
              *
              * Static functions
@@ -473,7 +479,7 @@
                     // Check if it's inside the plot area, but only for the X
                     // dimension.
                     if (this.options.clip === false ||
-                        chart.isInsidePlot(plotX, 0)) {
+                        chart.isInsidePlot(plotX, 0, false)) {
                         // Create the graphic the first time
                         if (!point.graphic) {
                             point.graphic = this.chart.renderer
@@ -527,14 +533,6 @@
             WindbarbSeries.prototype.getExtremes = function () {
                 return {};
             };
-            WindbarbSeries.prototype.shouldShowTooltip = function (plotX, plotY, options) {
-                if (options === void 0) {
-                    options = {};
-                }
-                options.ignoreX = this.chart.inverted;
-                options.ignoreY = !options.ignoreX;
-                return _super.prototype.shouldShowTooltip.call(this, plotX, plotY, options);
-            };
             /**
              * Wind barbs are a convenient way to represent wind speed and direction in
              * one graphical form. Wind direction is given by the stem direction, and
@@ -556,7 +554,7 @@
                 /**
                  * Data grouping options for the wind barbs. In Highcharts, this
                  * requires the `modules/datagrouping.js` module to be loaded. In
-                 * Highcharts Stock, data grouping is included.
+                 * Highstock, data grouping is included.
                  *
                  * @sample  highcharts/plotoptions/windbarb-datagrouping
                  *          Wind barb with data grouping

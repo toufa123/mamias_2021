@@ -10,9 +10,12 @@
  *
  * */
 import H from '../../Core/Globals.js';
+
 var doc = H.doc, win = H.win;
 import U from '../../Core/Utilities.js';
+
 var merge = U.merge;
+
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -30,6 +33,7 @@ function addClass(el, className) {
         el.className += className;
     }
 }
+
 /**
  * @private
  * @param {string} str
@@ -44,6 +48,7 @@ function escapeStringForHTML(str) {
         .replace(/'/g, '&#x27;')
         .replace(/\//g, '&#x2F;');
 }
+
 /**
  * Get an element by ID
  * @param {string} id
@@ -53,6 +58,7 @@ function escapeStringForHTML(str) {
 function getElement(id) {
     return doc.getElementById(id);
 }
+
 /**
  * Get a fake mouse event of a given type
  * @param {string} type
@@ -84,59 +90,6 @@ function getFakeMouseEvent(type) {
 }
 
 /**
- * Get an appropriate heading level for an element. Corresponds to the
- * heading level below the previous heading in the DOM.
- *
- * Note: Only detects previous headings in the DOM that are siblings,
- * ancestors, or previous siblings of ancestors. Headings that are nested below
- * siblings of ancestors (cousins et.al) are not picked up. This is because it
- * is ambiguous whether or not the nesting is for layout purposes or indicates a
- * separate section.
- *
- * @private
- * @param {Highcharts.HTMLDOMElement} [element]
- * @return {string} The heading tag name (h1, h2 etc).
- * If no nearest heading is found, "p" is returned.
- */
-function getHeadingTagNameForElement(element) {
-    var getIncreasedHeadingLevel = function (tagName) {
-        var headingLevel = parseInt(tagName.slice(1), 10);
-        var newLevel = Math.min(6, headingLevel + 1);
-        return 'h' + newLevel;
-    };
-    var isHeading = function (tagName) {
-        return /H[1-6]/.test(tagName);
-    };
-    var getPreviousSiblingsHeading = function (el) {
-        var sibling = el;
-        while (sibling = sibling.previousSibling) { // eslint-disable-line
-            var tagName = sibling.tagName || '';
-            if (isHeading(tagName)) {
-                return tagName;
-            }
-        }
-        return '';
-    };
-    var getHeadingRecursive = function (el) {
-        var prevSiblingsHeading = getPreviousSiblingsHeading(el);
-        if (prevSiblingsHeading) {
-            return getIncreasedHeadingLevel(prevSiblingsHeading);
-        }
-        // No previous siblings are headings, try parent node
-        var parent = el.parentElement;
-        if (!parent) {
-            return 'p';
-        }
-        var parentTagName = parent.tagName;
-        if (isHeading(parentTagName)) {
-            return getIncreasedHeadingLevel(parentTagName);
-        }
-        return getHeadingRecursive(parent);
-    };
-    return getHeadingRecursive(element);
-}
-
-/**
  * Remove an element from the DOM.
  * @private
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
@@ -147,6 +100,7 @@ function removeElement(element) {
         element.parentNode.removeChild(element);
     }
 }
+
 /**
  * Utility function. Reverses child nodes of a DOM element.
  * @private
@@ -159,6 +113,7 @@ function reverseChildNodes(node) {
         node.appendChild(node.childNodes[i]);
     }
 }
+
 /**
  * Set attributes on element. Set to null to remove attribute.
  * @private
@@ -176,6 +131,7 @@ function setElAttrs(el, attrs) {
         }
     });
 }
+
 /**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
@@ -187,6 +143,7 @@ function stripHTMLTagsFromString(str) {
     return typeof str === 'string' ?
         str.replace(/<\/?[^>]+(>|$)/g, '') : str;
 }
+
 /**
  * Utility function for hiding an element visually, but still keeping it
  * available to screen reader users.
@@ -209,12 +166,12 @@ function visuallyHideElement(element) {
     };
     merge(true, element.style, hiddenStyle);
 }
+
 var HTMLUtilities = {
     addClass: addClass,
     escapeStringForHTML: escapeStringForHTML,
     getElement: getElement,
     getFakeMouseEvent: getFakeMouseEvent,
-    getHeadingTagNameForElement: getHeadingTagNameForElement,
     removeElement: removeElement,
     reverseChildNodes: reverseChildNodes,
     setElAttrs: setElAttrs,

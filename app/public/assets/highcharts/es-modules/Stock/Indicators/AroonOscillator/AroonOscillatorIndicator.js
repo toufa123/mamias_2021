@@ -23,14 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var AroonIndicator = SeriesRegistry.seriesTypes.aroon;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge;
 var AROON = SeriesRegistry.seriesTypes.aroon;
 /* *
@@ -49,6 +52,7 @@ var AROON = SeriesRegistry.seriesTypes.aroon;
  */
 var AroonOscillatorIndicator = /** @class */ (function (_super) {
     __extends(AroonOscillatorIndicator, _super);
+
     function AroonOscillatorIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -61,6 +65,7 @@ var AroonOscillatorIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -88,7 +93,7 @@ var AroonOscillatorIndicator = /** @class */ (function (_super) {
         var args = arguments, ctx = this;
         requiredIndicator.isParentLoaded(AROON, 'aroon', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
-            return;
+
         });
     };
     /**
@@ -112,6 +117,20 @@ var AroonOscillatorIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.aroonoscillator
      */
     AroonOscillatorIndicator.defaultOptions = merge(AroonIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of aroon oscillator series points.
+         *
+         * @excluding periods, index
+         */
+        params: {
+            /**
+             * Period for Aroon Oscillator
+             *
+             * @since   7.0.0
+             * @product highstock
+             */
+            period: 25
+        },
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }

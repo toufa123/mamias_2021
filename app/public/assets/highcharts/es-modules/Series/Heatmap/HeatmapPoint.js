@@ -25,14 +25,18 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
+
 var clamp = U.clamp, extend = U.extend, pick = U.pick;
 /* *
  *
@@ -41,6 +45,7 @@ var clamp = U.clamp, extend = U.extend, pick = U.pick;
  * */
 var HeatmapPoint = /** @class */ (function (_super) {
     __extends(HeatmapPoint, _super);
+
     function HeatmapPoint() {
         /* *
          *
@@ -56,6 +61,7 @@ var HeatmapPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -145,7 +151,7 @@ var HeatmapPoint = /** @class */ (function (_super) {
 }(ScatterPoint));
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    moveToTopOnHover: colorMapPointMixin.moveToTopOnHover
+    setState: colorMapPointMixin.setState
 });
 /* *
  *

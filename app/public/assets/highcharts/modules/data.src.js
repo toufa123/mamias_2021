@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Data module
  *
- * (c) 2012-2021 Torstein Honsi
+ * (c) 2012-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Extensions/Ajax.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
         /* *
          *
@@ -101,6 +103,7 @@
                     octet: 'application/octet-stream'
                 },
                 r = new XMLHttpRequest();
+
             /**
              * @private
              * @param {XMLHttpRequest} xhr - Internal request object.
@@ -114,6 +117,7 @@
                     // @todo Maybe emit a highcharts error event here
                 }
             }
+
             if (!options.url) {
                 return false;
             }
@@ -727,6 +731,7 @@
                 };
                 this.init(dataOptions, chartOptions, chart);
             }
+
             /* *
              *
              *  Functions
@@ -937,6 +942,7 @@
                         '\t': 0
                     };
                 columns = this.columns = [];
+
                 /*
                     This implementation is quite verbose. It will be shortened once
                     it's stable and passes all the test.
@@ -980,6 +986,7 @@
                  */
                 function parseRow(columnStr, rowNumber, noAdd, callbacks) {
                     var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
+
                     /**
                      * @private
                      */
@@ -988,6 +995,7 @@
                         cl = columnStr[j - 1];
                         cn = columnStr[j + 1];
                     }
+
                     /**
                      * @private
                      */
@@ -999,6 +1007,7 @@
                             dataTypes[column].push(type);
                         }
                     }
+
                     /**
                      * @private
                      */
@@ -1030,6 +1039,7 @@
                         ++column;
                         ++actualColumn;
                     }
+
                     if (!columnStr.trim().length) {
                         return;
                     }
@@ -1064,6 +1074,7 @@
                     }
                     push();
                 }
+
                 /**
                  * Attempt to guess the delimiter. We do a separate parse pass here
                  * because we need to count potential delimiters softly without making
@@ -1155,6 +1166,7 @@
                     }
                     return guessed;
                 }
+
                 /**
                  * Tries to guess the date format
                  *  - Check if either month candidate exceeds 12
@@ -1257,6 +1269,7 @@
                     }
                     return format;
                 }
+
                 /**
                  * @todo
                  * Figure out the best axis types for the data
@@ -1267,6 +1280,7 @@
                  */
                 function deduceAxisTypes() {
                 }
+
                 if (csv && options.beforeParse) {
                     csv = options.beforeParse.call(this, csv);
                 }
@@ -1307,7 +1321,7 @@
                         options.dateFormat = deduceDateFormat(columns[0]);
                     }
                     // lines.forEach(function (line, rowNo) {
-                    //    let trimmed = self.trim(line),
+                    //    var trimmed = self.trim(line),
                     //        isComment = trimmed.indexOf('#') === 0,
                     //        isBlank = trimmed === '',
                     //        items;
@@ -1407,6 +1421,7 @@
                 delete options.csvURL;
                 delete options.rowsURL;
                 delete options.columnsURL;
+
                 /**
                  * @private
                  */
@@ -1426,6 +1441,7 @@
                             clearTimeout(data.liveDataTimeout);
                             chart.liveDataURL = url;
                         }
+
                         /**
                          * @private
                          */
@@ -1437,6 +1453,7 @@
                                     setTimeout(performFetch, updateIntervalMs);
                             }
                         }
+
                         ajax({
                             url: url,
                             dataType: tp || 'json',
@@ -1455,6 +1472,7 @@
                         });
                         return true;
                     }
+
                     if (!request(originalOptions.csvURL, function (res) {
                         chart.update({
                             data: {
@@ -1479,6 +1497,7 @@
                         }
                     }
                 }
+
                 performFetch(true);
                 return this.hasURLOption(options);
             };
@@ -1507,6 +1526,7 @@
                 if (refreshRate < 4000) {
                     refreshRate = 4000;
                 }
+
                 /**
                  * Fetch the actual spreadsheet using XMLHttpRequest.
                  * @private
@@ -1534,6 +1554,7 @@
                         }
                     });
                 }
+
                 if (googleSpreadsheetKey) {
                     delete options.googleSpreadsheetKey;
                     fetchSheet(function (json) {

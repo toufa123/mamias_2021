@@ -33,6 +33,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php /* header */ $x = true; /* @var bool $isFoo */ $isFoo = true;
    +<?php /* header */ $x = true; /** @var bool $isFoo */ $isFoo = true;
 
@@ -45,7 +46,7 @@ With configuration: ``['ignored_tags' => ['todo']]``.
 
    --- Original
    +++ New
-    <?php
+   @@ -2,5 +2,5 @@
     // @todo do something later
     $foo = 1;
 

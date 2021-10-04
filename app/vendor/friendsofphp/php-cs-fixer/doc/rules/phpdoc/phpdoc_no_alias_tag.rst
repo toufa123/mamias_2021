@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,10 +1,10 @@
     <?php
     /**
      * @property string $foo
@@ -50,8 +51,7 @@ With configuration: ``['replacements' => ['link' => 'website']]``.
 
    --- Original
    +++ New
-    <?php
-    /**
+   @@ -3,8 +3,8 @@
      * @property string $foo
      * @property-read string $bar
      *

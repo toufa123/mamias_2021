@@ -24,6 +24,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -35,6 +36,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
  * */
 var BulletPoint = /** @class */ (function (_super) {
     __extends(BulletPoint, _super);
+
     function BulletPoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.options = void 0;
@@ -42,6 +44,7 @@ var BulletPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -57,7 +60,7 @@ var BulletPoint = /** @class */ (function (_super) {
             this.targetGraphic = this.targetGraphic.destroy();
         }
         _super.prototype.destroy.apply(this, arguments);
-        return;
+
     };
     return BulletPoint;
 }(ColumnSeries.prototype.pointClass));

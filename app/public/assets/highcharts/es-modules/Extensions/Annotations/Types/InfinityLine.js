@@ -21,6 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -28,10 +29,12 @@ import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var InfinityLine = /** @class */ (function (_super) {
     __extends(InfinityLine, _super);
+
     /* *
      *
      *  Constructors
@@ -40,6 +43,7 @@ var InfinityLine = /** @class */ (function (_super) {
     function InfinityLine(chart, options) {
         return _super.call(this, chart, options) || this;
     }
+
     /* *
      *
      * Static Functions
@@ -48,15 +52,25 @@ var InfinityLine = /** @class */ (function (_super) {
     InfinityLine.edgePoint = function (startIndex, endIndex) {
         return function (target) {
             var annotation = target.annotation, points = annotation.points, type = annotation.options.typeOptions.type;
-            if (type === 'horizontalLine' || type === 'verticalLine') {
-                // Horizontal and vertical lines have only one point,
+            if (type === 'horizontalLine') {
+                // Horizontal line has only one point,
                 // make a copy of it:
                 points = [
                     points[0],
                     new MockPoint(annotation.chart, points[0].target, {
-                        // add 0 or 1 to x or y depending on type
-                        x: points[0].x + +(type === 'horizontalLine'),
-                        y: points[0].y + +(type === 'verticalLine'),
+                        x: points[0].x + 1,
+                        y: points[0].y,
+                        xAxis: points[0].options.xAxis,
+                        yAxis: points[0].options.yAxis
+                    })
+                ];
+            } else if (type === 'verticalLine') {
+                // The same for verticalLine type:
+                points = [
+                    points[0],
+                    new MockPoint(annotation.chart, points[0].target, {
+                        x: points[0].x,
+                        y: points[0].y + 1,
                         xAxis: points[0].options.xAxis,
                         yAxis: points[0].options.yAxis
                     })
@@ -75,7 +89,7 @@ var InfinityLine = /** @class */ (function (_super) {
             firstPoint[xOrY]);
     };
     InfinityLine.findEdgePoint = function (firstPoint, secondPoint) {
-        var chart = firstPoint.series.chart, xAxis = firstPoint.series.xAxis, yAxis = secondPoint.series.yAxis,
+        var xAxis = firstPoint.series.xAxis, yAxis = secondPoint.series.yAxis,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),
             secondPointPixels = MockPoint.pointToPixels(secondPoint), deltaX = secondPointPixels.x - firstPointPixels.x,
             deltaY = secondPointPixels.y - firstPointPixels.y, xAxisMin = xAxis.left, xAxisMax = xAxisMin + xAxis.width,
@@ -95,8 +109,8 @@ var InfinityLine = /** @class */ (function (_super) {
                 edgePoint.y = yLimit;
             }
         }
-        edgePoint.x -= chart.plotLeft;
-        edgePoint.y -= chart.plotTop;
+        edgePoint.x -= xAxisMin;
+        edgePoint.y -= yAxisMin;
         if (firstPoint.series.chart.inverted) {
             swap = edgePoint.x;
             edgePoint.x = edgePoint.y;
@@ -114,11 +128,7 @@ var InfinityLine = /** @class */ (function (_super) {
             this.points[0],
             InfinityLine.endEdgePoint
         ];
-        // Be case-insensitive (#15155) e.g.:
-        // - line
-        // - horizontalLine
-        // - verticalLine
-        if (typeOptions.type.match(/line/gi)) {
+        if (typeOptions.type.match(/Line/g)) {
             points[0] = InfinityLine.startEdgePoint;
         }
         var line = this.initShape(merge(typeOptions.line, {

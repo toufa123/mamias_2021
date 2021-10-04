@@ -25,6 +25,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,6 +1,6 @@
     <?php
     $a = array_keys($b);
    -$a = array_search($b, $c);

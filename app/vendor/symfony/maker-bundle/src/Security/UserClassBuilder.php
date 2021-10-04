@@ -13,9 +13,6 @@ namespace Symfony\Bundle\MakerBundle\Security;
 
 use PhpParser\Node;
 use Symfony\Bundle\MakerBundle\Util\ClassSourceManipulator;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Security\Core\User\InMemoryUser;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -25,7 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 final class UserClassBuilder
 {
-    public function addUserInterfaceImplementation(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig): void
+    public function addUserInterfaceImplementation(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig)
     {
         $manipulator->addInterface(UserInterface::class);
 
@@ -33,42 +30,14 @@ final class UserClassBuilder
 
         $this->addGetRoles($manipulator, $userClassConfig);
 
-        $this->addPasswordImplementation($manipulator, $userClassConfig);
+        $this->addGetPassword($manipulator, $userClassConfig);
+
+        $this->addGetSalt($manipulator, $userClassConfig);
 
         $this->addEraseCredentials($manipulator, $userClassConfig);
     }
 
-    private function addPasswordImplementation(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig): void
-    {
-        if (60000 > Kernel::VERSION_ID) {
-            // Add methods required to fulfill the UserInterface contract
-            $this->addGetPassword($manipulator, $userClassConfig);
-            $this->addGetSalt($manipulator, $userClassConfig);
-
-            // Symfony >=5.3 uses "@see PasswordAuthenticatedInterface" for getPassword()
-            if (interface_exists(PasswordAuthenticatedUserInterface::class)) {
-                $manipulator->addUseStatementIfNecessary(PasswordAuthenticatedUserInterface::class);
-            }
-
-            // Future proof the entity for >= Symfony 6 && the entity will check passwords
-            if ($userClassConfig->hasPassword() && interface_exists(PasswordAuthenticatedUserInterface::class)) {
-                $manipulator->addInterface(PasswordAuthenticatedUserInterface::class);
-            }
-
-            return;
-        }
-
-        // Future proof >= Symfony 6.0
-        if (!$userClassConfig->hasPassword()) {
-            return;
-        }
-
-        $manipulator->addInterface(PasswordAuthenticatedUserInterface::class);
-
-        $this->addGetPassword($manipulator, $userClassConfig);
-    }
-
-    private function addGetUsername(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig): void
+    private function addGetUsername(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig)
     {
         if ($userClassConfig->isEntity()) {
             // add entity property
@@ -98,17 +67,10 @@ final class UserClassBuilder
             );
         }
 
-        $getterIdentifierName = 'getUsername';
-
-        // Check if we're using Symfony 5.3+ - UserInterface::getUsername() was replaced with UserInterface::getUserIdentifier()
-        if (class_exists(InMemoryUser::class)) {
-            $getterIdentifierName = 'getUserIdentifier';
-        }
-
         // define getUsername (if it was defined above, this will override)
         $manipulator->addAccessorMethod(
             $userClassConfig->getIdentityPropertyName(),
-            $getterIdentifierName,
+            'getUsername',
             'string',
             false,
             [
@@ -199,8 +161,6 @@ final class UserClassBuilder
 
     private function addGetPassword(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig)
     {
-        $seeInterface = interface_exists(PasswordAuthenticatedUserInterface::class) ? '@see PasswordAuthenticatedUserInterface' : '@see UserInterface';
-
         if (!$userClassConfig->hasPassword()) {
             // add an empty method only
             $builder = $manipulator->createMethodBuilder(
@@ -208,9 +168,9 @@ final class UserClassBuilder
                 'string',
                 true,
                 [
-                    'This method can be removed in Symfony 6.0 - is not needed for apps that do not check user passwords.',
+                    'This method is not needed for apps that do not check user passwords.',
                     '',
-                    $seeInterface,
+                    '@see UserInterface',
                 ]
             );
 
@@ -261,8 +221,9 @@ final class UserClassBuilder
             'string',
             false,
             [
-                $seeInterface,
-            ]
+                '@see UserInterface',
+            ],
+            true
         );
     }
 
@@ -275,7 +236,7 @@ final class UserClassBuilder
             ];
         } else {
             $methodDescription = [
-                'This method can be removed in Symfony 6.0 - is not needed for apps that do not check user passwords.',
+                'This method is not needed for apps that do not check user passwords.',
             ];
         }
 

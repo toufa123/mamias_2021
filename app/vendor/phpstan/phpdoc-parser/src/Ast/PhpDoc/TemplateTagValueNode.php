@@ -2,13 +2,10 @@
 
 namespace PHPStan\PhpDocParser\Ast\PhpDoc;
 
-use PHPStan\PhpDocParser\Ast\NodeAttributes;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 
 class TemplateTagValueNode implements PhpDocTagValueNode
 {
-
-	use NodeAttributes;
 
 	/** @var string */
 	public $name;

@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,7 +1,7 @@
     <?php
         switch($a) {
    -        case 1   :

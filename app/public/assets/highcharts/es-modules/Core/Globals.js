@@ -8,66 +8,79 @@
  *
  * */
 'use strict';
-/* *
- *
- *  Constants
- *
- * */
+/* globals Image, window */
 /**
- * @private
- * @deprecated
- * @todo Rename UMD argument `win` to `window`; move code to `Globals.win`
- */
-var w = (typeof win !== 'undefined' ?
-        win :
-        typeof window !== 'undefined' ?
-            window :
-            {}
-// eslint-disable-next-line node/no-unsupported-features/es-builtins
-);
-/* *
+ * Reference to the global SVGElement class as a workaround for a name conflict
+ * in the Highcharts namespace.
  *
- *  Namespace
+ * @global
+ * @typedef {global.SVGElement} GlobalSVGElement
  *
- * */
-/**
- * Shared Highcharts properties.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
-var Globals;
-(function (Globals) {
-    /* *
-     *
-     *  Constants
-     *
-     * */
-    Globals.SVG_NS = 'http://www.w3.org/2000/svg', Globals.product = 'Highcharts', Globals.version = '9.1.0', Globals.win = w, Globals.doc = Globals.win.document, Globals.svg = (Globals.doc &&
-        Globals.doc.createElementNS &&
-        !!Globals.doc.createElementNS(Globals.SVG_NS, 'svg').createSVGRect), Globals.userAgent = (Globals.win.navigator && Globals.win.navigator.userAgent) || '', Globals.isChrome = Globals.userAgent.indexOf('Chrome') !== -1, Globals.isFirefox = Globals.userAgent.indexOf('Firefox') !== -1, Globals.isMS = /(edge|msie|trident)/i.test(Globals.userAgent) && !Globals.win.opera, Globals.isSafari = !Globals.isChrome && Globals.userAgent.indexOf('Safari') !== -1, Globals.isTouchDevice = /(Mobile|Android|Windows Phone)/.test(Globals.userAgent), Globals.isWebKit = Globals.userAgent.indexOf('AppleWebKit') !== -1, Globals.deg2rad = Math.PI * 2 / 360, Globals.hasBidiBug = (Globals.isFirefox &&
-        parseInt(Globals.userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-    ), Globals.hasTouch = !!Globals.win.TouchEvent, Globals.marginNames = [
-        'plotTop',
-        'marginRight',
-        'marginBottom',
-        'plotLeft'
-    ], Globals.noop = function () {
-    }, Globals.supportsPassiveEvents = (function () {
-        // Checks whether the browser supports passive events, (#11353).
+// glob is a temporary fix to allow our es-modules to work.
+var glob = ( // @todo UMD variable named `window`, and glob named `win`
+        typeof win !== 'undefined' ?
+            win :
+            typeof window !== 'undefined' ?
+                window :
+                {}), doc = glob.document, SVG_NS = 'http://www.w3.org/2000/svg',
+    userAgent = (glob.navigator && glob.navigator.userAgent) || '', svg = (doc &&
+        doc.createElementNS &&
+        !!doc.createElementNS(SVG_NS, 'svg').createSVGRect), isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
+    isFirefox = userAgent.indexOf('Firefox') !== -1, isChrome = userAgent.indexOf('Chrome') !== -1,
+    hasBidiBug = (isFirefox &&
+        parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+    ), noop = function () {
+    },
+// Checks whether the browser supports passive events, (#11353).
+    checkPassiveEvents = function () {
         var supportsPassive = false;
-        // Object.defineProperty doesn't work on IE as well as passive
-        // events - instead of using polyfill, we can exclude IE totally.
-        if (!Globals.isMS) {
+        // Object.defineProperty doesn't work on IE as well as passive events -
+        // instead of using polyfill, we can exclude IE totally.
+        if (!isMS) {
             var opts = Object.defineProperty({}, 'passive', {
                 get: function () {
                     supportsPassive = true;
                 }
             });
-            if (Globals.win.addEventListener && Globals.win.removeEventListener) {
-                Globals.win.addEventListener('testPassive', Globals.noop, opts);
-                Globals.win.removeEventListener('testPassive', Globals.noop, opts);
+            if (glob.addEventListener && glob.removeEventListener) {
+                glob.addEventListener('testPassive', noop, opts);
+                glob.removeEventListener('testPassive', noop, opts);
             }
         }
         return supportsPassive;
-    }());
+    };
+var H = {
+    product: 'Highcharts',
+    version: '9.0.0',
+    deg2rad: Math.PI * 2 / 360,
+    doc: doc,
+    hasBidiBug: hasBidiBug,
+    hasTouch: !!glob.TouchEvent,
+    isMS: isMS,
+    isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
+    isFirefox: isFirefox,
+    isChrome: isChrome,
+    isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
+    isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
+    SVG_NS: SVG_NS,
+    chartCount: 0,
+    seriesTypes: {},
+    supportsPassiveEvents: checkPassiveEvents(),
+    symbolSizes: {},
+    svg: svg,
+    win: glob,
+    marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
+    noop: noop,
+    /**
+     * Theme options that should get applied to the chart. In module mode it
+     * might not be possible to change this property because of read-only
+     * restrictions, instead use {@link Highcharts.setOptions}.
+     *
+     * @name Highcharts.theme
+     * @type {Highcharts.Options}
+     */
     /**
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
@@ -76,7 +89,7 @@ var Globals;
      * @name Highcharts.charts
      * @type {Array<Highcharts.Chart|undefined>}
      */
-    Globals.charts = [];
+    charts: [],
     /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the
@@ -88,23 +101,8 @@ var Globals;
      *         Adding support for week number
      *
      * @name Highcharts.dateFormats
-     * @type {Record<string, Highcharts.TimeFormatCallbackFunction>}
+     * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
      */
-    Globals.dateFormats = {};
-    /**
-     * @private
-     * @deprecated
-     * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
-     */
-    Globals.seriesTypes = {};
-    /**
-     * @private
-     */
-    Globals.symbolSizes = {};
-})(Globals || (Globals = {}));
-/* *
- *
- *  Default Export
- *
- * */
-export default Globals;
+    dateFormats: {}
+};
+export default H;

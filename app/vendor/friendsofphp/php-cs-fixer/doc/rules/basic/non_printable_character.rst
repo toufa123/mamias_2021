@@ -33,6 +33,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php echo "​Hello World !";
    +<?php echo "Hello World !";
 
@@ -45,6 +46,7 @@ With configuration: ``['use_escape_sequences_in_strings' => true]``.
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php echo "​Hello World !";
    +<?php echo "\u{200b}Hello\u{2007}World\u{a0}!";
 

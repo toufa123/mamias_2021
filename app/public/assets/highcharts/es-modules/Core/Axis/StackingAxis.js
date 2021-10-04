@@ -9,10 +9,12 @@
  * */
 'use strict';
 import A from '../Animation/AnimationUtilities.js';
+
 var getDeferredAnimation = A.getDeferredAnimation;
 import U from '../Utilities.js';
+
 var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent,
-    isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
+    objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.
@@ -31,6 +33,7 @@ var StackingAxisAdditions = /** @class */ (function () {
         this.stacksTouched = 0;
         this.axis = axis;
     }
+
     /* *
      *
      *  Functions
@@ -44,7 +47,7 @@ var StackingAxisAdditions = /** @class */ (function () {
         var stacking = this;
         var axis = stacking.axis;
         var axisSeries = axis.series;
-        var reversedStacks = axis.options.reversedStacks;
+        var reversedStacks = pick(axis.options.reversedStacks, true);
         var len = axisSeries.length;
         var actualSeries, i;
         if (!axis.isXAxis) {
@@ -86,16 +89,16 @@ var StackingAxisAdditions = /** @class */ (function () {
      * @private
      */
     StackingAxisAdditions.prototype.resetStacks = function () {
-        var _this = this;
-        var _a = this, axis = _a.axis, stacks = _a.stacks;
+        var stacking = this;
+        var axis = stacking.axis;
+        var stacks = stacking.stacks;
         if (!axis.isXAxis) {
             objectEach(stacks, function (type) {
-                objectEach(type, function (stack, x) {
+                objectEach(type, function (stack, key) {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if (isNumber(stack.touched) &&
-                        stack.touched < _this.stacksTouched) {
+                    if (stack.touched < stacking.stacksTouched) {
                         stack.destroy();
-                        delete type[x];
+                        delete type[key];
                         // Reset stacks
                     } else {
                         stack.total = null;
@@ -114,8 +117,8 @@ var StackingAxisAdditions = /** @class */ (function () {
         var chart = axis.chart;
         var renderer = chart.renderer;
         var stacks = stacking.stacks;
-        var stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation;
-        var animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false);
+        var stackLabelsAnim = axis.options.stackLabels.animation;
+        var animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
         var stackTotalGroup = stacking.stackTotalGroup = (stacking.stackTotalGroup ||
             renderer
                 .g('stack-labels')
@@ -149,6 +152,7 @@ var StackingAxisAdditions = /** @class */ (function () {
 var StackingAxis = /** @class */ (function () {
     function StackingAxis() {
     }
+
     /* *
      *
      *  Static Functions

@@ -387,10 +387,14 @@ abstract class AbstractRule implements Rule
         array $args = array(),
         $metric = null
     ) {
-        $message = array(
-            'message' => $this->message,
-            'args' => $args,
-        );
+        $search = array();
+        $replace = array();
+        foreach ($args as $index => $value) {
+            $search[] = '{' . $index . '}';
+            $replace[] = $value;
+        }
+
+        $message = str_replace($search, $replace, $this->message);
 
         $ruleViolation = new RuleViolation($this, $node, $message, $metric);
         $this->report->addRuleViolation($ruleViolation);

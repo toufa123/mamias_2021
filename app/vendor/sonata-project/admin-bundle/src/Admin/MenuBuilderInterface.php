@@ -19,10 +19,6 @@ use Knp\Menu\ItemInterface;
  * This interface can be implemented by admins that need to build menus.
  *
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
- *
- * NEXT_MAJOR: Remove this interface.
- *
- * @deprecated since sonata-project/admin-bundle 3.95
  */
 interface MenuBuilderInterface
 {
@@ -33,7 +29,7 @@ interface MenuBuilderInterface
      *
      * @return ItemInterface|bool
      *
-     * @deprecated since sonata-project/admin-bundle 3.24
+     * @deprecated Use buildTabMenu instead
      *
      * @phpstan-param AdminInterface<object>|null $childAdmin
      */
@@ -45,8 +41,6 @@ interface MenuBuilderInterface
      * @param string $action
      *
      * @return ItemInterface|bool
-     *
-     * @deprecated since sonata-project/admin-bundle 3.95
      *
      * @phpstan-param AdminInterface<object>|null $childAdmin
      */

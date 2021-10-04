@@ -1,6 +1,6 @@
 /* *
  *
- *  Parabolic SAR indicator for Highcharts Stock
+ *  Parabolic SAR indicator for Highstock
  *
  *  (c) 2010-2021 Grzegorz Blachliński
  *
@@ -27,18 +27,23 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var merge = U.merge, extend = U.extend;
 /* eslint-disable require-jsdoc */
+
 // Utils:
 function toFixed(a, n) {
     return parseFloat(a.toFixed(n));
 }
+
 function calculateDirection(previousDirection, low, high, PSAR) {
     if ((previousDirection === 1 && low > PSAR) ||
         (previousDirection === -1 && high > PSAR)) {
@@ -46,6 +51,7 @@ function calculateDirection(previousDirection, low, high, PSAR) {
     }
     return -1;
 }
+
 /* *
  * Method for calculating acceleration factor
  * dir - direction
@@ -68,18 +74,22 @@ function getAccelerationFactor(dir, pDir, eP, pEP, pAcc, inc, maxAcc, initAcc) {
     }
     return initAcc;
 }
+
 function getExtremePoint(high, low, previousDirection, previousExtremePoint) {
     if (previousDirection === 1) {
         return (high > previousExtremePoint) ? high : previousExtremePoint;
     }
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
+
 function getEPMinusPSAR(EP, PSAR) {
     return EP - PSAR;
 }
+
 function getAccelerationFactorMultiply(accelerationFactor, EPMinusSAR) {
     return accelerationFactor * EPMinusSAR;
 }
+
 /* *
  * Method for calculating PSAR
  * pdir - previous direction
@@ -105,6 +115,7 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
     }
     return pEP;
 }
+
 /* eslint-enable require-jsdoc */
 /* *
  *
@@ -122,6 +133,7 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
  */
 var PSARIndicator = /** @class */ (function (_super) {
     __extends(PSARIndicator, _super);
+
     function PSARIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -134,6 +146,7 @@ var PSARIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -227,7 +240,6 @@ var PSARIndicator = /** @class */ (function (_super) {
          * @excluding period
          */
         params: {
-            period: void 0,
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value
@@ -267,7 +279,7 @@ var PSARIndicator = /** @class */ (function (_super) {
     return PSARIndicator;
 }(SMAIndicator));
 extend(PSARIndicator.prototype, {
-    nameComponents: void 0
+    nameComponents: false
 });
 SeriesRegistry.registerSeriesType('psar', PSARIndicator);
 /* *

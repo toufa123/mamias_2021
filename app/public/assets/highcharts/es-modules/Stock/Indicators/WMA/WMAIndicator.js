@@ -25,14 +25,18 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
+
 // Utils:
 /**
  * @private
@@ -41,6 +45,7 @@ function accumulateAverage(points, xVal, yVal, i, index) {
     var xValue = xVal[i], yValue = index < 0 ? yVal[i] : yVal[i][index];
     points.push([xValue, yValue]);
 }
+
 /**
  * @private
  */
@@ -54,6 +59,7 @@ function weightedSumArray(array, pLen) {
         return [null, prev[1] + cur[1] * (i + 1)];
     })[1] / denominator;
 }
+
 /**
  * @private
  */
@@ -62,6 +68,7 @@ function populateAverage(points, xVal, yVal, i) {
     points.shift(); // remove point until range < period
     return [wmaX, wmaY];
 }
+
 /* eslint-enable valid-jsdoc */
 /**
  * The SMA series type.
@@ -74,6 +81,7 @@ function populateAverage(points, xVal, yVal, i) {
  */
 var WMAIndicator = /** @class */ (function (_super) {
     __extends(WMAIndicator, _super);
+
     function WMAIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -81,6 +89,7 @@ var WMAIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     WMAIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0,
             range = 1, xValue = xVal[0], yValue = yVal[0], WMA = [], xData = [], yData = [], index = -1, i, points,

@@ -23,14 +23,18 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
+
 // Utils:
 /**
  * @private
@@ -39,6 +43,7 @@ function accumulateAverage(points, xVal, yVal, i) {
     var xValue = xVal[i], yValue = yVal[i];
     points.push([xValue, yValue]);
 }
+
 /**
  * @private
  */
@@ -48,6 +53,7 @@ function getTR(currentPoint, prevPoint) {
         LCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[2] - prevY[3]), TR = Math.max(HL, HCp, LCp);
     return TR;
 }
+
 /**
  * @private
  */
@@ -56,6 +62,7 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
     y = (((prevATR * (period - 1)) + TR) / period);
     return [x, y];
 }
+
 /* eslint-enable valid-jsdoc */
 /* *
  *
@@ -73,6 +80,7 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
  */
 var ATRIndicator = /** @class */ (function (_super) {
     __extends(ATRIndicator, _super);
+
     function ATRIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -85,6 +93,7 @@ var ATRIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -140,11 +149,8 @@ var ATRIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.atr
      */
     ATRIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
         params: {
-            index: void 0 // unused index, do not inherit (#15362)
+            period: 14
         }
     });
     return ATRIndicator;

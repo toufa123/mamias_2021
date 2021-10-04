@@ -14,7 +14,6 @@ class <?= $class_name ?> extends AbstractType
     {
         $builder
             ->add('<?= $email_field ?>', EmailType::class, [
-                'attr' => ['autocomplete' => 'email'],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter your email',

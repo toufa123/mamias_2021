@@ -26,11 +26,10 @@ use Sonata\Form\Validator\ErrorElement;
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
  *
  * @method array getAccessMapping(AdminInterface $admin)
- * @method void  configure(AdminInterface $admin)
  * @method array configureBatchActions(AdminInterface $admin, array $actions)
  * @method array configureExportFields(AdminInterface $admin, array $fields)
  * @method array configureActionButtons(AdminInterface $admin, array $list, string $action, object $object)
- * @method array configureDashboardActions(AdminInterface $admin, array $actions)
+ * @method array configureDashboardButtons(AdminInterface $admin, array $actions)
  * @method void  configureDefaultFilterValues(AdminInterface $admin, array &$filterValues)
  * @method void  configureDefaultSortValues(AdminInterface $admin, array &$sortValues)
  * @method void  configureFormOptions(AdminInterface $admin, array &$formOptions)
@@ -167,13 +166,6 @@ interface AdminExtensionInterface
     public function getPersistentParameters(AdminInterface $admin);
 
     /**
-     * Get a chance to configure admin before used.
-     *
-     * @phpstan-param AdminInterface<T> $admin
-     */
-//    public function configure(AdminInterface $admin): void;
-
-    /*
      * Get a chance to add persistent parameters.
      *
      * @param array<string, mixed> $parameters
@@ -285,7 +277,7 @@ interface AdminExtensionInterface
      * @phpstan-param AdminInterface<T> $admin
      */
     // NEXT_MAJOR: Uncomment this method
-    // public function configureDashboardActions(AdminInterface $admin, array $actions): array;
+    // public function configureDashboardButtons(AdminInterface $admin, array $actions): array;
 
     /*
      * NEXT_MAJOR: Uncomment this method

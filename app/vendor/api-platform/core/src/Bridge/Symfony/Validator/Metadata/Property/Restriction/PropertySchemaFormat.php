@@ -17,7 +17,6 @@ use ApiPlatform\Core\Metadata\Property\PropertyMetadata;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Ip;
-use Symfony\Component\Validator\Constraints\Ulid;
 use Symfony\Component\Validator\Constraints\Uuid;
 
 /**
@@ -40,10 +39,6 @@ class PropertySchemaFormat implements PropertySchemaRestrictionMetadataInterface
             return ['format' => 'uuid'];
         }
 
-        if ($constraint instanceof Ulid) {
-            return ['format' => 'ulid'];
-        }
-
         if ($constraint instanceof Ip) {
             if ($constraint->version === $constraint::V4) {
                 return ['format' => 'ipv4'];
@@ -62,6 +57,6 @@ class PropertySchemaFormat implements PropertySchemaRestrictionMetadataInterface
     {
         $schema = $propertyMetadata->getSchema();
 
-        return empty($schema['format']) && ($constraint instanceof Email || $constraint instanceof Uuid || $constraint instanceof Ulid || $constraint instanceof Ip);
+        return empty($schema['format']);
     }
 }

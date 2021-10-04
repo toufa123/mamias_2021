@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -21,13 +21,14 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Themes/Skies.js', [_modules['Core/Globals.js'], _modules['Core/Options.js']], function (Highcharts, O) {
+    _registerModule(_modules, 'Extensions/Themes/Skies.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Highcharts, U) {
         /* *
          *
          *  (c) 2010-2021 Torstein Honsi
@@ -39,7 +40,7 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var setOptions = O.setOptions;
+        var setOptions = U.setOptions;
         Highcharts.theme = {
             colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',
                 '#82914E', '#86777F', '#42A07B'],

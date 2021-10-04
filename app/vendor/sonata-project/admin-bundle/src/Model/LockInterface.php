@@ -17,8 +17,6 @@ use Sonata\AdminBundle\Exception\LockException;
 
 /**
  * @author Emmanuel Vella <vella.emmanuel@gmail.com>
- *
- * @phpstan-template T of object
  */
 interface LockInterface
 {
@@ -26,8 +24,6 @@ interface LockInterface
      * @param object $object
      *
      * @return mixed|null
-     *
-     * @phpstan-param T $object
      */
     public function getLockVersion($object);
 
@@ -36,8 +32,6 @@ interface LockInterface
      * @param mixed  $expectedVersion
      *
      * @throws LockException
-     *
-     * @phpstan-param T $object
      */
     public function lock($object, $expectedVersion);
 }

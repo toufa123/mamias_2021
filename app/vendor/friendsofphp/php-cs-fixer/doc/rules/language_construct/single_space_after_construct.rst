@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
 
    -throw  new  \Exception();
@@ -42,6 +43,7 @@ With configuration: ``['constructs' => ['echo']]``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
 
    -echo  "Hello!";
@@ -56,6 +58,7 @@ With configuration: ``['constructs' => ['yield_from']]``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
 
    -yield  from  baz();

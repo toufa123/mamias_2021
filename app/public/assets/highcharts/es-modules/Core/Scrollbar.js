@@ -13,10 +13,12 @@ import H from './Globals.js';
 import palette from './Color/Palette.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from './Utilities.js';
+
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined,
     destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick,
     removeEvent = U.removeEvent;
 import O from './Options.js';
+
 var defaultOptions = O.defaultOptions;
 var isTouchDevice = H.isTouchDevice;
 /**
@@ -54,8 +56,8 @@ var swapXY = H.swapXY = function (path, vertical) {
 };
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
- * A reusable scrollbar, internally used in Highcharts Stock's
- * navigator and optionally on individual axes.
+ * A reusable scrollbar, internally used in Highstock's navigator and optionally
+ * on individual axes.
  *
  * @private
  * @class
@@ -100,6 +102,7 @@ var Scrollbar = /** @class */ (function () {
         this.renderer = chart.renderer;
         this.init(renderer, options, chart);
     }
+
     /* *
      *
      *  Functions
@@ -562,23 +565,6 @@ var Scrollbar = /** @class */ (function () {
             }
         }
         scroller.rendered = true;
-    };
-    /**
-     * Checks if the extremes should be updated in response to a scrollbar
-     * change event.
-     *
-     * @private
-     * @function Highcharts.Scrollbar#shouldUpdateExtremes
-     * @param  {string} eventType
-     * @return {boolean}
-     */
-    Scrollbar.prototype.shouldUpdateExtremes = function (eventType) {
-        return (pick(this.options.liveRedraw, H.svg && !H.isTouchDevice && !this.chart.isBoosting) ||
-            // Mouseup always should change extremes
-            eventType === 'mouseup' ||
-            eventType === 'touchend' ||
-            // Internal events
-            !defined(eventType));
     };
     Scrollbar.prototype.trackClick = function (e) {
         var scroller = this;

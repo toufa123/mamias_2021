@@ -16,10 +16,10 @@ namespace Symfony\Bundle\MakerBundle\Doctrine;
  */
 final class EntityRelation
 {
-    public const MANY_TO_ONE = 'ManyToOne';
-    public const ONE_TO_MANY = 'OneToMany';
-    public const MANY_TO_MANY = 'ManyToMany';
-    public const ONE_TO_ONE = 'OneToOne';
+    const MANY_TO_ONE = 'ManyToOne';
+    const ONE_TO_MANY = 'OneToMany';
+    const MANY_TO_MANY = 'ManyToMany';
+    const ONE_TO_ONE = 'OneToOne';
 
     private $type;
 

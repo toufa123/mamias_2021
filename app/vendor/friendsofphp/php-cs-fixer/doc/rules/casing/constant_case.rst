@@ -29,6 +29,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
    -$a = FALSE;
    -$b = True;
@@ -46,6 +47,7 @@ With configuration: ``['case' => 'upper']``.
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
     $a = FALSE;
    -$b = True;

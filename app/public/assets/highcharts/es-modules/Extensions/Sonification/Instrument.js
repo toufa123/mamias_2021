@@ -144,6 +144,7 @@ var defaultOptions = {
 function Instrument(options) {
     this.init(options);
 }
+
 Instrument.prototype.init = function (options) {
     if (!this.initAudioContext()) {
         error(29);
@@ -386,17 +387,17 @@ Instrument.prototype.play = function (options) {
             var target = options.duration, currentDurationIx = 0,
                 callbackInterval = instrument.options.playCallbackInterval;
             if (typeof value === 'function') {
-                var timer_1 = setInterval(function () {
+                var timer = setInterval(function () {
                     currentDurationIx++;
                     var curTime = (currentDurationIx * callbackInterval / target);
                     if (curTime >= 1) {
                         instrument[setter](value(1), setterData);
-                        clearInterval(timer_1);
+                        clearInterval(timer);
                     } else {
                         instrument[setter](value(curTime), setterData);
                     }
                 }, callbackInterval);
-                instrument.playCallbackTimers.push(timer_1);
+                instrument.playCallbackTimers.push(timer);
             } else {
                 instrument[setter](value, setterData);
             }

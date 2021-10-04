@@ -11,7 +11,6 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-use Sonata\AdminBundle\DependencyInjection\Compiler\AliasDeprecatedPublicServicesCompilerPass;
 use Sonata\AdminBundle\Security\Acl\Permission\MaskBuilder;
 use Sonata\AdminBundle\Security\Handler\AclSecurityHandler;
 use Sonata\AdminBundle\Security\Handler\NoopSecurityHandler;
@@ -34,7 +33,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
         ->set('sonata.admin.manipulator.acl.admin.class', AdminAclManipulator::class)
 
-        ->set('sonata.admin.object.manipulator.acl.admin.class', AdminObjectAclManipulator::class);
+        ->set('sonata.admin.object.manipulator.acl.admin.class', AdminObjectAclManipulator::class)
+    ;
 
     // Use "service" function for creating references to services when dropping support for Symfony 4.4
     // Use "param" function for creating references to parameters when dropping support for Symfony 5.1
@@ -64,22 +64,16 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ->call('setObjectPermissions', ['%sonata.admin.configuration.security.object_permissions%'])
 
         ->set('sonata.admin.manipulator.acl.admin', '%sonata.admin.manipulator.acl.admin.class%')
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->args([
                 '%sonata.admin.security.mask.builder.class%',
             ])
 
         ->set('sonata.admin.object.manipulator.acl.admin', '%sonata.admin.object.manipulator.acl.admin.class%')
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->args([
                 new ReferenceConfigurator('form.factory'),
                 '%sonata.admin.security.mask.builder.class%',
             ])
-        // NEXT_MAJOR: Remove alias.
-        ->alias('sonata.admin.object.manipulator.acl.admin.do-not-use', 'sonata.admin.object.manipulator.acl.admin')
-        ->public();
+    ;
 };

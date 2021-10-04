@@ -15,8 +15,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    namespace Foo;
+   @@ -3,6 +3,7 @@
 
     use Bar;
     use Baz;
@@ -32,9 +31,7 @@ Example #2
 
    --- Original
    +++ New
-    <?php
-    namespace Foo;
-
+   @@ -4,7 +4,6 @@
     use Bar;
     use Baz;
 

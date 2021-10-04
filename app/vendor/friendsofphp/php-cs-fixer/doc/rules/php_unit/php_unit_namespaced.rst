@@ -47,6 +47,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,8 +1,8 @@
     <?php
    -final class MyTest extends \PHPUnit_Framework_TestCase
    +final class MyTest extends \PHPUnit\Framework\TestCase
@@ -67,15 +68,11 @@ With configuration: ``['target' => '4.8']``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -final class MyTest extends \PHPUnit_Framework_TestCase
    +final class MyTest extends \PHPUnit\Framework\TestCase
     {
-        public function testSomething()
-        {
-            PHPUnit_Framework_Assert::assertTrue(true);
-        }
-    }
 
 Rule sets
 ---------

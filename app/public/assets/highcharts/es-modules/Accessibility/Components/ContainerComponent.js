@@ -10,14 +10,17 @@
  *
  * */
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
+
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle;
 import H from '../../Core/Globals.js';
+
 var doc = H.doc;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
+
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend;
 /* eslint-disable valid-jsdoc */
 /**
@@ -105,25 +108,6 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             }
             unhideChartElementFromAT(chart, credits.element);
         }
-    },
-    /**
-     * Empty handler to just set focus on chart
-     * @return {Highcharts.KeyboardNavigationHandler}
-     */
-    getKeyboardNavigation: function () {
-        var chart = this.chart;
-        return new KeyboardNavigationHandler(chart, {
-            keyCodeMap: [],
-            validate: function () {
-                return true;
-            },
-            init: function () {
-                var a11y = chart.accessibility;
-                if (a11y) {
-                    a11y.keyboardNavigation.tabindexContainer.focus();
-                }
-            }
-        });
     },
     /**
      * Accessibility disabled/chart destroyed.

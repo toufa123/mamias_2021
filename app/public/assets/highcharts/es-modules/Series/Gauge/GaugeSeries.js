@@ -25,16 +25,20 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
+
 var noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
+
 var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, pick = U.pick, pInt = U.pInt;
 /* *
  *
@@ -53,6 +57,7 @@ var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, 
  */
 var GaugeSeries = /** @class */ (function (_super) {
     __extends(GaugeSeries, _super);
+
     function GaugeSeries() {
         /* *
          *
@@ -72,6 +77,7 @@ var GaugeSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions

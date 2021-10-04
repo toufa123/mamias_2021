@@ -232,11 +232,11 @@ class Foo {
         );
 
         foreach ($docBlock->getAnnotationsOfType('param') as $annotation) {
-            $argumentName = $annotation->getVariableName();
-
-            if (null === $argumentName) {
+            if (0 === Preg::match('/@param(?:\s+[^\$]\S+)?\s+(\$\S+)/', $annotation->getContent(), $matches)) {
                 continue;
             }
+
+            $argumentName = $matches[1];
 
             if (!isset($argumentsInfo[$argumentName]) && $this->configuration['allow_unused_params']) {
                 continue;

@@ -23,15 +23,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
+
 // Utils:
 /**
  * @private
@@ -46,6 +50,7 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
     std = Math.sqrt(variance);
     return std;
 }
+
 /* eslint-enable valid-jsdoc */
 /**
  * Bollinger Bands series type.
@@ -58,6 +63,7 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
  */
 var BBIndicator = /** @class */ (function (_super) {
     __extends(BBIndicator, _super);
+
     function BBIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -70,6 +76,7 @@ var BBIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     BBIndicator.prototype.init = function () {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:

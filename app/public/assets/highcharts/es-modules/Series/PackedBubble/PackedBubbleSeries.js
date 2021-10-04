@@ -25,20 +25,24 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Color from '../../Core/Color/Color.js';
+
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 import PackedBubblePoint from './PackedBubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var Series = SeriesRegistry.series, BubbleSeries = SeriesRegistry.seriesTypes.bubble;
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent,
     isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../../Series/Networkgraph/DraggableNodes.js';
+
 var dragNodesMixin = H.dragNodesMixin;
 import './PackedBubbleComposition.js';
 /* *
@@ -55,6 +59,7 @@ import './PackedBubbleComposition.js';
  */
 var PackedBubbleSeries = /** @class */ (function (_super) {
     __extends(PackedBubbleSeries, _super);
+
     function PackedBubbleSeries() {
         /* *
          *
@@ -76,6 +81,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -340,10 +346,10 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
                 'stroke-width': nodeMarker.lineWidth
-            };
+            }, visibility = series.visible ? 'inherit' : 'hidden';
         // create the group for parent Nodes if doesn't exist
         if (!this.parentNodesGroup) {
-            series.parentNodesGroup = series.plotGroup('parentNodesGroup', 'parentNode', series.visible ? 'inherit' : 'hidden', 0.1, chart.seriesGroup);
+            series.parentNodesGroup = series.plotGroup('parentNodesGroup', 'parentNode', visibility, 0.1, chart.seriesGroup);
             series.group.attr({
                 zIndex: 2
             });
@@ -452,21 +458,21 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
      */
     PackedBubbleSeries.prototype.onMouseUp = function (point) {
         if (point.fixedPosition && !point.removed) {
-            var distanceXY_1, distanceR_1, layout_1 = this.layout, parentNodeLayout = this.parentNodeLayout;
-            if (parentNodeLayout && layout_1.options.dragBetweenSeries) {
+            var distanceXY, distanceR, layout = this.layout, parentNodeLayout = this.parentNodeLayout;
+            if (parentNodeLayout && layout.options.dragBetweenSeries) {
                 parentNodeLayout.nodes.forEach(function (node) {
                     if (point && point.marker &&
                         node !== point.series.parentNode) {
-                        distanceXY_1 = layout_1.getDistXY(point, node);
-                        distanceR_1 = (layout_1.vectorLength(distanceXY_1) -
+                        distanceXY = layout.getDistXY(point, node);
+                        distanceR = (layout.vectorLength(distanceXY) -
                             node.marker.radius -
                             point.marker.radius);
-                        if (distanceR_1 < 0) {
+                        if (distanceR < 0) {
                             node.series.addPoint(merge(point.options, {
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);
-                            layout_1.removeElementFromCollection(point, layout_1.nodes);
+                            layout.removeElementFromCollection(point, layout.nodes);
                             point.remove();
                         }
                     }
@@ -768,21 +774,19 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
                 // update the series points with the val from positions
                 // array
                 point = data[positions[i][4]];
-                radius = pick(positions[i][2], void 0);
+                radius = positions[i][2];
                 if (!useSimulation) {
                     point.plotX = (positions[i][0] - chart.plotLeft +
                         chart.diffX);
                     point.plotY = (positions[i][1] - chart.plotTop +
                         chart.diffY);
                 }
-                if (isNumber(radius)) {
-                    point.marker = extend(point.marker, {
-                        radius: radius,
-                        width: 2 * radius,
-                        height: 2 * radius
-                    });
-                    point.radius = radius;
-                }
+                point.marker = extend(point.marker, {
+                    radius: radius,
+                    width: 2 * radius,
+                    height: 2 * radius
+                });
+                point.radius = radius;
             }
         }
         if (useSimulation) {

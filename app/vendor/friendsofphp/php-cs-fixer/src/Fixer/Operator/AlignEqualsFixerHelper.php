@@ -16,7 +16,6 @@ use PhpCsFixer\AbstractAlignFixerHelper;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use PhpCsFixer\Utils;
 
 /**
  * @author Carlos Cirello <carlos.cirello.nl@gmail.com>
@@ -28,11 +27,12 @@ final class AlignEqualsFixerHelper extends AbstractAlignFixerHelper
 {
     public function __construct()
     {
-        Utils::triggerDeprecation(
+        @trigger_error(
             sprintf(
                 'The "%s" class is deprecated. You should stop using it, as it will be removed in 3.0 version.',
                 __CLASS__
-            )
+            ),
+            E_USER_DEPRECATED
         );
     }
 

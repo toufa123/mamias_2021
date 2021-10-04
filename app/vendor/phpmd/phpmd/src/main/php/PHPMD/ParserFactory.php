@@ -65,11 +65,11 @@ class ParserFactory
     {
         $application = new Application();
 
-        $workingDirectory = getcwd();
-        if (file_exists($workingDirectory . self::PDEPEND_CONFIG_FILE_NAME)) {
-            $application->setConfigurationFile($workingDirectory . self::PDEPEND_CONFIG_FILE_NAME);
-        } elseif (file_exists($workingDirectory . self::PDEPEND_CONFIG_FILE_NAME_DIST)) {
-            $application->setConfigurationFile($workingDirectory . self::PDEPEND_CONFIG_FILE_NAME_DIST);
+        $currentWorkingDirectory = getcwd();
+        if (file_exists($currentWorkingDirectory . self::PDEPEND_CONFIG_FILE_NAME)) {
+            $application->setConfigurationFile($currentWorkingDirectory . self::PDEPEND_CONFIG_FILE_NAME);
+        } elseif (file_exists($currentWorkingDirectory . self::PDEPEND_CONFIG_FILE_NAME_DIST)) {
+            $application->setConfigurationFile($currentWorkingDirectory . self::PDEPEND_CONFIG_FILE_NAME_DIST);
         }
 
         return $application->getEngine();
@@ -120,9 +120,9 @@ class ParserFactory
      */
     private function initIgnores(Engine $pdepend, PHPMD $phpmd)
     {
-        if (count($phpmd->getIgnorePatterns()) > 0) {
+        if (count($phpmd->getIgnorePattern()) > 0) {
             $pdepend->addFileFilter(
-                new ExcludePathFilter($phpmd->getIgnorePatterns())
+                new ExcludePathFilter($phpmd->getIgnorePattern())
             );
         }
     }

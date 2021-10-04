@@ -10,8 +10,10 @@
  * */
 'use strict';
 import U from '../Core/Utilities.js';
+
 var extend = U.extend, pick = U.pick;
 var min = Math.min, max = Math.max, abs = Math.abs;
+
 /**
  * Get index of last obstacle before xMin. Employs a type of binary search, and
  * thus requires that obstacles are sorted by xMin value.
@@ -49,6 +51,7 @@ function findLastObstacleBefore(obstacles, xMin, startIx) {
     }
     return left > 0 ? left - 1 : 0;
 }
+
 /**
  * Test if a point lays within an obstacle.
  *
@@ -70,6 +73,7 @@ function pointWithinObstacle(obstacle, point) {
         point.y <= obstacle.yMax &&
         point.y >= obstacle.yMin);
 }
+
 /**
  * Find the index of an obstacle that wraps around a point.
  * Returns -1 if not found.
@@ -97,6 +101,7 @@ function findObstacleFromPoint(obstacles, point) {
     }
     return -1;
 }
+
 /**
  * Get SVG path array from array of line segments.
  *
@@ -119,6 +124,7 @@ function pathFromSegments(segments) {
     }
     return path;
 }
+
 /**
  * Limits obstacle max/mins in all directions to bounds. Modifies input
  * obstacle.
@@ -140,6 +146,7 @@ function limitObstacleToBounds(obstacle, bounds) {
     obstacle.xMin = max(obstacle.xMin, bounds.xMin);
     obstacle.xMax = min(obstacle.xMax, bounds.xMax);
 }
+
 /**
  * Get an SVG path from a starting coordinate to an ending coordinate.
  * Draws a straight line.
@@ -166,6 +173,7 @@ function straight(start, end) {
         obstacles: [{start: start, end: end}]
     };
 }
+
 /**
  * Find a path from a starting coordinate to an ending coordinate, using
  * right angles only, and taking only starting/ending obstacle into
@@ -191,7 +199,7 @@ function straight(start, end) {
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-var simpleConnect = function (start, end, options) {
+var simpleConnect = extend(function (start, end, options) {
     var segments = [], endSegment,
         dir = pick(options.startDirectionX, abs(end.x - start.x) > abs(end.y - start.y)) ? 'x' : 'y',
         chartObstacles = options.chartObstacles, startObstacleIx = findObstacleFromPoint(chartObstacles, start),
@@ -212,6 +220,7 @@ var simpleConnect = function (start, end, options) {
         point[fromKey] = to[toKey || fromKey] + (offset || 0);
         return point;
     }
+
     // eslint-disable-next-line valid-jsdoc
     /**
      * Return waypoint outside obstacle.
@@ -222,6 +231,7 @@ var simpleConnect = function (start, end, options) {
             abs(point[direction] - obstacle[direction + 'Max']);
         return copyFromPoint(point, direction, obstacle, direction + (useMax ? 'Max' : 'Min'), useMax ? 1 : -1);
     }
+
     // Pull out end point
     if (endObstacleIx > -1) {
         endObstacle = chartObstacles[endObstacleIx];
@@ -283,8 +293,9 @@ var simpleConnect = function (start, end, options) {
         path: pathFromSegments(segments),
         obstacles: segments
     };
-};
-simpleConnect.requiresObstacles = true;
+}, {
+    requiresObstacles: true
+});
 /**
  * Find a path from a starting coordinate to an ending coordinate, taking
  * obstacles into consideration. Might not always find the optimal path,
@@ -315,7 +326,7 @@ simpleConnect.requiresObstacles = true;
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-var fastAvoid = function (start, end, options) {
+var fastAvoid = extend(function (start, end, options) {
     /*
         Algorithm rules/description
         - Find initial direction
@@ -409,6 +420,7 @@ var fastAvoid = function (start, end, options) {
         }
         return toPoint;
     }
+
     /**
      * Decide in which direction to dodge or get out of an obstacle.
      * Considers desired direction, which way is shortest, soft and hard
@@ -478,6 +490,7 @@ var fastAvoid = function (start, end, options) {
             (maxOutOfHardBounds ? false : useMax); // Not out on min
         return useMax;
     }
+
     // eslint-disable-next-line valid-jsdoc
     /**
      * Find a clear path between point.
@@ -594,6 +607,7 @@ var fastAvoid = function (start, end, options) {
         segments = segments.concat(clearPathTo(segments[segments.length - 1].end, toPoint, !dirIsX));
         return segments;
     }
+
     // eslint-disable-next-line valid-jsdoc
     /**
      * Extract point to outside of obstacle in whichever direction is
@@ -614,6 +628,7 @@ var fastAvoid = function (start, end, options) {
             y: obstacle[useMax ? 'yMax' : 'yMin'] + (useMax ? 1 : -1)
         };
     }
+
     // Cut the obstacle array to soft bounds for optimization in large
     // datasets.
     chartObstacles =
@@ -651,8 +666,9 @@ var fastAvoid = function (start, end, options) {
         path: pathFromSegments(segments),
         obstacles: segments
     };
-};
-fastAvoid.requiresObstacles = true;
+}, {
+    requiresObstacles: true
+});
 // Define the available pathfinding algorithms.
 // Algorithms take up to 3 arguments: starting point, ending point, and an
 // options object.

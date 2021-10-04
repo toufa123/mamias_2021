@@ -29,12 +29,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var Series = SeriesRegistry.series, PiePoint = SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 import U from '../../Core/Utilities.js';
+
 var defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *
@@ -43,6 +46,7 @@ var defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.
  * */
 var TimelinePoint = /** @class */ (function (_super) {
     __extends(TimelinePoint, _super);
+
     function TimelinePoint() {
         /* *
          *
@@ -55,6 +59,7 @@ var TimelinePoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions

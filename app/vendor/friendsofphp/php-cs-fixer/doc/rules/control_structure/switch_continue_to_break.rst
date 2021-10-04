@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,5 +1,5 @@
     <?php
     switch ($foo) {
         case 1:
@@ -28,8 +29,7 @@ Example #2
 
    --- Original
    +++ New
-    <?php
-    switch ($foo) {
+   @@ -3,7 +3,7 @@
         case 1:
             while($bar) {
                 do {
@@ -38,6 +38,7 @@ Example #2
                 } while(false);
 
                 if ($foo + 1 > 3) {
+   @@ -10,6 +10,6 @@
                     continue;
                 }
 

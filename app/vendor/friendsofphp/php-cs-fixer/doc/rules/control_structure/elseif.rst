@@ -15,6 +15,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
     if ($a) {
    -} else if ($b) {

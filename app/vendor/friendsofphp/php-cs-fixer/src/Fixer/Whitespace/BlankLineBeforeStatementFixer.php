@@ -23,7 +23,6 @@ use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
-use PhpCsFixer\Utils;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -89,7 +88,7 @@ final class BlankLineBeforeStatementFixer extends AbstractFixer implements Confi
 
         foreach ($this->configuration['statements'] as $key) {
             if ('die' === $key) {
-                Utils::triggerDeprecation('Option "die" is deprecated, use "exit" instead.');
+                @trigger_error('Option "die" is deprecated, use "exit" instead.', E_USER_DEPRECATED);
             }
 
             $this->fixTokenMap[$key] = self::$tokenMap[$key];

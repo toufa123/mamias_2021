@@ -14,7 +14,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,12 +2,12 @@
     final class MyTest extends \PHPUnit_Framework_TestCase
     {
         /**

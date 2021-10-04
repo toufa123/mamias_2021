@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -21,13 +21,14 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/DraggablePoints.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (A, Chart, H, Point, Series, SeriesRegistry, U) {
+    _registerModule(_modules, 'Extensions/DraggablePoints.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Chart, H, Point, Series, SeriesRegistry, U) {
         /* *
          *
          *  (c) 2009-2021 Highsoft AS
@@ -39,13 +40,13 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var animObject = A.animObject;
         var seriesTypes = SeriesRegistry.seriesTypes;
         var addEvent = U.addEvent,
             clamp = U.clamp,
             merge = U.merge,
             objectEach = U.objectEach,
             pick = U.pick;
+
         /**
          * Flip a side property, used with resizeRect. If input side is "left", return
          * "right" etc.
@@ -67,6 +68,7 @@
                 bottom: 'top'
             }[side];
         }
+
         /* @todo
         Add drag/drop support to specific data props for different series types.
 
@@ -198,17 +200,11 @@
                 },
                 // Position handle at bottom if column is below threshold
                 handlePositioner: function (point) {
-                    var bBox = (point.shapeArgs ||
-                        (point.graphic && point.graphic.getBBox()) ||
-                        {}),
-                        reversed = point.series.yAxis.reversed,
-                        threshold = point.series.options.threshold || 0,
-                        y = point.y || 0,
-                        bottom = (!reversed && y >= threshold) ||
-                            (reversed && y < threshold);
+                    var bBox = point.shapeArgs || point.graphic.getBBox();
                     return {
-                        x: bBox.x || 0,
-                        y: bottom ? (bBox.y || 0) : (bBox.y || 0) + (bBox.height || 0)
+                        x: bBox.x,
+                        y: point.y >= (point.series.options.threshold || 0) ?
+                            bBox.y : bBox.y + bBox.height
                     };
                 },
                 // Horizontal handle
@@ -285,8 +281,8 @@
                     handlePositioner: function (point) {
                         var bBox = point.shapeArgs || point.graphic.getBBox();
                         return {
-                            x: bBox.x || 0,
-                            y: (bBox.y || 0) + (bBox.height || 0)
+                            x: bBox.x,
+                            y: bBox.y + bBox.height
                         };
                     },
                     handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -311,8 +307,8 @@
                     handlePositioner: function (point) {
                         var bBox = point.shapeArgs || point.graphic.getBBox();
                         return {
-                            x: bBox.x || 0,
-                            y: bBox.y || 0
+                            x: bBox.x,
+                            y: bBox.y
                         };
                     },
                     handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -342,7 +338,7 @@
                     resizeSide: 'bottom',
                     handlePositioner: function (point) {
                         return {
-                            x: point.shapeArgs.x || 0,
+                            x: point.shapeArgs.x,
                             y: point.lowPlot
                         };
                     },
@@ -367,7 +363,7 @@
                     resizeSide: 'bottom',
                     handlePositioner: function (point) {
                         return {
-                            x: point.shapeArgs.x || 0,
+                            x: point.shapeArgs.x,
                             y: point.q1Plot
                         };
                     },
@@ -398,7 +394,7 @@
                     resizeSide: 'top',
                     handlePositioner: function (point) {
                         return {
-                            x: point.shapeArgs.x || 0,
+                            x: point.shapeArgs.x,
                             y: point.q3Plot
                         };
                     },
@@ -423,7 +419,7 @@
                     resizeSide: 'top',
                     handlePositioner: function (point) {
                         return {
-                            x: point.shapeArgs.x || 0,
+                            x: point.shapeArgs.x,
                             y: point.highPlot
                         };
                     },
@@ -627,8 +623,8 @@
             // Handle positioner logic is the same for x and x2 apart from the
             // x value. shapeArgs does not take yAxis reversed etc into account, so we
             // use axis.toPixels to handle positioning.
-            var xrangeHandlePositioner_1 = function (point,
-                                                     xProp) {
+            var xrangeHandlePositioner = function (point,
+                                                   xProp) {
                 var series = point.series,
                     xAxis = series.xAxis,
                     yAxis = series.yAxis,
@@ -671,7 +667,7 @@
                     resize: true,
                     resizeSide: 'left',
                     handlePositioner: function (point) {
-                        return xrangeHandlePositioner_1(point, 'x');
+                        return xrangeHandlePositioner(point, 'x');
                     },
                     handleFormatter: horizHandleFormatter,
                     propValidate: function (val, point) {
@@ -693,7 +689,7 @@
                     resize: true,
                     resizeSide: 'right',
                     handlePositioner: function (point) {
-                        return xrangeHandlePositioner_1(point, 'x2');
+                        return xrangeHandlePositioner(point, 'x2');
                     },
                     handleFormatter: horizHandleFormatter,
                     propValidate: function (val, point) {
@@ -1087,6 +1083,7 @@
          * @requires  modules/draggable-points
          * @apioption plotOptions.series.point.events.drop
          */
+
         /**
          * Point specific options for the draggable-points module. Overrides options on
          * `series.dragDrop`.
@@ -1125,6 +1122,7 @@
                 }
             }
         }
+
         /**
          * Utility function to test if a chart should have drag/drop enabled, looking at
          * its options.
@@ -1147,6 +1145,7 @@
                 }
             }
         }
+
         /**
          * Utility function to test if a point is movable (any of its props can be
          * dragged by a move, not just individually).
@@ -1182,6 +1181,7 @@
                 series.yAxis &&
                 series.xAxis);
         }
+
         /**
          * Take a mouse/touch event and return the event object with chartX/chartY.
          *
@@ -1200,6 +1200,7 @@
                 chart.pointer.normalize(e) :
                 e);
         }
+
         /**
          * Add multiple event listeners with the same handler to the same element.
          *
@@ -1233,6 +1234,7 @@
                 });
             };
         }
+
         /**
          * In mousemove events, check that we have dragged mouse further than the
          * dragSensitivity before we call mouseMove handler.
@@ -1263,6 +1265,7 @@
                     (newY - oldY) * (newY - oldY));
             return distance > sensitivity;
         }
+
         /**
          * Get a snapshot of points, mouse position, and guide box dimensions
          *
@@ -1317,6 +1320,7 @@
             });
             return res;
         }
+
         /**
          * Get a list of points that are grouped with this point. If only one point is
          * in the group, that point is returned by itself in an array.
@@ -1350,6 +1354,7 @@
                 // Otherwise return the point by itself only
                 [point];
         }
+
         /**
          * Resize a rect element on one side. The element is modified.
          *
@@ -1394,6 +1399,7 @@
             }
             rect.attr(resizeAttrs);
         }
+
         /**
          * Prepare chart.dragDropData with origin info, and show the guide box.
          *
@@ -1425,6 +1431,7 @@
                 isDragging: true
             };
         }
+
         /**
          * Calculate new point options from points being dragged.
          *
@@ -1490,12 +1497,15 @@
          * @function updatePoints
          * @param {Highcharts.Chart} chart
          *        A chart with dragDropData.newPoints.
-         * @param {boolean} [animation=true]
+         * @param {boolean} [animate=true]
          *        Animate updating points?
          */
-        function updatePoints(chart, animation) {
+        function updatePoints(chart, animate) {
             var newPoints = chart.dragDropData.newPoints,
-                animOptions = animObject(animation);
+                animOptions = animate === false ? false : merge({
+                        duration: 400 // 400 is the default in animate
+                    },
+                    chart.options.chart.animation);
             chart.isDragDropAnimating = true;
             // Update the points
             objectEach(newPoints, function (newPoint) {
@@ -1512,6 +1522,7 @@
                 }
             }, animOptions.duration);
         }
+
         /**
          * Resize the guide box according to point options and a difference in mouse
          * positions. Handles reversed axes.
@@ -1550,6 +1561,7 @@
                     dY - (dragDropData.origin.prevdY || 0) : 0
             });
         }
+
         /**
          * Default mouse move handler while dragging. Handles updating points or guide
          * box.
@@ -1599,6 +1611,7 @@
             origin.prevdX = dX;
             origin.prevdY = dY;
         }
+
         /**
          * Set the state of the guide box.
          *
@@ -1739,14 +1752,15 @@
                 var bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
                 if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
                     changed = true;
-                    minX = Math.min(bBox.x || 0, minX);
-                    maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
-                    minY = Math.min(bBox.y || 0, minY);
-                    maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
+                    minX = Math.min(bBox.x, minX);
+                    maxX = Math.max(bBox.x + bBox.width, maxX);
+                    minY = Math.min(bBox.y, minY);
+                    maxY = Math.max(bBox.y + bBox.height, maxY);
                 }
             });
             return changed ? chart.renderer.rect(minX, minY, maxX - minX, maxY - minY) : chart.renderer.g();
         };
+
         /**
          * On point mouse out. Hide drag handles, depending on state.
          *
@@ -1767,6 +1781,7 @@
                 chart.hideDragHandles();
             }
         }
+
         /**
          * Mouseout on resize handle. Handle states, and possibly run mouseOut on point.
          *
@@ -1785,6 +1800,7 @@
                 mouseOut(point);
             }
         }
+
         /**
          * Mousedown on resize handle. Init a drag if the conditions are right.
          *
@@ -1814,6 +1830,7 @@
             e.stopPropagation();
             e.preventDefault();
         }
+
         /**
          * Render drag handles on a point - depending on which handles are enabled - and
          * attach events to them.
@@ -1836,7 +1853,7 @@
                     val.handleOptions,
                     options.dragHandle),
                     handleAttrs = {
-                        'class': handleOptions.className,
+                        className: handleOptions.className,
                         'stroke-width': handleOptions.lineWidth,
                         fill: handleOptions.color,
                         stroke: handleOptions.lineColor
@@ -1921,6 +1938,7 @@
                 delete chart.dragHandles;
             }
         };
+
         /**
          * Utility function to count the number of props in an object.
          *
@@ -1942,6 +1960,7 @@
             }
             return count;
         }
+
         /**
          * Utility function to get the value of the first prop of an object. (Note that
          * the order of keys in an object is usually not guaranteed.)
@@ -1961,6 +1980,7 @@
                 }
             }
         }
+
         /**
          * Mouseover on a point. Show drag handles if the conditions are right.
          *
@@ -1989,6 +2009,7 @@
                 point.showDragHandles();
             }
         }
+
         /**
          * On container mouse move. Handle drag sensitivity and fire drag event.
          *
@@ -2010,7 +2031,7 @@
                 newPoints,
                 numNewPoints = 0,
                 newPoint;
-            if (dragDropData && dragDropData.isDragging && dragDropData.point.series) {
+            if (dragDropData && dragDropData.isDragging) {
                 point = dragDropData.point;
                 seriesDragDropOpts = point.series.options.dragDrop;
                 // No tooltip for dragging
@@ -2047,6 +2068,7 @@
                 }
             }
         }
+
         /**
          * On container mouse up. Fire drop event and reset state.
          *
@@ -2061,8 +2083,7 @@
             var dragDropData = chart.dragDropData;
             if (dragDropData &&
                 dragDropData.isDragging &&
-                dragDropData.draggedPastSensitivity &&
-                dragDropData.point.series) {
+                dragDropData.draggedPastSensitivity) {
                 var point = dragDropData.point,
                     newPoints = dragDropData.newPoints,
                     numNewPoints = countProps(newPoints),
@@ -2098,6 +2119,7 @@
                 delete chart.dragGuideBox;
             }
         }
+
         /**
          * On container mouse down. Init dragdrop if conditions are right.
          *
@@ -2138,6 +2160,7 @@
                 dragPoint.firePointEvent('dragStart', e);
             }
         }
+
         /* eslint-disable no-invalid-this */
         // Point hover event. We use a short timeout due to issues with coordinating
         // point mouseover/out events on dragHandles and points. Particularly arearange
@@ -2184,6 +2207,7 @@
                 zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
             return (e[zoomKey] || e[panKey]);
         };
+
         /**
          * Add events to document and chart if the chart is draggable.
          *
@@ -2219,6 +2243,7 @@
                 });
             }
         }
+
         // Add event listener to Chart.render that checks whether or not we should add
         // dragdrop.
         addEvent(Chart, 'render', function () {

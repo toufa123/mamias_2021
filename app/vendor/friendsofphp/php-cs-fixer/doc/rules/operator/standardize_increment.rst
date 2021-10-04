@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$i += 1;
    +++$i;
@@ -25,6 +26,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$i -= 1;
    +--$i;

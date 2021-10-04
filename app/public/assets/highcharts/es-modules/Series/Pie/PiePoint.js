@@ -25,10 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
+
 var setAnimation = A.setAnimation;
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
@@ -42,6 +44,7 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, isNumber = U.
  * */
 var PiePoint = /** @class */ (function (_super) {
     __extends(PiePoint, _super);
+
     function PiePoint() {
         /* *
          *
@@ -54,6 +57,7 @@ var PiePoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions

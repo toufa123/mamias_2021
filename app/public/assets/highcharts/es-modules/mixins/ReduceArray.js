@@ -9,6 +9,7 @@
  * */
 'use strict';
 import '../Core/Utilities.js';
+
 var reduceArrayMixin = {
     /**
      * Get min value of array filled by OHLC data.

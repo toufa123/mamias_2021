@@ -11,17 +11,12 @@
 
 namespace Symfony\Component\Security\Acl\Tests\Domain;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\SecurityIdentityRetrievalStrategy;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Role\Role;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-class SecurityIdentityRetrievalStrategyTest extends TestCase
+class SecurityIdentityRetrievalStrategyTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getSecurityIdentityRetrievalTests
@@ -29,18 +24,18 @@ class SecurityIdentityRetrievalStrategyTest extends TestCase
     public function testGetSecurityIdentities($user, array $roles, $authenticationStatus, array $sids)
     {
         if ('anonymous' === $authenticationStatus) {
-            $token = $this->getMockBuilder(AnonymousToken::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\AnonymousToken')
+                                ->disableOriginalConstructor()
+                                ->getMock();
         } else {
             $class = '';
             if (\is_string($user)) {
                 $class = 'MyCustomTokenImpl';
             }
 
-            $token = $this->getMockBuilder(AbstractToken::class)
-                ->setMockClassName($class)
-                ->getMock();
+            $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')
+                        ->setMockClassName($class)
+                        ->getMock();
         }
 
         if (method_exists($token, 'getRoleNames')) {
@@ -127,10 +122,7 @@ class SecurityIdentityRetrievalStrategyTest extends TestCase
 
     protected function getAccount($username, $class)
     {
-        $account = $this->getMockBuilder(UserInterface::class)
-            ->setMockClassName($class)
-            ->getMock()
-        ;
+        $account = $this->getMock('Symfony\Component\Security\Core\User\UserInterface', [], [], $class);
         $account
             ->expects($this->any())
             ->method('getUsername')
@@ -166,9 +158,10 @@ class SecurityIdentityRetrievalStrategyTest extends TestCase
                 ->willReturn($roles);
         }
 
-        $trustResolver = $this->createMock(AuthenticationTrustResolverInterface::class);
+        $trustResolver = $this->getMock('Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface', [], ['', '']);
 
         $trustResolver
+            ->expects($this->at(0))
             ->method('isAnonymous')
             ->willReturn('anonymous' === $authenticationStatus)
         ;
@@ -196,6 +189,7 @@ class SecurityIdentityRetrievalStrategyTest extends TestCase
             ;
         } else {
             $trustResolver
+                ->expects($this->at(1))
                 ->method('isAnonymous')
                 ->willReturn(true)
             ;

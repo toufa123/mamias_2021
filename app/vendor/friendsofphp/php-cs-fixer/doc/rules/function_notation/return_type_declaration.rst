@@ -34,6 +34,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -function foo(int $a):string {};
    +function foo(int $a): string {};
@@ -47,6 +48,7 @@ With configuration: ``['space_before' => 'none']``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -function foo(int $a):string {};
    +function foo(int $a): string {};
@@ -60,6 +62,7 @@ With configuration: ``['space_before' => 'one']``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -function foo(int $a):string {};
    +function foo(int $a) : string {};

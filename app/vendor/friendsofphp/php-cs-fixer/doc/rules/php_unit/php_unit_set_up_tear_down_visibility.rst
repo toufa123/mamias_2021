@@ -20,7 +20,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,13 +2,13 @@
     final class MyTest extends \PHPUnit_Framework_TestCase
     {
         private $hello;

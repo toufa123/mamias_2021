@@ -25,15 +25,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Color from '../../Core/Color/Color.js';
+
 var color = Color.parse;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *
@@ -51,6 +55,7 @@ var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick
  */
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
+
     function AreaSeries() {
         /* *
          *
@@ -64,6 +69,7 @@ var AreaSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -212,9 +218,6 @@ var AreaSeries = /** @class */ (function (_super) {
             bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
         }
         areaPath = topPath.concat(bottomPath);
-        if (areaPath.length) {
-            areaPath.push(['Z']);
-        }
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);
@@ -230,12 +233,12 @@ var AreaSeries = /** @class */ (function (_super) {
      */
     AreaSeries.prototype.getStackPoints = function (points) {
         var series = this, segment = [], keys = [], xAxis = this.xAxis, yAxis = this.yAxis,
-            stack = yAxis.stacking.stacks[this.stackKey], pointMap = {}, yAxisSeries = yAxis.series,
-            seriesLength = yAxisSeries.length, upOrDown = yAxis.options.reversedStacks ? 1 : -1,
-            seriesIndex = yAxisSeries.indexOf(series);
+            stack = yAxis.stacking.stacks[this.stackKey], pointMap = {}, seriesIndex = series.index,
+            yAxisSeries = yAxis.series, seriesLength = yAxisSeries.length, visibleSeries,
+            upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1, i;
         points = points || this.points;
         if (this.options.stacking) {
-            for (var i = 0; i < points.length; i++) {
+            for (i = 0; i < points.length; i++) {
                 // Reset after point update (#7326)
                 points[i].leftNull = points[i].rightNull = void 0;
                 // Create a map where we can quickly look up the points by
@@ -253,7 +256,7 @@ var AreaSeries = /** @class */ (function (_super) {
             keys.sort(function (a, b) {
                 return a - b;
             });
-            var visibleSeries_1 = yAxisSeries.map(function (s) {
+            visibleSeries = yAxisSeries.map(function (s) {
                 return s.visible;
             });
             keys.forEach(function (x, idx) {
@@ -271,30 +274,32 @@ var AreaSeries = /** @class */ (function (_super) {
                         // If there is a stack next to this one,
                         // to the left or to the right...
                         if (otherStack) {
-                            var i = seriesIndex;
+                            i = seriesIndex;
                             // Can go either up or down,
                             // depending on reversedStacks
                             while (i >= 0 && i < seriesLength) {
-                                var si = yAxisSeries[i].index;
-                                stackPoint = otherStack.points[si];
+                                stackPoint = otherStack.points[i];
                                 if (!stackPoint) {
                                     // If the next point in this series
                                     // is missing, mark the point
                                     // with point.leftNull or
                                     // point.rightNull = true.
-                                    if (si === series.index) {
-                                        pointMap[x][nullName] = true;
+                                    if (i === seriesIndex) {
+                                        pointMap[x][nullName] =
+                                            true;
                                         // If there are missing points in
                                         // the next stack in any of the
                                         // series below this one, we need
                                         // to substract the missing values
                                         // and add a hiatus to the left or
                                         // right.
-                                    } else if (visibleSeries_1[i]) {
+                                    } else if (visibleSeries[i]) {
                                         stackedValues =
-                                            stack[x].points[si];
+                                            stack[x].points[i];
                                         if (stackedValues) {
-                                            cliff -= stackedValues[1] - stackedValues[0];
+                                            cliff -=
+                                                stackedValues[1] -
+                                                stackedValues[0];
                                         }
                                     }
                                 }
@@ -311,10 +316,9 @@ var AreaSeries = /** @class */ (function (_super) {
                 } else {
                     // Loop down the stack to find the series below this
                     // one that has a value (#1991)
-                    var i = seriesIndex;
+                    i = seriesIndex;
                     while (i >= 0 && i < seriesLength) {
-                        var si = yAxisSeries[i].index;
-                        stackPoint = stack[x].points[si];
+                        stackPoint = stack[x].points[i];
                         if (stackPoint) {
                             y = stackPoint[1];
                             break;
@@ -323,7 +327,6 @@ var AreaSeries = /** @class */ (function (_super) {
                         // down
                         i += upOrDown;
                     }
-                    y = pick(y, 0);
                     y = yAxis.translate(// #6272
                         y, 0, 1, 0, 1);
                     segment.push({

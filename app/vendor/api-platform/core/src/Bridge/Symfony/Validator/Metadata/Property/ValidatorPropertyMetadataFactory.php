@@ -30,7 +30,6 @@ use Symfony\Component\Validator\Constraints\Isbn;
 use Symfony\Component\Validator\Constraints\Issn;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Sequentially;
 use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Constraints\Uuid;
@@ -87,9 +86,9 @@ final class ValidatorPropertyMetadataFactory implements PropertyMetadataFactoryI
     /**
      * {@inheritdoc}
      */
-    public function create(string $resourceClass, string $property, array $options = []): PropertyMetadata
+    public function create(string $resourceClass, string $name, array $options = []): PropertyMetadata
     {
-        $propertyMetadata = $this->decorated->create($resourceClass, $property, $options);
+        $propertyMetadata = $this->decorated->create($resourceClass, $name, $options);
 
         $required = $propertyMetadata->isRequired();
         $iri = $propertyMetadata->getIri();
@@ -108,7 +107,7 @@ final class ValidatorPropertyMetadataFactory implements PropertyMetadataFactoryI
         $validationGroups = $this->getValidationGroups($validatorClassMetadata, $options);
         $restrictions = [];
 
-        foreach ($validatorClassMetadata->getPropertyMetadata($property) as $validatorPropertyMetadata) {
+        foreach ($validatorClassMetadata->getPropertyMetadata($name) as $validatorPropertyMetadata) {
             foreach ($this->getPropertyConstraints($validatorPropertyMetadata, $validationGroups) as $constraint) {
                 if (null === $required && $this->isRequired($constraint)) {
                     $required = true;
@@ -171,15 +170,11 @@ final class ValidatorPropertyMetadataFactory implements PropertyMetadataFactoryI
             }
 
             foreach ($validatorPropertyMetadata->findConstraints($validationGroup) as $propertyConstraint) {
-                if ($propertyConstraint instanceof Sequentially) {
-                    $constraints[] = $propertyConstraint->getNestedContraints();
-                } else {
-                    $constraints[] = [$propertyConstraint];
-                }
+                $constraints[] = $propertyConstraint;
             }
         }
 
-        return array_merge([], ...$constraints);
+        return $constraints;
     }
 
     /**

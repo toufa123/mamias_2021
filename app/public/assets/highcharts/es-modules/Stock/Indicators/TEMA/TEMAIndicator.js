@@ -23,13 +23,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import U from '../../../Core/Utilities.js';
+
 var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
 /**
  * The TEMA series type.
@@ -42,6 +45,7 @@ var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
  */
 var TEMAIndicator = /** @class */ (function (_super) {
     __extends(TEMAIndicator, _super);
+
     function TEMAIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.EMApercent = void 0;
@@ -50,11 +54,12 @@ var TEMAIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     TEMAIndicator.prototype.init = function () {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
-            return;
+
         });
     };
     TEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
@@ -183,10 +188,10 @@ SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
  * */
 export default TEMAIndicator;
 /**
- * A `TEMA` series. If the [type](#series.tema.type) option is not
+ * A `TEMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.tema
+ * @extends   series,plotOptions.ema
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

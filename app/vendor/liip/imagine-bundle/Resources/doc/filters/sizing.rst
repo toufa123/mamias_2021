@@ -45,11 +45,11 @@ Example configuration:
 Thumbnail Options
 ~~~~~~~~~~~~~~~~~
 
-**mode:** ``string``
+:strong:`mode:` ``string``
     Sets the desired resize method: ``'outbound'`` crops the image as required, while
     ``'inset'`` performs a non-cropping relative resize.
 
-**size:** ``int[]``
+:strong:`size:` ``int[]``
     Sets the generated thumbnail size as an integer array containing the dimensions
     as width and height values.
 
@@ -87,11 +87,11 @@ Example configuration:
 Fixed Options
 ~~~~~~~~~~~~~
 
-**width:** ``int``
+:strong:`width:` ``int``
     Sets the "desired width" which initiates a proportional scale operation that up- or
     down-scales until the image width matches this value.
 
-**height:** ``int``
+:strong:`height:` ``int``
     Sets the "desired height" which initiates a proportional scale operation that up- or
     down-scales until the image height matches this value.
 
@@ -131,11 +131,11 @@ Example configuration:
 Crop Options
 ~~~~~~~~~~~~
 
-**size:** ``int[]``
+:strong:`size:` ``int[]``
     Sets the crop size as an integer array containing the dimensions as width and
     height values.
 
-**start:** ``int[]``
+:strong:`start:` ``int[]``
     Sets the top, left-post anchor coordinates where the crop operation starts.
 
 
@@ -207,19 +207,19 @@ Example configuration:
 Relative Resize Options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-**heighten:** ``float``
+:strong:`heighten:` ``float``
     Sets the "desired height" which initiates a proportional scale operation that up- or
     down-scales until the image height matches this value.
 
-**widen:** ``float``
+:strong:`widen:` ``float``
     Sets the "desired width" which initiates a proportional scale operation that up- or
     down-scales until the image width matches this value.
 
-**increase:** ``float``
+:strong:`increase:` ``float``
     Sets the "desired additional size" which initiates a scale operation computed by
     adding this value to all image sides.
 
-**scale:** ``float``
+:strong:`scale:` ``float``
     Sets the "ratio multiple" which initiates a proportional scale operation computed
     by multiplying all image sides by this value.
 
@@ -286,11 +286,11 @@ Example configuration:
 Scale Options
 ~~~~~~~~~~~~~
 
-**dim:** ``int[]``
+:strong:`dim:` ``int[]``
     Sets the "desired dimensions" as an array containing a width and height integer, from
     which a relative resize is performed within these constraints.
 
-**to:** ``float``
+:strong:`to:` ``float``
     Sets the "ratio multiple" which initiates a proportional scale operation computed
     by multiplying all image sides by this value.
 
@@ -337,11 +337,11 @@ Example configuration:
 Down Scale Options
 ~~~~~~~~~~~~~~~~~~
 
-**max:** ``int[]``
+:strong:`max:` ``int[]``
     Sets the "desired max dimensions" as an array containing a width and height integer, from
     which a down-scale is performed to meet the passed constraints.
 
-**by:** ``float``
+:strong:`by:` ``float``
     Sets the "ratio multiple" which initiates a proportional scale operation computed
     by multiplying all image sides by this value.
 
@@ -388,11 +388,11 @@ Example configuration:
 Up Scale Options
 ~~~~~~~~~~~~~~~~
 
-**min:** ``int[]``
+:strong:`min:` ``int[]``
     Sets the "desired min dimensions" as an array containing a width and height integer, from
     which an up-scale is performed to meet the passed constraints.
 
-**by:** ``float``
+:strong:`by:` ``float``
     Sets the "ratio multiple" which initiates a proportional scale operation computed
     by multiplying all image sides by this value.
 

@@ -15,6 +15,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
    -if ( $a ) {
    -    foo( );
@@ -29,6 +30,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
    -function foo( $bar, $baz )
    +function foo($bar, $baz)

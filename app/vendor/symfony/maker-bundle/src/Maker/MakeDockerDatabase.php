@@ -56,6 +56,7 @@ final class MakeDockerDatabase extends AbstractMaker
     public function __construct(FileManager $fileManager)
     {
         $this->fileManager = $fileManager;
+        $this->composeFilePath = sprintf('%s/docker-compose.yaml', $this->fileManager->getRootDirectory());
     }
 
     public static function getCommandName(): string
@@ -79,7 +80,18 @@ final class MakeDockerDatabase extends AbstractMaker
     {
         $io->section('- Docker Compose Setup-');
 
-        $this->composeFileManipulator = new ComposeFileManipulator($this->getComposeFileContents($io));
+        $composeFileContents = '';
+        $statusMessage = 'Existing docker-compose.yaml not found: a new one will be generated!';
+
+        if ($this->fileManager->fileExists($this->composeFilePath)) {
+            $composeFileContents = $this->fileManager->getFileContents($this->composeFilePath);
+
+            $statusMessage = 'We found your existing docker-compose.yaml: Let\'s update it!';
+        }
+
+        $io->text($statusMessage);
+
+        $this->composeFileManipulator = new ComposeFileManipulator($composeFileContents);
 
         $io->newLine();
 
@@ -172,35 +184,5 @@ final class MakeDockerDatabase extends AbstractMaker
                 sprintf('Cannot find PHP\'s pdo_%s extension. Be sure it\'s installed & enabled to talk to the database.', $extension)
             );
         }
-    }
-
-    /**
-     * Determines and sets the correct Compose File Path and retrieves its contents
-     * if the file exists else an empty string.
-     */
-    private function getComposeFileContents(ConsoleStyle $io): string
-    {
-        $this->composeFilePath = sprintf('%s/docker-compose.yaml', $this->fileManager->getRootDirectory());
-
-        $composeFileExists = false;
-        $statusMessage = 'Existing docker-compose.yaml not found: a new one will be generated!';
-        $contents = '';
-
-        foreach (['.yml', '.yaml'] as $extension) {
-            $composeFilePath = sprintf('%s/docker-compose%s', $this->fileManager->getRootDirectory(), $extension);
-
-            if (!$composeFileExists && $this->fileManager->fileExists($composeFilePath)) {
-                $composeFileExists = true;
-
-                $statusMessage = sprintf('We found your existing docker-compose%s: Let\'s update it!', $extension);
-
-                $this->composeFilePath = $composeFilePath;
-                $contents = $this->fileManager->getFileContents($composeFilePath);
-            }
-        }
-
-        $io->text($statusMessage);
-
-        return $contents;
     }
 }

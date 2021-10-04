@@ -1,6 +1,6 @@
 /* *
  *
- *  Money Flow Index indicator for Highcharts Stock
+ *  Money Flow Index indicator for Highstock
  *
  *  (c) 2010-2021 Grzegorz Blachliński
  *
@@ -27,29 +27,37 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge, error = U.error, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
+
 // Utils:
 function sumArray(array) {
     return array.reduce(function (prev, cur) {
         return prev + cur;
     });
 }
+
 function toFixed(a, n) {
     return parseFloat(a.toFixed(n));
 }
+
 function calculateTypicalPrice(point) {
     return (point[1] + point[2] + point[3]) / 3;
 }
+
 function calculateRawMoneyFlow(typicalPrice, volume) {
     return typicalPrice * volume;
 }
+
 /* eslint-enable require-jsdoc */
 /* *
  *
@@ -67,6 +75,7 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  */
 var MFIIndicator = /** @class */ (function (_super) {
     __extends(MFIIndicator, _super);
+
     function MFIIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -79,6 +88,7 @@ var MFIIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
     *
     *  Functions
@@ -169,7 +179,7 @@ var MFIIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
-            index: void 0,
+            period: 14,
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means

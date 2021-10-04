@@ -21,6 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -28,10 +29,11 @@ import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 
-var merge = U.merge, pick = U.pick;
+var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var VerticalLine = /** @class */ (function (_super) {
     __extends(VerticalLine, _super);
+
     /* *
      *
      *  Constructors
@@ -40,38 +42,35 @@ var VerticalLine = /** @class */ (function (_super) {
     function VerticalLine(chart, userOptions) {
         return _super.call(this, chart, userOptions) || this;
     }
+
     /* *
      *
      *  Static Functions
      *
      * */
     VerticalLine.connectorFirstPoint = function (target) {
-        var annotation = target.annotation, chart = annotation.chart, inverted = chart.inverted,
-            point = annotation.points[0], left = pick(point.series.yAxis && point.series.yAxis.left, 0),
-            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
-            offset = annotation.options.typeOptions.label.offset,
-            y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
+        var annotation = target.annotation, point = annotation.points[0], xy = MockPoint.pointToPixels(point, true),
+            y = xy.y, offset = annotation.options.typeOptions.label.offset;
+        if (annotation.chart.inverted) {
+            y = xy.x;
+        }
         return {
             x: point.x,
             xAxis: point.series.xAxis,
-            y: y + offset +
-                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
+            y: y + offset
         };
     };
     VerticalLine.connectorSecondPoint = function (target) {
-        var annotation = target.annotation, chart = annotation.chart, inverted = chart.inverted,
-            typeOptions = annotation.options.typeOptions, point = annotation.points[0],
-            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
-            top = pick(point.series.yAxis && point.series.yAxis.top, 0), yOffset = typeOptions.yOffset,
-            y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
+        var annotation = target.annotation, typeOptions = annotation.options.typeOptions, point = annotation.points[0],
+            yOffset = typeOptions.yOffset, xy = MockPoint.pointToPixels(point, true),
+            y = xy[annotation.chart.inverted ? 'x' : 'y'];
         if (typeOptions.label.offset < 0) {
             yOffset *= -1;
         }
         return {
             x: point.x,
             xAxis: point.series.xAxis,
-            y: y + yOffset +
-                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
+            y: y + yOffset
         };
     };
     /* *

@@ -10,6 +10,7 @@
  * */
 'use strict';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+
 /**
  * Creates an arrow symbol. Like a triangle, except not filled.
  * ```

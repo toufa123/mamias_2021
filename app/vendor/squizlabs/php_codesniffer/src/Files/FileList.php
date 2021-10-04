@@ -184,7 +184,7 @@ class FileList implements \Iterator, \Countable
     public function current()
     {
         $path = key($this->files);
-        if (isset($this->files[$path]) === false) {
+        if ($this->files[$path] === null) {
             $this->files[$path] = new LocalFile($path, $this->ruleset, $this->config);
         }
 

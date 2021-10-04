@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -$a++;
    -$b--;
@@ -43,6 +44,7 @@ With configuration: ``['style' => 'post']``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -++$a;
    ---$b;

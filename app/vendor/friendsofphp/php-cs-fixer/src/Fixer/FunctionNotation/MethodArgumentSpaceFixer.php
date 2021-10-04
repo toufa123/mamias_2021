@@ -26,7 +26,6 @@ use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use PhpCsFixer\Utils;
 use Symfony\Component\OptionsResolver\Options;
 
 /**
@@ -43,7 +42,7 @@ final class MethodArgumentSpaceFixer extends AbstractFixer implements Configurat
      */
     public function fixSpace(Tokens $tokens, $index)
     {
-        Utils::triggerDeprecation(__METHOD__.' is deprecated and will be removed in 3.0.');
+        @trigger_error(__METHOD__.' is deprecated and will be removed in 3.0.', E_USER_DEPRECATED);
         $this->fixSpace2($tokens, $index);
     }
 

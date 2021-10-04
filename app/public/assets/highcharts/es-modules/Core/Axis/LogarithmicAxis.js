@@ -10,6 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
+
 var addEvent = U.addEvent, getMagnitude = U.getMagnitude, normalizeTickInterval = U.normalizeTickInterval,
     pick = U.pick;
 /* eslint-disable valid-jsdoc */
@@ -28,6 +29,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
     function LogarithmicAxisAdditions(axis) {
         this.axis = axis;
     }
+
     /* *
      *
      *  Functions
@@ -55,8 +57,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
             // Second case: We need intermediary ticks. For example
             // 1, 2, 4, 6, 8, 10, 20, 40 etc.
         } else if (interval >= 0.08) {
-            var roundedMin = Math.floor(min), intermediate = void 0, i = void 0, j = void 0, len = void 0, pos = void 0,
-                lastPos = void 0, break2 = void 0;
+            var roundedMin = Math.floor(min), intermediate, i, j, len, pos, lastPos, break2;
             if (interval > 0.3) {
                 intermediate = [1, 2, 4];
                 // 0.2 equals five minor ticks per 1, 10, 100 etc
@@ -118,6 +119,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
 var LogarithmicAxis = /** @class */ (function () {
     function LogarithmicAxis() {
     }
+
     /**
      * Provides logarithmic support for axes.
      *

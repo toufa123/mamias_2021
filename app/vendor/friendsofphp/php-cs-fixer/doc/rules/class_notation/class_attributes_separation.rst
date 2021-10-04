@@ -29,9 +29,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    final class Sample
-    {
+   @@ -4,9 +4,8 @@
         protected function foo()
         {
         }
@@ -52,6 +50,7 @@ With configuration: ``['elements' => ['property' => 'one']]``.
 
    --- Original
    +++ New
+   @@ -1,6 +1,8 @@
     <?php
     class Sample
    -{private $a; // a is awesome
@@ -71,7 +70,7 @@ With configuration: ``['elements' => ['const' => 'one']]``.
 
    --- Original
    +++ New
-    <?php
+   @@ -2,6 +2,7 @@
     class Sample
     {
         const A = 1;

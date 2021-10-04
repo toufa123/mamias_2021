@@ -11,6 +11,7 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
+
 var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
 /* eslint-disable no-invalid-this */
 /**
@@ -30,7 +31,7 @@ var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, pick = U.
  * @apioption yAxis.staticScale
  */
 addEvent(Axis, 'afterSetOptions', function () {
-    var chartOptions = this.chart.options.chart;
+    var chartOptions = this.chart.options && this.chart.options.chart;
     if (!this.horiz &&
         isNumber(this.options.staticScale) &&
         (!chartOptions.height ||
@@ -49,7 +50,7 @@ Chart.prototype.adjustHeight = function () {
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale);
                 diff = height - chart.plotHeight;
-                if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
+                if (Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
                     chart.setSize(void 0, chart.chartHeight + diff, animate);
@@ -58,11 +59,9 @@ Chart.prototype.adjustHeight = function () {
                 // animation.
                 axis.series.forEach(function (series) {
                     var clipRect = series.sharedClipKey &&
-                        chart.sharedClips[series.sharedClipKey];
+                        chart[series.sharedClipKey];
                     if (clipRect) {
-                        clipRect.attr(chart.inverted ? {
-                            width: chart.plotHeight
-                        } : {
+                        clipRect.attr({
                             height: chart.plotHeight
                         });
                     }

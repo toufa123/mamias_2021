@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,9 +1,7 @@
     <?php
     /**
      * @internal

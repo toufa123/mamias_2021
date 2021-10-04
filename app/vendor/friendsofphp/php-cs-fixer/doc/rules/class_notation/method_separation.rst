@@ -18,9 +18,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    final class Sample
-    {
+   @@ -4,7 +4,8 @@
         protected function foo()
         {
         }

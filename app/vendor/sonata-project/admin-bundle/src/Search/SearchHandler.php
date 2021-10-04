@@ -81,22 +81,14 @@ class SearchHandler
 
         $datagrid = $admin->getDatagrid();
 
-        $datagridValues = $datagrid->getValues();
-
         $found = false;
         foreach ($datagrid->getFilters() as $filter) {
-            /** @var FilterInterface $filter */
-            $formName = $filter->getFormName();
-
+            /** @var $filter FilterInterface */
             if ($filter->getOption('global_search', false)) {
                 $filter->setOption('case_sensitive', $this->caseSensitive);
-                $filter->setOption('or_group', $admin->getCode());
                 $filter->setCondition(FilterInterface::CONDITION_OR);
-                $datagrid->setValue($formName, null, $term);
+                $datagrid->setValue($filter->getFormName(), null, $term);
                 $found = true;
-            } elseif (isset($datagridValues[$formName])) {
-                // Remove any previously set filter that is not configured for the global search.
-                $datagrid->removeFilter($formName);
             }
         }
 

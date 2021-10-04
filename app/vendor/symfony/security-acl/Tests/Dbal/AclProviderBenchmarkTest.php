@@ -11,9 +11,7 @@
 
 namespace Symfony\Component\Security\Acl\Tests\Dbal;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Acl\Dbal\AclProvider;
 use Symfony\Component\Security\Acl\Dbal\Schema;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -22,10 +20,10 @@ use Symfony\Component\Security\Acl\Domain\PermissionGrantingStrategy;
 /**
  * @group benchmark
  */
-class AclProviderBenchmarkTest extends TestCase
+class AclProviderBenchmarkTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Connection */
-    protected $connection;
+    /** @var \Doctrine\DBAL\Connection */
+    protected $con;
     protected $insertClassStmt;
     protected $insertSidStmt;
     protected $insertOidAncestorStmt;
@@ -35,13 +33,13 @@ class AclProviderBenchmarkTest extends TestCase
     protected function setUp(): void
     {
         try {
-            $this->connection = DriverManager::getConnection([
+            $this->con = DriverManager::getConnection([
                 'driver' => 'pdo_mysql',
                 'host' => 'localhost',
                 'user' => 'root',
                 'dbname' => 'testdb',
             ]);
-            $this->connection->connect();
+            $this->con->connect();
         } catch (\Exception $e) {
             $this->markTestSkipped('Unable to connect to the database: '.$e->getMessage());
         }
@@ -49,7 +47,7 @@ class AclProviderBenchmarkTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->connection = null;
+        $this->con = null;
     }
 
     public function testFindAcls()
@@ -58,8 +56,8 @@ class AclProviderBenchmarkTest extends TestCase
 
         // get some random test object identities from the database
         $oids = [];
-        $stmt = $this->connection->executeQuery('SELECT object_identifier, class_type FROM acl_object_identities o INNER JOIN acl_classes c ON c.id = o.class_id ORDER BY RAND() LIMIT 25');
-        foreach ($stmt->fetchAllAssociative() as $oid) {
+        $stmt = $this->con->executeQuery('SELECT object_identifier, class_type FROM acl_object_identities o INNER JOIN acl_classes c ON c.id = o.class_id ORDER BY RAND() LIMIT 25');
+        foreach ($stmt->fetchAll() as $oid) {
             $oids[] = new ObjectIdentity($oid['object_identifier'], $oid['class_type']);
         }
 
@@ -77,22 +75,22 @@ class AclProviderBenchmarkTest extends TestCase
      */
     protected function generateTestData()
     {
-        $sm = $this->connection->createSchemaManager();
+        $sm = $this->con->getSchemaManager();
         $sm->dropAndCreateDatabase('testdb');
-        $this->connection->executeStatement('USE testdb');
+        $this->con->exec('USE testdb');
 
         // import the schema
         $schema = new Schema($options = $this->getOptions());
-        foreach ($schema->toSql($this->connection->getDatabasePlatform()) as $sql) {
-            $this->connection->executeStatement($sql);
+        foreach ($schema->toSql($this->con->getDatabasePlatform()) as $sql) {
+            $this->con->exec($sql);
         }
 
         // setup prepared statements
-        $this->insertClassStmt = $this->connection->prepare('INSERT INTO acl_classes (id, class_type) VALUES (?, ?)');
-        $this->insertSidStmt = $this->connection->prepare('INSERT INTO acl_security_identities (id, identifier, username) VALUES (?, ?, ?)');
-        $this->insertOidStmt = $this->connection->prepare('INSERT INTO acl_object_identities (id, class_id, object_identifier, parent_object_identity_id, entries_inheriting) VALUES (?, ?, ?, ?, ?)');
-        $this->insertEntryStmt = $this->connection->prepare('INSERT INTO acl_entries (id, class_id, object_identity_id, field_name, ace_order, security_identity_id, mask, granting, granting_strategy, audit_success, audit_failure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $this->insertOidAncestorStmt = $this->connection->prepare('INSERT INTO acl_object_identity_ancestors (object_identity_id, ancestor_id) VALUES (?, ?)');
+        $this->insertClassStmt = $this->con->prepare('INSERT INTO acl_classes (id, class_type) VALUES (?, ?)');
+        $this->insertSidStmt = $this->con->prepare('INSERT INTO acl_security_identities (id, identifier, username) VALUES (?, ?, ?)');
+        $this->insertOidStmt = $this->con->prepare('INSERT INTO acl_object_identities (id, class_id, object_identifier, parent_object_identity_id, entries_inheriting) VALUES (?, ?, ?, ?, ?)');
+        $this->insertEntryStmt = $this->con->prepare('INSERT INTO acl_entries (id, class_id, object_identity_id, field_name, ace_order, security_identity_id, mask, granting, granting_strategy, audit_success, audit_failure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $this->insertOidAncestorStmt = $this->con->prepare('INSERT INTO acl_object_identity_ancestors (object_identity_id, ancestor_id) VALUES (?, ?)');
 
         for ($i = 0; $i < 40000; ++$i) {
             $this->generateAclHierarchy();
@@ -123,7 +121,7 @@ class AclProviderBenchmarkTest extends TestCase
         static $id = 1000;
 
         if (1000 === $id || ($id < 1500 && rand(0, 1))) {
-            $this->insertClassStmt->executeStatement([$id, $this->getRandomString(rand(20, 100), 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\\_')]);
+            $this->insertClassStmt->execute([$id, $this->getRandomString(rand(20, 100), 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\\_')]);
             ++$id;
 
             return $id - 1;
@@ -136,7 +134,7 @@ class AclProviderBenchmarkTest extends TestCase
     {
         static $id = 1000;
 
-        $this->insertOidStmt->executeStatement([
+        $this->insertOidStmt->execute([
             $id,
             $classId,
             $this->getRandomString(rand(20, 50)),
@@ -144,9 +142,9 @@ class AclProviderBenchmarkTest extends TestCase
             rand(0, 1),
         ]);
 
-        $this->insertOidAncestorStmt->executeStatement([$id, $id]);
+        $this->insertOidAncestorStmt->execute([$id, $id]);
         foreach ($ancestors as $ancestor) {
-            $this->insertOidAncestorStmt->executeStatement([$id, $ancestor]);
+            $this->insertOidAncestorStmt->execute([$id, $ancestor]);
         }
 
         $this->generateAces($classId, $id);
@@ -160,7 +158,7 @@ class AclProviderBenchmarkTest extends TestCase
         static $id = 1000;
 
         if (1000 === $id || ($id < 11000 && rand(0, 1))) {
-            $this->insertSidStmt->executeStatement([
+            $this->insertSidStmt->execute([
                 $id,
                 $this->getRandomString(rand(5, 30)),
                 rand(0, 1),
@@ -203,7 +201,7 @@ class AclProviderBenchmarkTest extends TestCase
             }
 
             // id, cid, oid, field, order, sid, mask, granting, strategy, a success, a failure
-            $this->insertEntryStmt->executeStatement([
+            $this->insertEntryStmt->execute([
                 $id,
                 $classId,
                 rand(0, 5) ? $objectId : null,
@@ -264,6 +262,6 @@ class AclProviderBenchmarkTest extends TestCase
 
     protected function getProvider()
     {
-        return new AclProvider($this->connection, $this->getStrategy(), $this->getOptions());
+        return new AclProvider($this->con, $this->getStrategy(), $this->getOptions());
     }
 }

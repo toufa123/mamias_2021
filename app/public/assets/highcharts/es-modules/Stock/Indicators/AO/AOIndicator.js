@@ -23,15 +23,18 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../../Core/Globals.js';
+
 var noop = H.noop;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, ColumnSeries = _a.column;
 import U from '../../../Core/Utilities.js';
-import palette from '../../../Core/Color/Palette.js';
+
 var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, isArray = U.isArray;
 /* *
  *
@@ -49,6 +52,7 @@ var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, isArray =
  */
 var AOIndicator = /** @class */ (function (_super) {
     __extends(AOIndicator, _super);
+
     function AOIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -61,6 +65,7 @@ var AOIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /**
      *
      * Functions
@@ -144,11 +149,6 @@ var AOIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.ao
      */
     AOIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            // Index and period are unchangeable, do not inherit (#15362)
-            index: void 0,
-            period: void 0
-        },
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -160,7 +160,7 @@ var AOIndicator = /** @class */ (function (_super) {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        greaterBarColor: palette.positiveColor,
+        greaterBarColor: '#06B535',
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -172,7 +172,7 @@ var AOIndicator = /** @class */ (function (_super) {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        lowerBarColor: palette.negativeColor,
+        lowerBarColor: '#F21313',
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,

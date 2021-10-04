@@ -24,6 +24,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -32,6 +33,7 @@ import U from '../../Utilities.js';
 
 var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick,
     removeEvent = U.removeEvent;
+
 /* eslint require-jsdoc: 0, no-invalid-this: 0 */
 function paddingSetter(value, key) {
     if (!isNumber(value)) {
@@ -41,6 +43,7 @@ function paddingSetter(value, key) {
         this.updateTextPadding();
     }
 }
+
 /**
  * SVG label to render text.
  * @private
@@ -50,6 +53,7 @@ function paddingSetter(value, key) {
  */
 var SVGLabel = /** @class */ (function (_super) {
     __extends(SVGLabel, _super);
+
     /* *
      *
      *  Constructors
@@ -74,7 +78,10 @@ var SVGLabel = /** @class */ (function (_super) {
         if (className) {
             _this.addClass('highcharts-' + className);
         }
-        _this.text = renderer.text('', 0, 0, useHTML).attr({zIndex: 1});
+        _this.text = renderer.text('', 0, 0, useHTML)
+            .attr({
+                zIndex: 1
+            });
         // Validate the shape argument
         var hasBGImage;
         if (typeof shape === 'string') {
@@ -91,17 +98,18 @@ var SVGLabel = /** @class */ (function (_super) {
         _this.alignFactor = 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
      *
      * */
     SVGLabel.prototype.alignSetter = function (value) {
-        var alignFactor = ({
+        var alignFactor = {
             left: 0,
             center: 0.5,
             right: 1
-        })[value];
+        }[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -134,20 +142,20 @@ var SVGLabel = /** @class */ (function (_super) {
      */
     SVGLabel.prototype.css = function (styles) {
         if (styles) {
-            var textStyles_1 = {}, isWidth = void 0, isFontStyle = void 0;
+            var textStyles = {}, isWidth, isFontStyle;
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
             SVGLabel.textProps.forEach(function (prop) {
                 if (typeof styles[prop] !== 'undefined') {
-                    textStyles_1[prop] = styles[prop];
+                    textStyles[prop] = styles[prop];
                     delete styles[prop];
                 }
             });
-            this.text.css(textStyles_1);
-            isWidth = 'width' in textStyles_1;
-            isFontStyle = 'fontSize' in textStyles_1 ||
-                'fontWeight' in textStyles_1;
+            this.text.css(textStyles);
+            isWidth = 'width' in textStyles;
+            isFontStyle = 'fontSize' in textStyles ||
+                'fontWeight' in textStyles;
             // Update existing text, box (#9400, #12163)
             if (isFontStyle) {
                 this.updateTextPadding();
@@ -186,19 +194,14 @@ var SVGLabel = /** @class */ (function (_super) {
      * Return the bounding box of the box, not the group.
      */
     SVGLabel.prototype.getBBox = function () {
-        // If we have a text string and the DOM bBox was 0, it typically means
-        // that the label was first rendered hidden, so we need to update the
-        // bBox (#15246)
-        if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
-            this.updateBoxSize();
-        }
+        var bBox = this.bBox;
         var padding = this.padding;
         var paddingLeft = pick(this.paddingLeft, padding);
         return {
             width: this.width,
             height: this.height,
-            x: this.bBox.x - paddingLeft,
-            y: this.bBox.y - padding
+            x: bBox.x - paddingLeft,
+            y: bBox.y - padding
         };
     };
     SVGLabel.prototype.getCrispAdjust = function () {
@@ -221,12 +224,10 @@ var SVGLabel = /** @class */ (function (_super) {
         if (span) {
             selectiveHandler = function (e) {
                 if ((eventType === 'mouseenter' ||
-                    eventType === 'mouseleave') &&
+                        eventType === 'mouseleave') &&
                     e.relatedTarget instanceof Element &&
-                    (
-                        // #14110
-                        label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
-                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+                    (label.element.contains(e.relatedTarget) ||
+                        span.element.contains(e.relatedTarget))) {
                     return;
                 }
                 handler.call(label.element, e);
@@ -398,6 +399,11 @@ var SVGLabel = /** @class */ (function (_super) {
      *
      * */
     SVGLabel.emptyBBox = {width: 0, height: 0, x: 0, y: 0};
+    /* *
+     *
+     *  Properties
+     *
+     * */
     /**
      * For labels, these CSS properties are applied to the `text` node directly.
      *

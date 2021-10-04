@@ -27,14 +27,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
 import O from '../../Core/Options.js';
+
 var defaultOptions = O.defaultOptions;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 
@@ -60,6 +63,7 @@ var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = 
  */
 var ItemSeries = /** @class */ (function (_super) {
     __extends(ItemSeries, _super);
+
     function ItemSeries() {
         /* *
          *
@@ -73,6 +77,7 @@ var ItemSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -276,6 +281,7 @@ var ItemSeries = /** @class */ (function (_super) {
         // remove those with the highest angles.
         var overshoot = finalItemCount - this.total -
             (isCircle ? rows.length : 0);
+
         /**
          * @private
          * @param {Highcharts.ItemRowContainerObject} item
@@ -288,6 +294,7 @@ var ItemSeries = /** @class */ (function (_super) {
                 overshoot--;
             }
         }
+
         while (overshoot > 0) {
             rows
                 // Return a simplified representation of the angle of

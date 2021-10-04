@@ -61,5 +61,3 @@ $fn = fn(array &$one) => 1;
 $fn = fn(array & $one) => 1;
 
 $fn = static fn(DateTime $a, DateTime $b): int => -($a->getTimestamp() <=> $b->getTimestamp());
-
-function issue3267(string|int ...$values) {}

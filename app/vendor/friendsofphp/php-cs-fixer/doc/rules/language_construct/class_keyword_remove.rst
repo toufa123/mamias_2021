@@ -14,7 +14,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,4 +2,4 @@
 
     use Foo\Bar\Baz;
 

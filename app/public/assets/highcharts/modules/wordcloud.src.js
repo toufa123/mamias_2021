@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
- * (c) 2016-2021 Highsoft AS
+ * (c) 2016-2019 Highsoft AS
  * Authors: Jon Arild Nygard
  *
  * License: www.highcharts.com/license
@@ -22,11 +22,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Mixins/Polygon.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
         /* *
          *
@@ -374,21 +376,17 @@
          * @todo export this function to enable usage
          */
         var draw = function draw(params) {
-            var _this = this;
-            var animatableAttribs = params.animatableAttribs,
+            var _a;
+            var component = this,
+                graphic = component.graphic,
+                animatableAttribs = params.animatableAttribs,
                 onComplete = params.onComplete,
                 css = params.css,
-                renderer = params.renderer;
-            var animation = (this.series && this.series.chart.hasRendered) ?
-                // Chart-level animation on updates
-                void 0 :
-                // Series-level animation on new points
-                (this.series &&
-                    this.series.options.animation);
-            var graphic = this.graphic;
-            if (this.shouldDraw()) {
+                renderer = params.renderer,
+                animation = (_a = component.series) === null || _a === void 0 ? void 0 : _a.options.animation;
+            if (component.shouldDraw()) {
                 if (!graphic) {
-                    this.graphic = graphic =
+                    component.graphic = graphic =
                         renderer[params.shapeType](params.shapeArgs)
                             .add(params.group);
                 }
@@ -397,8 +395,8 @@
                     .attr(params.attribs)
                     .animate(animatableAttribs, params.isNew ? false : animation, onComplete);
             } else if (graphic) {
-                var destroy_1 = function () {
-                    _this.graphic = graphic = (graphic && graphic.destroy());
+                var destroy = function () {
+                    component.graphic = graphic = graphic.destroy();
                     if (isFn(onComplete)) {
                         onComplete();
                     }
@@ -406,10 +404,10 @@
                 // animate only runs complete callback if something was animated.
                 if (Object.keys(animatableAttribs).length) {
                     graphic.animate(animatableAttribs, void 0, function () {
-                        destroy_1();
+                        destroy();
                     });
                 } else {
-                    destroy_1();
+                    destroy();
                 }
             }
         };
@@ -476,6 +474,7 @@
         var extend = U.extend;
         var WordcloudPoint = /** @class */ (function (_super) {
             __extends(WordcloudPoint, _super);
+
             function WordcloudPoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -491,6 +490,7 @@
                 _this.series = void 0;
                 return _this;
             }
+
             /* *
              *
              * Functions
@@ -564,7 +564,9 @@
                     r2.top > r1.bottom ||
                     r2.bottom < r1.top);
             }
+
             WordcloudUtils.isRectanglesIntersecting = isRectanglesIntersecting;
+
             /**
              * Detects if a word collides with any previously placed words.
              *
@@ -617,7 +619,9 @@
                 }
                 return intersects;
             }
+
             WordcloudUtils.intersectsAnyWord = intersectsAnyWord;
+
             /**
              * Gives a set of cordinates for an Archimedian Spiral.
              *
@@ -651,7 +655,9 @@
                 }
                 return result;
             }
+
             WordcloudUtils.archimedeanSpiral = archimedeanSpiral;
+
             /**
              * Gives a set of cordinates for an rectangular spiral.
              *
@@ -710,7 +716,9 @@
                 }
                 return result;
             }
+
             WordcloudUtils.squareSpiral = squareSpiral;
+
             /**
              * Gives a set of cordinates for an rectangular spiral.
              *
@@ -737,7 +745,9 @@
                 }
                 return result;
             }
+
             WordcloudUtils.rectangularSpiral = rectangularSpiral;
+
             /**
              * @private
              * @function getRandomPosition
@@ -751,7 +761,9 @@
             function getRandomPosition(size) {
                 return Math.round((size * (Math.random() + 0.5)) / 2);
             }
+
             WordcloudUtils.getRandomPosition = getRandomPosition;
+
             /**
              * Calculates the proper scale to fit the cloud inside the plotting area.
              *
@@ -783,7 +795,9 @@
                     scaleY = height > 0 ? 1 / height * targetHeight : 1;
                 return Math.min(scaleX, scaleY);
             }
+
             WordcloudUtils.getScale = getScale;
+
             /**
              * Calculates what is called the playing field. The field is the area which
              * all the words are allowed to be positioned within. The area is
@@ -842,7 +856,9 @@
                     ratioY: ratioY
                 };
             }
+
             WordcloudUtils.getPlayingField = getPlayingField;
+
             /**
              * Calculates a number of degrees to rotate, based upon a number of
              * orientations within a range from-to.
@@ -886,7 +902,9 @@
                 }
                 return result;
             }
+
             WordcloudUtils.getRotation = getRotation;
+
             /**
              * Calculates the spiral positions and store them in scope for quick access.
              *
@@ -914,7 +932,9 @@
                     return attempt <= length ? arr[attempt - 1] : false;
                 };
             }
+
             WordcloudUtils.getSpiral = getSpiral;
+
             /**
              * Detects if a word is placed outside the playing field.
              *
@@ -942,7 +962,9 @@
                     playingField.top < rect.top &&
                     playingField.bottom > rect.bottom);
             }
+
             WordcloudUtils.outsidePlayingField = outsidePlayingField;
+
             /**
              * Check if a point intersects with previously placed words, or if it goes
              * outside the field boundaries. If a collision, then try to adjusts the
@@ -998,7 +1020,9 @@
                 }
                 return delta;
             }
+
             WordcloudUtils.intersectionTesting = intersectionTesting;
+
             /**
              * Extends the playing field to have enough space to fit a given word.
              *
@@ -1047,7 +1071,9 @@
                 // Return the new extended field.
                 return result;
             }
+
             WordcloudUtils.extendPlayingField = extendPlayingField;
+
             /**
              * If a rectangle is outside a give field, then the boundaries of the field
              * is adjusted accordingly. Modifies the field object which is passed as the
@@ -1081,6 +1107,7 @@
                 }
                 return field;
             }
+
             WordcloudUtils.updateFieldBoundaries = updateFieldBoundaries;
         })(WordcloudUtils || (WordcloudUtils = {}));
         /* *
@@ -1149,6 +1176,7 @@
          */
         var WordcloudSeries = /** @class */ (function (_super) {
             __extends(WordcloudSeries, _super);
+
             function WordcloudSeries() {
                 /* *
                  *
@@ -1167,6 +1195,7 @@
                 _this.points = void 0;
                 return _this;
             }
+
             /**
              *
              * Functions
@@ -1179,7 +1208,7 @@
                     lineWidth: 0,
                     maxPadding: 0,
                     startOnTick: false,
-                    title: void 0,
+                    title: null,
                     tickPositions: []
                 };
                 Series.prototype.bindAxes.call(this);
@@ -1303,9 +1332,7 @@
                             x: placement.x,
                             y: placement.y,
                             text: point.name,
-                            rotation: isNumber(placement.rotation) ?
-                                placement.rotation :
-                                void 0
+                            rotation: placement.rotation
                         }),
                         polygon = getPolygon(placement.x,
                             placement.y,
@@ -1339,8 +1366,8 @@
                     // Check if point was placed, if so delete it, otherwise place it
                     // on the correct positions.
                     if (isObject(delta)) {
-                        attr.x = (attr.x || 0) + delta.x;
-                        attr.y = (attr.y || 0) + delta.y;
+                        attr.x += delta.x;
+                        attr.y += delta.y;
                         rectangle.left += delta.x;
                         rectangle.right += delta.x;
                         rectangle.top += delta.y;
@@ -1348,7 +1375,6 @@
                         field = WordcloudUtils.updateFieldBoundaries(field, rectangle);
                         placed.push(point);
                         point.isNull = false;
-                        point.isInside = true; // #15447
                     } else {
                         point.isNull = true;
                     }

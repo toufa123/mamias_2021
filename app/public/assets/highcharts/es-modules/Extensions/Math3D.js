@@ -10,6 +10,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
+
 var pick = U.pick;
 // Mathematical Functionility
 var deg2rad = H.deg2rad;
@@ -41,6 +42,7 @@ var deg2rad = H.deg2rad;
  * @private
  * @function rotate3D
  */
+
 /* eslint-enable max-len */
 /**
  * @private
@@ -64,6 +66,7 @@ function rotate3D(x, y, z, angles) {
             angles.cosA * angles.cosB * z
     };
 }
+
 /**
  * Perspective3D function is available in global Highcharts scope because is
  * needed also outside of perspective() function (#8042).
@@ -93,7 +96,9 @@ function perspective3D(coordinate, origin, distance) {
         y: coordinate.y * projection
     };
 }
+
 H.perspective3D = perspective3D;
+
 /**
  * Transforms a given array of points according to the angles in chart.options.
  *
@@ -155,7 +160,9 @@ function perspective(points, chart, insidePlotArea, useInvertedPersp) {
         };
     });
 }
+
 H.perspective = perspective;
+
 /**
  * Calculate a distance from camera to points - made for calculating zIndex of
  * scatter points.
@@ -187,7 +194,9 @@ function pointCameraDistance(coordinates, chart) {
             Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2));
     return distance;
 }
+
 H.pointCameraDistance = pointCameraDistance;
+
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
  * https://en.wikipedia.org/wiki/Shoelace_formula
@@ -211,7 +220,9 @@ function shapeArea(vertexes) {
     }
     return area / 2;
 }
+
 H.shapeArea = shapeArea;
+
 /**
  * Calculate area of a 3D polygon after perspective projection
  *
@@ -235,6 +246,7 @@ H.shapeArea = shapeArea;
 function shapeArea3D(vertexes, chart, insidePlotArea) {
     return shapeArea(perspective(vertexes, chart, insidePlotArea));
 }
+
 H.shapeArea3d = shapeArea3D;
 var mathModule = {
     perspective: perspective,

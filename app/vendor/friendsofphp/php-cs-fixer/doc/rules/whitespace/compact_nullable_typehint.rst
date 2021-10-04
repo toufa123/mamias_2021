@@ -19,6 +19,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -function sample(? string $str): ? string
    +function sample(?string $str): ?string

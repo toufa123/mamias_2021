@@ -9,6 +9,7 @@
  * */
 import H from '../Globals.js';
 import U from '../Utilities.js';
+
 var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
@@ -169,6 +170,7 @@ var Color = /** @class */ (function () {
         }
         this.init(input);
     }
+
     /* *
      *
      *  Static Functions

@@ -16,9 +16,11 @@
  *
  * */
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var Series = SeriesRegistry.series;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
+
 var addEvent = U.addEvent, extend = U.extend;
 /* *
  *
@@ -36,13 +38,13 @@ addEvent(Series, 'afterBindAxes', function () {
                 gridLineWidth: 0,
                 lineWidth: 0,
                 min: 0,
-                // dataMin: 0,
+                dataMin: 0,
                 minPadding: 0,
                 max: TreemapUtilities.AXIS_MAX,
-                // dataMax: TreemapUtilities.AXIS_MAX,
+                dataMax: TreemapUtilities.AXIS_MAX,
                 maxPadding: 0,
                 startOnTick: false,
-                title: void 0,
+                title: null,
                 tickPositions: []
             };
             extend(yAxis.options, treeAxis);

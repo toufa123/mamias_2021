@@ -23,13 +23,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -48,6 +51,7 @@ function getExtremeIndexInArray(arr, extreme) {
     }
     return valueIndex;
 }
+
 /* eslint-enable valid-jsdoc */
 /* *
  *
@@ -65,6 +69,7 @@ function getExtremeIndexInArray(arr, extreme) {
  */
 var AroonIndicator = /** @class */ (function (_super) {
     __extends(AroonIndicator, _super);
+
     function AroonIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -77,6 +82,7 @@ var AroonIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -133,10 +139,12 @@ var AroonIndicator = /** @class */ (function (_super) {
         /**
          * Paramters used in calculation of aroon series points.
          *
-         * @excluding index
+         * @excluding periods, index
          */
         params: {
-            index: void 0,
+            /**
+             * Period for Aroon indicator
+             */
             period: 25
         },
         marker: {

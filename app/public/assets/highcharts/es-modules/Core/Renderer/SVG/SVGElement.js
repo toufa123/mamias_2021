@@ -18,15 +18,159 @@ var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, noop = H.noop, svg 
 import palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 
-var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined,
-    erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction,
-    isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick,
-    pInt = U.pInt, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
-/* *
+var attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase,
+    extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber,
+    isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt,
+    syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
+/**
+ * The horizontal alignment of an element.
  *
- *  Class
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
+ */
+/**
+ * Options to align the element relative to the chart or another box.
  *
- * */
+ * @interface Highcharts.AlignObject
+ */ /**
+ * Horizontal alignment. Can be one of `left`, `center` and `right`.
+ *
+ * @name Highcharts.AlignObject#align
+ * @type {Highcharts.AlignValue|undefined}
+ *
+ * @default left
+ */ /**
+ * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
+ *
+ * @name Highcharts.AlignObject#verticalAlign
+ * @type {Highcharts.VerticalAlignValue|undefined}
+ *
+ * @default top
+ */ /**
+ * Horizontal pixel offset from alignment.
+ *
+ * @name Highcharts.AlignObject#x
+ * @type {number|undefined}
+ *
+ * @default 0
+ */ /**
+ * Vertical pixel offset from alignment.
+ *
+ * @name Highcharts.AlignObject#y
+ * @type {number|undefined}
+ *
+ * @default 0
+ */ /**
+ * Use the `transform` attribute with translateX and translateY custom
+ * attributes to align this elements rather than `x` and `y` attributes.
+ *
+ * @name Highcharts.AlignObject#alignByTranslate
+ * @type {boolean|undefined}
+ *
+ * @default false
+ */
+/**
+ * Bounding box of an element.
+ *
+ * @interface Highcharts.BBoxObject
+ * @extends Highcharts.PositionObject
+ */ /**
+ * Height of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#height
+ * @type {number}
+ */ /**
+ * Width of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#width
+ * @type {number}
+ */ /**
+ * Horizontal position of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#x
+ * @type {number}
+ */ /**
+ * Vertical position of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#y
+ * @type {number}
+ */
+/**
+ * An object of key-value pairs for SVG attributes. Attributes in Highcharts
+ * elements for the most parts correspond to SVG, but some are specific to
+ * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
+ * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
+ * attributes containing a hyphen are _not_ camel-cased, they should be
+ * quoted to preserve the hyphen.
+ *
+ * @example
+ * {
+ *     'stroke': '#ff0000', // basic
+ *     'stroke-width': 2, // hyphenated
+ *     'rotation': 45 // custom
+ *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
+ * }
+ *
+ * @interface Highcharts.SVGAttributes
+ */ /**
+ * @name Highcharts.SVGAttributes#[key:string]
+ * @type {*}
+ */ /**
+ * @name Highcharts.SVGAttributes#d
+ * @type {string|Highcharts.SVGPathArray|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#fill
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#inverted
+ * @type {boolean|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#matrix
+ * @type {Array<number>|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#rotation
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#rotationOriginX
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#rotationOriginY
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#scaleX
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#scaleY
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#stroke
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#style
+ * @type {string|Highcharts.CSSObject|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#translateX
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#translateY
+ * @type {number|undefined}
+ */ /**
+ * @name Highcharts.SVGAttributes#zIndex
+ * @type {number|undefined}
+ */
+/**
+ * An SVG DOM element. The type is a reference to the regular SVGElement in the
+ * global scope.
+ *
+ * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
+/**
+ * The vertical alignment of an element.
+ *
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
+ */
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
@@ -58,7 +202,7 @@ var SVGElement = /** @class */ (function () {
          *
          * */
         this.element = void 0;
-        this.onEvents = {};
+        this.height = void 0;
         this.opacity = 1; // Default base for animation
         this.renderer = void 0;
         this.SVG_NS = SVG_NS;
@@ -77,9 +221,9 @@ var SVGElement = /** @class */ (function () {
             'anchorY',
             'rounded'
         ];
+        this.width = void 0;
     }
 
-    // @todo public zIndex?: number;
     /* *
      *
      *  Functions
@@ -138,8 +282,7 @@ var SVGElement = /** @class */ (function () {
      *         Returns the SVGElement for chaining.
      */
     SVGElement.prototype.add = function (parent) {
-        var renderer = this.renderer, element = this.element;
-        var inserted;
+        var renderer = this.renderer, element = this.element, inserted;
         if (parent) {
             this.parentGroup = parent;
         }
@@ -243,8 +386,8 @@ var SVGElement = /** @class */ (function () {
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     SVGElement.prototype.align = function (alignOptions, alignByTranslate, box) {
-        var attribs = {}, renderer = this.renderer, alignedObjects = renderer.alignedObjects;
-        var x, y, alignTo, alignFactor, vAlignFactor;
+        var align, vAlign, x, y, attribs = {}, alignTo, renderer = this.renderer,
+            alignedObjects = renderer.alignedObjects, alignFactor, vAlignFactor;
         // First call on instanciate
         if (alignOptions) {
             this.alignOptions = alignOptions;
@@ -262,9 +405,10 @@ var SVGElement = /** @class */ (function () {
             alignByTranslate = this.alignByTranslate;
             alignTo = this.alignTo;
         }
-        box = pick(box, renderer[alignTo], alignTo === 'scrollablePlotBox' ? renderer.plotBox : void 0, renderer);
+        box = pick(box, renderer[alignTo], renderer);
         // Assign variables
-        var align = alignOptions.align, vAlign = alignOptions.verticalAlign;
+        align = alignOptions.align;
+        vAlign = alignOptions.verticalAlign;
         // default: left align
         x = (box.x || 0) + (alignOptions.x || 0);
         // default: top align
@@ -431,17 +575,14 @@ var SVGElement = /** @class */ (function () {
             });
             // Insert an absolutely positioned break before the original text
             // to keep it in place
-            var br_1 = doc.createElementNS(SVG_NS, 'tspan');
-            br_1.textContent = '\u200B';
-            // Copy x and y if not null
-            ['x', 'y'].forEach(function (key) {
-                var value = elem.getAttribute(key);
-                if (value) {
-                    br_1.setAttribute(key, value);
-                }
+            var br = doc.createElementNS(SVG_NS, 'tspan');
+            br.textContent = '\u200B';
+            attr(br, {
+                x: elem.getAttribute('x'),
+                y: elem.getAttribute('y')
             });
             // Insert the outline
-            outline_1.appendChild(br_1);
+            outline_1.appendChild(br);
             elem.insertBefore(outline_1, elem.firstChild);
         }
     };
@@ -506,8 +647,8 @@ var SVGElement = /** @class */ (function () {
      *         used as a getter, the current value of the attribute is returned.
      */
     SVGElement.prototype.attr = function (hash, val, complete, continueAnimation) {
-        var element = this.element, symbolCustomAttribs = this.symbolCustomAttribs;
-        var key, hasSetSymbolSize, ret = this, skipAttr, setter;
+        var key, element = this.element, hasSetSymbolSize, ret = this, skipAttr, setter,
+            symbolCustomAttribs = this.symbolCustomAttribs;
         // single key-value pair
         if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
@@ -592,10 +733,10 @@ var SVGElement = /** @class */ (function () {
      * The modified rectangle arguments.
      */
     SVGElement.prototype.crisp = function (rect, strokeWidth) {
-        var wrapper = this;
+        var wrapper = this, normalizer;
         strokeWidth = strokeWidth || rect.strokeWidth || 0;
         // Math.round because strokeWidth can sometimes have roundoff errors
-        var normalizer = Math.round(strokeWidth) % 2 / 2;
+        normalizer = Math.round(strokeWidth) % 2 / 2;
         // normalize for crisp edges
         rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
         rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
@@ -624,9 +765,8 @@ var SVGElement = /** @class */ (function () {
      * SVG element to apply the gradient on.
      */
     SVGElement.prototype.complexColor = function (colorOptions, prop, elem) {
-        var renderer = this.renderer;
-        var colorObject, gradName, gradAttr, radAttr, gradients, stops, stopColor, stopOpacity, radialReference, id,
-            key = [], value;
+        var renderer = this.renderer, colorObject, gradName, gradAttr, radAttr, gradients, stops, stopColor,
+            stopOpacity, radialReference, id, key = [], value;
         fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function () {
@@ -661,9 +801,9 @@ var SVGElement = /** @class */ (function () {
                 }
                 // Build the unique key to detect whether we need to create a
                 // new element (#1282)
-                objectEach(gradAttr, function (value, n) {
+                objectEach(gradAttr, function (val, n) {
                     if (n !== 'id') {
-                        key.push(n, value);
+                        key.push(n, val);
                     }
                 });
                 objectEach(stops, function (val) {
@@ -686,6 +826,7 @@ var SVGElement = /** @class */ (function () {
                     // destroy them
                     gradientObject_1.stops = [];
                     stops.forEach(function (stop) {
+                        var stopObject;
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = Color.parse(stop[1]);
                             stopColor = colorObject.get('rgb');
@@ -694,7 +835,7 @@ var SVGElement = /** @class */ (function () {
                             stopColor = stop[1];
                             stopOpacity = 1;
                         }
-                        var stopObject = renderer.createElement('stop').attr({
+                        stopObject = renderer.createElement('stop').attr({
                             offset: stop[0],
                             'stop-color': stopColor,
                             'stop-opacity': stopOpacity
@@ -733,13 +874,13 @@ var SVGElement = /** @class */ (function () {
      *         Return the SVG element for chaining.
      */
     SVGElement.prototype.css = function (styles) {
-        var oldStyles = this.styles, newStyles = {}, elem = this.element,
+        var oldStyles = this.styles, newStyles = {}, elem = this.element, textWidth, serializedCss = '', hyphenate,
+            hasNew = !oldStyles,
             // These CSS properties are interpreted internally by the SVG
             // renderer, but are not supported by SVG and should not be added to
             // the DOM. In styled mode, no CSS should find its way to the DOM
             // whatsoever (#6173, #6474).
             svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
-        var textWidth, serializedCss = '', hyphenate, hasNew = !oldStyles;
         // convert legacy
         if (styles && styles.color) {
             styles.fill = styles.color;
@@ -846,11 +987,10 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.destroy = function () {
         var wrapper = this, element = wrapper.element || {}, renderer = wrapper.renderer,
-            ownerSVGElement = element.ownerSVGElement;
-        var parentToClean = (renderer.isSVG &&
-            element.nodeName === 'SPAN' &&
-            wrapper.parentGroup ||
-            void 0), grandParent, i;
+            parentToClean = (renderer.isSVG &&
+                element.nodeName === 'SPAN' &&
+                wrapper.parentGroup ||
+                void 0), grandParent, ownerSVGElement = element.ownerSVGElement, i;
         // remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = element.point = null;
@@ -861,7 +1001,8 @@ var SVGElement = /** @class */ (function () {
             // before destroying the element (#6196).
             // The upper case version is for Edge
             [].forEach.call(ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'), function (el) {
-                if (el.getAttribute('clip-path').indexOf(clipPath_1.element.id) > -1) {
+                var clipPathAttr = el.getAttribute('clip-path');
+                if (clipPathAttr.indexOf(clipPath_1.element.id) > -1) {
                     el.removeAttribute('clip-path');
                 }
             });
@@ -904,7 +1045,7 @@ var SVGElement = /** @class */ (function () {
             // Delete all properties
             delete wrapper[key];
         });
-        return;
+
     };
     /**
      * Destroy shadows on the element.
@@ -1048,13 +1189,13 @@ var SVGElement = /** @class */ (function () {
      *         The bounding box with `x`, `y`, `width` and `height` properties.
      */
     SVGElement.prototype.getBBox = function (reload, rot) {
-        var wrapper = this, renderer = wrapper.renderer, element = wrapper.element, styles = wrapper.styles,
-            textStr = wrapper.textStr, cache = renderer.cache, cacheKeys = renderer.cacheKeys,
-            isSVG = element.namespaceURI === wrapper.SVG_NS, rotation = pick(rot, wrapper.rotation, 0),
-            fontSize = renderer.styledMode ? (element &&
-                SVGElement.prototype.getStyle.call(element, 'font-size')) : (styles && styles.fontSize);
-        var bBox, // = wrapper.bBox,
-            width, height, toggleTextShadowShim, cacheKey;
+        var wrapper = this, bBox, // = wrapper.bBox,
+            renderer = wrapper.renderer, width, height, element = wrapper.element, styles = wrapper.styles, fontSize,
+            textStr = wrapper.textStr, toggleTextShadowShim, cache = renderer.cache, cacheKeys = renderer.cacheKeys,
+            isSVG = element.namespaceURI === wrapper.SVG_NS, cacheKey;
+        var rotation = pick(rot, wrapper.rotation, 0);
+        fontSize = renderer.styledMode ? (element &&
+            SVGElement.prototype.getStyle.call(element, 'font-size')) : (styles && styles.fontSize);
         // Avoid undefined and null (#7316)
         if (defined(textStr)) {
             cacheKey = textStr.toString();
@@ -1275,14 +1416,15 @@ var SVGElement = /** @class */ (function () {
      *         Return the SVGElement for chaining.
      */
     SVGElement.prototype.invert = function (inverted) {
-        this.inverted = inverted;
-        this.updateTransform();
-        return this;
+        var wrapper = this;
+        wrapper.inverted = inverted;
+        wrapper.updateTransform();
+        return wrapper;
     };
     /**
-     * Add an event listener. This is a simple setter that replaces the
-     * previous event of the same type added by this function, as opposed to
-     * the {@link Highcharts#addEvent} function.
+     * Add an event listener. This is a simple setter that replaces all other
+     * events of the same type, opposed to the {@link Highcharts#addEvent}
+     * function.
      *
      * @sample highcharts/members/element-on/
      *         A clickable rectangle
@@ -1290,7 +1432,9 @@ var SVGElement = /** @class */ (function () {
      * @function Highcharts.SVGElement#on
      *
      * @param {string} eventType
-     * The event type.
+     * The event type. If the type is `click`, Highcharts will internally
+     * translate it to a `touchstart` event on touch devices, to prevent the
+     * browser from waiting for a click event from firing.
      *
      * @param {Function} handler
      * The handler callback.
@@ -1299,12 +1443,43 @@ var SVGElement = /** @class */ (function () {
      * The SVGElement for chaining.
      */
     SVGElement.prototype.on = function (eventType, handler) {
-        var onEvents = this.onEvents;
-        if (onEvents[eventType]) {
-            // Unbind existing event
-            onEvents[eventType]();
+        var svgElement = this, element = svgElement.element, touchStartPos, touchEventFired;
+        // touch
+        if (hasTouch && eventType === 'click') {
+            element.ontouchstart = function (e) {
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
+            };
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e) {
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                var hasMoved = touchStartPos.clientX ? Math.sqrt(Math.pow(touchStartPos.clientX - e.changedTouches[0].clientX, 2) +
+                    Math.pow(touchStartPos.clientY - e.changedTouches[0].clientY, 2)) >= 4 : false;
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+                touchEventFired = true;
+                if (e.cancelable !== false) {
+                    // prevent other events from being fired. #9682
+                    e.preventDefault();
+                }
+            };
+            element.onclick = function (e) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
+                    handler.call(element, e);
+                }
+            };
+        } else {
+            // simplest possible event model for internal use
+            element['on' + eventType] = handler;
         }
-        onEvents[eventType] = addEvent(this.element, eventType, handler);
         return this;
     };
     /**
@@ -1402,9 +1577,8 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.setTextPath = function (path, textPathOptions) {
         var elem = this.element, textNode = this.text ? this.text.element : elem, attribsMap = {
-            textAnchor: 'text-anchor'
-        };
-        var adder = false, textPathElement, textPathId, textPathWrapper = this.textPathWrapper,
+                textAnchor: 'text-anchor'
+            }, attrs, adder = false, textPathElement, textPathId, textPathWrapper = this.textPathWrapper,
             firstTime = !textPathWrapper;
         // Defaults
         textPathOptions = merge(true, {
@@ -1415,7 +1589,7 @@ var SVGElement = /** @class */ (function () {
                 textAnchor: 'middle'
             }
         }, textPathOptions);
-        var attrs = AST.filterUserAttributes(textPathOptions.attributes);
+        attrs = AST.filterUserAttributes(textPathOptions.attributes);
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt
             // (e.g. ellipsis is applied), so we need to rebuild textPath too
@@ -1548,16 +1722,18 @@ var SVGElement = /** @class */ (function () {
      *         Returns the SVGElement for chaining.
      */
     SVGElement.prototype.shadow = function (shadowOptions, group, cutOff) {
-        var shadows = [], element = this.element, oldShadowOptions = this.oldShadowOptions, defaultShadowOptions = {
+        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowElementOpacity, update = false,
+            oldShadowOptions = this.oldShadowOptions,
+            // compensate for inverted plot area
+            transform;
+        var defaultShadowOptions = {
             color: palette.neutralColor100,
             offsetX: 1,
             offsetY: 1,
             opacity: 0.15,
             width: 3
         };
-        var i, shadow, strokeWidth, shadowElementOpacity, update = false,
-            // compensate for inverted plot area
-            transform, options;
+        var options;
         if (shadowOptions === true) {
             options = defaultShadowOptions;
         } else if (typeof shadowOptions === 'object') {
@@ -1683,8 +1859,7 @@ var SVGElement = /** @class */ (function () {
             return this['stroke-width'] || 0;
         }
         // In styled mode, read computed stroke width
-        var val = this.getStyle('stroke-width');
-        var ret = 0, dummy;
+        var val = this.getStyle('stroke-width'), ret = 0, dummy;
         // Read pixel values directly
         if (val.indexOf('px') === val.length - 2) {
             ret = pInt(val);
@@ -1842,9 +2017,9 @@ var SVGElement = /** @class */ (function () {
      * @function Highcharts.SVGElement#updateTransform
      */
     SVGElement.prototype.updateTransform = function () {
-        var wrapper = this, scaleX = wrapper.scaleX, scaleY = wrapper.scaleY, inverted = wrapper.inverted,
-            rotation = wrapper.rotation, matrix = wrapper.matrix, element = wrapper.element;
-        var translateX = wrapper.translateX || 0, translateY = wrapper.translateY || 0;
+        var wrapper = this, translateX = wrapper.translateX || 0, translateY = wrapper.translateY || 0,
+            scaleX = wrapper.scaleX, scaleY = wrapper.scaleY, inverted = wrapper.inverted, rotation = wrapper.rotation,
+            matrix = wrapper.matrix, element = wrapper.element, transform;
         // Flipping affects translate as adjustment for flipping around the
         // group's axis
         if (inverted) {
@@ -1854,7 +2029,7 @@ var SVGElement = /** @class */ (function () {
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
         // #1846).
-        var transform = ['translate(' + translateX + ',' + translateY + ')'];
+        transform = ['translate(' + translateX + ',' + translateY + ')'];
         // apply matrix
         if (defined(matrix)) {
             transform.push('matrix(' + matrix.join(',') + ')');
@@ -1925,9 +2100,9 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.zIndexSetter = function (value, key) {
         var renderer = this.renderer, parentGroup = this.parentGroup, parentWrapper = parentGroup || renderer,
-            parentNode = parentWrapper.element || renderer.box, element = this.element,
-            svgParent = parentNode === renderer.box;
-        var childNodes, otherElement, otherZIndex, inserted = false, undefinedOtherZIndex, run = this.added, i;
+            parentNode = parentWrapper.element || renderer.box, childNodes, otherElement, otherZIndex,
+            element = this.element, inserted = false, undefinedOtherZIndex, svgParent = parentNode === renderer.box,
+            run = this.added, i;
         if (defined(value)) {
             // So we can read it for other elements in the group
             element.setAttribute('data-z-index', value);
@@ -2003,167 +2178,5 @@ SVGElement.prototype.matrixSetter =
                                     this[key] = value;
                                     this.doTransform = true;
                                 };
-export default SVGElement;
-/* *
- *
- *  API Declarations
- *
- * */
-/**
- * Reference to the global SVGElement class as a workaround for a name conflict
- * in the Highcharts namespace.
- *
- * @global
- * @typedef {global.SVGElement} GlobalSVGElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- */
-/**
- * The horizontal alignment of an element.
- *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
- */
-/**
- * Options to align the element relative to the chart or another box.
- *
- * @interface Highcharts.AlignObject
- */ /**
- * Horizontal alignment. Can be one of `left`, `center` and `right`.
- *
- * @name Highcharts.AlignObject#align
- * @type {Highcharts.AlignValue|undefined}
- *
- * @default left
- */ /**
- * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
- *
- * @name Highcharts.AlignObject#verticalAlign
- * @type {Highcharts.VerticalAlignValue|undefined}
- *
- * @default top
- */ /**
- * Horizontal pixel offset from alignment.
- *
- * @name Highcharts.AlignObject#x
- * @type {number|undefined}
- *
- * @default 0
- */ /**
- * Vertical pixel offset from alignment.
- *
- * @name Highcharts.AlignObject#y
- * @type {number|undefined}
- *
- * @default 0
- */ /**
- * Use the `transform` attribute with translateX and translateY custom
- * attributes to align this elements rather than `x` and `y` attributes.
- *
- * @name Highcharts.AlignObject#alignByTranslate
- * @type {boolean|undefined}
- *
- * @default false
- */
-/**
- * Bounding box of an element.
- *
- * @interface Highcharts.BBoxObject
- * @extends Highcharts.PositionObject
- */ /**
- * Height of the bounding box.
- *
- * @name Highcharts.BBoxObject#height
- * @type {number}
- */ /**
- * Width of the bounding box.
- *
- * @name Highcharts.BBoxObject#width
- * @type {number}
- */ /**
- * Horizontal position of the bounding box.
- *
- * @name Highcharts.BBoxObject#x
- * @type {number}
- */ /**
- * Vertical position of the bounding box.
- *
- * @name Highcharts.BBoxObject#y
- * @type {number}
- */
-/**
- * An object of key-value pairs for SVG attributes. Attributes in Highcharts
- * elements for the most parts correspond to SVG, but some are specific to
- * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
- * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
- * attributes containing a hyphen are _not_ camel-cased, they should be
- * quoted to preserve the hyphen.
- *
- * @example
- * {
- *     'stroke': '#ff0000', // basic
- *     'stroke-width': 2, // hyphenated
- *     'rotation': 45 // custom
- *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
- * }
- *
- * @interface Highcharts.SVGAttributes
- */ /**
- * @name Highcharts.SVGAttributes#[key:string]
- * @type {*}
- */ /**
- * @name Highcharts.SVGAttributes#d
- * @type {string|Highcharts.SVGPathArray|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#fill
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#inverted
- * @type {boolean|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#matrix
- * @type {Array<number>|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#rotation
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#rotationOriginX
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#rotationOriginY
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#scaleX
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#scaleY
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#stroke
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#style
- * @type {string|Highcharts.CSSObject|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#translateX
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#translateY
- * @type {number|undefined}
- */ /**
- * @name Highcharts.SVGAttributes#zIndex
- * @type {number|undefined}
- */
-/**
- * An SVG DOM element. The type is a reference to the regular SVGElement in the
- * global scope.
- *
- * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- */
-/**
- * The vertical alignment of an element.
- *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
- */
-''; // detach doclets above
+H.SVGElement = SVGElement;
+export default H.SVGElement;

@@ -12,7 +12,6 @@
 namespace Symfony\Component\Security\Acl\Tests\Domain
 {
     use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-    use Symfony\Component\Security\Acl\Model\DomainObjectInterface;
 
     class ObjectIdentityTest extends \PHPUnit\Framework\TestCase
     {
@@ -35,17 +34,17 @@ namespace Symfony\Component\Security\Acl\Tests\Domain
 
         public function testFromDomainObjectPrefersInterfaceOverGetId()
         {
-            $domainObject = new class() implements DomainObjectInterface {
-                public function getObjectIdentifier()
-                {
-                    return 'getObjectIdentifier()';
-                }
-
-                public function getId()
-                {
-                    return 'getId()';
-                }
-            };
+            $domainObject = $this->createMock('Symfony\Component\Security\Acl\Model\DomainObjectInterface');
+            $domainObject
+                ->expects($this->once())
+                ->method('getObjectIdentifier')
+                ->willReturn('getObjectIdentifier()')
+            ;
+            $domainObject
+                ->expects($this->never())
+                ->method('getId')
+                ->willReturn('getId()')
+            ;
 
             $id = ObjectIdentity::fromDomainObject($domainObject);
             $this->assertEquals('getObjectIdentifier()', $id->getIdentifier());

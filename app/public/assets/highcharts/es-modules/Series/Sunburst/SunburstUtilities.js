@@ -13,8 +13,10 @@
  * */
 'use strict';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var TreemapSeries = SeriesRegistry.seriesTypes.treemap;
 import U from '../../Core/Utilities.js';
+
 var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 /* *
  *
@@ -34,6 +36,7 @@ var SunburstUtilities;
      *  Functions
      *
      * */
+
     /* eslint-disable valid-jsdoc */
     /**
      * @private
@@ -100,7 +103,9 @@ var SunburstUtilities;
         }
         return result;
     }
+
     SunburstUtilities.calculateLevelSizes = calculateLevelSizes;
+
     /**
      * @private
      */
@@ -111,7 +116,9 @@ var SunburstUtilities;
         var to = level + height;
         return {from: from, to: to};
     }
+
     SunburstUtilities.getLevelFromAndTo = getLevelFromAndTo;
+
     /**
      * TODO introduce step, which should default to 1.
      * @private
@@ -125,6 +132,7 @@ var SunburstUtilities;
         }
         return result;
     }
+
     SunburstUtilities.range = range;
     /* eslint-enable valid-jsdoc */
 })(SunburstUtilities || (SunburstUtilities = {}));

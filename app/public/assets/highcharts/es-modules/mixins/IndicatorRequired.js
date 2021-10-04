@@ -9,6 +9,7 @@
  * */
 'use strict';
 import U from '../Core/Utilities.js';
+
 var error = U.error;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var requiredIndicatorMixin = {

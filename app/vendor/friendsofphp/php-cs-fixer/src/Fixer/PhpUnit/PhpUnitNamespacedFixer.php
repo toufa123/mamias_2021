@@ -152,11 +152,6 @@ final class MyTest extends \PHPUnit_Framework_TestCase
                 break;
             }
 
-            $prevIndex = $tokens->getPrevMeaningfulToken($currIndex);
-            if ($tokens[$prevIndex]->isGivenKind(T_CONST)) {
-                continue;
-            }
-
             $originalClass = $tokens[$currIndex]->getContent();
 
             if (1 !== Preg::match($this->originalClassRegEx, $originalClass)) {

@@ -27,6 +27,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -35,8 +36,10 @@ import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import U from '../../Core/Utilities.js';
 
@@ -56,6 +59,7 @@ var defined = U.defined, extend = U.extend, find = U.find, isObject = U.isObject
  */
 var SankeySeries = /** @class */ (function (_super) {
     __extends(SankeySeries, _super);
+
     function SankeySeries() {
         /* *
          *
@@ -81,6 +85,7 @@ var SankeySeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Static Functions
@@ -212,6 +217,7 @@ var SankeySeries = /** @class */ (function (_super) {
      */
     SankeySeries.prototype.generatePoints = function () {
         NodesMixin.generatePoints.apply(this, arguments);
+
         /**
          * Order the nodes, starting with the root node(s). (#9818)
          * @private
@@ -227,6 +233,7 @@ var SankeySeries = /** @class */ (function (_super) {
                 });
             }
         }
+
         if (this.orderNodes) {
             this.nodes
                 // Identify the root node(s)
@@ -418,11 +425,12 @@ var SankeySeries = /** @class */ (function (_super) {
      */
     SankeySeries.prototype.translateLink = function (point) {
         var getY = function (node, fromOrTo) {
+            var _a;
             var linkTop = (node.offset(point, fromOrTo) *
                 translationFactor);
             var y = Math.min(node.nodeY + linkTop,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeY + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight);
+                node.nodeY + ((_a = node.shapeArgs) === null || _a === void 0 ? void 0 : _a.height) - linkHeight);
             return y;
         };
         var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart,
@@ -537,13 +545,13 @@ var SankeySeries = /** @class */ (function (_super) {
      */
     SankeySeries.prototype.translateNode = function (node, column) {
         var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(),
-            nodeHeight = Math.max(Math.round(sum * translationFactor), this.options.minLinkWidth),
+            height = Math.max(Math.round(sum * translationFactor), this.options.minLinkWidth),
             crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor),
             fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
                 nodeOffset.relativeTop))) + crisp, left = Math.floor(this.colDistance * node.column +
-            options.borderWidth / 2) + crisp, nodeLeft = chart.inverted ?
-            chart.plotSizeX - left :
-            left, nodeWidth = Math.round(this.nodeWidth);
+                options.borderWidth / 2) + crisp, nodeLeft = chart.inverted ?
+                chart.plotSizeX - left :
+                left, nodeWidth = Math.round(this.nodeWidth);
         node.sum = sum;
         // If node sum is 0, don't render the rect #12453
         if (sum) {
@@ -551,37 +559,37 @@ var SankeySeries = /** @class */ (function (_super) {
             node.shapeType = 'rect';
             node.nodeX = nodeLeft;
             node.nodeY = fromNodeTop;
-            var x = nodeLeft, y = fromNodeTop, width = node.options.width || options.width || nodeWidth,
-                height = node.options.height || options.height || nodeHeight;
-            if (chart.inverted) {
-                x = nodeLeft - nodeWidth;
-                y = chart.plotSizeY - fromNodeTop - nodeHeight;
-                width = node.options.height || options.height || nodeWidth;
-                height = node.options.width || options.width || nodeHeight;
+            if (!chart.inverted) {
+                node.shapeArgs = {
+                    x: nodeLeft,
+                    y: fromNodeTop,
+                    width: node.options.width || options.width || nodeWidth,
+                    height: node.options.height || options.height || height
+                };
+            } else {
+                node.shapeArgs = {
+                    x: nodeLeft - nodeWidth,
+                    y: chart.plotSizeY - fromNodeTop - height,
+                    width: node.options.height || options.height || nodeWidth,
+                    height: node.options.width || options.width || height
+                };
             }
+            node.shapeArgs.display = node.hasShape() ? '' : 'none';
             // Calculate data label options for the point
             node.dlOptions = SankeySeries.getDLOptions({
                 level: this.mapOptionsToLevel[node.level],
                 optionsPoint: node.options
             });
             // Pass test in drawPoints
-            node.plotX = 1;
             node.plotY = 1;
             // Set the anchor position for tooltips
             node.tooltipPos = chart.inverted ? [
-                chart.plotSizeY - y - height / 2,
-                chart.plotSizeX - x - width / 2
+                chart.plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                chart.plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
             ] : [
-                x + width / 2,
-                y + height / 2
+                node.shapeArgs.x + node.shapeArgs.width / 2,
+                node.shapeArgs.y + node.shapeArgs.height / 2
             ];
-            node.shapeArgs = {
-                x: x,
-                y: y,
-                width: width,
-                height: height,
-                display: node.hasShape() ? '' : 'none'
-            };
         } else {
             node.dlOptions = {
                 enabled: false
@@ -669,7 +677,7 @@ var SankeySeries = /** @class */ (function (_super) {
              * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
              */
             formatter: function () {
-                return;
+
             },
             inside: true
         },
@@ -853,7 +861,7 @@ extend(SankeySeries.prototype, {
     createNode: NodesMixin.createNode,
     destroy: NodesMixin.destroy,
     forceDL: true,
-    invertible: true,
+    invertable: true,
     isCartesian: false,
     orderNodes: true,
     pointArrayMap: ['from', 'to'],

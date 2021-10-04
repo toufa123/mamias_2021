@@ -34,8 +34,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    final class MyTest extends \PHPUnit_Framework_TestCase
+   @@ -3,13 +3,17 @@
     {
         public function testFoo()
         {
@@ -65,8 +64,7 @@ With configuration: ``['target' => '8.4']``.
 
    --- Original
    +++ New
-    <?php
-    final class MyTest extends \PHPUnit_Framework_TestCase
+   @@ -3,13 +3,16 @@
     {
         public function testFoo()
         {
@@ -95,8 +93,7 @@ With configuration: ``['target' => '5.6']``.
 
    --- Original
    +++ New
-    <?php
-    final class MyTest extends \PHPUnit_Framework_TestCase
+   @@ -3,13 +3,16 @@
     {
         public function testFoo()
         {
@@ -125,8 +122,7 @@ With configuration: ``['target' => '5.2']``.
 
    --- Original
    +++ New
-    <?php
-    final class MyTest extends \PHPUnit_Framework_TestCase
+   @@ -3,7 +3,9 @@
     {
         public function testFoo()
         {
@@ -136,13 +132,6 @@ With configuration: ``['target' => '5.2']``.
    +        $this->expectExceptionCode(123);
             foo();
         }
-
-        public function testBar()
-        {
-            $this->setExpectedExceptionRegExp("RuntimeException", "/Msg.*/", 123);
-            bar();
-        }
-    }
 
 Rule sets
 ---------

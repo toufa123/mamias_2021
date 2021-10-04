@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,6 +1,6 @@
     <?php
     /**
    - * @{TUTORIAL}
@@ -46,6 +47,7 @@ With configuration: ``['tags' => ['TUTORIAL']]``.
 
    --- Original
    +++ New
+   @@ -1,6 +1,6 @@
     <?php
     /**
    - * @{TUTORIAL}

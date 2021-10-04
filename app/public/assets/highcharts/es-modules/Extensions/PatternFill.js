@@ -16,15 +16,13 @@ import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-
-var getOptions = O.getOptions;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 
-var addEvent = U.addEvent, erase = U.erase, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
+var addEvent = U.addEvent, erase = U.erase, getOptions = U.getOptions, merge = U.merge, pick = U.pick,
+    removeEvent = U.removeEvent, wrap = U.wrap;
 /**
  * Pattern options
  *
@@ -158,6 +156,7 @@ var patterns = H.patterns = (function () {
     });
     return patterns;
 })();
+
 /**
  * Utility function to compute a hash value from an object. Modified Java
  * String.hashCode implementation in JS. Use the preSeed parameter to add an
@@ -191,6 +190,7 @@ function hashFromObject(obj, preSeed) {
     }
     return hash.toString(16).replace('-', '1');
 }
+
 /**
  * Set dimensions on pattern from point. This function will set internal
  * pattern._width/_height properties if width and height are not both already
@@ -327,16 +327,14 @@ SVGRenderer.prototype.addPattern = function (options, animation) {
     pattern.id = id;
     // Use an SVG path for the pattern
     if (options.path) {
-        path = U.isObject(options.path) ?
-            options.path :
-            {d: options.path};
+        path = options.path;
         // The background
         if (options.backgroundColor) {
             rect(options.backgroundColor);
         }
         // The pattern
         attribs = {
-            'd': path.d
+            'd': path.d || path
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;

@@ -5,6 +5,7 @@
  * */
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
+
 var addEvent = U.addEvent, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick,
     removeEvent = U.removeEvent;
 /* eslint-disable valid-jsdoc */
@@ -130,24 +131,22 @@ var eventEmitterMixin = {
      * capability as well as the extended ones.
      */
     onDrag: function (e) {
-        if (this.chart.isInsidePlot(e.chartX - this.chart.plotLeft, e.chartY - this.chart.plotTop, {
-            visiblePlotOnly: true
-        })) {
-            var translation_1 = this.mouseMoveToTranslation(e);
+        if (this.chart.isInsidePlot(e.chartX - this.chart.plotLeft, e.chartY - this.chart.plotTop)) {
+            var translation = this.mouseMoveToTranslation(e);
             if (this.options.draggable === 'x') {
-                translation_1.y = 0;
+                translation.y = 0;
             }
             if (this.options.draggable === 'y') {
-                translation_1.x = 0;
+                translation.x = 0;
             }
             if (this.points.length) {
-                this.translate(translation_1.x, translation_1.y);
+                this.translate(translation.x, translation.y);
             } else {
                 this.shapes.forEach(function (shape) {
-                    shape.translate(translation_1.x, translation_1.y);
+                    shape.translate(translation.x, translation.y);
                 });
                 this.labels.forEach(function (label) {
-                    label.translate(translation_1.x, translation_1.y);
+                    label.translate(translation.x, translation.y);
                 });
             }
             this.redraw(false);

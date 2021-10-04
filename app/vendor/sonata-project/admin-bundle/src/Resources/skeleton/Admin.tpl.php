@@ -13,16 +13,16 @@ use Sonata\AdminBundle\Show\ShowMapper;
 final class <?= $class_name ?> extends AbstractAdmin
 {
 
-    protected function configureDatagridFilters(DatagridMapper $filter): void
+    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
-        $filter
+        $datagridMapper
 <?= $fields ?>;
     }
 
-    protected function configureListFields(ListMapper $list): void
+    protected function configureListFields(ListMapper $listMapper): void
     {
-        $list
-<?= $fields ?>->add(ListMapper::NAME_ACTIONS, null, [
+        $listMapper
+<?= $fields ?>->add('_action', null, [
                 'actions' => [
                     'show' => [],
                     'edit' => [],
@@ -31,15 +31,15 @@ final class <?= $class_name ?> extends AbstractAdmin
             ]);
     }
 
-    protected function configureFormFields(FormMapper $form): void
+    protected function configureFormFields(FormMapper $formMapper): void
     {
-        $form
+        $formMapper
 <?= $fields ?>;
     }
 
-    protected function configureShowFields(ShowMapper $show): void
+    protected function configureShowFields(ShowMapper $showMapper): void
     {
-        $show
+        $showMapper
 <?= $fields ?>;
     }
 }

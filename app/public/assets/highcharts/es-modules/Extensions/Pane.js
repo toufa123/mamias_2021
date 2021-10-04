@@ -13,6 +13,7 @@ import H from '../Core/Globals.js';
 import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
+
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
@@ -23,7 +24,7 @@ Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
- * In the future, this can be extended to basic Highcharts and Highcharts Stock.
+ * In the future, this can be extended to basic Highcharts and Highstock.
  *
  * @private
  * @class
@@ -202,6 +203,7 @@ var Pane = /** @class */ (function () {
         };
         this.init(options, chart);
     }
+
     /**
      * Initialize the Pane object
      *
@@ -344,6 +346,7 @@ var Pane = /** @class */ (function () {
     };
     return Pane;
 }());
+
 /**
  * Check whether element is inside or outside pane.
  * @private
@@ -355,6 +358,7 @@ var Pane = /** @class */ (function () {
 function isInsidePane(x, y, center) {
     return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) <= center[2] / 2;
 }
+
 Chart.prototype.getHoverPane = function (eventArgs) {
     var chart = this;
     var hoverPane;

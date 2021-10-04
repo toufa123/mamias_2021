@@ -24,7 +24,6 @@ use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
-use PhpCsFixer\Utils;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 
@@ -194,7 +193,8 @@ class Sample
                 ->setNormalizer(static function (Options $options, $values) {
                     $deprecated = array_intersect($values, self::SUPPORTED_TYPES);
                     if (\count($deprecated) > 0) {
-                        Utils::triggerDeprecation('A list of elements is deprecated, use a dictionary of `const|method|property` => `none|one` instead.');
+                        $message = 'A list of elements is deprecated, use a dictionary of `const|method|property` => `none|one` instead.';
+                        @trigger_error($message, E_USER_DEPRECATED);
 
                         return array_fill_keys($deprecated, self::SPACING_ONE);
                     }
@@ -266,8 +266,7 @@ class Sample
             $nextNotWhite = $tokens->getNextNonWhitespace($nextNotWhite);
         }
 
-        $functionIndex = $tokens->getTokenNotOfKindsSibling($nextNotWhite - 1, 1, [T_ABSTRACT, T_FINAL, T_PUBLIC, T_PROTECTED, T_PRIVATE, T_STATIC, T_WHITESPACE, T_COMMENT, T_DOC_COMMENT]);
-        if ($tokens[$functionIndex]->isGivenKind(T_FUNCTION)) {
+        if ($tokens[$nextNotWhite]->isGivenKind(T_FUNCTION)) {
             $this->correctLineBreaks($tokens, $elementEndIndex, $nextNotWhite, 2);
 
             return;

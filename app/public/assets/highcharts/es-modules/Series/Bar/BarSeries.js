@@ -25,12 +25,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -48,6 +50,7 @@ var extend = U.extend, merge = U.merge;
  */
 var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
+
     function BarSeries() {
         /* *
          *
@@ -65,6 +68,7 @@ var BarSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /**
      * A bar series is a special type of column series where the columns are
      * horizontal.

@@ -12,8 +12,6 @@
 
 namespace PhpCsFixer\Test;
 
-use PhpCsFixer\Utils;
-
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
@@ -29,11 +27,12 @@ final class AccessibleObject
      */
     public function __construct($object)
     {
-        Utils::triggerDeprecation(
+        @trigger_error(
             sprintf(
                 'The "%s" class is deprecated and will be removed in 3.0 version. Use "php-cs-fixer/accessible-object" package instead.',
                 __CLASS__
-            )
+            ),
+            E_USER_DEPRECATED
         );
 
         $this->object = $object;
@@ -43,7 +42,7 @@ final class AccessibleObject
     public function __call($name, array $arguments)
     {
         if (!method_exists($this->object, $name)) {
-            throw new \LogicException(sprintf('Cannot call non existing method "%s"->%s.', \get_class($this->object), $name));
+            throw new \LogicException(sprintf('Cannot call non existing method %s->%s.', \get_class($this->object), $name));
         }
 
         $method = $this->reflection->getMethod($name);
@@ -66,7 +65,7 @@ final class AccessibleObject
     public function __get($name)
     {
         if (!property_exists($this->object, $name)) {
-            throw new \LogicException(sprintf('Cannot get non existing property "%s"->%s.', \get_class($this->object), $name));
+            throw new \LogicException(sprintf('Cannot get non existing property %s->%s.', \get_class($this->object), $name));
         }
 
         $property = $this->reflection->getProperty($name);
@@ -78,7 +77,7 @@ final class AccessibleObject
     public function __set($name, $value)
     {
         if (!property_exists($this->object, $name)) {
-            throw new \LogicException(sprintf('Cannot set non existing property "%s"->%s = "%s".', \get_class($this->object), $name, var_export($value, true)));
+            throw new \LogicException(sprintf('Cannot set non existing property %s->%s = %s.', \get_class($this->object), $name, var_export($value, true)));
         }
 
         $property = $this->reflection->getProperty($name);

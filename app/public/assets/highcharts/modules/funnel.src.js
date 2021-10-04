@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Highcharts funnel module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Series/Funnel/FunnelSeries.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Chart, H, palette, SeriesRegistry, U) {
         /* *
          *
@@ -82,6 +84,7 @@
          */
         var FunnelSeries = /** @class */ (function (_super) {
             __extends(FunnelSeries, _super);
+
             function FunnelSeries() {
                 /* *
                  *
@@ -96,6 +99,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions
@@ -263,6 +267,7 @@
                     y3,
                     x4,
                     y5;
+
                 /**
                  * Get positions - either an integer or a percentage string must be
                  * given.
@@ -279,6 +284,7 @@
                         relativeTo * parseInt(length, 10) / 100 :
                         parseInt(length, 10);
                 }
+
                 series.getWidthAt = function (y) {
                     var top = (centerY - height / 2);
                     return (y > neckY || height === neckHeight) ?
@@ -661,6 +667,7 @@
          */
         var PyramidSeries = /** @class */ (function (_super) {
             __extends(PyramidSeries, _super);
+
             function PyramidSeries() {
                 /* *
                  *
@@ -679,6 +686,7 @@
                 _this.points = void 0;
                 return _this;
             }
+
             /**
              * A pyramid series is a special type of funnel, without neck and reversed
              * by default.

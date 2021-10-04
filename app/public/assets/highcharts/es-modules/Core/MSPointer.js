@@ -25,18 +25,22 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from './Globals.js';
+
 var charts = H.charts, doc = H.doc, noop = H.noop, win = H.win;
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
+
 var addEvent = U.addEvent, css = U.css, objectEach = U.objectEach, removeEvent = U.removeEvent;
 /* globals MSPointerEvent, PointerEvent */
 // The touches object keeps track of the points being touched at all times
 var touches = {};
 var hasPointerEvent = !!win.PointerEvent;
+
 /* eslint-disable valid-jsdoc */
 /** @private */
 function getWebkitTouches() {
@@ -53,6 +57,7 @@ function getWebkitTouches() {
     });
     return fake;
 }
+
 /** @private */
 function translateMSPointer(e, method, wktype, func) {
     var p;
@@ -68,12 +73,15 @@ function translateMSPointer(e, method, wktype, func) {
         });
     }
 }
+
 /** @private */
 var MSPointer = /** @class */ (function (_super) {
     __extends(MSPointer, _super);
+
     function MSPointer() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+
     /* *
      *
      *  Functions

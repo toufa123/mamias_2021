@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Client side exporting module
  *
- * (c) 2015-2021 Torstein Honsi / Oystein Moseng
+ * (c) 2015-2019 Torstein Honsi / Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Extensions/DownloadURL.js', [_modules['Core/Globals.js']], function (Highcharts) {
         /* *
          *
@@ -135,7 +137,7 @@
 
         return exports;
     });
-    _registerModule(_modules, 'Extensions/OfflineExporting.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js'], _modules['Extensions/DownloadURL.js']], function (Chart, H, O, SVGRenderer, U, DownloadURL) {
+    _registerModule(_modules, 'Extensions/OfflineExporting.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js'], _modules['Extensions/DownloadURL.js']], function (Chart, H, SVGRenderer, U, DownloadURL) {
         /* *
          *
          *  Client side exporting module
@@ -149,11 +151,10 @@
          * */
         var win = H.win,
             doc = H.doc;
-        var getOptions = O.getOptions;
         var addEvent = U.addEvent,
             error = U.error,
             extend = U.extend,
-            fireEvent = U.fireEvent,
+            getOptions = U.getOptions,
             merge = U.merge;
         var downloadURL = DownloadURL.downloadURL;
         var domurl = win.URL || win.webkitURL || win,
@@ -161,6 +162,7 @@
             loadEventDeferDelay = H.isMS ? 150 : 0;
         // Dummy object so we can reuse our canvas-tools.js without errors
         H.CanVGRenderer = {};
+
         /* eslint-disable valid-jsdoc */
         /**
          * Downloads a script and executes a callback when done.
@@ -181,6 +183,7 @@
             };
             head.appendChild(script);
         }
+
         /**
          * Get blob URL from SVG code. Falls back to normal data URI.
          *
@@ -208,6 +211,7 @@
             }
             return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
         }
+
         /**
          * Get data:URL from image URL. Pass in callbacks to handle results.
          *
@@ -293,6 +297,7 @@
             img.onerror = errorHandler;
             img.src = imageURL;
         }
+
         /* eslint-enable valid-jsdoc */
         /**
          * Get data URL to an image of an SVG and call download on it options object:
@@ -334,6 +339,7 @@
                     (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])), scale = options.scale || 1;
             // Allow libURL to end with or without fordward slash
             libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
+
             /* eslint-disable valid-jsdoc */
             /**
              * @private
@@ -366,18 +372,10 @@
                         i++;
                     }
                 }
-                // Workaround for #15135, zero width spaces, which Highcharts uses to
-                // break lines, are not correctly rendered in PDF. Replace it with a
-                // regular space and offset by some pixels to compensate.
-                [].forEach.call(svgElement.querySelectorAll('tspan'), function (tspan) {
-                    if (tspan.textContent === '\u200B') {
-                        tspan.textContent = ' ';
-                        tspan.setAttribute('dx', -5);
-                    }
-                });
                 win.svg2pdf(svgElement, pdf, {removeInvalid: true});
                 return pdf.output('datauristring');
             }
+
             /**
              * @private
              * @return {void}
@@ -429,6 +427,7 @@
                     failCallback(e);
                 }
             }
+
             /* eslint-enable valid-jsdoc */
             // Initiate download depending on file type
             if (imageType === 'image/svg+xml') {
@@ -535,6 +534,7 @@
                     });
             }
         }
+
         /* eslint-disable valid-jsdoc */
         /**
          * Get SVG of chart prepared for client side export. This converts embedded
@@ -662,9 +662,7 @@
                         fallbackToExportServer('Image type not supported' +
                             'for charts with embedded HTML');
                     } else {
-                        downloadSVGLocal(svg, extend({filename: chart.getFilename()}, options), fallbackToExportServer, function () {
-                            return fireEvent(chart, 'exportChartLocalSuccess');
-                        });
+                        downloadSVGLocal(svg, extend({filename: chart.getFilename()}, options), fallbackToExportServer);
                     }
                 },
                 // Return true if the SVG contains images with external data. With the
@@ -722,11 +720,11 @@
                 fallbackToExportServer('Image type not supported for this chart/browser.');
                 return;
             }
-            chart.getSVGForLocalExport(options, chartOptions || {}, fallbackToExportServer, svgSuccess);
+            chart.getSVGForLocalExport(options, chartOptions, fallbackToExportServer, svgSuccess);
         };
         // Extend the default options to use the local exporter logic
         merge(true, getOptions().exporting, {
-            libURL: 'https://code.highcharts.com/9.1.0/lib/',
+            libURL: 'https://code.highcharts.com/9.0.0/lib/',
             // When offline-exporting is loaded, redefine the menu item definitions
             // related to download.
             menuItemDefinitions: {

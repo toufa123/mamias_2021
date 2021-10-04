@@ -18,6 +18,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$a = dirname(__FILE__);
    +$a = __DIR__;

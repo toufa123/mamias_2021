@@ -13,13 +13,11 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
 var win = H.win, doc = H.doc;
-import O from '../Core/Options.js';
-
-var getOptions = O.getOptions;
+import '../Core/Options.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 
-var addEvent = U.addEvent, error = U.error, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
+var addEvent = U.addEvent, error = U.error, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
 import DownloadURL from '../Extensions/DownloadURL.js';
 
 var downloadURL = DownloadURL.downloadURL;
@@ -28,6 +26,7 @@ var domurl = win.URL || win.webkitURL || win,
     loadEventDeferDelay = H.isMS ? 150 : 0;
 // Dummy object so we can reuse our canvas-tools.js without errors
 H.CanVGRenderer = {};
+
 /* eslint-disable valid-jsdoc */
 /**
  * Downloads a script and executes a callback when done.
@@ -48,6 +47,7 @@ function getScript(scriptLocation, callback) {
     };
     head.appendChild(script);
 }
+
 /**
  * Get blob URL from SVG code. Falls back to normal data URI.
  *
@@ -75,6 +75,7 @@ function svgToDataUrl(svg) {
     }
     return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
 }
+
 /**
  * Get data:URL from image URL. Pass in callbacks to handle results.
  *
@@ -159,6 +160,7 @@ function imageToDataUrl(imageURL, imageType, callbackArgs, scale, successCallbac
     img.onerror = errorHandler;
     img.src = imageURL;
 }
+
 /* eslint-enable valid-jsdoc */
 /**
  * Get data URL to an image of an SVG and call download on it options object:
@@ -199,6 +201,7 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
         (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])), scale = options.scale || 1;
     // Allow libURL to end with or without fordward slash
     libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
+
     /* eslint-disable valid-jsdoc */
     /**
      * @private
@@ -228,18 +231,10 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
                 i++;
             }
         }
-        // Workaround for #15135, zero width spaces, which Highcharts uses to
-        // break lines, are not correctly rendered in PDF. Replace it with a
-        // regular space and offset by some pixels to compensate.
-        [].forEach.call(svgElement.querySelectorAll('tspan'), function (tspan) {
-            if (tspan.textContent === '\u200B') {
-                tspan.textContent = ' ';
-                tspan.setAttribute('dx', -5);
-            }
-        });
         win.svg2pdf(svgElement, pdf, {removeInvalid: true});
         return pdf.output('datauristring');
     }
+
     /**
      * @private
      * @return {void}
@@ -288,6 +283,7 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
             failCallback(e);
         }
     }
+
     /* eslint-enable valid-jsdoc */
     // Initiate download depending on file type
     if (imageType === 'image/svg+xml') {
@@ -394,6 +390,7 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
             });
     }
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Get SVG of chart prepared for client side export. This converts embedded
@@ -509,9 +506,7 @@ Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
                 fallbackToExportServer('Image type not supported' +
                     'for charts with embedded HTML');
             } else {
-                downloadSVGLocal(svg, extend({filename: chart.getFilename()}, options), fallbackToExportServer, function () {
-                    return fireEvent(chart, 'exportChartLocalSuccess');
-                });
+                downloadSVGLocal(svg, extend({filename: chart.getFilename()}, options), fallbackToExportServer);
             }
         },
         // Return true if the SVG contains images with external data. With the
@@ -569,11 +564,11 @@ Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
         fallbackToExportServer('Image type not supported for this chart/browser.');
         return;
     }
-    chart.getSVGForLocalExport(options, chartOptions || {}, fallbackToExportServer, svgSuccess);
+    chart.getSVGForLocalExport(options, chartOptions, fallbackToExportServer, svgSuccess);
 };
 // Extend the default options to use the local exporter logic
 merge(true, getOptions().exporting, {
-    libURL: 'https://code.highcharts.com/9.1.0/lib/',
+    libURL: 'https://code.highcharts.com/9.0.0/lib/',
     // When offline-exporting is loaded, redefine the menu item definitions
     // related to download.
     menuItemDefinitions: {

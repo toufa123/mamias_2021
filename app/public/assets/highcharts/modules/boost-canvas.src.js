@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Boost module
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  * Author: Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -24,11 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Extensions/BoostCanvas.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Color/Color.js'], _modules['Core/Globals.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Chart, Color, H, palette, Series, SeriesRegistry, U) {
         /* *
          *
@@ -76,20 +78,12 @@
                             // draw the columns
                             this.points.forEach(function (point) {
                                 var plotY = point.plotY,
+                                    shapeArgs,
                                     pointAttr;
                                 if (typeof plotY !== 'undefined' &&
                                     !isNaN(plotY) &&
-                                    point.y !== null &&
-                                    ctx) {
-                                    var _a = point.shapeArgs || {},
-                                        _b = _a.x,
-                                        x = _b === void 0 ? 0 : _b,
-                                        _c = _a.y,
-                                        y = _c === void 0 ? 0 : _c,
-                                        _d = _a.width,
-                                        width = _d === void 0 ? 0 : _d,
-                                        _e = _a.height,
-                                        height = _e === void 0 ? 0 : _e;
+                                    point.y !== null) {
+                                    shapeArgs = point.shapeArgs;
                                     if (!chart.styledMode) {
                                         pointAttr = point.series.pointAttribs(point);
                                     } else {
@@ -97,9 +91,9 @@
                                     }
                                     ctx.fillStyle = pointAttr.fill;
                                     if (inverted) {
-                                        ctx.fillRect(yAxis.len - y + xAxis.left, xAxis.len - x + yAxis.top, -height, -width);
+                                        ctx.fillRect(yAxis.len - shapeArgs.y + xAxis.left, xAxis.len - shapeArgs.x + yAxis.top, -shapeArgs.height, -shapeArgs.width);
                                     } else {
-                                        ctx.fillRect(x + xAxis.left, y + yAxis.top, width, height);
+                                        ctx.fillRect(shapeArgs.x + xAxis.left, shapeArgs.y + yAxis.top, shapeArgs.width, shapeArgs.height);
                                     }
                                 }
                             });
@@ -568,6 +562,7 @@
                         chart.boostCopy();
                     }
                 }
+
                 /**
                  * @private
                  */
@@ -579,6 +574,7 @@
                         chart.canvas.getContext('2d').clearRect(0, 0, chart.canvas.width, chart.canvas.height);
                     }
                 }
+
                 addEvent(chart, 'predraw', clear);
                 addEvent(chart, 'render', canvasToSVG);
             });

@@ -21,6 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -28,10 +29,12 @@ import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var CrookedLine = /** @class */ (function (_super) {
     __extends(CrookedLine, _super);
+
     /* *
      *
      * Constructors
@@ -40,6 +43,7 @@ var CrookedLine = /** @class */ (function (_super) {
     function CrookedLine(chart, options) {
         return _super.call(this, chart, options) || this;
     }
+
     /* *
      *
      * Functions
@@ -162,9 +166,7 @@ CrookedLine.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions
             },
             events: {
                 drag: function (e, target) {
-                    if (target.chart.isInsidePlot(e.chartX - target.chart.plotLeft, e.chartY - target.chart.plotTop, {
-                        visiblePlotOnly: true
-                    })) {
+                    if (target.chart.isInsidePlot(e.chartX - target.chart.plotLeft, e.chartY - target.chart.plotTop)) {
                         var translation = this.mouseMoveToTranslation(e);
                         target.translatePoint(translation.x, translation.y, this.index);
                         // Update options:

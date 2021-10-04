@@ -33,7 +33,7 @@ of the white list ones are used as well. (case insensitive)
 
 Allowed types: ``array``
 
-Default value: ``['@final', '@Entity', '@ORM\\Entity', '@ORM\\Mapping\\Entity', '@Mapping\\Entity', '@Document', '@ODM\\Document']``
+Default value: ``['@final', '@Entity', '@ORM\\Entity', '@ORM\\Mapping\\Entity', '@Mapping\\Entity']``
 
 ``consider_absent_docblock_as_internal_class``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +58,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,6 +2,6 @@
     /**
      * @internal
      */
@@ -76,18 +76,12 @@ With configuration: ``['annotation_include' => ['@Custom'], 'annotation_exclude'
 
    --- Original
    +++ New
-    <?php
+   @@ -2,5 +2,5 @@
     /**
      * @CUSTOM
      */
    -class A{}
    +final class A{}
-
-    /**
-     * @CUSTOM
-     * @not-fix
-     */
-    class B{}
 
 Rule sets
 ---------

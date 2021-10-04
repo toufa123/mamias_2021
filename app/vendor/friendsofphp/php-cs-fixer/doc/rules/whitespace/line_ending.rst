@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,5 +1,5 @@
     <?php $b = " $a ^M
    - 123"; $a = <<<TEST^M
    -AAAAA ^M

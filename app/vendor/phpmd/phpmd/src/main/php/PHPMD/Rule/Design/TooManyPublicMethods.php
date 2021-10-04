@@ -46,19 +46,14 @@ class TooManyPublicMethods extends AbstractRule implements ClassAware
         $this->ignoreRegexp = $this->getStringProperty('ignorepattern');
 
         $threshold = $this->getIntProperty('maxmethods');
-        $publicMethodsCount = $node->getMetric('npm'); // NPM stands for Number of Public Methods
-
-        if ($publicMethodsCount !== null && $publicMethodsCount <= $threshold) {
+        if ($node->getMetric('npm') <= $threshold) {
             return;
         }
-
         /** @var AbstractTypeNode $node */
         $nom = $this->countMethods($node);
-
         if ($nom <= $threshold) {
             return;
         }
-
         $this->addViolation(
             $node,
             array(
@@ -80,25 +75,11 @@ class TooManyPublicMethods extends AbstractRule implements ClassAware
     {
         $count = 0;
         foreach ($node->getMethods() as $method) {
-            if ($method->getNode()->isPublic() && !$this->isIgnoredMethodName($method->getName())) {
+            if ($method->getNode()->isPublic() && preg_match($this->ignoreRegexp, $method->getName()) === 0) {
                 ++$count;
             }
         }
 
         return $count;
-    }
-
-    /**
-     * Return true if the method name is ignored by the current ignoreRegexp pattern.
-     *
-     * ignoreRegexp is given to the rule using ignorepattern option.
-     *
-     * @param string $methodName
-     * @return bool
-     */
-    private function isIgnoredMethodName($methodName)
-    {
-        return !empty($this->ignoreRegexp) &&
-            preg_match($this->ignoreRegexp, $methodName) === 1;
     }
 }

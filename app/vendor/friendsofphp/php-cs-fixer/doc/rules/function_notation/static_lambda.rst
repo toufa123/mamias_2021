@@ -18,6 +18,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
    -$a = function () use ($b)
    +$a = static function () use ($b)

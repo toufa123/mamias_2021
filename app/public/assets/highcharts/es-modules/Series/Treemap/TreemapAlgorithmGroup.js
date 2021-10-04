@@ -46,6 +46,7 @@ var TreemapAlgorithmGroup = /** @class */ (function () {
             }
         };
     }
+
     /* *
      *
      *  Functions

@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Sonata\AdminBundle\Twig\Extension;
 
 use Sonata\AdminBundle\Admin\AdminInterface;
-use Sonata\AdminBundle\Admin\Pool;
-use Sonata\AdminBundle\Exception\AdminCodeNotFoundException;
 use Sonata\AdminBundle\Templating\TemplateRegistryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
@@ -31,29 +29,14 @@ final class TemplateRegistryExtension extends AbstractExtension
     private $globalTemplateRegistry;
 
     /**
-     * NEXT_MAJOR: Remove this property.
-     *
      * @var ContainerInterface
      */
     private $container;
 
-    /**
-     * NEXT_MAJOR: Remove "null" from var type.
-     *
-     * @var Pool|null
-     */
-    private $pool;
-
-    /**
-     * @internal since sonata-project/admin-bundle 4. This class should only be used through Twig
-     *
-     * NEXT_MAJOR: Remove $container parameter and make Pool mandatory.
-     */
-    public function __construct(TemplateRegistryInterface $globalTemplateRegistry, ContainerInterface $container, ?Pool $pool = null)
+    public function __construct(TemplateRegistryInterface $globalTemplateRegistry, ContainerInterface $container)
     {
         $this->globalTemplateRegistry = $globalTemplateRegistry;
         $this->container = $container;
-        $this->pool = $pool;
     }
 
     /**
@@ -103,13 +86,18 @@ final class TemplateRegistryExtension extends AbstractExtension
     }
 
     /**
-     * @throws AdminCodeNotFoundException
+     * @throws ServiceNotFoundException
+     * @throws ServiceCircularReferenceException
      */
     private function getTemplateRegistry(string $adminCode): TemplateRegistryInterface
     {
-        $admin = $this->pool->getAdminByAdminCode($adminCode);
+        $serviceId = sprintf('%s.template_registry', $adminCode);
+        $templateRegistry = $this->container->get($serviceId);
+        if ($templateRegistry instanceof TemplateRegistryInterface) {
+            return $templateRegistry;
+        }
 
-        return $admin->getTemplateRegistry();
+        throw new ServiceNotFoundException($serviceId);
     }
 
     /**

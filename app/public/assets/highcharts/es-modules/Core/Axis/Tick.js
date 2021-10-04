@@ -8,7 +8,6 @@
  *
  * */
 'use strict';
-import F from '../FormatUtilities.js';
 import H from '../Globals.js';
 
 var deg2rad = H.deg2rad;
@@ -110,6 +109,7 @@ var Tick = /** @class */ (function () {
             this.addLabel();
         }
     }
+
     /* *
      *
      *  Functions
@@ -127,17 +127,11 @@ var Tick = /** @class */ (function () {
             log = axis.logarithmic, names = axis.names, pos = tick.pos,
             labelOptions = pick(tick.options && tick.options.labels, options.labels), str,
             tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0],
-            isLast = pos === tickPositions[tickPositions.length - 1], label = tick.label,
-            animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
-                axis.tickInterval === 1, tickPositionInfo = tickPositions.info, dateTimeLabelFormat,
-            dateTimeLabelFormats, i, list;
-        // The context value
-        var value = this.parameters.category || (categories ?
-            pick(categories[pos], names[pos], pos) :
-            pos);
-        if (log && isNumber(value)) {
-            value = correctFloat(log.lin2log(value));
-        }
+            isLast = pos === tickPositions[tickPositions.length - 1], value = this.parameters.category || (categories ?
+                pick(categories[pos], names[pos], pos) :
+                pos), label = tick.label, animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
+                axis.tickInterval === 1, tickPositionInfo = tickPositions.info, dateTimeLabelFormat, dateTimeLabelFormats,
+            i, list;
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
         if (axis.dateTime && tickPositionInfo) {
@@ -162,47 +156,28 @@ var Tick = /** @class */ (function () {
          */
         tick.isLast = isLast;
         // Get the string
-        var ctx = {
+        tick.formatCtx = {
             axis: axis,
             chart: chart,
-            dateTimeLabelFormat: dateTimeLabelFormat,
             isFirst: isFirst,
             isLast: isLast,
-            pos: pos,
-            tick: tick,
+            dateTimeLabelFormat: dateTimeLabelFormat,
             tickPositionInfo: tickPositionInfo,
-            value: value
+            value: log ? correctFloat(log.lin2log(value)) : value,
+            pos: pos
         };
-        // Fire an event that allows modifying the context for use in
-        // `labels.format` and `labels.formatter`.
-        fireEvent(this, 'labelFormat', ctx);
-        // Label formatting. When `labels.format` is given, we first run the
-        // defaultFormatter and append the result to the context as `text`.
-        // Handy for adding prefix or suffix while keeping default number
-        // formatting.
-        var labelFormatter = function (ctx) {
-            if (labelOptions.formatter) {
-                return labelOptions.formatter.call(ctx, ctx);
-            }
-            if (labelOptions.format) {
-                ctx.text = axis.defaultLabelFormatter.call(ctx);
-                return F.format(labelOptions.format, ctx, chart);
-            }
-            return axis.defaultLabelFormatter.call(ctx, ctx);
-        };
-        str = labelFormatter.call(ctx, ctx);
+        str = axis.labelFormatter.call(tick.formatCtx, this.formatCtx);
         // Set up conditional formatting based on the format list if existing.
         list = dateTimeLabelFormats && dateTimeLabelFormats.list;
         if (list) {
             tick.shortenLabel = function () {
                 for (i = 0; i < list.length; i++) {
-                    extend(ctx, {dateTimeLabelFormat: list[i]});
                     label.attr({
-                        text: labelFormatter.call(ctx, ctx)
+                        text: axis.labelFormatter.call(extend(tick.formatCtx, {dateTimeLabelFormat: list[i]}))
                     });
                     if (label.getBBox().width <
                         axis.getSlotWidth(tick) - 2 *
-                        labelOptions.padding) {
+                        pick(labelOptions.padding, 5)) {
                         return;
                     }
                 }
@@ -230,7 +205,7 @@ var Tick = /** @class */ (function () {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
             if (label.textWidth &&
-                !labelOptions.style.width &&
+                !(labelOptions.style && labelOptions.style.width) &&
                 !label.styles.width) {
                 label.css({width: null});
             }
@@ -426,7 +401,8 @@ var Tick = /** @class */ (function () {
             leftPos, rightPos, textWidth, css = {};
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation && labelOptions.overflow === 'justify') {
+        if (!rotation &&
+            pick(labelOptions.overflow, 'justify') === 'justify') {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
             if (leftPos < leftBound) {
@@ -534,8 +510,6 @@ var Tick = /** @class */ (function () {
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old), x = xy.x, y = xy.y,
             reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
-        var labelOpacity = pick(opacity, tick.label && tick.label.newOpacity, // #15528
-            1);
         opacity = pick(opacity, 1);
         this.isActive = true;
         // Create the grid line
@@ -543,7 +517,7 @@ var Tick = /** @class */ (function () {
         // create the tick mark
         this.renderMark(xy, opacity, reverseCrisp);
         // the label is created on init - now move it into place
-        this.renderLabel(xy, old, labelOpacity, index);
+        this.renderLabel(xy, old, opacity, index);
         tick.isNew = false;
         fireEvent(this, 'afterRender');
     };
@@ -559,18 +533,16 @@ var Tick = /** @class */ (function () {
     Tick.prototype.renderGridLine = function (old, opacity, reverseCrisp) {
         var tick = this, axis = tick.axis, options = axis.options, gridLine = tick.gridLine, gridLinePath, attribs = {},
             pos = tick.pos, type = tick.type, tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            renderer = axis.chart.renderer, gridLineWidth = options.gridLineWidth,
-            gridLineColor = options.gridLineColor, dashStyle = options.gridLineDashStyle;
-        if (tick.type === 'minor') {
-            gridLineWidth = options.minorGridLineWidth;
-            gridLineColor = options.minorGridLineColor;
-            dashStyle = options.minorGridLineDashStyle;
-        }
+            renderer = axis.chart.renderer, gridPrefix = type ? type + 'Grid' : 'grid',
+            gridLineWidth = options[gridPrefix + 'LineWidth'], gridLineColor = options[gridPrefix + 'LineColor'],
+            dashStyle = options[gridPrefix + 'LineDashStyle'];
         if (!gridLine) {
             if (!axis.chart.styledMode) {
                 attribs.stroke = gridLineColor;
-                attribs['stroke-width'] = gridLineWidth || 0;
-                attribs.dashstyle = dashStyle;
+                attribs['stroke-width'] = gridLineWidth;
+                if (dashStyle) {
+                    attribs.dashstyle = dashStyle;
+                }
             }
             if (!type) {
                 attribs.zIndex = 1;
@@ -616,10 +588,10 @@ var Tick = /** @class */ (function () {
      */
     Tick.prototype.renderMark = function (xy, opacity, reverseCrisp) {
         var tick = this, axis = tick.axis, options = axis.options, renderer = axis.chart.renderer, type = tick.type,
-            tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'), mark = tick.mark, isNewMark = !mark, x = xy.x,
-            y = xy.y,
-            tickWidth = pick(options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
-            tickColor = options[type !== 'minor' ? 'tickColor' : 'minorTickColor'];
+            tickPrefix = type ? type + 'Tick' : 'tick', tickSize = axis.tickSize(tickPrefix), mark = tick.mark,
+            isNewMark = !mark, x = xy.x, y = xy.y,
+            tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
+            tickColor = options[tickPrefix + 'Color'];
         if (tickSize) {
             // negate the length
             if (axis.opposite) {
@@ -670,11 +642,11 @@ var Tick = /** @class */ (function () {
             // last, it is a single centered tick, in which case we show the
             // label anyway (#2100).
             if ((tick.isFirst &&
-                !tick.isLast &&
-                !options.showFirstLabel) ||
+                    !tick.isLast &&
+                    !pick(options.showFirstLabel, 1)) ||
                 (tick.isLast &&
                     !tick.isFirst &&
-                    !options.showLastLabel)) {
+                    !pick(options.showLastLabel, 1))) {
                 show = false;
                 // Handle label overflow and show or hide accordingly
             } else if (horiz &&

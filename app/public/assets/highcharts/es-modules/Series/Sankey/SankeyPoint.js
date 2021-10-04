@@ -27,14 +27,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
+
 var defined = U.defined, extend = U.extend;
 /* *
  *
@@ -43,6 +46,7 @@ var defined = U.defined, extend = U.extend;
  * */
 var SankeyPoint = /** @class */ (function (_super) {
     __extends(SankeyPoint, _super);
+
     function SankeyPoint() {
         /* *
          *
@@ -65,6 +69,7 @@ var SankeyPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions

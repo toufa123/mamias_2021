@@ -12,14 +12,19 @@
 'use strict';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
+
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import H from '../../Core/Globals.js';
+
 var noop = H.noop;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
+
 var removeElement = HTMLUtilities.removeElement, setElAttrs = HTMLUtilities.setElAttrs;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, pick = U.pick;
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -29,6 +34,7 @@ function chartHasMapZoom(chart) {
         chart.mapNavButtons &&
         chart.mapNavButtons.length);
 }
+
 /**
  * Pan along axis in a direction (1 or -1), optionally with a defined
  * granularity (number of steps it takes to walk across current view)

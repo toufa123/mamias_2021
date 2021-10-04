@@ -39,7 +39,7 @@ Array Notation
     In array declaration, there MUST NOT be a whitespace before each comma.
 - `normalize_index_brace <./array_notation/normalize_index_brace.rst>`_
     Array index should always be written by using square braces.
-- `trailing_comma_in_multiline_array <./array_notation/trailing_comma_in_multiline_array.rst>`_ *(deprecated)*
+- `trailing_comma_in_multiline_array <./array_notation/trailing_comma_in_multiline_array.rst>`_
     PHP multi-line arrays should have a trailing comma.
 - `trim_array_spaces <./array_notation/trim_array_spaces.rst>`_
     Arrays should be formatted like function/method arguments, without leading or trailing single line space.
@@ -201,8 +201,6 @@ Control Structure
     Removes extra spaces between colon and case value.
 - `switch_continue_to_break <./control_structure/switch_continue_to_break.rst>`_
     Switch case must not be ended with ``continue`` but with ``break``.
-- `trailing_comma_in_multiline <./control_structure/trailing_comma_in_multiline.rst>`_
-    Multi-line arrays, arguments list and parameters list must have a trailing comma.
 - `yoda_style <./control_structure/yoda_style.rst>`_
     Write conditions in Yoda style (``true``), non-Yoda style (``['equal' => false, 'identical' => false, 'less_and_greater' => false]``) or ignore those conditions (``null``) based on configuration.
 
@@ -249,8 +247,6 @@ Function Notation
     Adds or removes ``?`` before type declarations for parameters with a default ``null`` value.
 - `phpdoc_to_param_type <./function_notation/phpdoc_to_param_type.rst>`_ *(risky)*
     EXPERIMENTAL: Takes ``@param`` annotations of non-mixed types and adjusts accordingly the function signature. Requires PHP >= 7.0.
-- `phpdoc_to_property_type <./function_notation/phpdoc_to_property_type.rst>`_ *(risky)*
-    EXPERIMENTAL: Takes ``@var`` annotation of non-mixed types and adjusts accordingly the property signature. Requires PHP >= 7.4.
 - `phpdoc_to_return_type <./function_notation/phpdoc_to_return_type.rst>`_ *(risky)*
     EXPERIMENTAL: Takes ``@return`` annotation of non-mixed types and adjusts accordingly the function signature. Requires PHP >= 7.0.
 - `regular_callable_call <./function_notation/regular_callable_call.rst>`_ *(risky)*
@@ -358,7 +354,7 @@ Operator
 - `not_operator_with_successor_space <./operator/not_operator_with_successor_space.rst>`_
     Logical NOT operators (``!``) should have one trailing whitespace.
 - `object_operator_without_whitespace <./operator/object_operator_without_whitespace.rst>`_
-    There should not be space before or after object operators ``->`` and ``?->``.
+    There should not be space before or after object ``T_OBJECT_OPERATOR`` ``->``.
 - `operator_linebreak <./operator/operator_linebreak.rst>`_
     Operators - when multiline - must always be at the beginning or at the end of the line.
 - `pre_increment <./operator/pre_increment.rst>`_ *(deprecated)*

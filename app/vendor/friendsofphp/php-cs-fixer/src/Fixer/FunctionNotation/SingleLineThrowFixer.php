@@ -32,17 +32,12 @@ final class SingleLineThrowFixer extends AbstractFixer
     /**
      * @internal
      */
-    const REMOVE_WHITESPACE_AROUND_TOKENS = ['(', [T_DOUBLE_COLON]];
+    const REMOVE_WHITESPACE_AROUND_TOKENS = ['(', [T_OBJECT_OPERATOR], [T_DOUBLE_COLON]];
 
     /**
      * @internal
      */
     const REMOVE_WHITESPACE_BEFORE_TOKENS = [')',  ']', ',', ';'];
-
-    /**
-     * @internal
-     */
-    const THROW_END_TOKENS = [';', '(', '{', '}'];
 
     /**
      * {@inheritdoc}
@@ -68,12 +63,12 @@ final class SingleLineThrowFixer extends AbstractFixer
     /**
      * {@inheritdoc}
      *
-     * Must run before BracesFixer, ConcatSpaceFixer.
+     * Must run before ConcatSpaceFixer.
      */
     public function getPriority()
     {
         // must be fun before ConcatSpaceFixer
-        return 36;
+        return 1;
     }
 
     /**
@@ -86,15 +81,18 @@ final class SingleLineThrowFixer extends AbstractFixer
                 continue;
             }
 
-            /** @var int $endCandidateIndex */
-            $endCandidateIndex = $tokens->getNextTokenOfKind($index, self::THROW_END_TOKENS);
+            /** @var int $openingBraceCandidateIndex */
+            $openingBraceCandidateIndex = $tokens->getNextTokenOfKind($index, [';', '(']);
 
-            while ($tokens[$endCandidateIndex]->equals('(')) {
-                $closingBraceIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $endCandidateIndex);
-                $endCandidateIndex = $tokens->getNextTokenOfKind($closingBraceIndex, self::THROW_END_TOKENS);
+            while ($tokens[$openingBraceCandidateIndex]->equals('(')) {
+                /** @var int $closingBraceIndex */
+                $closingBraceIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $openingBraceCandidateIndex);
+
+                /** @var int $openingBraceCandidateIndex */
+                $openingBraceCandidateIndex = $tokens->getNextTokenOfKind($closingBraceIndex, [';', '(']);
             }
 
-            $this->trimNewLines($tokens, $index, $tokens->getPrevMeaningfulToken($endCandidateIndex));
+            $this->trimNewLines($tokens, $index, $openingBraceCandidateIndex);
         }
     }
 
@@ -133,7 +131,7 @@ final class SingleLineThrowFixer extends AbstractFixer
 
             $prevIndex = $tokens->getNonEmptySibling($index, -1);
 
-            if ($this->isPreviousTokenToClear($tokens[$prevIndex])) {
+            if ($tokens[$prevIndex]->equalsAny(array_merge(self::REMOVE_WHITESPACE_AFTER_TOKENS, self::REMOVE_WHITESPACE_AROUND_TOKENS))) {
                 $tokens->clearAt($index);
 
                 continue;
@@ -142,7 +140,7 @@ final class SingleLineThrowFixer extends AbstractFixer
             $nextIndex = $tokens->getNonEmptySibling($index, 1);
 
             if (
-                $this->isNextTokenToClear($tokens[$nextIndex])
+                $tokens[$nextIndex]->equalsAny(array_merge(self::REMOVE_WHITESPACE_AROUND_TOKENS, self::REMOVE_WHITESPACE_BEFORE_TOKENS))
                 && !$tokens[$prevIndex]->isGivenKind(T_FUNCTION)
             ) {
                 $tokens->clearAt($index);
@@ -152,33 +150,5 @@ final class SingleLineThrowFixer extends AbstractFixer
 
             $tokens[$index] = new Token([T_WHITESPACE, ' ']);
         }
-    }
-
-    /**
-     * @return bool
-     */
-    private function isPreviousTokenToClear(Token $token)
-    {
-        static $tokens = null;
-
-        if (null === $tokens) {
-            $tokens = array_merge(self::REMOVE_WHITESPACE_AFTER_TOKENS, self::REMOVE_WHITESPACE_AROUND_TOKENS);
-        }
-
-        return $token->equalsAny($tokens) || $token->isObjectOperator();
-    }
-
-    /**
-     * @return bool
-     */
-    private function isNextTokenToClear(Token $token)
-    {
-        static $tokens = null;
-
-        if (null === $tokens) {
-            $tokens = array_merge(self::REMOVE_WHITESPACE_AROUND_TOKENS, self::REMOVE_WHITESPACE_BEFORE_TOKENS);
-        }
-
-        return $token->equalsAny($tokens) || $token->isObjectOperator();
     }
 }

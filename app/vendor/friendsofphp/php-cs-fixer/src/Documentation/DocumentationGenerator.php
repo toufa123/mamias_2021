@@ -14,7 +14,8 @@ namespace PhpCsFixer\Documentation;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Console\Command\HelpCommand;
-use PhpCsFixer\Differ\FullDiffer;
+use PhpCsFixer\Diff\GeckoPackages\DiffOutputBuilder\UnifiedDiffOutputBuilder;
+use PhpCsFixer\Diff\v2_0\Differ;
 use PhpCsFixer\Fixer\Basic\Psr0Fixer;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
@@ -41,7 +42,7 @@ use PhpCsFixer\Utils;
 final class DocumentationGenerator
 {
     /**
-     * @var FullDiffer
+     * @var Differ
      */
     private $differ;
 
@@ -49,7 +50,10 @@ final class DocumentationGenerator
 
     public function __construct()
     {
-        $this->differ = new FullDiffer();
+        $this->differ = new Differ(new UnifiedDiffOutputBuilder([
+            'fromFile' => 'Original',
+            'toFile' => 'New',
+        ]));
 
         $this->path = \dirname(__DIR__, 2).'/doc';
     }
@@ -510,7 +514,6 @@ RST;
         $fixer->fix($file, $tokens);
 
         $diff = $this->differ->diff($old, $tokens->generateCode());
-        $diff = Preg::replace('/@@[ \+\-\d,]+@@\n/', '', $diff);
         $diff = Preg::replace('/\r/', '^M', $diff);
         $diff = Preg::replace('/^ $/m', '', $diff);
         $diff = Preg::replace('/\n$/', '', $diff);

@@ -8492,7 +8492,6 @@
 }
 
 .swagger-ui .small-caps {
-    font-feature-settings: "smcp";
     font-variant: small-caps
 }
 
@@ -8522,7 +8521,6 @@
     }
 
     .swagger-ui .small-caps-ns {
-        font-feature-settings: "smcp";
         font-variant: small-caps
     }
 
@@ -8553,7 +8551,6 @@
     }
 
     .swagger-ui .small-caps-m {
-        font-feature-settings: "smcp";
         font-variant: small-caps
     }
 
@@ -8584,7 +8581,6 @@
     }
 
     .swagger-ui .small-caps-l {
-        font-feature-settings: "smcp";
         font-variant: small-caps
     }
 
@@ -9018,10 +9014,6 @@
     flex-direction: column
 }
 
-.swagger-ui .try-out.btn-group {
-    padding: 0
-}
-
 .swagger-ui .opblock-tag {
     display: flex;
     align-items: center;
@@ -9089,12 +9081,7 @@
 }
 
 .swagger-ui .examples-select {
-    margin-bottom: .75em;
-    display: inline-block
-}
-
-.swagger-ui .examples-select .examples-select-element {
-    width: 100%
+    margin-bottom: .75em
 }
 
 .swagger-ui .examples-select__section-label {
@@ -9586,7 +9573,7 @@
     hyphens: auto;
     border-radius: 4px;
     background: #333;
-    word-wrap: break-word;
+    overflow-wrap: break-word;
     font-family: monospace;
     font-weight: 600;
     color: #fff
@@ -9604,11 +9591,6 @@
     overflow-y: auto;
     max-height: 400px;
     min-height: 6em
-}
-
-.swagger-ui .highlight-code > .microlight code {
-    white-space: pre-wrap !important;
-    word-break: break-all
 }
 
 .swagger-ui .curl-command {

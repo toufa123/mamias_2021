@@ -30,14 +30,13 @@ class XdebugHandler
     private static $inRestart;
     private static $name;
     private static $skipped;
-    private static $xdebugActive;
 
     private $cli;
+    private $colorOption;
     private $debug;
     private $envAllowXdebug;
     private $envOriginalInis;
     private $loaded;
-    private $mode;
     private $persistent;
     private $script;
     /** @var Status|null */
@@ -51,11 +50,12 @@ class XdebugHandler
      * would result in MYAPP_ALLOW_XDEBUG and MYAPP_ORIGINAL_INIS.
      *
      * @param string $envPrefix Value used in environment variables
-     * @throws \RuntimeException If the parameter is invalid
+     * @param string $colorOption Command-line long option to force color output
+     * @throws \RuntimeException If a parameter is invalid
      */
-    public function __construct($envPrefix)
+    public function __construct($envPrefix, $colorOption = '')
     {
-        if (!is_string($envPrefix) || empty($envPrefix)) {
+        if (!is_string($envPrefix) || empty($envPrefix) || !is_string($colorOption)) {
             throw new \RuntimeException('Invalid constructor parameter');
         }
 
@@ -63,18 +63,12 @@ class XdebugHandler
         $this->envAllowXdebug = self::$name.self::SUFFIX_ALLOW;
         $this->envOriginalInis = self::$name.self::SUFFIX_INIS;
 
+        $this->colorOption = $colorOption;
+
         if (extension_loaded('xdebug')) {
-            $this->loaded = phpversion('xdebug') ?: 'unknown';
-
-            if (false !== ($mode = ini_get('xdebug.mode'))) {
-                $this->mode = getenv('XDEBUG_MODE') ?: ($mode  ?: 'off');
-                if (preg_match('/^,+$/', str_replace(' ', '', $this->mode))) {
-                    $this->mode = 'off';
-                }
-            }
+            $ext = new \ReflectionExtension('xdebug');
+            $this->loaded = $ext->getVersion() ?: 'unknown';
         }
-
-        self::$xdebugActive = $this->loaded && $this->mode !== 'off';
 
         if ($this->cli = PHP_SAPI === 'cli') {
             $this->debug = getenv(self::DEBUG);
@@ -129,10 +123,10 @@ class XdebugHandler
      */
     public function check()
     {
-        $this->notify(Status::CHECK, $this->loaded.'|'.$this->mode);
+        $this->notify(Status::CHECK, $this->loaded);
         $envArgs = explode('|', (string) getenv($this->envAllowXdebug));
 
-        if (empty($envArgs[0]) && $this->requiresRestart(self::$xdebugActive)) {
+        if (empty($envArgs[0]) && $this->requiresRestart((bool) $this->loaded)) {
             // Restart required
             $this->notify(Status::RESTART);
 
@@ -211,7 +205,7 @@ class XdebugHandler
 
         if (count($envArgs) !== 6
             || (!self::$inRestart && php_ini_loaded_file() !== $envArgs[0])) {
-            return null;
+            return;
         }
 
         return array(
@@ -235,39 +229,21 @@ class XdebugHandler
     }
 
     /**
-     * Returns whether Xdebug is loaded and active
+     * Returns true if Xdebug is loaded, or as directed by an extending class
      *
-     * true: if Xdebug is loaded and is running in an active mode.
-     * false: if Xdebug is not loaded, or it is running with xdebug.mode=off.
+     * @param bool $isLoaded Whether Xdebug is loaded
      *
      * @return bool
      */
-    public static function isXdebugActive()
+    protected function requiresRestart($isLoaded)
     {
-        return self::$xdebugActive;
-    }
-
-    /**
-     * Allows an extending class to decide if there should be a restart
-     *
-     * The default is to restart if Xdebug is loaded and its mode is not "off".
-     * Do not typehint for 1.x compatibility.
-     *
-     * @param bool $default The default behaviour
-     *
-     * @return bool Whether the process should restart
-     */
-    protected function requiresRestart($default)
-    {
-        return $default;
+        return $isLoaded;
     }
 
     /**
      * Allows an extending class to access the tmpIni
      *
-     * Do not typehint for 1.x compatibility
-     *
-     * @param array $command
+     * @param string $command
      */
     protected function restart($command)
     {
@@ -277,30 +253,28 @@ class XdebugHandler
     /**
      * Executes the restarted command then deletes the tmp ini
      *
-     * @param array $command
+     * @param string $command
      */
-    private function doRestart(array $command)
+    private function doRestart($command)
     {
         $this->tryEnableSignals();
-        $this->notify(Status::RESTARTING, implode(' ', $command));
+        $this->notify(Status::RESTARTING, $command);
 
-        if (PHP_VERSION_ID >= 70400) {
-            $cmd = $command;
-        } else {
-            $cmd = Process::escapeShellCommand($command);
-            if (defined('PHP_WINDOWS_VERSION_BUILD')) {
-                // Outer quotes required on cmd string below PHP 8
-                $cmd = '"'.$cmd.'"';
+        // Prefer proc_open to keep fds intact, because passthru pipes to stdout
+        if (function_exists('proc_open')) {
+            if (defined('PHP_WINDOWS_VERSION_BUILD') && PHP_VERSION_ID < 80000) {
+                $command = '"'.$command.'"';
             }
-        }
-
-        $process = proc_open($cmd, array(), $pipes);
-        if (is_resource($process)) {
-            $exitCode = proc_close($process);
+            $process = proc_open($command, array(), $pipes);
+            if (is_resource($process)) {
+                $exitCode = proc_close($process);
+            }
+        } else {
+            passthru($command, $exitCode);
         }
 
         if (!isset($exitCode)) {
-            // Unlikely that php or the default shell cannot be invoked
+            // Unlikely that the default shell cannot be invoked
             $this->notify(Status::ERROR, 'Unable to restart process');
             $exitCode = -1;
         } else {
@@ -401,9 +375,9 @@ class XdebugHandler
     }
 
     /**
-     * Returns the command line arguments for the restart
+     * Returns the restart command line
      *
-     * @return array
+     * @return string
      */
     private function getCommand()
     {
@@ -415,7 +389,18 @@ class XdebugHandler
             array_push($php, '-n', '-c', $this->tmpIni);
         }
 
-        return array_merge($php, array($this->script), $args);
+        if (defined('STDOUT') && Process::supportsColor(STDOUT)) {
+            $args = Process::addColorOption($args, $this->colorOption);
+        }
+
+        $args = array_merge($php, array($this->script), $args);
+
+        $cmd = Process::escape(array_shift($args), true, true);
+        foreach ($args as $arg) {
+            $cmd .= ' '.Process::escape($arg);
+        }
+
+        return $cmd;
     }
 
     /**
@@ -527,7 +512,7 @@ class XdebugHandler
     /**
      * Adds restart settings to the environment
      *
-     * @param string[] $envArgs
+     * @param string $envArgs
      */
     private function setEnvRestartSettings($envArgs)
     {
@@ -579,12 +564,11 @@ class XdebugHandler
      * Returns true if there are no known configuration issues
      *
      * @param string $info Set by method
-     * @return bool
      */
     private function checkConfiguration(&$info)
     {
-        if (!function_exists('proc_open')) {
-            $info = 'proc_open function is disabled';
+        if (false !== strpos(ini_get('disable_functions'), 'passthru')) {
+            $info = 'passthru function is disabled';
             return false;
         }
 
@@ -598,43 +582,34 @@ class XdebugHandler
             }
         }
 
-
-        $workingDir = getcwd();
-        if (0 === strpos($workingDir, '\\\\')) {
-            if (defined('PHP_WINDOWS_VERSION_BUILD') && PHP_VERSION_ID < 70400) {
-                $info = 'cmd.exe does not support UNC paths: '.$workingDir;
-                return false;
-            }
-        }
-
         return true;
     }
 
     /**
      * Enables async signals and control interrupts in the restarted process
      *
-     * Available on Unix PHP 7.1+ with the pcntl extension and Windows PHP 7.4+.
+     * Only available on Unix PHP 7.1+ with the pcntl extension. To replicate on
+     * Windows would require PHP 7.4+ using proc_open rather than passthru.
      */
     private function tryEnableSignals()
     {
-        if (function_exists('pcntl_async_signals') && function_exists('pcntl_signal')) {
-            pcntl_async_signals(true);
-            $message = 'Async signals enabled';
-
-            if (!self::$inRestart) {
-                // Restarting, so ignore SIGINT in parent
-                pcntl_signal(SIGINT, SIG_IGN);
-            } elseif (is_int(pcntl_signal_get_handler(SIGINT))) {
-                // Restarted, no handler set so force default action
-                pcntl_signal(SIGINT, SIG_DFL);
-            }
+        if (!function_exists('pcntl_async_signals') || !function_exists('pcntl_signal')) {
+            return;
         }
 
-        if (!self::$inRestart && function_exists('sapi_windows_set_ctrl_handler')) {
-            // Restarting, so set a handler to ignore CTRL events in the parent.
-            // This ensures that CTRL+C events will be available in the child
-            // process without having to enable them there, which is unreliable.
-            sapi_windows_set_ctrl_handler(function ($evt) {});
+        pcntl_async_signals(true);
+        $message = 'Async signals enabled';
+
+        if (!self::$inRestart) {
+            // Restarting, so ignore SIGINT in parent
+            pcntl_signal(SIGINT, SIG_IGN);
+            $message .= ' (SIGINT = SIG_IGN)';
+        } elseif (is_int(pcntl_signal_get_handler(SIGINT))) {
+            // Restarted, no handler set so force default action
+            pcntl_signal(SIGINT, SIG_DFL);
+            $message .= ' (SIGINT = SIG_DFL)';
         }
+
+        $this->notify(Status::INFO, $message);
     }
 }

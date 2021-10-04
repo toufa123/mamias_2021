@@ -21,19 +21,13 @@ var isFn = function (x) {
  * @todo export this function to enable usage
  */
 var draw = function draw(params) {
-    var _this = this;
-    var animatableAttribs = params.animatableAttribs, onComplete = params.onComplete, css = params.css,
-        renderer = params.renderer;
-    var animation = (this.series && this.series.chart.hasRendered) ?
-        // Chart-level animation on updates
-        void 0 :
-        // Series-level animation on new points
-        (this.series &&
-            this.series.options.animation);
-    var graphic = this.graphic;
-    if (this.shouldDraw()) {
+    var _a;
+    var component = this, graphic = component.graphic, animatableAttribs = params.animatableAttribs,
+        onComplete = params.onComplete, css = params.css, renderer = params.renderer,
+        animation = (_a = component.series) === null || _a === void 0 ? void 0 : _a.options.animation;
+    if (component.shouldDraw()) {
         if (!graphic) {
-            this.graphic = graphic =
+            component.graphic = graphic =
                 renderer[params.shapeType](params.shapeArgs)
                     .add(params.group);
         }
@@ -42,8 +36,8 @@ var draw = function draw(params) {
             .attr(params.attribs)
             .animate(animatableAttribs, params.isNew ? false : animation, onComplete);
     } else if (graphic) {
-        var destroy_1 = function () {
-            _this.graphic = graphic = (graphic && graphic.destroy());
+        var destroy = function () {
+            component.graphic = graphic = graphic.destroy();
             if (isFn(onComplete)) {
                 onComplete();
             }
@@ -51,10 +45,10 @@ var draw = function draw(params) {
         // animate only runs complete callback if something was animated.
         if (Object.keys(animatableAttribs).length) {
             graphic.animate(animatableAttribs, void 0, function () {
-                destroy_1();
+                destroy();
             });
         } else {
-            destroy_1();
+            destroy();
         }
     }
 };

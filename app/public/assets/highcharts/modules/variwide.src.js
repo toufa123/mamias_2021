@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Highcharts variwide module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Series/Variwide/VariwidePoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -73,6 +75,7 @@
          * */
         var VariwidePoint = /** @class */ (function (_super) {
             __extends(VariwidePoint, _super);
+
             function VariwidePoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -86,6 +89,7 @@
                 _this.series = void 0;
                 return _this;
             }
+
             /* *
              *
              * Functions
@@ -239,6 +243,7 @@
          */
         var VariwideSeries = /** @class */ (function (_super) {
             __extends(VariwideSeries, _super);
+
             function VariwideSeries() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -255,6 +260,7 @@
                 _this.zData = void 0;
                 return _this;
             }
+
             /* *
              *
              * Functions
@@ -274,7 +280,7 @@
                     this.xAxis.variwide = true;
                     this.xAxis.zData = this.zData; // Used for label rank
                 }
-                return;
+
             };
             /* eslint-disable valid-jsdoc */
             /**

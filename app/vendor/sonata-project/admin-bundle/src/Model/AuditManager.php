@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\Model;
 
-use Psr\Container\ContainerInterface;
-use Sonata\AdminBundle\DependencyInjection\Compiler\AddAuditReadersCompilerPass;
-use Symfony\Component\DependencyInjection\ContainerInterface as SymfonyContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @final since sonata-project/admin-bundle 3.52
@@ -35,35 +33,17 @@ class AuditManager implements AuditManagerInterface
     protected $readers = [];
 
     /**
-     * @var SymfonyContainerInterface
+     * @var ContainerInterface
      */
     protected $container;
 
-    /**
-     * @var ContainerInterface|null
-     */
-    private $psrContainer;
-
-    // NEXT_MAJOR: Remove SymfonyContainerInterface parameter and only use ContainerInterface parameter
-    public function __construct(SymfonyContainerInterface $container, ?ContainerInterface $psrContainer = null)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->psrContainer = $psrContainer;
     }
 
     public function setReader($serviceId, array $classes)
     {
-        // NEXT_MAJOR: Remove this "if" block.
-        if (null !== $this->psrContainer && !$this->psrContainer->has($serviceId)) {
-            @trigger_error(sprintf(
-                'Not registering the audit reader "%1$s" with tag "%2$s" is deprecated since'
-                .' sonata-project/admin-bundle 3.95 and will not work in 4.0.'
-                .' You MUST add "%2$s" tag to the service "%1$s".',
-                $serviceId,
-                AddAuditReadersCompilerPass::AUDIT_READER_TAG
-            ), \E_USER_DEPRECATED);
-        }
-
         $this->readers[$serviceId] = $classes;
     }
 

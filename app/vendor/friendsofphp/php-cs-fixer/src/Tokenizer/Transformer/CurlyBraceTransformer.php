@@ -122,7 +122,7 @@ final class CurlyBraceTransformer extends AbstractTransformer
 
     private function transformIntoDynamicPropBraces(Tokens $tokens, Token $token, $index)
     {
-        if (!$token->isObjectOperator()) {
+        if (!$token->isGivenKind(T_OBJECT_OPERATOR)) {
             return;
         }
 
@@ -181,7 +181,7 @@ final class CurlyBraceTransformer extends AbstractTransformer
 
         if (
             $tokens[$prevIndex]->isGivenKind(T_STRING)
-            && !$tokens[$tokens->getPrevMeaningfulToken($prevIndex)]->isObjectOperator()
+            && !$tokens[$tokens->getPrevMeaningfulToken($prevIndex)]->isGivenKind(T_OBJECT_OPERATOR)
         ) {
             return;
         }

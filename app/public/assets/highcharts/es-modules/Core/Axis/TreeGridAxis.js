@@ -14,12 +14,15 @@ import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import mixinTreeSeries from '../../Mixins/TreeSeries.js';
+
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
 import U from '../Utilities.js';
+
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber,
     isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
 import './BrokenAxis.js';
+
 /**
  * @private
  */
@@ -36,6 +39,7 @@ var TreeGridAxis;
      *
      * */
     var applied = false;
+
     /* *
      *
      *  Functions
@@ -54,7 +58,9 @@ var TreeGridAxis;
             applied = true;
         }
     }
+
     TreeGridAxis.compose = compose;
+
     /**
      * @private
      */
@@ -74,6 +80,7 @@ var TreeGridAxis;
             showPoints: false
         };
     }
+
     /**
      * Creates a tree structure of the data, and the treegrid. Calculates
      * categories, and y-values of points based on the tree.
@@ -211,6 +218,7 @@ var TreeGridAxis;
             tree: tree
         };
     }
+
     /**
      * Builds the tree of categories and calculates its positions.
      * @private
@@ -313,6 +321,7 @@ var TreeGridAxis;
             }
         });
     }
+
     /**
      * Generates a tick for initial positioning.
      *
@@ -355,6 +364,7 @@ var TreeGridAxis;
             proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
         }
     }
+
     /**
      * Override to add indentation to axis.maxLabelDimensions.
      *
@@ -365,15 +375,19 @@ var TreeGridAxis;
      * The original function
      */
     function wrapGetMaxLabelDimensions(proceed) {
-        var axis = this, options = axis.options, retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = options.type === 'treegrid';
+        var axis = this, options = axis.options, labelOptions = options && options.labels,
+            indentation = (labelOptions && isNumber(labelOptions.indentation) ?
+                labelOptions.indentation :
+                0), retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
+            isTreeGrid = axis.options.type === 'treegrid';
         var treeDepth;
         if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
             treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            retVal.width += options.labels.indentation * (treeDepth - 1);
+            retVal.width += indentation * (treeDepth - 1);
         }
         return retVal;
     }
+
     /**
      * @private
      */
@@ -418,9 +432,8 @@ var TreeGridAxis;
             // and chart height is set, set axis.isDirty
             // to ensure collapsing works (#12012)
             addEvent(axis, 'afterBreaks', function () {
-                if (axis.coll === 'yAxis' &&
-                    !axis.staticScale &&
-                    axis.chart.options.chart.height) {
+                var _a;
+                if (axis.coll === 'yAxis' && !axis.staticScale && ((_a = axis.chart.options.chart) === null || _a === void 0 ? void 0 : _a.height)) {
                     axis.isDirty = true;
                 }
             });
@@ -515,6 +528,7 @@ var TreeGridAxis;
             axis.options.showLastLabel = true;
         }
     }
+
     /**
      * Set the tick positions, tickInterval, axis min and max.
      *
@@ -542,6 +556,7 @@ var TreeGridAxis;
             proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
         }
     }
+
     /* *
      *
      *  Classes
@@ -563,6 +578,7 @@ var TreeGridAxis;
         function Additions(axis) {
             this.axis = axis;
         }
+
         /* *
          *
          *  Functions

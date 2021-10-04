@@ -23,14 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var StochasticIndicator = SeriesRegistry.seriesTypes.stochastic;
 var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge;
 /**
  * The Slow Stochastic series type.
@@ -43,6 +46,7 @@ var extend = U.extend, merge = U.merge;
  */
 var SlowStochasticIndicator = /** @class */ (function (_super) {
     __extends(SlowStochasticIndicator, _super);
+
     function SlowStochasticIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -50,11 +54,12 @@ var SlowStochasticIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     SlowStochasticIndicator.prototype.init = function () {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(seriesTypes.stochastic, 'stochastic', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
-            return;
+
         });
     };
     SlowStochasticIndicator.prototype.getValues = function (series, params) {

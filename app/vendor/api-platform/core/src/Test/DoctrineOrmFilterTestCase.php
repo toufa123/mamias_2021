@@ -65,21 +65,21 @@ abstract class DoctrineOrmFilterTestCase extends KernelTestCase
     /**
      * @dataProvider provideApplyTestData
      */
-    public function testApply(?array $properties, array $filterParameters, string $expectedDql, array $expectedParameters = null, callable $factory = null, string $resourceClass = null)
+    public function testApply(?array $properties, array $filterParameters, string $expectedDql, array $expectedParameters = null, callable $factory = null)
     {
-        $this->doTestApply(false, $properties, $filterParameters, $expectedDql, $expectedParameters, $factory, $resourceClass);
+        $this->doTestApply(false, $properties, $filterParameters, $expectedDql, $expectedParameters, $factory);
     }
 
     /**
      * @group legacy
      * @dataProvider provideApplyTestData
      */
-    public function testApplyRequest(?array $properties, array $filterParameters, string $expectedDql, array $expectedParameters = null, callable $factory = null, string $resourceClass = null)
+    public function testApplyRequest(?array $properties, array $filterParameters, string $expectedDql, array $expectedParameters = null, callable $factory = null)
     {
-        $this->doTestApply(true, $properties, $filterParameters, $expectedDql, $expectedParameters, $factory, $resourceClass);
+        $this->doTestApply(true, $properties, $filterParameters, $expectedDql, $expectedParameters, $factory);
     }
 
-    protected function doTestApply(bool $request, ?array $properties, array $filterParameters, string $expectedDql, array $expectedParameters = null, callable $filterFactory = null, string $resourceClass = null)
+    protected function doTestApply(bool $request, ?array $properties, array $filterParameters, string $expectedDql, array $expectedParameters = null, callable $filterFactory = null)
     {
         if (null === $filterFactory) {
             $filterFactory = function (ManagerRegistry $managerRegistry, array $properties = null, RequestStack $requestStack = null): FilterInterface {
@@ -95,15 +95,9 @@ abstract class DoctrineOrmFilterTestCase extends KernelTestCase
             $requestStack->push(Request::create('/api/dummies', 'GET', $filterParameters));
         }
 
-        $repository = $this->repository;
-        if ($resourceClass) {
-            /** @var EntityRepository $repository */
-            $repository = $this->managerRegistry->getManagerForClass($resourceClass)->getRepository($resourceClass);
-        }
-        $resourceClass = $resourceClass ?: $this->resourceClass;
-        $queryBuilder = $repository->createQueryBuilder($this->alias);
+        $queryBuilder = $this->repository->createQueryBuilder($this->alias);
         $filterCallable = $filterFactory($this->managerRegistry, $properties, $requestStack);
-        $filterCallable->apply($queryBuilder, new QueryNameGenerator(), $resourceClass, null, $request ? [] : ['filters' => $filterParameters]);
+        $filterCallable->apply($queryBuilder, new QueryNameGenerator(), $this->resourceClass, null, $request ? [] : ['filters' => $filterParameters]);
 
         $this->assertEquals($expectedDql, $queryBuilder->getQuery()->getDQL());
 

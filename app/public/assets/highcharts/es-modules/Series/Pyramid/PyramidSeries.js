@@ -27,12 +27,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import FunnelSeries from '../Funnel/FunnelSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+
 var merge = U.merge;
 /* *
  *
@@ -50,6 +52,7 @@ var merge = U.merge;
  */
 var PyramidSeries = /** @class */ (function (_super) {
     __extends(PyramidSeries, _super);
+
     function PyramidSeries() {
         /* *
          *
@@ -67,6 +70,7 @@ var PyramidSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /**
      * A pyramid series is a special type of funnel, without neck and reversed
      * by default.

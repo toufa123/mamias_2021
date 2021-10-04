@@ -15,7 +15,6 @@ namespace ApiPlatform\Core\GraphQl\Resolver\Stage;
 
 use ApiPlatform\Core\DataProvider\Pagination;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
-use ApiPlatform\Core\DataProvider\PartialPaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\Util\IdentifierTrait;
 use ApiPlatform\Core\GraphQl\Serializer\ItemNormalizer;
 use ApiPlatform\Core\GraphQl\Serializer\SerializerContextBuilderInterface;
@@ -123,12 +122,12 @@ final class SerializeStage implements SerializeStageInterface
     {
         $args = $context['args'];
 
-        if (!($collection instanceof PartialPaginatorInterface)) {
-            throw new \LogicException(sprintf('Collection returned by the collection data provider must implement %s or %s.', PaginatorInterface::class, PartialPaginatorInterface::class));
+        if (!($collection instanceof PaginatorInterface)) {
+            throw new \LogicException(sprintf('Collection returned by the collection data provider must implement %s.', PaginatorInterface::class));
         }
 
         $offset = 0;
-        $totalItems = 1; // For partial pagination, always consider there is at least one item.
+        $totalItems = $collection->getTotalItems();
         $nbPageItems = $collection->count();
         if (isset($args['after'])) {
             $after = base64_decode($args['after'], true);
@@ -137,35 +136,28 @@ final class SerializeStage implements SerializeStageInterface
             }
             $offset = 1 + (int) $after;
         }
-
-        if ($collection instanceof PaginatorInterface) {
-            $totalItems = $collection->getTotalItems();
-
-            if (isset($args['before'])) {
-                $before = base64_decode($args['before'], true);
-                if (false === $before || '' === $args['before']) {
-                    throw new \UnexpectedValueException('' === $args['before'] ? 'Empty cursor is invalid' : sprintf('Cursor %s is invalid', $args['before']));
-                }
-                $offset = (int) $before - $nbPageItems;
+        if (isset($args['before'])) {
+            $before = base64_decode($args['before'], true);
+            if (false === $before || '' === $args['before']) {
+                throw new \UnexpectedValueException('' === $args['before'] ? 'Empty cursor is invalid' : sprintf('Cursor %s is invalid', $args['before']));
             }
-            if (isset($args['last']) && !isset($args['before'])) {
-                $offset = $totalItems - $args['last'];
-            }
+            $offset = (int) $before - $nbPageItems;
         }
-
+        if (isset($args['last']) && !isset($args['before'])) {
+            $offset = $totalItems - $args['last'];
+        }
         $offset = 0 > $offset ? 0 : $offset;
 
         $data = $this->getDefaultCursorBasedPaginatedData();
-        if ($totalItems > 0) {
+
+        if (($totalItems = $collection->getTotalItems()) > 0) {
+            $data['totalCount'] = $totalItems;
             $data['pageInfo']['startCursor'] = base64_encode((string) $offset);
             $end = $offset + $nbPageItems - 1;
             $data['pageInfo']['endCursor'] = base64_encode((string) ($end >= 0 ? $end : 0));
+            $itemsPerPage = $collection->getItemsPerPage();
+            $data['pageInfo']['hasNextPage'] = (float) ($itemsPerPage > 0 ? $offset % $itemsPerPage : $offset) + $itemsPerPage * $collection->getCurrentPage() < $totalItems;
             $data['pageInfo']['hasPreviousPage'] = $offset > 0;
-            if ($collection instanceof PaginatorInterface) {
-                $data['totalCount'] = $totalItems;
-                $itemsPerPage = $collection->getItemsPerPage();
-                $data['pageInfo']['hasNextPage'] = (float) ($itemsPerPage > 0 ? $offset % $itemsPerPage : $offset) + $itemsPerPage * $collection->getCurrentPage() < $totalItems;
-            }
         }
 
         $index = 0;

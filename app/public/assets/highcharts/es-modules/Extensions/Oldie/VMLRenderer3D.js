@@ -10,9 +10,9 @@
  *
  * */
 import Axis from '../../Core/Axis/Axis.js';
-import O from '../../Core/Options.js';
+import U from '../../Core/Utilities.js';
 
-var setOptions = O.setOptions;
+var setOptions = U.setOptions;
 import VMLAxis3D from './VMLAxis3D.js';
 
 var VMLRenderer3D = /** @class */ (function () {

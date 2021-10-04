@@ -27,15 +27,18 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Math3D from '../../Extensions/Math3D.js';
+
 var pointCameraDistance = Math3D.pointCameraDistance;
 import Scatter3DPoint from './Scatter3DPoint.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -51,6 +54,7 @@ var extend = U.extend, merge = U.merge;
  */
 var Scatter3DSeries = /** @class */ (function (_super) {
     __extends(Scatter3DSeries, _super);
+
     function Scatter3DSeries() {
         /* *
          *
@@ -68,6 +72,7 @@ var Scatter3DSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions

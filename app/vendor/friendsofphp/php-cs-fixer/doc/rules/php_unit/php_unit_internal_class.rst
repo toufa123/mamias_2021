@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,5 @@
     <?php
    +/**
    + * @internal
@@ -43,6 +44,7 @@ With configuration: ``['types' => ['final']]``.
 
    --- Original
    +++ New
+   @@ -1,4 +1,7 @@
     <?php
     class MyTest extends TestCase {}
    +/**

@@ -29,12 +29,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+
 var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../../Core/Globals.js';
+
 var noop = H.noop;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
@@ -61,10 +64,12 @@ var rad2deg = 180 / Math.PI;
  *  Functions
  *
  * */
+
 // eslint-disable-next-line require-jsdoc
 function isBoolean(x) {
     return typeof x === 'boolean';
 }
+
 /**
  * Find a set of coordinates given a start coordinates, an angle, and a
  * distance.
@@ -93,6 +98,7 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
         y: y + (Math.sin(angle) * distance)
     };
 };
+
 // eslint-disable-next-line require-jsdoc
 function getDlOptions(params) {
     // Set options to new object to avoid problems with scope
@@ -202,6 +208,7 @@ function getDlOptions(params) {
     }
     return options;
 }
+
 // eslint-disable-next-line require-jsdoc
 function getAnimation(shape, params) {
     var point = params.point, radians = params.radians, innerR = params.innerR, idRoot = params.idRoot,
@@ -263,6 +270,7 @@ function getAnimation(shape, params) {
         to: to
     };
 }
+
 // eslint-disable-next-line require-jsdoc
 function getDrillId(point, idRoot, mapIdToNode) {
     var drillId, node = point.node, nodeRoot;
@@ -277,6 +285,7 @@ function getDrillId(point, idRoot, mapIdToNode) {
     }
     return drillId;
 }
+
 // eslint-disable-next-line require-jsdoc
 function cbSetTreeValuesBefore(node, options) {
     var mapIdToNode = options.mapIdToNode, nodeParent = mapIdToNode[node.parent], series = options.series,
@@ -301,6 +310,7 @@ function cbSetTreeValuesBefore(node, options) {
     }
     return node;
 }
+
 /* *
  *
  *  Class
@@ -308,6 +318,7 @@ function cbSetTreeValuesBefore(node, options) {
  * */
 var SunburstSeries = /** @class */ (function (_super) {
     __extends(SunburstSeries, _super);
+
     function SunburstSeries() {
         /* *
          *
@@ -332,6 +343,7 @@ var SunburstSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -440,7 +452,6 @@ var SunburstSeries = /** @class */ (function (_super) {
                 plotX: shape.plotX,
                 plotY: shape.plotY,
                 value: node.val,
-                isInside: visible,
                 isNull: !visible // used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({

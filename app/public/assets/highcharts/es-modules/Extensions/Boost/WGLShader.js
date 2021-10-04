@@ -11,7 +11,9 @@
  * */
 'use strict';
 import U from '../../Core/Utilities.js';
+
 var clamp = U.clamp, error = U.error, pick = U.pick;
+
 /* eslint-disable valid-jsdoc */
 /**
  * A static shader mimicing axis translation functions found in Core/Axis
@@ -219,6 +221,7 @@ function GLShader(gl) {
         errors = [],
         // Texture uniform
         uSamplerUniform;
+
     /**
      * Handle errors accumulated in errors stack
      * @private
@@ -228,6 +231,7 @@ function GLShader(gl) {
             error('[highcharts boost] shader error - ' + errors.join('\n'));
         }
     }
+
     /**
      * String to shader program
      * @private
@@ -248,6 +252,7 @@ function GLShader(gl) {
         }
         return shader;
     }
+
     /**
      * Create the shader.
      * Loads the shader program statically defined above
@@ -260,12 +265,14 @@ function GLShader(gl) {
             handleErrors();
             return false;
         }
+
         /**
          * @private
          */
         function uloc(n) {
             return gl.getUniformLocation(shaderProgram, n);
         }
+
         shaderProgram = gl.createProgram();
         gl.attachShader(shaderProgram, v);
         gl.attachShader(shaderProgram, f);
@@ -290,6 +297,7 @@ function GLShader(gl) {
         isInverted = uloc('isInverted');
         return true;
     }
+
     /**
      * Destroy the shader
      * @private
@@ -300,6 +308,7 @@ function GLShader(gl) {
             shaderProgram = false;
         }
     }
+
     /**
      * Bind the shader.
      * This makes the shader the active one until another one is bound,
@@ -311,6 +320,7 @@ function GLShader(gl) {
             gl.useProgram(shaderProgram);
         }
     }
+
     /**
      * Set a uniform value.
      * This uses a hash map to cache uniform locations.
@@ -325,6 +335,7 @@ function GLShader(gl) {
             gl.uniform1f(u, val);
         }
     }
+
     /**
      * Set the active texture
      * @private
@@ -335,6 +346,7 @@ function GLShader(gl) {
             gl.uniform1i(uSamplerUniform, texture);
         }
     }
+
     /**
      * Set if inversion state
      * @private
@@ -345,6 +357,7 @@ function GLShader(gl) {
             gl.uniform1i(isInverted, flag);
         }
     }
+
     /**
      * Enable/disable circle drawing
      * @private
@@ -354,6 +367,7 @@ function GLShader(gl) {
             gl.uniform1i(isCircleUniform, flag ? 1 : 0);
         }
     }
+
     /**
      * Flush
      * @private
@@ -364,6 +378,7 @@ function GLShader(gl) {
             gl.uniform1i(isCircleUniform, 0);
         }
     }
+
     /**
      * Set bubble uniforms
      * @private
@@ -387,6 +402,7 @@ function GLShader(gl) {
             setUniform('bubbleMaxSize', series.maxPxSize);
         }
     }
+
     /**
      * Set the Color uniform.
      * @private
@@ -397,6 +413,7 @@ function GLShader(gl) {
             gl.uniform4f(fillColorUniform, color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3]);
         }
     }
+
     /**
      * Set skip translation
      * @private
@@ -406,6 +423,7 @@ function GLShader(gl) {
             gl.uniform1i(skipTranslationUniform, flag === true ? 1 : 0);
         }
     }
+
     /**
      * Set the perspective matrix
      * @private
@@ -416,6 +434,7 @@ function GLShader(gl) {
             gl.uniformMatrix4fv(pUniform, false, m);
         }
     }
+
     /**
      * Set the point size.
      * @private
@@ -426,6 +445,7 @@ function GLShader(gl) {
             gl.uniform1f(psUniform, p);
         }
     }
+
     /**
      * Get the shader program handle
      * @private
@@ -434,6 +454,7 @@ function GLShader(gl) {
     function getProgram() {
         return shaderProgram;
     }
+
     if (gl) {
         if (!createShader()) {
             return false;
@@ -465,4 +486,5 @@ function GLShader(gl) {
         destroy: destroy
     };
 }
+
 export default GLShader;

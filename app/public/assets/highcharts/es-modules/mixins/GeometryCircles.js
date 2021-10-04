@@ -5,8 +5,10 @@
  * */
 'use strict';
 import Geometry from './Geometry.js';
+
 var getAngleBetweenPoints = Geometry.getAngleBetweenPoints, getCenterOfPoints = Geometry.getCenterOfPoints,
     getDistanceBetweenPoints = Geometry.getDistanceBetweenPoints;
+
 /**
  * @private
  * @param {number} x
@@ -20,6 +22,7 @@ function round(x, decimals) {
     var a = Math.pow(10, decimals);
     return Math.round(x * a) / a;
 }
+
 /**
  * Calculates the area of a circle based on its radius.
  * @private
@@ -34,6 +37,7 @@ function getAreaOfCircle(r) {
     }
     return Math.PI * r * r;
 }
+
 /**
  * Calculates the area of a circular segment based on the radius of the circle
  * and the height of the segment.
@@ -49,6 +53,7 @@ function getAreaOfCircle(r) {
 function getCircularSegmentArea(r, h) {
     return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
 }
+
 /**
  * Calculates the area of overlap between two circles based on their radiuses
  * and the distance between them.
@@ -85,6 +90,7 @@ function getOverlapBetweenCircles(r1, r2, d) {
     }
     return overlap;
 }
+
 /**
  * Calculates the intersection points of two circles.
  *
@@ -116,6 +122,7 @@ function getCircleCircleIntersection(c1, c2) {
     }
     return points;
 }
+
 /**
  * Calculates all the intersection points for between a list of circles.
  * @private
@@ -138,6 +145,7 @@ function getCirclesIntersectionPoints(circles) {
         return points.concat(additional);
     }, []);
 }
+
 /**
  * Tests wether the first circle is completely overlapping the second circle.
  *
@@ -151,6 +159,7 @@ function isCircle1CompletelyOverlappingCircle2(circle1, circle2) {
     return getDistanceBetweenPoints(circle1, circle2) + circle2.r <
         circle1.r + 1e-10;
 }
+
 /**
  * Tests wether a point lies within a given circle.
  * @private
@@ -164,6 +173,7 @@ function isCircle1CompletelyOverlappingCircle2(circle1, circle2) {
 function isPointInsideCircle(point, circle) {
     return getDistanceBetweenPoints(point, circle) <= circle.r + 1e-10;
 }
+
 /**
  * Tests wether a point lies within a set of circles.
  * @private
@@ -179,6 +189,7 @@ function isPointInsideAllCircles(point, circles) {
         return !isPointInsideCircle(point, circle);
     });
 }
+
 /**
  * Tests wether a point lies outside a set of circles.
  *
@@ -196,6 +207,7 @@ function isPointOutsideAllCircles(point, circles) {
         return isPointInsideCircle(point, circle);
     });
 }
+
 /**
  * Calculates the points for the polygon of the intersection area between a set
  * of circles.
@@ -212,6 +224,7 @@ function getCirclesIntersectionPolygon(circles) {
             return isPointInsideAllCircles(p, circles);
         });
 }
+
 /**
  * Calculate the path for the area of overlap between a set of circles.
  * @todo handle cases with only 1 or 0 arcs.
@@ -303,6 +316,7 @@ function getAreaOfIntersectionBetweenCircles(circles) {
     }
     return result;
 }
+
 var geometryCircles = {
     getAreaOfCircle: getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles: getAreaOfIntersectionBetweenCircles,

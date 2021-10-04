@@ -22,12 +22,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var error = U.error, extend = U.extend, merge = U.merge;
 /**
  * The AD series type.
@@ -40,6 +43,7 @@ var error = U.error, extend = U.extend, merge = U.merge;
  */
 var ADIndicator = /** @class */ (function (_super) {
     __extends(ADIndicator, _super);
+
     function ADIndicator() {
         /* *
          *
@@ -57,6 +61,7 @@ var ADIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
      *
      *  Static Functions
@@ -122,11 +127,7 @@ var ADIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.ad
      */
     ADIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
         params: {
-            index: void 0,
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means

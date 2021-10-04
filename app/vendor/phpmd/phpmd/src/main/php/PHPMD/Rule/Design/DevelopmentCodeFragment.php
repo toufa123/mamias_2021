@@ -49,7 +49,6 @@ class DevelopmentCodeFragment extends AbstractRule implements MethodAware, Funct
                 $fragment = str_replace("{$namespace}\\", "", $fragment);
             }
             $fragment = strtolower($fragment);
-            $fragment = trim($fragment, "\\");
             if (false === in_array($fragment, $this->getSuspectImages())) {
                 continue;
             }

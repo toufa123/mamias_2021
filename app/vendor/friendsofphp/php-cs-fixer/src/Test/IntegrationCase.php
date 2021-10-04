@@ -14,7 +14,6 @@ namespace PhpCsFixer\Test;
 
 use PhpCsFixer\RuleSet\RuleSet;
 use PhpCsFixer\Tests\Test\IntegrationCase as BaseIntegrationCase;
-use PhpCsFixer\Utils;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -56,8 +55,13 @@ final class IntegrationCase
             $expectedCode,
             $inputCode
         );
-
-        Utils::triggerDeprecation(sprintf('The "%s" class is deprecated. You should stop using it, as it will be removed in 3.0 version.', __CLASS__));
+        @trigger_error(
+            sprintf(
+                'The "%s" class is deprecated. You should stop using it, as it will be removed in 3.0 version.',
+                __CLASS__
+            ),
+            E_USER_DEPRECATED
+        );
     }
 
     public function hasInputCode()
@@ -117,7 +121,13 @@ final class IntegrationCase
      */
     public function shouldCheckPriority()
     {
-        Utils::triggerDeprecation(sprintf('The "%s" method is deprecated. You should stop using it, as it will be removed in 3.0 version.', __METHOD__));
+        @trigger_error(
+            sprintf(
+                'The "%s" method is deprecated. You should stop using it, as it will be removed in 3.0 version.',
+                __METHOD__
+            ),
+            E_USER_DEPRECATED
+        );
 
         $settings = $this->base->getSettings();
 

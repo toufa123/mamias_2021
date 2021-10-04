@@ -15,6 +15,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
     $user->setEmail('voff.web@gmail.com')
    -         ->setPassword('233434');

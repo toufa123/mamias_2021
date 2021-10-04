@@ -3,12 +3,9 @@
 namespace PHPStan\PhpDocParser\Ast\Type;
 
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprNode;
-use PHPStan\PhpDocParser\Ast\NodeAttributes;
 
 class ConstTypeNode implements TypeNode
 {
-
-	use NodeAttributes;
 
 	/** @var ConstExprNode */
 	public $constExpr;

@@ -14,8 +14,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    class Foo
+   @@ -3,7 +3,6 @@
     {
         /**
          * @internal

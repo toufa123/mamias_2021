@@ -12,7 +12,6 @@
 namespace Symfony\Component\Security\Acl\Tests\Dbal;
 
 use Doctrine\DBAL\DriverManager;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Acl\Dbal\AclProvider;
 use Symfony\Component\Security\Acl\Dbal\Schema;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -21,9 +20,14 @@ use Symfony\Component\Security\Acl\Domain\PermissionGrantingStrategy;
 /**
  * @requires extension pdo_sqlite
  */
-class AclProviderTest extends TestCase
+class AclProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private $connection;
+    protected $con;
+    protected $insertClassStmt;
+    protected $insertEntryStmt;
+    protected $insertOidStmt;
+    protected $insertOidAncestorStmt;
+    protected $insertSidStmt;
 
     /**
      * @expectedMessage There is no ACL for the given object identity.
@@ -141,47 +145,47 @@ class AclProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->connection = DriverManager::getConnection([
+        $this->con = DriverManager::getConnection([
             'driver' => 'pdo_sqlite',
             'memory' => true,
         ]);
 
         // import the schema
-        $schema = new Schema($this->getOptions());
-        foreach ($schema->toSql($this->connection->getDatabasePlatform()) as $sql) {
-            $this->connection->executeStatement($sql);
+        $schema = new Schema($options = $this->getOptions());
+        foreach ($schema->toSql($this->con->getDatabasePlatform()) as $sql) {
+            $this->con->exec($sql);
         }
 
         // populate the schema with some test data
-        $insertClassStmt = $this->connection->prepare('INSERT INTO acl_classes (id, class_type) VALUES (?, ?)');
+        $this->insertClassStmt = $this->con->prepare('INSERT INTO acl_classes (id, class_type) VALUES (?, ?)');
         foreach ($this->getClassData() as $data) {
-            $insertClassStmt->executeStatement($data);
+            $this->insertClassStmt->execute($data);
         }
 
-        $insertSidStmt = $this->connection->prepare('INSERT INTO acl_security_identities (id, identifier, username) VALUES (?, ?, ?)');
+        $this->insertSidStmt = $this->con->prepare('INSERT INTO acl_security_identities (id, identifier, username) VALUES (?, ?, ?)');
         foreach ($this->getSidData() as $data) {
-            $insertSidStmt->executeStatement($data);
+            $this->insertSidStmt->execute($data);
         }
 
-        $insertOidStmt = $this->connection->prepare('INSERT INTO acl_object_identities (id, class_id, object_identifier, parent_object_identity_id, entries_inheriting) VALUES (?, ?, ?, ?, ?)');
+        $this->insertOidStmt = $this->con->prepare('INSERT INTO acl_object_identities (id, class_id, object_identifier, parent_object_identity_id, entries_inheriting) VALUES (?, ?, ?, ?, ?)');
         foreach ($this->getOidData() as $data) {
-            $insertOidStmt->executeStatement($data);
+            $this->insertOidStmt->execute($data);
         }
 
-        $insertEntryStmt = $this->connection->prepare('INSERT INTO acl_entries (id, class_id, object_identity_id, field_name, ace_order, security_identity_id, mask, granting, granting_strategy, audit_success, audit_failure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $this->insertEntryStmt = $this->con->prepare('INSERT INTO acl_entries (id, class_id, object_identity_id, field_name, ace_order, security_identity_id, mask, granting, granting_strategy, audit_success, audit_failure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         foreach ($this->getEntryData() as $data) {
-            $insertEntryStmt->executeStatement($data);
+            $this->insertEntryStmt->execute($data);
         }
 
-        $insertOidAncestorStmt = $this->connection->prepare('INSERT INTO acl_object_identity_ancestors (object_identity_id, ancestor_id) VALUES (?, ?)');
+        $this->insertOidAncestorStmt = $this->con->prepare('INSERT INTO acl_object_identity_ancestors (object_identity_id, ancestor_id) VALUES (?, ?)');
         foreach ($this->getOidAncestorData() as $data) {
-            $insertOidAncestorStmt->executeStatement($data);
+            $this->insertOidAncestorStmt->execute($data);
         }
     }
 
     protected function tearDown(): void
     {
-        $this->connection = null;
+        $this->con = null;
     }
 
     protected function getField($object, $field)
@@ -265,13 +269,13 @@ class AclProviderTest extends TestCase
         ];
     }
 
-    protected function getStrategy(): PermissionGrantingStrategy
+    protected function getStrategy()
     {
         return new PermissionGrantingStrategy();
     }
 
-    protected function getProvider(): AclProvider
+    protected function getProvider()
     {
-        return new AclProvider($this->connection, $this->getStrategy(), $this->getOptions());
+        return new AclProvider($this->con, $this->getStrategy(), $this->getOptions());
     }
 }

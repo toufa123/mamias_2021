@@ -48,14 +48,7 @@ class Tokens extends \SplFixedArray
     private static $cache = [];
 
     /**
-     * Cache of block starts. Any change in collection will invalidate it.
-     *
-     * @var array<int, int>
-     */
-    private $blockStartCache = [];
-
-    /**
-     * Cache of block ends. Any change in collection will invalidate it.
+     * Cache of block edges. Any change in collection will invalidate it.
      *
      * @var array<int, int>
      */
@@ -334,7 +327,6 @@ class Tokens extends \SplFixedArray
      */
     public function offsetSet($index, $newval)
     {
-        $this->blockStartCache = [];
         $this->blockEndCache = [];
 
         if (!isset($this[$index]) || !$this[$index]->equals($newval)) {
@@ -387,7 +379,7 @@ class Tokens extends \SplFixedArray
 
         for ($count = $index; $index < $limit; ++$index) {
             if (!$this->isEmptyAt($index)) {
-                $this[$count++] = $this[$index]; // @phpstan-ignore-line as we know that index exists
+                $this[$count++] = $this[$index];
             }
         }
 
@@ -469,9 +461,9 @@ class Tokens extends \SplFixedArray
     {
         if (3 === \func_num_args()) {
             if ($findEnd) {
-                Utils::triggerDeprecation('Argument #3 of Tokens::findBlockEnd is deprecated and will be removed in 3.0, you can safely drop the argument.');
+                @trigger_error('Argument #3 of Tokens::findBlockEnd is deprecated and will be removed in 3.0, you can safely drop the argument.', E_USER_DEPRECATED);
             } else {
-                Utils::triggerDeprecation('Argument #3 of Tokens::findBlockEnd is deprecated and will be removed in 3.0, use Tokens::findBlockStart instead.');
+                @trigger_error('Argument #3 of Tokens::findBlockEnd is deprecated and will be removed in 3.0, use Tokens::findBlockStart instead.', E_USER_DEPRECATED);
             }
         }
 
@@ -946,7 +938,6 @@ class Tokens extends \SplFixedArray
 
         $oldSize = \count($this);
         $this->changed = true;
-        $this->blockStartCache = [];
         $this->blockEndCache = [];
         $this->setSize($oldSize + $itemsCount);
 
@@ -1029,7 +1020,7 @@ class Tokens extends \SplFixedArray
      */
     public function overrideAt($index, $token)
     {
-        Utils::triggerDeprecation(__METHOD__.' is deprecated and will be removed in 3.0, use offsetSet instead.');
+        @trigger_error(__METHOD__.' is deprecated and will be removed in 3.0, use offsetSet instead.', E_USER_DEPRECATED);
         self::$isLegacyMode = true;
 
         $this[$index]->override($token);
@@ -1135,6 +1126,12 @@ class Tokens extends \SplFixedArray
 
     public function toJson()
     {
+        static $options = null;
+
+        if (null === $options) {
+            $options = Utils::calculateBitmask(['JSON_PRETTY_PRINT', 'JSON_NUMERIC_CHECK']);
+        }
+
         $output = new \SplFixedArray(\count($this));
 
         foreach ($this as $index => $token) {
@@ -1145,7 +1142,7 @@ class Tokens extends \SplFixedArray
             $this->rewind();
         }
 
-        return json_encode($output, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        return json_encode($output, $options);
     }
 
     /**
@@ -1383,7 +1380,7 @@ class Tokens extends \SplFixedArray
      */
     protected function applyTransformers()
     {
-        $transformers = Transformers::createSingleton();
+        $transformers = Transformers::create();
         $transformers->transform($this);
     }
 
@@ -1439,13 +1436,8 @@ class Tokens extends \SplFixedArray
             throw new \InvalidArgumentException(sprintf('Invalid param type: "%s".', $type));
         }
 
-        if (!self::isLegacyMode()) {
-            if ($findEnd && isset($this->blockStartCache[$searchIndex])) {
-                return $this->blockStartCache[$searchIndex];
-            }
-            if (!$findEnd && isset($this->blockEndCache[$searchIndex])) {
-                return $this->blockEndCache[$searchIndex];
-            }
+        if (!self::isLegacyMode() && isset($this->blockEndCache[$searchIndex])) {
+            return $this->blockEndCache[$searchIndex];
         }
 
         $startEdge = $blockEdgeDefinitions[$type]['start'];
@@ -1490,13 +1482,8 @@ class Tokens extends \SplFixedArray
             throw new \UnexpectedValueException(sprintf('Missing block "%s".', $findEnd ? 'end' : 'start'));
         }
 
-        if ($startIndex < $index) {
-            $this->blockStartCache[$startIndex] = $index;
-            $this->blockEndCache[$index] = $startIndex;
-        } else {
-            $this->blockStartCache[$index] = $startIndex;
-            $this->blockEndCache[$startIndex] = $index;
-        }
+        $this->blockEndCache[$startIndex] = $index;
+        $this->blockEndCache[$index] = $startIndex;
 
         return $index;
     }

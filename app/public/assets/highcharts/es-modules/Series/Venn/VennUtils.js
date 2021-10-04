@@ -15,6 +15,7 @@
  *
  * */
 import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
+
 var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle,
     getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection,
     getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles,
@@ -23,8 +24,10 @@ var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle,
     isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
 import GeometryMixin from '../../Mixins/Geometry.js';
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
+
 var getDistanceBetweenPoints = GeometryMixin.getDistanceBetweenPoints;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
 /* *
  *
@@ -41,6 +44,7 @@ var VennUtils;
     VennUtils.geometry = GeometryMixin;
     VennUtils.geometryCircles = GeometryCirclesModule;
     VennUtils.nelderMead = NelderMeadMixin;
+
     /* *
      *
      *  Functions
@@ -92,7 +96,9 @@ var VennUtils;
         // Returns the modified relations.
         return relations;
     }
+
     VennUtils.addOverlapToSets = addOverlapToSets;
+
     /**
      * Finds the root of a given function. The root is the input value needed
      * for a function to return 0.
@@ -140,6 +146,7 @@ var VennUtils;
         }
         return x;
     }
+
     /**
      * Uses the bisection method to make a best guess of the ideal distance
      * between two circles too get the desired overlap.
@@ -174,7 +181,9 @@ var VennUtils;
         }
         return distance;
     }
+
     VennUtils.getDistanceBetweenCirclesByOverlap = getDistanceBetweenCirclesByOverlap;
+
     /**
      * Finds the available width for a label, by taking the label position and
      * finding the largest distance, which is inside all internal circles, and
@@ -214,7 +223,9 @@ var VennUtils;
         // Find the smallest distance of left and right.
         return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
     }
+
     VennUtils.getLabelWidth = getLabelWidth;
+
     /**
      * Calculates a margin for a point based on the iternal and external
      * circles. The margin describes if the point is well placed within the
@@ -241,7 +252,9 @@ var VennUtils;
         }, margin);
         return margin;
     }
+
     VennUtils.getMarginFromCircles = getMarginFromCircles;
+
     /**
      * Calculates the area of overlap between a list of circles.
      * @private
@@ -262,11 +275,14 @@ var VennUtils;
         }
         return overlap;
     }
+
     // eslint-disable-next-line require-jsdoc
     function isSet(x) {
         return isArray(x.sets) && x.sets.length === 1;
     }
+
     VennUtils.isSet = isSet;
+
     // eslint-disable-next-line require-jsdoc
     function isValidRelation(x) {
         var map = {};
@@ -283,10 +299,12 @@ var VennUtils;
                 return invalid;
             }));
     }
+
     // eslint-disable-next-line require-jsdoc
     function isValidSet(x) {
         return (isValidRelation(x) && isSet(x) && x.value > 0);
     }
+
     /**
      * Uses a greedy approach to position all the sets. Works well with a small
      * number of sets, and are in these cases a good choice aesthetically.
@@ -392,7 +410,9 @@ var VennUtils;
         // Return the positions of each set.
         return mapOfIdToCircles;
     }
+
     VennUtils.layoutGreedyVenn = layoutGreedyVenn;
+
     /**
      * Calculates the difference between the desired overlap and the actual
      * overlap between two circles.
@@ -425,7 +445,9 @@ var VennUtils;
             return totalLoss + loss;
         }, 0);
     }
+
     VennUtils.loss = loss;
+
     /**
      * Prepares the venn data so that it is usable for the layout function.
      * Filter out sets, or intersections that includes sets, that are missing in
@@ -478,7 +500,9 @@ var VennUtils;
                 return mapOfIdToRelation[id];
             });
     }
+
     VennUtils.processVennData = processVennData;
+
     /**
      * Takes two sets and finds the one with the largest total overlap.
      * @private
@@ -490,6 +514,7 @@ var VennUtils;
     function sortByTotalOverlap(a, b) {
         return b.totalOverlap - a.totalOverlap;
     }
+
     VennUtils.sortByTotalOverlap = sortByTotalOverlap;
 })(VennUtils || (VennUtils = {}));
 /* *

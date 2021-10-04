@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Sankey diagram module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Mixins/Nodes.js', [_modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (H, Point, Series, U) {
         /* *
          *
@@ -265,6 +267,7 @@
          * */
         var SankeyPoint = /** @class */ (function (_super) {
             __extends(SankeyPoint, _super);
+
             function SankeyPoint() {
                 /* *
                  *
@@ -288,6 +291,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions
@@ -369,10 +373,12 @@
                 childrenTotal = 0,
                 children = [],
                 value;
-            tree.levelDynamic = tree.level - (levelIsConstant ? 0 : nodeRoot.level);
-            tree.name = pick(point && point.name, '');
-            tree.visible = (idRoot === tree.id ||
-                (isBoolean(options.visible) ? options.visible : false));
+            extend(tree, {
+                levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
+                name: pick(point && point.name, ''),
+                visible: (idRoot === tree.id ||
+                    (isBoolean(options.visible) ? options.visible : false))
+            });
             if (isFn(before)) {
                 tree = before(tree, options);
             }
@@ -394,10 +400,12 @@
             tree.visible = childrenTotal > 0 || tree.visible;
             // Set the values
             value = pick(optionsPoint.value, childrenTotal);
-            tree.children = children;
-            tree.childrenTotal = childrenTotal;
-            tree.isLeaf = tree.visible && !childrenTotal;
-            tree.val = value;
+            extend(tree, {
+                children: children,
+                childrenTotal: childrenTotal,
+                isLeaf: tree.visible && !childrenTotal,
+                val: value
+            });
             return tree;
         };
         /**
@@ -434,6 +442,7 @@
                 }
                 return color;
             }
+
             if (node) {
                 point = points[node.i];
                 level = mapOptionsToLevel[node.level] || {};
@@ -616,6 +625,7 @@
          */
         var SankeySeries = /** @class */ (function (_super) {
             __extends(SankeySeries, _super);
+
             function SankeySeries() {
                 /* *
                  *
@@ -642,6 +652,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Static Functions
@@ -787,6 +798,7 @@
              */
             SankeySeries.prototype.generatePoints = function () {
                 NodesMixin.generatePoints.apply(this, arguments);
+
                 /**
                  * Order the nodes, starting with the root node(s). (#9818)
                  * @private
@@ -802,6 +814,7 @@
                         });
                     }
                 }
+
                 if (this.orderNodes) {
                     this.nodes
                         // Identify the root node(s)
@@ -1000,12 +1013,13 @@
             SankeySeries.prototype.translateLink = function (point) {
                 var getY = function (node,
                                      fromOrTo) {
+                    var _a;
                     var linkTop = (node.offset(point,
-                        fromOrTo) *
+                            fromOrTo) *
                         translationFactor);
                     var y = Math.min(node.nodeY + linkTop,
                         // Prevent links from spilling below the node (#12014)
-                        node.nodeY + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight);
+                        node.nodeY + ((_a = node.shapeArgs) === null || _a === void 0 ? void 0 : _a.height) - linkHeight);
                     return y;
                 };
                 var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart,
@@ -1139,7 +1153,7 @@
                     chart = this.chart,
                     options = this.options,
                     sum = node.getSum(),
-                    nodeHeight = Math.max(Math.round(sum * translationFactor),
+                    height = Math.max(Math.round(sum * translationFactor),
                         this.options.minLinkWidth),
                     crisp = Math.round(options.borderWidth) % 2 / 2,
                     nodeOffset = column.offset(node,
@@ -1159,39 +1173,37 @@
                     node.shapeType = 'rect';
                     node.nodeX = nodeLeft;
                     node.nodeY = fromNodeTop;
-                    var x = nodeLeft,
-                        y = fromNodeTop,
-                        width = node.options.width || options.width || nodeWidth,
-                        height = node.options.height || options.height || nodeHeight;
-                    if (chart.inverted) {
-                        x = nodeLeft - nodeWidth;
-                        y = chart.plotSizeY - fromNodeTop - nodeHeight;
-                        width = node.options.height || options.height || nodeWidth;
-                        height = node.options.width || options.width || nodeHeight;
+                    if (!chart.inverted) {
+                        node.shapeArgs = {
+                            x: nodeLeft,
+                            y: fromNodeTop,
+                            width: node.options.width || options.width || nodeWidth,
+                            height: node.options.height || options.height || height
+                        };
+                    } else {
+                        node.shapeArgs = {
+                            x: nodeLeft - nodeWidth,
+                            y: chart.plotSizeY - fromNodeTop - height,
+                            width: node.options.height || options.height || nodeWidth,
+                            height: node.options.width || options.width || height
+                        };
                     }
+                    node.shapeArgs.display = node.hasShape() ? '' : 'none';
                     // Calculate data label options for the point
                     node.dlOptions = SankeySeries.getDLOptions({
                         level: this.mapOptionsToLevel[node.level],
                         optionsPoint: node.options
                     });
                     // Pass test in drawPoints
-                    node.plotX = 1;
                     node.plotY = 1;
                     // Set the anchor position for tooltips
                     node.tooltipPos = chart.inverted ? [
-                        chart.plotSizeY - y - height / 2,
-                        chart.plotSizeX - x - width / 2
+                        chart.plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                        chart.plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
                     ] : [
-                        x + width / 2,
-                        y + height / 2
+                        node.shapeArgs.x + node.shapeArgs.width / 2,
+                        node.shapeArgs.y + node.shapeArgs.height / 2
                     ];
-                    node.shapeArgs = {
-                        x: x,
-                        y: y,
-                        width: width,
-                        height: height,
-                        display: node.hasShape() ? '' : 'none'
-                    };
                 } else {
                     node.dlOptions = {
                         enabled: false
@@ -1279,7 +1291,7 @@
                      * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
                      */
                     formatter: function () {
-                        return;
+
                     },
                     inside: true
                 },
@@ -1463,7 +1475,7 @@
             createNode: NodesMixin.createNode,
             destroy: NodesMixin.destroy,
             forceDL: true,
-            invertible: true,
+            invertable: true,
             isCartesian: false,
             orderNodes: true,
             pointArrayMap: ['from', 'to'],

@@ -10,8 +10,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 import PolygonMixin from '../../Mixins/Polygon.js';
+
 var isPolygonsColliding = PolygonMixin.isPolygonsColliding, movePolygon = PolygonMixin.movePolygon;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 /* *
   *
@@ -46,7 +48,9 @@ var WordcloudUtils;
             r2.top > r1.bottom ||
             r2.bottom < r1.top);
     }
+
     WordcloudUtils.isRectanglesIntersecting = isRectanglesIntersecting;
+
     /**
      * Detects if a word collides with any previously placed words.
      *
@@ -95,7 +99,9 @@ var WordcloudUtils;
         }
         return intersects;
     }
+
     WordcloudUtils.intersectsAnyWord = intersectsAnyWord;
+
     /**
      * Gives a set of cordinates for an Archimedian Spiral.
      *
@@ -127,7 +133,9 @@ var WordcloudUtils;
         }
         return result;
     }
+
     WordcloudUtils.archimedeanSpiral = archimedeanSpiral;
+
     /**
      * Gives a set of cordinates for an rectangular spiral.
      *
@@ -183,7 +191,9 @@ var WordcloudUtils;
         }
         return result;
     }
+
     WordcloudUtils.squareSpiral = squareSpiral;
+
     /**
      * Gives a set of cordinates for an rectangular spiral.
      *
@@ -208,7 +218,9 @@ var WordcloudUtils;
         }
         return result;
     }
+
     WordcloudUtils.rectangularSpiral = rectangularSpiral;
+
     /**
      * @private
      * @function getRandomPosition
@@ -222,7 +234,9 @@ var WordcloudUtils;
     function getRandomPosition(size) {
         return Math.round((size * (Math.random() + 0.5)) / 2);
     }
+
     WordcloudUtils.getRandomPosition = getRandomPosition;
+
     /**
      * Calculates the proper scale to fit the cloud inside the plotting area.
      *
@@ -251,7 +265,9 @@ var WordcloudUtils;
             scaleX = width > 0 ? 1 / width * targetWidth : 1, scaleY = height > 0 ? 1 / height * targetHeight : 1;
         return Math.min(scaleX, scaleY);
     }
+
     WordcloudUtils.getScale = getScale;
+
     /**
      * Calculates what is called the playing field. The field is the area which
      * all the words are allowed to be positioned within. The area is
@@ -306,7 +322,9 @@ var WordcloudUtils;
             ratioY: ratioY
         };
     }
+
     WordcloudUtils.getPlayingField = getPlayingField;
+
     /**
      * Calculates a number of degrees to rotate, based upon a number of
      * orientations within a range from-to.
@@ -348,7 +366,9 @@ var WordcloudUtils;
         }
         return result;
     }
+
     WordcloudUtils.getRotation = getRotation;
+
     /**
      * Calculates the spiral positions and store them in scope for quick access.
      *
@@ -374,7 +394,9 @@ var WordcloudUtils;
             return attempt <= length ? arr[attempt - 1] : false;
         };
     }
+
     WordcloudUtils.getSpiral = getSpiral;
+
     /**
      * Detects if a word is placed outside the playing field.
      *
@@ -402,7 +424,9 @@ var WordcloudUtils;
             playingField.top < rect.top &&
             playingField.bottom > rect.bottom);
     }
+
     WordcloudUtils.outsidePlayingField = outsidePlayingField;
+
     /**
      * Check if a point intersects with previously placed words, or if it goes
      * outside the field boundaries. If a collision, then try to adjusts the
@@ -452,7 +476,9 @@ var WordcloudUtils;
         }
         return delta;
     }
+
     WordcloudUtils.intersectionTesting = intersectionTesting;
+
     /**
      * Extends the playing field to have enough space to fit a given word.
      *
@@ -494,7 +520,9 @@ var WordcloudUtils;
         // Return the new extended field.
         return result;
     }
+
     WordcloudUtils.extendPlayingField = extendPlayingField;
+
     /**
      * If a rectangle is outside a give field, then the boundaries of the field
      * is adjusted accordingly. Modifies the field object which is passed as the
@@ -528,6 +556,7 @@ var WordcloudUtils;
         }
         return field;
     }
+
     WordcloudUtils.updateFieldBoundaries = updateFieldBoundaries;
 })(WordcloudUtils || (WordcloudUtils = {}));
 /* *

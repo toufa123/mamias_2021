@@ -23,13 +23,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var merge = U.merge, extend = U.extend, defined = U.defined, isArray = U.isArray;
 /**
  *
@@ -47,6 +50,7 @@ var merge = U.merge, extend = U.extend, defined = U.defined, isArray = U.isArray
  */
 var PivotPointsIndicator = /** @class */ (function (_super) {
     __extends(PivotPointsIndicator, _super);
+
     function PivotPointsIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -61,6 +65,7 @@ var PivotPointsIndicator = /** @class */ (function (_super) {
         _this.plotEndPoint = void 0;
         return _this;
     }
+
     /**
      *
      * Functions
@@ -262,7 +267,6 @@ var PivotPointsIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
-            index: void 0,
             period: 28,
             /**
              * Algorithm used to calculate ressistance and support lines based

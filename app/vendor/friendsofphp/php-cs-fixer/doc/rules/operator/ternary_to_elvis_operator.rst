@@ -18,6 +18,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$foo = $foo ? $foo : 1;
    +$foo = $foo ?  : 1;
@@ -29,6 +30,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php $foo = $bar[a()] ? $bar[a()] : 1; # "risky" sample, "a()" only gets called once after fixing
    +<?php $foo = $bar[a()] ?  : 1; # "risky" sample, "a()" only gets called once after fixing
 

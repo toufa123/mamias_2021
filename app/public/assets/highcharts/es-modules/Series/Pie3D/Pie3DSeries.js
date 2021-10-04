@@ -27,15 +27,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from '../../Core/Globals.js';
+
 var deg2rad = H.deg2rad, svg = H.svg;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, pick = U.pick;
 /* *
  *
@@ -44,9 +48,11 @@ var extend = U.extend, pick = U.pick;
  * */
 var Pie3DSeries = /** @class */ (function (_super) {
     __extends(Pie3DSeries, _super);
+
     function Pie3DSeries() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+
     /* *
      *
      *  Functions
@@ -70,7 +76,7 @@ var Pie3DSeries = /** @class */ (function (_super) {
         if (!this.chart.is3d()) {
             _super.prototype.animate.apply(this, arguments);
         } else {
-            var animation = this.options.animation, attribs = void 0, center = this.center, group = this.group,
+            var animation = this.options.animation, attribs, center = this.center, group = this.group,
                 markerGroup = this.markerGroup;
             if (svg) { // VML is too slow anyway
                 if (animation === true) {
@@ -113,12 +119,12 @@ var Pie3DSeries = /** @class */ (function (_super) {
      */
     Pie3DSeries.prototype.drawDataLabels = function () {
         if (this.chart.is3d()) {
-            var series = this, chart = series.chart, options3d_1 = chart.options.chart.options3d;
+            var series = this, chart = series.chart, options3d = chart.options.chart.options3d;
             series.data.forEach(function (point) {
                 var shapeArgs = point.shapeArgs, r = shapeArgs.r,
                     // #3240 issue with datalabels for 0 and null values
-                    a1 = (shapeArgs.alpha || options3d_1.alpha) * deg2rad,
-                    b1 = (shapeArgs.beta || options3d_1.beta) * deg2rad, a2 = (shapeArgs.start + shapeArgs.end) / 2,
+                    a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad,
+                    b1 = (shapeArgs.beta || options3d.beta) * deg2rad, a2 = (shapeArgs.start + shapeArgs.end) / 2,
                     labelPosition = point.labelPosition, connectorPosition = labelPosition.connectorPosition,
                     yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)), xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
                 // Apply perspective on label positions
@@ -184,7 +190,7 @@ var Pie3DSeries = /** @class */ (function (_super) {
     };
     return Pie3DSeries;
 }(PieSeries));
-extend(Pie3DSeries.prototype, {
+extend(Pie3DSeries, {
     pointClass: Pie3DPoint
 });
 /* *

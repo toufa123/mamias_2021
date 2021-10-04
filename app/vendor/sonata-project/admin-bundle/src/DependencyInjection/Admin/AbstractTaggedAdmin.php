@@ -33,15 +33,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @phpstan-template T of object
- * @phpstan-implements TaggedAdminInterface<T>
  */
 abstract class AbstractTaggedAdmin implements TaggedAdminInterface
 {
-    /**
-     * NEXT_MAJOR: Remove this constant.
-     *
-     * @deprecated since sonata-project/sonata-admin 3.98, will be removed in 4.0
-     */
     public const MOSAIC_ICON_CLASS = 'fa fa-th-large fa-fw';
 
     /**
@@ -74,8 +68,13 @@ abstract class AbstractTaggedAdmin implements TaggedAdminInterface
 
     /**
      * @var array<string, array<string, string>>
+     *
+     * @phpstan-var array{list: array{class: string}, mosaic: array{class: string}}
      */
-    protected $listModes = TaggedAdminInterface::DEFAULT_LIST_MODES;
+    protected $listModes = [
+        'list' => ['class' => 'fa fa-list fa-fw'],
+        'mosaic' => ['class' => self::MOSAIC_ICON_CLASS],
+    ];
 
     /**
      * @var string
@@ -118,7 +117,6 @@ abstract class AbstractTaggedAdmin implements TaggedAdminInterface
      * The Entity or Document manager.
      *
      * @var ModelManagerInterface|null
-     * @phpstan-var ModelManagerInterface<T>|null
      */
     protected $modelManager;
 
@@ -265,26 +263,13 @@ abstract class AbstractTaggedAdmin implements TaggedAdminInterface
         return $this->label;
     }
 
-    /**
-     * NEXT_MAJOR: Remove this method.
-     */
     final public function showMosaicButton($isShown)
     {
-        @trigger_error(sprintf(
-            'The method %s() is deprecated since sonata-project/admin-bundle 3.98. Use `setListModes` instead.',
-            __METHOD__
-        ), \E_USER_DEPRECATED);
-
         if ($isShown) {
             $this->listModes['mosaic'] = ['class' => static::MOSAIC_ICON_CLASS];
         } else {
             unset($this->listModes['mosaic']);
         }
-    }
-
-    final public function setListModes(array $listModes): void
-    {
-        $this->listModes = $listModes;
     }
 
     /**
@@ -387,10 +372,7 @@ abstract class AbstractTaggedAdmin implements TaggedAdminInterface
     }
 
     /**
-     * NEXT_MAJOR: Move the phpdoc to the interface.
-     *
      * @final since sonata-admin/admin-bundle 3.84
-     * @phpstan-param ModelManagerInterface<T> $modelManager
      */
     public function setModelManager(ModelManagerInterface $modelManager)
     {

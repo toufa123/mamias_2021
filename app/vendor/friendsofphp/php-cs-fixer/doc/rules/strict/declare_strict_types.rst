@@ -18,6 +18,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php
    +<?php declare(strict_types=1);
    \ No newline at end of file

@@ -23,36 +23,42 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Color from '../../../Core/Color/Color.js';
+
 var color = Color.parse;
 import H from '../../../Core/Globals.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge,
-    objectEach = U.objectEach;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
 /* eslint-disable require-jsdoc */
+
 // Utils:
 function maxHigh(arr) {
     return arr.reduce(function (max, res) {
         return Math.max(max, res[1]);
     }, -Infinity);
 }
+
 function minLow(arr) {
     return arr.reduce(function (min, res) {
         return Math.min(min, res[2]);
     }, Infinity);
 }
+
 function highlowLevel(arr) {
     return {
         high: maxHigh(arr),
         low: minLow(arr)
     };
 }
+
 function getClosestPointRange(axis) {
     var closestDataRange, loopLength, distance, xData, i;
     axis.series.forEach(function (series) {
@@ -70,6 +76,7 @@ function getClosestPointRange(axis) {
     });
     return closestDataRange;
 }
+
 // Check two lines intersection (line a1-a2 and b1-b2)
 // Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
 function checkLineIntersection(a1, a2, b1, b2) {
@@ -81,7 +88,7 @@ function checkLineIntersection(a1, a2, b1, b2) {
             sabX = a1.plotX - b1.plotX, // Auxiliary section a1-b1 X
             sabY = a1.plotY - b1.plotY, // Auxiliary section a1-b1 Y
             // First degree Bézier parameters
-            u = void 0, t = void 0;
+            u, t;
         u = (-saY * sabX + saX * sabY) / (-sbX * saY + saX * sbY);
         t = (sbX * sabY - sbY * sabX) / (-sbX * saY + saX * sbY);
         if (u >= 0 && u <= 1 && t >= 0 && t <= 1) {
@@ -93,6 +100,7 @@ function checkLineIntersection(a1, a2, b1, b2) {
     }
     return false;
 }
+
 // Parameter opt (indicator options object) include indicator, points,
 // nextPoints, color, options, gappedExtend and graph properties
 function drawSenkouSpan(opt) {
@@ -105,6 +113,7 @@ function drawSenkouSpan(opt) {
     indicator.fillGraph = true;
     SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 }
+
 // Data integrity in Ichimoku is different than default 'averages':
 // Point: [undefined, value, value, ...] is correct
 // Point: [undefined, undefined, undefined, ...] is incorrect
@@ -135,6 +144,7 @@ H.approximations['ichimoku-averages'] = function () {
 * */
 var IKHIndicator = /** @class */ (function (_super) {
     __extends(IKHIndicator, _super);
+
     function IKHIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -151,6 +161,7 @@ var IKHIndicator = /** @class */ (function (_super) {
         _this.nextPoints = void 0;
         return _this;
     }
+
     /* *
     *
     * Functions
@@ -207,16 +218,15 @@ var IKHIndicator = /** @class */ (function (_super) {
         var indicator = this;
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
         indicator.points.forEach(function (point) {
-            indicator.pointArrayMap.forEach(function (key) {
-                var pointValue = point[key];
-                if (isNumber(pointValue)) {
-                    point['plot' + key] = indicator.yAxis.toPixels(pointValue, true);
+            indicator.pointArrayMap.forEach(function (value) {
+                if (defined(point[value])) {
+                    point['plot' + value] = indicator.yAxis.toPixels(point[value], true);
                     // Add extra parameters for support tooltip in moved
                     // lines
-                    point.plotY = point['plot' + key];
+                    point.plotY = point['plot' + value];
                     point.tooltipPos = [
                         point.plotX,
-                        point['plot' + key]
+                        point['plot' + value]
                     ];
                     point.isNull = false;
                 }
@@ -401,7 +411,6 @@ var IKHIndicator = /** @class */ (function (_super) {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
-        indicator.color = mainColor;
     };
     IKHIndicator.prototype.getGraphPath = function (points) {
         var indicator = this, path = [], spanA, spanAarr = [];
@@ -510,11 +519,7 @@ var IKHIndicator = /** @class */ (function (_super) {
      * @optionparent plotOptions.ikh
      */
     IKHIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
         params: {
-            index: void 0,
             period: 26,
             /**
              * The base period for Tenkan calculations.

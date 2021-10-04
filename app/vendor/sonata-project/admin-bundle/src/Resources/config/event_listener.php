@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 
 use Sonata\AdminBundle\EventListener\AssetsInstallCommandListener;
-use Sonata\AdminBundle\Util\BCDeprecationParameters;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
@@ -22,7 +21,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     // Use "param" function for creating references to parameters when dropping support for Symfony 5.1
     $containerConfigurator->services()
 
-        ->set('sonata.admin.listener.assets_install', AssetsInstallCommandListener::class)
+        ->set(AssetsInstallCommandListener::class)
             ->tag('kernel.event_listener', [
                 'event' => ConsoleEvents::TERMINATE,
                 'method' => 'copySonataCoreBundleAssets',
@@ -31,11 +30,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 new ReferenceConfigurator('filesystem'),
                 '%kernel.project_dir%',
             ])
-
-        // NEXT_MAJOR: Remove this alias.
-        ->alias(AssetsInstallCommandListener::class, 'sonata.admin.listener.assets_install')
-            ->deprecate(...BCDeprecationParameters::forConfig(
-                'The "%alias_id%" alias is deprecated since sonata-project/admin-bundle 3.96 and will be removed in 4.0.',
-                '3.96'
-            ));
+    ;
 };

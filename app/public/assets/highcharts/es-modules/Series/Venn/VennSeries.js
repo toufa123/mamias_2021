@@ -32,12 +32,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
+
 var animObject = A.animObject;
 import Color from '../../Core/Color/Color.js';
+
 var color = Color.parse;
 import GeometryMixin from '../../Mixins/Geometry.js';
 
@@ -55,9 +58,11 @@ var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle,
     isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle,
     isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
+
 var nelderMead = NelderMeadMixin.nelderMead;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
@@ -79,6 +84,7 @@ var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.
  */
 var VennSeries = /** @class */ (function (_super) {
     __extends(VennSeries, _super);
+
     function VennSeries() {
         /* *
          *
@@ -98,6 +104,7 @@ var VennSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Static Functions
@@ -315,7 +322,7 @@ var VennSeries = /** @class */ (function (_super) {
     /* eslint-disable valid-jsdoc */
     VennSeries.prototype.animate = function (init) {
         if (!init) {
-            var series = this, animOptions_1 = animObject(series.options.animation);
+            var series = this, animOptions = animObject(series.options.animation);
             series.points.forEach(function (point) {
                 var args = point.shapeArgs;
                 if (point.graphic && args) {
@@ -330,7 +337,7 @@ var VennSeries = /** @class */ (function (_super) {
                     }
                     point.graphic
                         .attr(attr)
-                        .animate(animate, animOptions_1);
+                        .animate(animate, animOptions);
                     // If shape is path, then fade it in after the circles
                     // animation
                     if (args.d) {
@@ -340,7 +347,7 @@ var VennSeries = /** @class */ (function (_super) {
                                     opacity: 1
                                 });
                             }
-                        }, animOptions_1.duration);
+                        }, animOptions.duration);
                     }
                 }
             }, series);
@@ -478,7 +485,7 @@ var VennSeries = /** @class */ (function (_super) {
                     style: {
                         width: dataLabelWidth
                     }
-                }, isObject(dlOptions, true) ? dlOptions : void 0);
+                }, isObject(dlOptions) && dlOptions);
             }
             // Set name for usage in tooltip and in data label.
             point.name = point.options.name || sets.join('∩');

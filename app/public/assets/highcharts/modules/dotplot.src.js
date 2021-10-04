@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Dot plot series type for Highcharts
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,30 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
+    _registerModule(_modules, 'Series/DotPlot/DotPlotSymbols.js', [_modules['Core/Renderer/SVG/SVGRenderer.js']], function (SVGRenderer) {
+        /* *
+         *
+         *  (c) 2009-2021 Torstein Honsi
+         *
+         *  Dot plot series type for Highcharts
+         *
+         *  License: www.highcharts.com/license
+         *
+         *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+         *
+         * */
+        SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
+            return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
+        };
+
+    });
     _registerModule(_modules, 'Series/DotPlot/DotPlotSeries.js', [_modules['Series/Column/ColumnSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (ColumnSeries, SeriesRegistry, U) {
         /* *
          *
@@ -89,6 +108,7 @@
          */
         var DotPlotSeries = /** @class */ (function (_super) {
             __extends(DotPlotSeries, _super);
+
             function DotPlotSeries() {
                 /* *
                  *
@@ -107,6 +127,7 @@
                 _this.points = void 0;
                 return _this;
             }
+
             /* *
              *
              * Functions

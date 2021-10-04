@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
- * (c) 2009-2021 Sebastian Bochan, Rafal Sebestjanski
+ * (c) 2009-2019 Sebastian Bochan, Rafal Sebestjanski
  *
  * License: www.highcharts.com/license
  */
@@ -21,11 +21,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Series/Lollipop/LollipopPoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -73,6 +75,7 @@
          * */
         var LollipopPoint = /** @class */ (function (_super) {
             __extends(LollipopPoint, _super);
+
             function LollipopPoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -80,6 +83,7 @@
                 _this.options = void 0;
                 return _this;
             }
+
             return LollipopPoint;
         }(DumbbellPoint));
         extend(LollipopPoint.prototype, {
@@ -160,6 +164,7 @@
          */
         var LollipopSeries = /** @class */ (function (_super) {
             __extends(LollipopSeries, _super);
+
             function LollipopSeries() {
                 /* *
                  *
@@ -178,6 +183,7 @@
                 _this.points = void 0;
                 return _this;
             }
+
             LollipopSeries.prototype.toYData = function (point) {
                 return [pick(point.y, point.low)];
             };

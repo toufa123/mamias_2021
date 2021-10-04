@@ -53,6 +53,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,13 +1,13 @@
     <?php
 
    -class  Foo  extends  Bar  implements  Baz,  BarBaz
@@ -79,6 +80,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
 
    -$foo = new  class  extends  Bar  implements  Baz,  BarBaz {};
@@ -93,6 +95,7 @@ With configuration: ``['single_line' => true]``.
 
    --- Original
    +++ New
+   @@ -1,6 +1,4 @@
     <?php
 
    -class Foo
@@ -110,6 +113,7 @@ With configuration: ``['single_item_single_line' => true]``.
 
    --- Original
    +++ New
+   @@ -1,6 +1,4 @@
     <?php
 
    -class Foo
@@ -127,6 +131,7 @@ With configuration: ``['multi_line_extends_each_single_line' => true]``.
 
    --- Original
    +++ New
+   @@ -1,5 +1,7 @@
     <?php
 
     interface Bar extends

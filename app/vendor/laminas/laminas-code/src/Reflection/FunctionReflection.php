@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @see       https://github.com/laminas/laminas-code for the canonical source repository
+ * @copyright https://github.com/laminas/laminas-code/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas/laminas-code/blob/master/LICENSE.md New BSD License
+ */
+
 namespace Laminas\Code\Reflection;
 
 use ReflectionFunction;
@@ -18,19 +24,17 @@ use function strrpos;
 use function substr;
 use function var_export;
 
-use const FILE_IGNORE_NEW_LINES;
-
 class FunctionReflection extends ReflectionFunction implements ReflectionInterface
 {
     /**
      * Constant use in @MethodReflection to display prototype as an array
      */
-    public const PROTOTYPE_AS_ARRAY = 'prototype_as_array';
+    const PROTOTYPE_AS_ARRAY = 'prototype_as_array';
 
     /**
      * Constant use in @MethodReflection to display prototype as a string
      */
-    public const PROTOTYPE_AS_STRING = 'prototype_as_string';
+    const PROTOTYPE_AS_STRING = 'prototype_as_string';
 
     /**
      * Get function DocBlock
@@ -47,7 +51,9 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
             ));
         }
 
-        return new DocBlockReflection($comment);
+        $instance = new DocBlockReflection($comment);
+
+        return $instance;
     }
 
     /**
@@ -81,11 +87,11 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
         }
 
         $startLine = $this->getStartLine();
-        $endLine   = $this->getEndLine();
+        $endLine = $this->getEndLine();
 
         // eval'd protect
         if (preg_match('#\((\d+)\) : eval\(\)\'d code$#', $fileName, $matches)) {
-            $fileName  = preg_replace('#\(\d+\) : eval\(\)\'d code$#', '', $fileName);
+            $fileName = preg_replace('#\(\d+\) : eval\(\)\'d code$#', '', $fileName);
             $startLine = $endLine = $matches[1];
         }
 
@@ -127,14 +133,14 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      * @param string $format
      * @return array|string
      */
-    public function getPrototype($format = self::PROTOTYPE_AS_ARRAY)
+    public function getPrototype($format = FunctionReflection::PROTOTYPE_AS_ARRAY)
     {
         $returnType = 'mixed';
-        $docBlock   = $this->getDocBlock();
+        $docBlock = $this->getDocBlock();
         if ($docBlock) {
-            $return      = $docBlock->getTag('return');
+            $return = $docBlock->getTag('return');
             $returnTypes = $return->getTypes();
-            $returnType  = count($returnTypes) > 1 ? implode('|', $returnTypes) : $returnTypes[0];
+            $returnType = count($returnTypes) > 1 ? implode('|', $returnTypes) : $returnTypes[0];
         }
 
         $prototype = [
@@ -154,7 +160,7 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
             ];
         }
 
-        if ($format == self::PROTOTYPE_AS_STRING) {
+        if ($format == FunctionReflection::PROTOTYPE_AS_STRING) {
             $line = $prototype['return'] . ' ' . $prototype['name'] . '(';
             $args = [];
             foreach ($prototype['arguments'] as $name => $argument) {
@@ -182,10 +188,10 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      */
     public function getParameters()
     {
-        $phpReflections     = parent::getParameters();
+        $phpReflections  = parent::getParameters();
         $laminasReflections = [];
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
-            $instance             = new ParameterReflection($this->getName(), $phpReflection->getName());
+            $instance          = new ParameterReflection($this->getName(), $phpReflection->getName());
             $laminasReflections[] = $instance;
             unset($phpReflection);
         }
@@ -209,7 +215,7 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
             );
         }
 
-        $tag = $docBlock->getTag('return');
+        $tag    = $docBlock->getTag('return');
 
         return new DocBlockReflection('@return ' . $tag->getDescription());
     }
@@ -229,11 +235,11 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
         }
 
         $startLine = $this->getStartLine();
-        $endLine   = $this->getEndLine();
+        $endLine = $this->getEndLine();
 
         // eval'd protect
         if (preg_match('#\((\d+)\) : eval\(\)\'d code$#', $fileName, $matches)) {
-            $fileName  = preg_replace('#\(\d+\) : eval\(\)\'d code$#', '', $fileName);
+            $fileName = preg_replace('#\(\d+\) : eval\(\)\'d code$#', '', $fileName);
             $startLine = $endLine = $matches[1];
         }
 

@@ -29,6 +29,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,12 +1,12 @@
     <?php
     /**
    - * @param integer $a
@@ -55,17 +56,13 @@ With configuration: ``['types' => ['boolean']]``.
 
    --- Original
    +++ New
+   @@ -1,5 +1,5 @@
     <?php
     /**
      * @param integer $a
    - * @param boolean $b
    + * @param bool $b
      * @param real $c
-     */
-    function sample($a, $b, $c)
-    {
-        return sample2($a, $b, $c);
-    }
 
 Rule sets
 ---------

@@ -61,7 +61,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,9 +2,9 @@
 
     function baz($options)
     {
@@ -83,7 +83,7 @@ With configuration: ``['exclude' => ['json_encode']]``.
 
    --- Original
    +++ New
-    <?php
+   @@ -2,9 +2,9 @@
 
     function baz($options)
     {
@@ -104,6 +104,7 @@ With configuration: ``['scope' => 'all']``.
 
    --- Original
    +++ New
+   @@ -1,7 +1,7 @@
     <?php
     namespace space1 {
    -    echo count([1]);
@@ -123,6 +124,7 @@ With configuration: ``['scope' => 'namespaced']``.
 
    --- Original
    +++ New
+   @@ -1,7 +1,7 @@
     <?php
     namespace space1 {
    -    echo count([1]);
@@ -141,6 +143,7 @@ With configuration: ``['include' => ['myGlobalFunction']]``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -myGlobalFunction();
    +\myGlobalFunction();
@@ -155,6 +158,7 @@ With configuration: ``['include' => ['@all']]``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
    -myGlobalFunction();
    -count();
@@ -170,6 +174,7 @@ With configuration: ``['include' => ['@internal']]``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
     myGlobalFunction();
    -count();
@@ -184,6 +189,7 @@ With configuration: ``['include' => ['@compiler_optimized']]``.
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php
     $a .= str_repeat($a, 4);
    -$c = get_class($d);

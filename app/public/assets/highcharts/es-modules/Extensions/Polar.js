@@ -9,6 +9,7 @@
  * */
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
+
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -16,9 +17,11 @@ import Pane from './Pane.js';
 import Pointer from '../Core/Pointer.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+
 var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
+
 var addEvent = U.addEvent, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat,
     uniqueKey = U.uniqueKey, wrap = U.wrap;
 // Extensions for polar charts. Additionally, much of the geometry required for
@@ -112,7 +115,7 @@ seriesProto.getConnectors = function (segment, index, calculateNeighbours, conne
  * @private
  */
 seriesProto.toXY = function (point) {
-    var chart = this.chart, xAxis = this.xAxis, yAxis = this.yAxis, plotX = point.plotX, plotY = point.plotY,
+    var xy, chart = this.chart, xAxis = this.xAxis, yAxis = this.yAxis, plotX = point.plotX, plotY = point.plotY,
         series = point.series, inverted = chart.inverted, pointY = point.y,
         radius = inverted ? plotX : yAxis.len - plotY, clientX;
     // Corrected y position of inverted series other than column
@@ -126,14 +129,11 @@ seriesProto.toXY = function (point) {
     if (yAxis.center) {
         radius += yAxis.center[3] / 2;
     }
-    // Find the polar plotX and plotY. Avoid setting plotX and plotY to NaN when
-    // plotY is undefined (#15438)
-    if (isNumber(plotY)) {
-        var xy = inverted ? yAxis.postTranslate(plotY, radius) :
-            xAxis.postTranslate(plotX, radius);
-        point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-        point.plotY = point.polarPlotY = xy.y - chart.plotTop;
-    }
+    // Find the polar plotX and plotY
+    xy = inverted ? yAxis.postTranslate(plotY, radius) :
+        xAxis.postTranslate(plotX, radius);
+    point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+    point.plotY = point.polarPlotY = xy.y - chart.plotTop;
     // If shared tooltip, record the angle in degrees in order to align X
     // points. Otherwise, use a standard k-d tree to get the nearest point
     // in two dimensions.
@@ -161,18 +161,12 @@ if (seriesTypes.spline) {
                 ret = ['M', point.plotX, point.plotY];
             } else { // curve from last point to this
                 connectors = this.getConnectors(segment, i, true, this.connectEnds);
-                var rightContX = connectors.prevPointCont && connectors.prevPointCont.rightContX;
-                var rightContY = connectors.prevPointCont && connectors.prevPointCont.rightContY;
                 ret = [
                     'C',
-                    isNumber(rightContX) ? rightContX : connectors.plotX,
-                    isNumber(rightContY) ? rightContY : connectors.plotY,
-                    isNumber(connectors.leftContX) ?
-                        connectors.leftContX :
-                        connectors.plotX,
-                    isNumber(connectors.leftContY) ?
-                        connectors.leftContY :
-                        connectors.plotY,
+                    connectors.prevPointCont.rightContX,
+                    connectors.prevPointCont.rightContY,
+                    connectors.leftContX,
+                    connectors.leftContY,
                     connectors.plotX,
                     connectors.plotY
                 ];
@@ -600,7 +594,7 @@ if (seriesTypes.column) {
             } else { // Required corrections for data labels of inverted bars
                 // The plotX and plotY are correctly set therefore they
                 // don't need to be swapped (inverted argument is false)
-                this.forceDL = chart.isInsidePlot(point.plotX, Math.round(point.plotY));
+                this.forceDL = chart.isInsidePlot(point.plotX, Math.round(point.plotY), false);
                 // Checks if labels should be positioned inside
                 if (inside && point.shapeArgs) {
                     shapeArgs = point.shapeArgs;
@@ -609,7 +603,7 @@ if (seriesTypes.column) {
                     labelPos =
                         this.yAxis.postTranslate(
                             // angle
-                            ((shapeArgs.start || 0) + (shapeArgs.end || 0)) / 2 -
+                            (shapeArgs.start + shapeArgs.end) / 2 -
                             this
                                 .xAxis.startAngleRad,
                             // radius

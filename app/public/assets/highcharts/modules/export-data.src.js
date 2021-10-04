@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Exporting module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Extensions/DownloadURL.js', [_modules['Core/Globals.js']], function (Highcharts) {
         /* *
          *
@@ -135,7 +137,7 @@
 
         return exports;
     });
-    _registerModule(_modules, 'Extensions/ExportData.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Renderer/HTML/AST.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Utilities.js'], _modules['Extensions/DownloadURL.js']], function (Axis, Chart, AST, H, O, U, DownloadURL) {
+    _registerModule(_modules, 'Extensions/ExportData.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Renderer/HTML/AST.js'], _modules['Core/Globals.js'], _modules['Core/Utilities.js'], _modules['Extensions/DownloadURL.js']], function (Axis, Chart, AST, H, U, DownloadURL) {
         /* *
          *
          *  Experimental data export module for Highcharts
@@ -153,15 +155,15 @@
         var doc = H.doc,
             seriesTypes = H.seriesTypes,
             win = H.win;
-        var getOptions = O.getOptions,
-            setOptions = O.setOptions;
         var addEvent = U.addEvent,
             defined = U.defined,
             extend = U.extend,
             find = U.find,
             fireEvent = U.fireEvent,
+            getOptions = U.getOptions,
             isNumber = U.isNumber,
-            pick = U.pick;
+            pick = U.pick,
+            setOptions = U.setOptions;
         /**
          * Function callback to execute while data rows are processed for exporting.
          * This allows the modification of data rows before processed into the final
@@ -204,6 +206,7 @@
                 .replace(/'/g, '&#x27;')
                 .replace(/\//g, '&#x2F;');
         }
+
         setOptions({
             /**
              * Callback that fires while exporting data. This allows the modification of
@@ -257,7 +260,7 @@
                  * converter, as demonstrated in the sample below.
                  *
                  * @sample  highcharts/export-data/categorized/ Categorized data
-                 * @sample  highcharts/export-data/stock-timeaxis/ Highcharts Stock time axis
+                 * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
                  * @sample  highcharts/export-data/xlsx/
                  *          Using a third party XLSX converter
                  *
@@ -819,8 +822,7 @@
                 var html = "<" + node.tagName;
                 if (attributes) {
                     Object.keys(attributes).forEach(function (key) {
-                        var value = attributes[key];
-                        html += " " + key + "=\"" + value + "\"";
+                        html += " " + key + "=\"" + attributes[key] + "\"";
                     });
                 }
                 html += '>';
@@ -1019,6 +1021,7 @@
             fireEvent(this, 'aftergetTableAST', e);
             return e.tree;
         };
+
         /**
          * Get a blob object from content, if blob is supported
          *
@@ -1052,6 +1055,7 @@
                 // Ignore
             }
         }
+
         /**
          * Generates a data URL of CSV for local download in the browser. This is the
          * default action for a click on the 'Download CSV' button.
@@ -1149,9 +1153,7 @@
                     options.buttons.contextButton.menuItems,
                 lang = this.options.lang;
             if (exportingOptions &&
-                exportingOptions.menuItemDefinitions &&
-                lang &&
-                lang.viewData &&
+                exportingOptions.menuItemDefinitions && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
                 lang.hideData &&
                 menuItems &&
                 exportDivElements &&

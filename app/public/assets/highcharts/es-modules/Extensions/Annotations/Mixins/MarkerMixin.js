@@ -7,6 +7,7 @@
 import Chart from '../../../Core/Chart/Chart.js';
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../../Core/Utilities.js';
+
 var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
 /**
  * Options for configuring markers for annotations.
@@ -49,6 +50,7 @@ var defaultMarkers = {
     arrow: {
         tagName: 'marker',
         attributes: {
+            display: 'none',
             id: 'arrow',
             refY: 5,
             refX: 9,
@@ -72,6 +74,7 @@ var defaultMarkers = {
     'reverse-arrow': {
         tagName: 'marker',
         attributes: {
+            display: 'none',
             id: 'reverse-arrow',
             refY: 5,
             refX: 1,
@@ -94,10 +97,9 @@ SVGRenderer.prototype.addMarker = function (id, markerOptions) {
         stroke: markerOptions.color || 'none',
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };
-    options.children = (markerOptions.children &&
-        markerOptions.children.map(function (child) {
-            return merge(attrs, child);
-        }));
+    options.children = markerOptions.children.map(function (child) {
+        return merge(attrs, child);
+    });
     var ast = merge(true, {
         attributes: {
             markerWidth: 20,
@@ -111,6 +113,7 @@ SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     marker.id = id;
     return marker;
 };
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -120,6 +123,7 @@ function createMarkerSetter(markerType) {
         this.attr(markerType, 'url(#' + value + ')');
     };
 }
+
 /**
  * @private
  * @mixin
@@ -138,14 +142,15 @@ var markerMixin = {
             color = defined(fill) && fill !== 'none' ?
                 fill :
                 itemOptions.stroke, setMarker = function (markerType) {
+                var _a;
                 var markerId = itemOptions[markerType], def, predefinedMarker, key, marker;
                 if (markerId) {
                     for (key in defs) { // eslint-disable-line guard-for-in
                         def = defs[key];
-                        if ((markerId === (def.attributes && def.attributes.id) ||
-                            // Legacy, for
-                            // unit-tests/annotations/annotations-shapes
-                            markerId === def.id) &&
+                        if ((markerId === ((_a = def.attributes) === null || _a === void 0 ? void 0 : _a.id) ||
+                                // Legacy, for
+                                // unit-tests/annotations/annotations-shapes
+                                markerId === def.id) &&
                             def.tagName === 'marker') {
                             predefinedMarker = def;
                             break;
@@ -164,16 +169,13 @@ var markerMixin = {
 };
 addEvent(Chart, 'afterGetContainer', function () {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
-    // objectEach(this.options.defs, function (def): void {
-    //     const attributes = def.attributes;
-    //     if (
-    //         def.tagName === 'marker' &&
-    //         attributes &&
-    //         attributes.id &&
-    //         attributes.display !== 'none'
-    //     ) {
-    //         this.renderer.addMarker(attributes.id, def);
-    //     }
-    // }, this);
+    objectEach(this.options.defs, function (def) {
+        var attributes = def.attributes;
+        if (def.tagName === 'marker' &&
+            attributes &&
+            attributes.display !== 'none') {
+            this.renderer.addMarker(attributes.id, def);
+        }
+    }, this);
 });
 export default markerMixin;

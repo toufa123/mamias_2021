@@ -50,8 +50,6 @@ class ObjectInstantiationSniff implements Sniff
         $allowedTokens = [
             T_EQUAL        => true,
             T_DOUBLE_ARROW => true,
-            T_FN_ARROW     => true,
-            T_MATCH_ARROW  => true,
             T_THROW        => true,
             T_RETURN       => true,
             T_INLINE_THEN  => true,

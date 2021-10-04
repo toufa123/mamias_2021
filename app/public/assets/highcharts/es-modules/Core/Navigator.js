@@ -11,8 +11,10 @@
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
+
 var color = Color.parse;
 import H from './Globals.js';
+
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
@@ -133,7 +135,7 @@ extend(defaultOptions, {
         margin: 25,
         /**
          * Whether the mask should be inside the range marking the zoomed
-         * range, or outside. In Highcharts Stock 1.x it was always `false`.
+         * range, or outside. In Highstock 1.x it was always `false`.
          *
          * @sample {highstock} stock/navigator/maskinside-false/
          *         False, mask outside
@@ -334,10 +336,7 @@ extend(defaultOptions, {
                 approximation: 'average',
                 enabled: true,
                 groupPixelWidth: 2,
-                // Replace smoothed property by anchors, #12455.
-                firstAnchor: 'firstPoint',
-                anchor: 'middle',
-                lastAnchor: 'lastPoint',
+                smoothed: true,
                 // Day and week differs from plotOptions.series.dataGrouping
                 units: [
                     ['millisecond', [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]],
@@ -379,11 +378,11 @@ extend(defaultOptions, {
                 enabled: false
             },
             /**
-             * Since Highcharts Stock v8, default value is the same as default
+             * Since Highstock v8, default value is the same as default
              * `pointRange` defined for a specific type (e.g. `null` for
              * column type).
              *
-             * In Highcharts Stock version < 8, defaults to 0.
+             * In Highstock version < 8, defaults to 0.
              *
              * @extends plotOptions.series.pointRange
              * @type {number|null}
@@ -559,6 +558,7 @@ var Navigator = /** @class */ (function () {
         this.zoomedMin = void 0;
         this.init(chart);
     }
+
     /**
      * Draw one of the handles on the side of the zoomed range in the navigator
      *
@@ -1376,7 +1376,9 @@ var Navigator = /** @class */ (function () {
                 var range = navigator.size, to = range * this.to, from = range * this.from;
                 navigator.hasDragged = navigator.scrollbar.hasDragged;
                 navigator.render(0, 0, from, to);
-                if (this.shouldUpdateExtremes(e.DOMType)) {
+                if (chart.options.scrollbar.liveRedraw ||
+                    (e.DOMType !== 'mousemove' &&
+                        e.DOMType !== 'touchmove')) {
                     setTimeout(function () {
                         navigator.onMouseUp(e);
                     });
@@ -1522,9 +1524,6 @@ var Navigator = /** @class */ (function () {
                 navSeriesMixin.name = 'Navigator ' + baseSeries.length;
                 baseOptions = base.options || {};
                 baseNavigatorOptions = baseOptions.navigatorOptions || {};
-                // The dataLabels options are not merged correctly
-                // if the settings are an array, #13847.
-                userNavOptions.dataLabels = splat(userNavOptions.dataLabels);
                 mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, userNavOptions, baseNavigatorOptions);
                 // Once nav series type is resolved, pick correct pointRange
                 mergedNavSeriesOptions.pointRange = pick(
@@ -1602,29 +1601,29 @@ var Navigator = /** @class */ (function () {
         // Adding this multiple times to the same axis is no problem, as
         // duplicates should be discarded by the browser.
         if (baseSeries[0] && baseSeries[0].xAxis) {
-            baseSeries[0].eventsToUnbind.push(addEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes));
+            addEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
         }
         baseSeries.forEach(function (base) {
             // Link base series show/hide to navigator series visibility
-            base.eventsToUnbind.push(addEvent(base, 'show', function () {
+            addEvent(base, 'show', function () {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(true, false);
                 }
-            }));
-            base.eventsToUnbind.push(addEvent(base, 'hide', function () {
+            });
+            addEvent(base, 'hide', function () {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(false, false);
                 }
-            }));
+            });
             // Respond to updated data in the base series, unless explicitily
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {
-                    base.eventsToUnbind.push(addEvent(base, 'updatedData', this.updatedDataHandler));
+                    addEvent(base, 'updatedData', this.updatedDataHandler);
                 }
             }
             // Handle series removal
-            base.eventsToUnbind.push(addEvent(base, 'remove', function () {
+            addEvent(base, 'remove', function () {
                 if (this.navigatorSeries) {
                     erase(navigator.series, this.navigatorSeries);
                     if (defined(this.navigatorSeries.options)) {
@@ -1632,7 +1631,7 @@ var Navigator = /** @class */ (function () {
                     }
                     delete this.navigatorSeries;
                 }
-            }));
+            });
         }, this);
     };
     /**

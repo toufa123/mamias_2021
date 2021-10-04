@@ -26,10 +26,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import U from '../../Core/Utilities.js';
+
 var isNumber = U.isNumber;
 import ColumnSeries from '../Column/ColumnSeries.js';
 /* *
@@ -39,6 +41,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
  * */
 var WindbarbPoint = /** @class */ (function (_super) {
     __extends(WindbarbPoint, _super);
+
     function WindbarbPoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -53,6 +56,7 @@ var WindbarbPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
+
     /* *
      *
      * Functions

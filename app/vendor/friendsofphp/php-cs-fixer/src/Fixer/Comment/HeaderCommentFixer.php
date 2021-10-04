@@ -102,22 +102,6 @@ echo 1;
                         'location' => 'after_declare_strict',
                     ]
                 ),
-                new CodeSample(
-                    '<?php
-declare(strict_types=1);
-
-/*
- * Comment is not wanted here.
- */
-
-namespace A\B;
-
-echo 1;
-',
-                    [
-                        'header' => '',
-                    ]
-                ),
             ]
         );
     }

@@ -15,7 +15,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,9 +2,9 @@
     /**
      * Hello there!
      *

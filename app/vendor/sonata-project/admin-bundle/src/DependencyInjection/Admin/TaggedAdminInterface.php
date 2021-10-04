@@ -44,6 +44,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @method void                             initialize()
  * @method void                             setLabel(?string $label)
+ * @method void                             showMosaicButton(bool $isShown)
  * @method void                             setPagerType(string $pagerType)
  * @method string                           getPagerType()
  * @method void                             setManagerType(string $managerType)
@@ -62,17 +63,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @method Pool                             getConfigurationPool()
  * @method void                             setRouteGenerator(RouteGeneratorInterface $routeGenerator)
  * @method RouteGeneratorInterface          getRouteGenerator()
- *
- * @phpstan-template T of object
  */
 interface TaggedAdminInterface
 {
     public const ADMIN_TAG = 'sonata.admin';
-
-    public const DEFAULT_LIST_MODES = [
-        'list' => ['class' => 'fa fa-list fa-fw'],
-        'mosaic' => ['class' => 'fa fa-th-large fa-fw'],
-    ];
 
     /**
      * NEXT_MAJOR: Uncomment this method.
@@ -94,12 +88,12 @@ interface TaggedAdminInterface
     /**
      * NEXT_MAJOR: Uncomment this method.
      *
-     * @param array<string, array<string, string>>
+     * Enable/Disable mosaic button for the admin screen.
      */
-//    public function setListModes(array $listModes): void;
+//    public function showMosaicButton(bool $isShown): void;
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, mixed>>
      */
     public function getListModes();
 
@@ -123,7 +117,7 @@ interface TaggedAdminInterface
      */
     public function getManagerType();
 
-    /*
+    /**
      * NEXT_MAJOR: Uncomment this method.
      *
      * Set the roles and permissions per role.
@@ -159,14 +153,11 @@ interface TaggedAdminInterface
 
     /**
      * NEXT_MAJOR: Uncomment this method.
-     *
-     * @phpstan-param ModelManagerInterface<T>
      */
 //    public function setModelManager(ModelManagerInterface $modelManager): void;
 
     /**
      * @return ModelManagerInterface
-     * @phpstan-return ModelManagerInterface<T>
      */
     public function getModelManager();
 

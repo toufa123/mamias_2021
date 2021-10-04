@@ -32,9 +32,10 @@ import palette from '../../Core/Color/Palette.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from '../Utilities.js';
+
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined,
     destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent,
-    isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+    merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -54,6 +55,7 @@ var PlotLineOrBand = /** @class */ (function () {
             this.id = options.id;
         }
     }
+
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
@@ -868,17 +870,15 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 acrossPanes: options.acrossPanes
             }), result = [], i,
             // #4964 check if chart is inverted or plotband is on yAxis
-            horiz = this.horiz, plus = 1, isFlat, outside = !isNumber(this.min) ||
-            !isNumber(this.max) ||
-            (from < this.min && to < this.min) ||
-            (from > this.max && to > this.max);
+            horiz = this.horiz, plus = 1, isFlat, outside = (from < this.min && to < this.min) ||
+                (from > this.max && to > this.max);
         if (path && toPath) {
             // Flat paths don't need labels (#3836)
             if (outside) {
                 isFlat = path.toString() === toPath.toString();
                 plus = 0;
             }
-            // Go over each subpath - for panes in Highcharts Stock
+            // Go over each subpath - for panes in Highstock
             for (i = 0; i < path.length; i += 2) {
                 var pathStart = path[i], pathEnd = path[i + 1], toPathStart = toPath[i], toPathEnd = toPath[i + 1];
                 // Type checking all affected path segments. Consider something

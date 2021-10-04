@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,5 +1,5 @@
     <?php
     class MyTest extends \PhpUnit\FrameWork\TestCase
     {
@@ -44,6 +45,7 @@ With configuration: ``['case' => 'snake_case']``.
 
    --- Original
    +++ New
+   @@ -1,5 +1,5 @@
     <?php
     class MyTest extends \PhpUnit\FrameWork\TestCase
     {

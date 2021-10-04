@@ -1,4 +1,5 @@
 @import 'https://fonts.googleapis.com/css?family=Signika:400,700';
+
 .highcharts-container {
     background: url(https://www.highcharts.com/samples/graphics/sand.png);
 }
@@ -43,8 +44,6 @@
     font-family: "Signika", Arial, Helvetica, sans-serif;
     font-size: 12px;
     user-select: none;
-    touch-action: manipulation;
-    outline: none;
 }
 
 .highcharts-root {
@@ -103,7 +102,6 @@
 
 .highcharts-subtitle {
     fill: #666666;
-    font-size: 1em;
 }
 
 /* Axes */

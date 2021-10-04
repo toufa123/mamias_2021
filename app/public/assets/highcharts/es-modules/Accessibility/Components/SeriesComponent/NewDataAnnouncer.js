@@ -13,15 +13,19 @@
 import H from '../../../Core/Globals.js';
 import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, defined = U.defined;
 import ChartUtilities from '../../Utils/ChartUtilities.js';
+
 var getChartTitle = ChartUtilities.getChartTitle;
 import SeriesDescriber from './SeriesDescriber.js';
+
 var defaultPointDescriptionFormatter = SeriesDescriber
     .defaultPointDescriptionFormatter, defaultSeriesDescriptionFormatter = SeriesDescriber
     .defaultSeriesDescriptionFormatter;
 import Announcer from '../../Utils/Announcer.js';
 import EventProvider from '../../Utils/EventProvider.js';
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -29,6 +33,7 @@ import EventProvider from '../../Utils/EventProvider.js';
 function chartHasAnnounceEnabled(chart) {
     return !!chart.options.accessibility.announceNewData.enabled;
 }
+
 /**
  * @private
  */
@@ -38,6 +43,7 @@ function findPointInDataArray(point) {
     });
     return candidates.length === 1 ? candidates[0] : point;
 }
+
 /**
  * Get array of unique series from two arrays
  * @private
@@ -52,6 +58,7 @@ function getUniqueSeries(arrayA, arrayB) {
         return uniqueSeries[ix];
     });
 }
+
 /**
  * @private
  * @class

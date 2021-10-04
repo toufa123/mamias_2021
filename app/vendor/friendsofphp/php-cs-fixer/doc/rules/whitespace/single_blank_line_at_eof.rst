@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$a = 1;
    \ No newline at end of file
@@ -26,6 +27,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1,3 +1,2 @@
     <?php
     $a = 1;
    -

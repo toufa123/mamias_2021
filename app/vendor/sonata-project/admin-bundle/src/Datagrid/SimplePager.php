@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Sonata\AdminBundle\Datagrid;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Sonata\AdminBundle\Util\TraversableToCollection;
 
 /**
  * @final since sonata-project/admin-bundle 3.52
@@ -29,15 +27,11 @@ use Sonata\AdminBundle\Util\TraversableToCollection;
 class SimplePager extends Pager
 {
     /**
-     * @var Collection<array-key, object>|null
+     * @var iterable<object>|null
      */
     protected $results;
 
     /**
-     * NEXT_MAJOR: Remove this property.
-     *
-     * @deprecated since sonata-project/admin-bundle 3.99
-     *
      * @var bool
      */
     protected $haveToPaginate;
@@ -87,7 +81,12 @@ class SimplePager extends Pager
 
     public function countResults(): int
     {
-        return ($this->getPage() - 1) * $this->getMaxPerPage() + $this->thresholdCount;
+        $n = ($this->getLastPage() - 1) * $this->getMaxPerPage();
+        if ($this->getLastPage() === $this->getPage()) {
+            return $n + $this->thresholdCount;
+        }
+
+        return $n;
     }
 
     public function getCurrentPageResults(): iterable
@@ -96,13 +95,16 @@ class SimplePager extends Pager
             return $this->results;
         }
 
-        $this->results = TraversableToCollection::transform($this->getQuery()->execute());
-        $this->thresholdCount = $this->results->count();
-
-        if ($this->thresholdCount > $this->getMaxPerPage()) {
+        $this->results = $this->getQuery()->execute();
+        $this->thresholdCount = \count($this->results);
+        if (\count($this->results) > $this->getMaxPerPage()) {
             $this->haveToPaginate = true;
 
-            $this->results = new ArrayCollection($this->results->slice(0, $this->getMaxPerPage()));
+            if ($this->results instanceof ArrayCollection) {
+                $this->results = new ArrayCollection($this->results->slice(0, $this->getMaxPerPage()));
+            } else {
+                $this->results = new ArrayCollection(\array_slice($this->results, 0, $this->getMaxPerPage()));
+            }
         } else {
             $this->haveToPaginate = false;
         }
@@ -127,18 +129,26 @@ class SimplePager extends Pager
         }
 
         // @phpstan-ignore-next-line
-        $this->results = TraversableToCollection::transform($this->getQuery()->execute([], $hydrationMode));
-        $this->thresholdCount = $this->results->count();
-
-        if ($this->thresholdCount > $this->getMaxPerPage()) {
+        $this->results = $this->getQuery()->execute([], $hydrationMode);
+        $this->thresholdCount = \count($this->results);
+        if (\count($this->results) > $this->getMaxPerPage()) {
             $this->haveToPaginate = true;
 
-            $this->results = new ArrayCollection($this->results->slice(0, $this->getMaxPerPage()));
+            if ($this->results instanceof ArrayCollection) {
+                $this->results = new ArrayCollection($this->results->slice(0, $this->getMaxPerPage()));
+            } else {
+                $this->results = new ArrayCollection(\array_slice($this->results, 0, $this->getMaxPerPage()));
+            }
         } else {
             $this->haveToPaginate = false;
         }
 
         return $this->results;
+    }
+
+    public function haveToPaginate()
+    {
+        return $this->haveToPaginate || $this->getPage() > 1;
     }
 
     /**

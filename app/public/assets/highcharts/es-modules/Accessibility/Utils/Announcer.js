@@ -12,9 +12,11 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
+
 var doc = H.doc;
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
+
 var setElAttrs = HTMLUtilities.setElAttrs, visuallyHideElement = HTMLUtilities.visuallyHideElement;
 var Announcer = /** @class */ (function () {
     function Announcer(chart, type) {
@@ -22,6 +24,7 @@ var Announcer = /** @class */ (function () {
         this.domElementProvider = new DOMElementProvider();
         this.announceRegion = this.addAnnounceRegion(type);
     }
+
     Announcer.prototype.destroy = function () {
         this.domElementProvider.destroyCreatedElements();
     };

@@ -11,10 +11,17 @@ file that was distributed with this source code.
 {% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
 
 {% block field %}
-    {%- include '@SonataAdmin/CRUD/display_trans.html.twig' with {
-        value: value,
-        value_format: field_description.option('format'),
-        translation_domain: field_description.option('catalogue', admin.translationDomain),
-        safe: field_description.option('safe'),
-    } only -%}
+    {% set value_format = field_description.options.format|default('%s') %}
+
+    {% if field_description.options.catalogue is not defined %}
+        {% set value = value_format|format(value)|trans %}
+    {% else %}
+        {% set value = value_format|format(value)|trans({}, field_description.options.catalogue|default(admin.translationDomain)) %}
+    {% endif %}
+
+    {% if field_description.options.safe %}
+        {{ value|raw }}
+    {% else %}
+        {{ value }}
+    {% endif %}
 {% endblock %}

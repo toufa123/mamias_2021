@@ -11,10 +11,13 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+
 var doc = H.doc, win = H.win;
 import U from '../Core/Utilities.js';
+
 var addEvent = U.addEvent, fireEvent = U.fireEvent;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
+
 var getElement = HTMLUtilities.getElement;
 import EventProvider from './Utils/EventProvider.js';
 /* eslint-disable valid-jsdoc */
@@ -43,6 +46,7 @@ H.Chart.prototype.dismissPopupContent = function () {
         chart.hideExportMenu();
     });
 };
+
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
  * logic for the chart.
@@ -60,6 +64,7 @@ H.Chart.prototype.dismissPopupContent = function () {
 function KeyboardNavigation(chart, components) {
     this.init(chart, components);
 }
+
 KeyboardNavigation.prototype = {
     /**
      * Initialize the class
@@ -136,14 +141,14 @@ KeyboardNavigation.prototype = {
      * @param {global.FocusEvent} e Browser focus event.
      */
     onFocus: function (e) {
+        var _a;
         var chart = this.chart;
         var focusComesFromChart = (e.relatedTarget &&
             chart.container.contains(e.relatedTarget));
         // Init keyboard nav if tabbing into chart
-        if (!this.exiting && !this.isClickingChart && !focusComesFromChart && this.modules[0]) {
-            this.modules[0].init(1);
+        if (!this.isClickingChart && !focusComesFromChart) {
+            (_a = this.modules[0]) === null || _a === void 0 ? void 0 : _a.init(1);
         }
-        this.exiting = false;
     },
     /**
      * Reset chart navigation state if we click outside the chart and it's
@@ -175,8 +180,6 @@ KeyboardNavigation.prototype = {
             this.modules[this.currentModuleIx];
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;
-        // Used for sending focus out of the chart by the modules.
-        this.exiting = false;
         // If there is a nav module for the current index, run it.
         // Otherwise, we are outside of the chart in some direction.
         if (curNavModule) {
@@ -239,8 +242,8 @@ KeyboardNavigation.prototype = {
         // No module
         this.currentModuleIx = 0; // Reset counter
         // Set focus to chart or exit anchor depending on direction
-        this.exiting = true;
         if (direction > 0) {
+            this.exiting = true;
             this.exitAnchor.focus();
         } else {
             this.tabindexContainer.focus();

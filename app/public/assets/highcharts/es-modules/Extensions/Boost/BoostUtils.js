@@ -13,13 +13,16 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
+
 var win = H.win, doc = H.doc;
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 import U from '../../Core/Utilities.js';
+
 var pick = U.pick;
 // This should be a const.
 var CHUNK_SIZE = 3000;
+
 /**
  * Tolerant max() function.
  *
@@ -51,6 +54,7 @@ function patientMax() {
     });
     return r;
 }
+
 /**
  * Return true if ths boost.enabled option is true
  *
@@ -69,6 +73,7 @@ function boostEnabled(chart) {
         chart.options.boost &&
         chart.options.boost.enabled), true);
 }
+
 /**
  * Returns true if we should force boosting the chart
  * @private
@@ -120,6 +125,7 @@ function shouldForceChartSeriesBoosting(chart) {
         sboostCount > 5);
     return chart.boostForceChartBoost;
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Performs the actual render if the renderer is
@@ -136,6 +142,7 @@ function renderIfNotSeriesBoosting(renderer, series, chart) {
         renderer.render(chart || series.chart);
     }
 }
+
 /**
  * @private
  */
@@ -147,6 +154,7 @@ function allocateIfNotSeriesBoosting(renderer, series) {
         renderer.allocateBufferForSingleSeries(series);
     }
 }
+
 /**
  * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
  * UI thread.
@@ -187,6 +195,7 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
         }
     }
 }
+
 /**
  * Returns true if the current browser supports webgl
  *
@@ -212,6 +221,7 @@ function hasWebGLSupport() {
     }
     return false;
 }
+
 /* eslint-disable no-invalid-this */
 /**
  * Used for treemap|heatmap.drawPoints
@@ -242,6 +252,7 @@ function pointDrawHandler(proceed) {
     }
     renderIfNotSeriesBoosting(renderer, this);
 }
+
 /* eslint-enable no-invalid-this, valid-jsdoc */
 var funs = {
     patientMax: patientMax,

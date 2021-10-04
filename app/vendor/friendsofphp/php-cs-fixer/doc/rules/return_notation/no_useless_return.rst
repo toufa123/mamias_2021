@@ -14,8 +14,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    function example($b) {
+   @@ -3,5 +3,5 @@
         if ($b) {
             return;
         }

@@ -70,6 +70,7 @@ H.ajax = function (attr) {
         text: 'text/plain',
         octet: 'application/octet-stream'
     }, r = new XMLHttpRequest();
+
     /**
      * @private
      * @param {XMLHttpRequest} xhr - Internal request object.
@@ -83,6 +84,7 @@ H.ajax = function (attr) {
             // @todo Maybe emit a highcharts error event here
         }
     }
+
     if (!options.url) {
         return false;
     }

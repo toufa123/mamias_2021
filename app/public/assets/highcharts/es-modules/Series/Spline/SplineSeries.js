@@ -25,12 +25,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
+
 var merge = U.merge, pick = U.pick;
 /**
  * Spline series type.
@@ -39,6 +42,7 @@ var merge = U.merge, pick = U.pick;
  */
 var SplineSeries = /** @class */ (function (_super) {
     __extends(SplineSeries, _super);
+
     function SplineSeries() {
         /* *
          *
@@ -57,6 +61,7 @@ var SplineSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -95,6 +100,7 @@ var SplineSeries = /** @class */ (function (_super) {
                 // #6387, area splines next to null:
                 !point.isCliff;
         }
+
         // Find control points
         if (doCurve(lastPoint) && doCurve(nextPoint)) {
             var lastX = lastPoint.plotX || 0, lastY = lastPoint.plotY || 0, nextX = nextPoint.plotX || 0,

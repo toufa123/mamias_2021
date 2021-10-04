@@ -177,16 +177,6 @@ yield  from  baz();
 
     /**
      * {@inheritdoc}
-     *
-     * Must run before BracesFixer, FunctionDeclarationFixer.
-     */
-    public function getPriority()
-    {
-        return 36;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function isCandidate(Tokens $tokens)
     {

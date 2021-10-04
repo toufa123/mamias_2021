@@ -75,6 +75,7 @@ function KeyboardNavigationHandler(chart, options) {
         fail: 5 // Handler failed
     };
 }
+
 KeyboardNavigationHandler.prototype = {
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.

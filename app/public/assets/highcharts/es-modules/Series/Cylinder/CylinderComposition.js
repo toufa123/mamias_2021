@@ -13,12 +13,16 @@
  * */
 'use strict';
 import Color from '../../Core/Color/Color.js';
+
 var color = Color.parse;
 import H from '../../Core/Globals.js';
+
 var charts = H.charts, deg2rad = H.deg2rad, RendererProto = H.Renderer.prototype;
 import Math3D from '../../Extensions/Math3D.js';
+
 var perspective = Math3D.perspective;
 import U from '../../Core/Utilities.js';
+
 var merge = U.merge, pick = U.pick;
 /* *
  *
@@ -132,19 +136,17 @@ RendererProto.getCylinderBack = function (topPath, bottomPath) {
 };
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
-    var _a = shapeArgs.width, width = _a === void 0 ? 0 : _a, _b = shapeArgs.height, height = _b === void 0 ? 0 : _b,
-        _c = shapeArgs.alphaCorrection, alphaCorrection = _c === void 0 ? 0 : _c;
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
-    var depth = pick(shapeArgs.depth, width, 0), radius = Math.min(width, depth) / 2,
+    var depth = pick(shapeArgs.depth, shapeArgs.width), radius = Math.min(shapeArgs.width, depth) / 2,
         // Approximated longest diameter
         angleOffset = deg2rad * (chart.options.chart.options3d.beta - 90 +
-            alphaCorrection),
+            (shapeArgs.alphaCorrection || 0)),
         // Could be top or bottom of the cylinder
-        y = (shapeArgs.y || 0) + (isBottom ? height : 0),
+        y = shapeArgs.y + (isBottom ? shapeArgs.height : 0),
         // Use cubic Bezier curve to draw a cricle in x,z (y is constant).
         // More math. at spencermortensen.com/articles/bezier-circle/
-        c = 0.5519 * radius, centerX = width / 2 + (shapeArgs.x || 0), centerZ = depth / 2 + (shapeArgs.z || 0),
+        c = 0.5519 * radius, centerX = shapeArgs.width / 2 + shapeArgs.x, centerZ = depth / 2 + shapeArgs.z,
         // points could be generated in a loop, but readability will plummet
         points = [{
             x: 0,

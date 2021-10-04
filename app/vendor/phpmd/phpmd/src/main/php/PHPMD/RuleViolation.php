@@ -49,14 +49,6 @@ class RuleViolation
     private $description;
 
     /**
-     * The arguments for the description/message text or <b>null</b>
-     * when the arguments are unknown.
-     *
-     * @var array|null
-     */
-    private $args = null;
-
-    /**
      * The raw metric value which caused this rule violation.
      *
      * @var mixed
@@ -74,7 +66,7 @@ class RuleViolation
      * The name of a method or <b>null</b> when this violation has no method
      * context.
      *
-     * @var string|null
+     * @var string
      */
     private $methodName = null;
 
@@ -91,7 +83,7 @@ class RuleViolation
      *
      * @param \PHPMD\Rule $rule
      * @param \PHPMD\AbstractNode $node
-     * @param string|array $violationMessage
+     * @param string $violationMessage
      * @param mixed $metric
      */
     public function __construct(Rule $rule, AbstractNode $node, $violationMessage, $metric = null)
@@ -99,20 +91,7 @@ class RuleViolation
         $this->rule = $rule;
         $this->node = $node;
         $this->metric = $metric;
-
-        if (is_array($violationMessage) === true) {
-            $search = array();
-            $replace = array();
-            foreach ($violationMessage['args'] as $index => $value) {
-                $search[] = '{' . $index . '}';
-                $replace[] = $value;
-            }
-
-            $this->args = $violationMessage['args'];
-            $this->description = str_replace($search, $replace, $violationMessage['message']);
-        } else {
-            $this->description = $violationMessage;
-        }
+        $this->description = $violationMessage;
 
         if ($node instanceof AbstractTypeNode) {
             $this->className = $node->getName();
@@ -145,17 +124,6 @@ class RuleViolation
     }
 
     /**
-     * Returns the arguments for the description/message text or <b>null</b>
-     * when the arguments are unknown.
-     *
-     * @return array|null
-     */
-    public function getArgs()
-    {
-        return $this->args;
-    }
-
-    /**
      * Returns the raw metric value which caused this rule violation.
      *
      * @return mixed|null
@@ -168,7 +136,7 @@ class RuleViolation
     /**
      * Returns the file name where this rule violation was detected.
      *
-     * @return string|null
+     * @return string
      */
     public function getFileName()
     {
@@ -220,7 +188,7 @@ class RuleViolation
      * Returns the name of a method or <b>null</b> when this violation has no
      * method context.
      *
-     * @return string|null
+     * @return string
      */
     public function getMethodName()
     {

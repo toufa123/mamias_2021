@@ -187,7 +187,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  */
 /**
  * Generic dictionary in TypeScript notation.
- * Use the native `AnyRecord` instead.
+ * Use the native `Record<string, any>` instead.
  *
  * @deprecated
  * @interface Highcharts.Dictionary<T>
@@ -327,7 +327,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  * chart constructor.
  *
  * @example
- * let chart = Highcharts.chart('container', { ... });
+ * var chart = Highcharts.chart('container', { ... });
  *
  * @namespace Highcharts
  */
@@ -354,8 +354,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *        Reference to the chart that causes the error. Used in 'debugger'
  *        module to display errors directly on the chart.
  *        Important note: This argument is undefined for errors that lack
- *        access to the Chart instance. In such case, the error will be
- *        displayed on the last created chart.
+ *        access to the Chart instance.
  *
  * @param {Highcharts.Dictionary<string>} [params]
  *        Additional parameters for the generated message.
@@ -367,11 +366,9 @@ function error(code, stop, chart, params) {
     if (code === 32) {
         code = severity + ": Deprecated member";
     }
-    var isCode = isNumber(code);
-    var message = isCode ?
+    var isCode = isNumber(code), message = isCode ?
         severity + " #" + code + ": www.highcharts.com/errors/" + code + "/" :
-        code.toString();
-    var defaultHandler = function () {
+        code.toString(), defaultHandler = function () {
         if (stop) {
             throw new Error(message);
         }
@@ -395,13 +392,19 @@ function error(code, stop, chart, params) {
         });
         message += additionalMessages_1;
     }
-    fireEvent(Highcharts, 'displayError', {chart: chart, code: code, message: message, params: params}, defaultHandler);
+    if (chart) {
+        fireEvent(chart, 'displayError', {code: code, message: message, params: params}, defaultHandler);
+    } else {
+        defaultHandler();
+    }
     error.messages.push(message);
 }
+
 (function (error) {
     error.messages = [];
 })(error || (error = {}));
 /* eslint-disable valid-jsdoc */
+
 /**
  * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
@@ -445,8 +448,7 @@ function error(code, stop, chart, params) {
  */
 function merge() {
     /* eslint-enable valid-jsdoc */
-    var i, args = arguments, ret = {};
-    var doCopy = function (copy, original) {
+    var i, args = arguments, len, ret = {}, doCopy = function (copy, original) {
         // An object is replacing a primitive
         if (typeof copy !== 'object') {
             copy = {};
@@ -475,12 +477,13 @@ function merge() {
         args = Array.prototype.slice.call(args, 2);
     }
     // For each argument, extend the return
-    var len = args.length;
+    len = args.length;
     for (i = 0; i < len; i++) {
         ret = doCopy(ret, args[i]);
     }
     return ret;
 }
+
 /**
  * Constrain a value to within a lower and upper threshold.
  *
@@ -493,6 +496,7 @@ function merge() {
 function clamp(value, min, max) {
     return value > min ? value < max ? value : max : min;
 }
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -519,6 +523,7 @@ function cleanRecursively(newer, older) {
     });
     return result;
 }
+
 /**
  * Shortcut for parseInt
  *
@@ -537,6 +542,7 @@ function cleanRecursively(newer, older) {
 function pInt(s, mag) {
     return parseInt(s, mag || 10);
 }
+
 /**
  * Utility function to check for string type.
  *
@@ -551,6 +557,7 @@ function pInt(s, mag) {
 function isString(s) {
     return typeof s === 'string';
 }
+
 /**
  * Utility function to check if an item is an array.
  *
@@ -566,6 +573,7 @@ function isArray(obj) {
     var str = Object.prototype.toString.call(obj);
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
+
 /**
  * Utility function to check if an item is of type object.
  *
@@ -585,6 +593,7 @@ function isObject(obj, strict) {
         typeof obj === 'object' &&
         (!strict || !isArray(obj))); // eslint-disable-line @typescript-eslint/no-explicit-any
 }
+
 /**
  * Utility function to check if an Object is a HTML Element.
  *
@@ -599,6 +608,7 @@ function isObject(obj, strict) {
 function isDOMElement(obj) {
     return isObject(obj) && typeof obj.nodeType === 'number';
 }
+
 /**
  * Utility function to check if an Object is a class.
  *
@@ -616,6 +626,7 @@ function isClass(obj) {
         !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object'));
 }
+
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
  * Infinity or -Infinity).
@@ -631,6 +642,7 @@ function isClass(obj) {
 function isNumber(n) {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
 }
+
 /**
  * Remove the last occurence of an item from an array.
  *
@@ -653,6 +665,7 @@ function erase(arr, item) {
         }
     }
 }
+
 /**
  * Check if an object is null or undefined.
  *
@@ -667,6 +680,7 @@ function erase(arr, item) {
 function defined(obj) {
     return typeof obj !== 'undefined' && obj !== null;
 }
+
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
  * a key and a value, or let the second argument be a collection of keys and
@@ -709,6 +723,7 @@ function attr(elem, prop, value) {
     }
     return ret;
 }
+
 /**
  * Check if an element is an array, and if not, make it into an array.
  *
@@ -723,6 +738,7 @@ function attr(elem, prop, value) {
 function splat(obj) {
     return isArray(obj) ? obj : [obj];
 }
+
 /**
  * Set a timeout if the delay is given, otherwise perform the function
  * synchronously.
@@ -749,6 +765,7 @@ function syncTimeout(fn, delay, context) {
     fn.call(0, context);
     return -1;
 }
+
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
  * (e.g. by `chart.destroy()`). For the details see
@@ -766,6 +783,7 @@ function internalClearTimeout(id) {
         clearTimeout(id);
     }
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to extend an object with the members of another.
@@ -775,7 +793,7 @@ function internalClearTimeout(id) {
  * @param {T|undefined} a
  *        The object to be extended.
  *
- * @param {Partial<T>} b
+ * @param {object} b
  *        The object to add to the first one.
  *
  * @return {T}
@@ -792,6 +810,7 @@ function extend(a, b) {
     }
     return a;
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -814,6 +833,7 @@ function pick() {
         }
     }
 }
+
 /**
  * Set CSS on a given element.
  *
@@ -836,6 +856,7 @@ function css(el, styles) {
     }
     extend(el.style, styles);
 }
+
 /**
  * Utility function to create an HTML element with attributes and styles.
  *
@@ -875,6 +896,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
     }
     return el;
 }
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * Extend a prototyped class by new members.
@@ -898,6 +920,7 @@ function extendClass(parent, members) {
     extend(obj.prototype, members);
     return obj;
 }
+
 /**
  * Left-pad a string to a given length by adding a character repetetively.
  *
@@ -922,6 +945,7 @@ function pad(number, length, padder) {
             .replace('-', '')
             .length).join(padder || '0') + number;
 }
+
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  *
@@ -945,6 +969,7 @@ function relativeLength(value, base, offset) {
         (base * parseFloat(value) / 100) + (offset || 0) :
         parseFloat(value);
 }
+
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
@@ -965,16 +990,84 @@ function relativeLength(value, base, offset) {
 function wrap(obj, method, func) {
     var proceed = obj[method];
     obj[method] = function () {
-        var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this;
+        var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this, ret;
         ctx.proceed = function () {
             proceed.apply(ctx, arguments.length ? arguments : outerArgs);
         };
         args.unshift(proceed);
-        var ret = func.apply(this, args);
+        ret = func.apply(this, args);
         ctx.proceed = null;
         return ret;
     };
 }
+
+/**
+ * Format a string according to a subset of the rules of Python's String.format
+ * method.
+ *
+ * @example
+ * var s = Highcharts.format(
+ *     'The {color} fox was {len:.2f} feet long',
+ *     { color: 'red', len: Math.PI }
+ * );
+ * // => The red fox was 3.14 feet long
+ *
+ * @function Highcharts.format
+ *
+ * @param {string} str
+ *        The string to format.
+ *
+ * @param {Record<string, *>} ctx
+ *        The context, a collection of key-value pairs where each key is
+ *        replaced by its value.
+ *
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
+ *
+ * @return {string}
+ *         The formatted string.
+ */
+function format(str, ctx, chart) {
+    var splitter = '{', isInside = false, segment, valueAndFormat, ret = [], val, index;
+    var floatRegex = /f$/;
+    var decRegex = /\.([0-9])/;
+    var lang = H.defaultOptions.lang;
+    var time = chart && chart.time || H.time;
+    var numberFormatter = chart && chart.numberFormatter || numberFormat;
+    while (str) {
+        index = str.indexOf(splitter);
+        if (index === -1) {
+            break;
+        }
+        segment = str.slice(0, index);
+        if (isInside) { // we're on the closing bracket looking back
+            valueAndFormat = segment.split(':');
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
+            // Format the replacement
+            if (valueAndFormat.length && typeof val === 'number') {
+                segment = valueAndFormat.join(':');
+                if (floatRegex.test(segment)) { // float
+                    var decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(val, decimals, lang.decimalPoint, segment.indexOf(',') > -1 ? lang.thousandsSep : '');
+                    }
+                } else {
+                    val = time.dateFormat(segment, val);
+                }
+            }
+            // Push the result and advance the cursor
+            ret.push(val);
+        } else {
+            ret.push(segment);
+        }
+        str = str.slice(index + 1); // the rest
+        isInside = !isInside; // toggle
+        splitter = isInside ? '}' : '{'; // now look for next matching bracket
+    }
+    ret.push(str);
+    return ret.join('');
+}
+
 /**
  * Get the magnitude of a number.
  *
@@ -989,6 +1082,7 @@ function wrap(obj, method, func) {
 function getMagnitude(num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 }
+
 /**
  * Take an interval and normalize it to multiples of round numbers.
  *
@@ -1019,10 +1113,10 @@ function getMagnitude(num) {
  * reasons.
  */
 function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, hasTickAmount) {
-    var i, retInterval = interval;
+    var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
-    var normalized = interval / magnitude;
+    normalized = interval / magnitude;
     // multiples for a linear scale
     if (!multiples) {
         multiples = hasTickAmount ?
@@ -1060,6 +1154,7 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, ha
     retInterval = correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
     return retInterval;
 }
+
 /**
  * Sort an object array and keep the order of equal items. The ECMAScript
  * standard does not specify the behaviour when items are equal.
@@ -1078,8 +1173,7 @@ function stableSort(arr, sortFunction) {
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
     // function
-    var length = arr.length;
-    var sortValue, i;
+    var length = arr.length, sortValue, i;
     // Add index to each item
     for (i = 0; i < length; i++) {
         arr[i].safeI = i; // stable sort index
@@ -1093,6 +1187,7 @@ function stableSort(arr, sortFunction) {
         delete arr[i].safeI; // stable sort index
     }
 }
+
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -1115,6 +1210,7 @@ function arrayMin(data) {
     }
     return min;
 }
+
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -1137,6 +1233,7 @@ function arrayMax(data) {
     }
     return max;
 }
+
 /**
  * Utility method that destroys any SVGElement instances that are properties on
  * the given object. It loops all properties and invokes destroy if there is a
@@ -1161,6 +1258,7 @@ function destroyObjectProperties(obj, except) {
         delete obj[n];
     });
 }
+
 /**
  * Discard a HTML element by moving it to the bin and delete.
  *
@@ -1180,7 +1278,9 @@ function discardElement(element) {
     }
     garbageBin.innerHTML = '';
 }
+
 var garbageBin;
+
 /**
  * Fix JS round off float errors.
  *
@@ -1198,6 +1298,7 @@ var garbageBin;
 function correctFloat(num, prec) {
     return parseFloat(num.toPrecision(prec || 14));
 }
+
 /**
  * The time unit lookup
  *
@@ -1213,6 +1314,101 @@ var timeUnits = {
     month: 28 * 24 * 3600000,
     year: 364 * 24 * 3600000
 };
+
+/**
+ * Format a number and return a string based on input settings.
+ *
+ * @sample highcharts/members/highcharts-numberformat/
+ *         Custom number format
+ *
+ * @function Highcharts.numberFormat
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string}
+ *         The formatted number.
+ */
+function numberFormat(number, decimals, decimalPoint, thousandsSep) {
+    number = +number || 0;
+    decimals = +decimals;
+    var lang = H.defaultOptions.lang, origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
+        strinteger, thousands, ret, roundedNumber, exponent = number.toString().split('e'), fractionDigits,
+        firstDecimals = decimals;
+    if (decimals === -1) {
+        // Preserve decimals. Not huge numbers (#3793).
+        decimals = Math.min(origDec, 20);
+    } else if (!isNumber(decimals)) {
+        decimals = 2;
+    } else if (decimals && exponent[1] && exponent[1] < 0) {
+        // Expose decimals from exponential notation (#7042)
+        fractionDigits = decimals + +exponent[1];
+        if (fractionDigits >= 0) {
+            // remove too small part of the number while keeping the notation
+            exponent[0] = (+exponent[0]).toExponential(fractionDigits)
+                .split('e')[0];
+            decimals = fractionDigits;
+        } else {
+            // fractionDigits < 0
+            exponent[0] = exponent[0].split('.')[0] || 0;
+            if (decimals < 20) {
+                // use number instead of exponential notation (#7405)
+                number = (exponent[0] * Math.pow(10, exponent[1]))
+                    .toFixed(decimals);
+            } else {
+                // or zero
+                number = 0;
+            }
+            exponent[1] = 0;
+        }
+    }
+    // Add another decimal to avoid rounding errors of float numbers. (#4573)
+    // Then use toFixed to handle rounding.
+    roundedNumber = (Math.abs(exponent[1] ? exponent[0] : number) +
+        Math.pow(10, -Math.max(decimals, origDec) - 1)).toFixed(decimals);
+    // A string containing the positive integer component of the number
+    strinteger = String(pInt(roundedNumber));
+    // Leftover after grouping into thousands. Can be 0, 1 or 2.
+    thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
+    // Language
+    decimalPoint = pick(decimalPoint, lang.decimalPoint);
+    thousandsSep = pick(thousandsSep, lang.thousandsSep);
+    // Start building the return
+    ret = number < 0 ? '-' : '';
+    // Add the leftover after grouping into thousands. For example, in the
+    // number 42 000 000, this line adds 42.
+    ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
+    if (+exponent[1] < 0 && !firstDecimals) {
+        ret = '0';
+    } else {
+        // Add the remaining thousands groups, joined by the thousands separator
+        ret += strinteger
+            .substr(thousands)
+            .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    }
+    // Add the decimal point and the decimal component
+    if (decimals) {
+        // Get the decimal component
+        ret += decimalPoint + roundedNumber.slice(-decimals);
+    }
+    if (exponent[1] && +ret !== 0) {
+        ret += 'e' + exponent[1];
+    }
+    return ret;
+}
+
 /**
  * Easing definition
  *
@@ -1228,6 +1424,7 @@ var timeUnits = {
 Math.easeInOutSine = function (pos) {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
+
 /**
  * Returns the value of a property path on a given object.
  *
@@ -1243,27 +1440,23 @@ Math.easeInOutSine = function (pos) {
  * @return {unknown}
  * The unknown property value.
  */
-function getNestedProperty(path, parent) {
-    var pathElements = path.split('.');
-    while (pathElements.length && defined(parent)) {
-        var pathElement = pathElements.shift();
-        // Filter on the key
-        if (typeof pathElement === 'undefined' ||
-            pathElement === '__proto__') {
-            return; // undefined
-        }
-        var child = parent[pathElement];
-        // Filter on the child
-        if (!defined(child) ||
-            typeof child === 'function' ||
-            typeof child.nodeType === 'number' ||
-            child === win) {
-            return; // undefined
-        }
-        // Else, proceed
-        parent = child;
+function getNestedProperty(path, obj) {
+    if (!path) {
+        return obj;
     }
-    return parent;
+    var pathElements = path.split('.').reverse();
+    var subProperty = obj;
+    if (pathElements.length === 1) {
+        return subProperty[path];
+    }
+    var pathElement = pathElements.pop();
+    while (typeof pathElement !== 'undefined' &&
+    typeof subProperty !== 'undefined' &&
+    subProperty !== null) {
+        subProperty = subProperty[pathElement];
+        pathElement = pathElements.pop();
+    }
+    return subProperty;
 }
 
 /**
@@ -1274,20 +1467,18 @@ function getNestedProperty(path, parent) {
  * @function Highcharts.getStyle
  *
  * @param {Highcharts.HTMLDOMElement} el
- * An HTML element.
+ *        An HTML element.
  *
  * @param {string} prop
- * The property name.
+ *        The property name.
  *
  * @param {boolean} [toInt=true]
- * Parse to integer.
+ *        Parse to integer.
  *
- * @return {number|string|undefined}
- * The style value.
+ * @return {number|string}
+ *         The numeric value.
  */
 function getStyle(el, prop, toInt) {
-    var customGetStyle = (H.getStyle || // oldie getStyle
-        getStyle);
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1305,29 +1496,30 @@ function getStyle(el, prop, toInt) {
         }
         return Math.max(0, // #8377
             (offsetWidth -
-                (customGetStyle(el, 'padding-left', true) || 0) -
-                (customGetStyle(el, 'padding-right', true) || 0)));
+                H.getStyle(el, 'padding-left') -
+                H.getStyle(el, 'padding-right')));
     }
     if (prop === 'height') {
         return Math.max(0, // #8377
-            (Math.min(el.offsetHeight, el.scrollHeight) -
-                (customGetStyle(el, 'padding-top', true) || 0) -
-                (customGetStyle(el, 'padding-bottom', true) || 0)));
+            Math.min(el.offsetHeight, el.scrollHeight) -
+            H.getStyle(el, 'padding-top') -
+            H.getStyle(el, 'padding-bottom'));
     }
     if (!win.getComputedStyle) {
         // SVG not supported, forgot to load oldie.js?
         error(27, true);
     }
     // Otherwise, get the computed style
-    var css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
-    if (css) {
-        style = css.getPropertyValue(prop);
+    style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    if (style) {
+        style = style.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
     return style;
 }
+
 /**
  * Search for an item in an array.
  *
@@ -1351,6 +1543,7 @@ function inArray(item, arr, fromIndex) {
     error(32, false, void 0, {'Highcharts.inArray': 'use Array.indexOf'});
     return arr.indexOf(item, fromIndex);
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
@@ -1375,14 +1568,14 @@ var find = Array.prototype.find ?
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
     function (arr, callback) {
-        var i;
-        var length = arr.length;
+        var i, length = arr.length;
         for (i = 0; i < length; i++) {
             if (callback(arr[i], i)) { // eslint-disable-line callback-return
                 return arr[i];
             }
         }
     };
+
 /**
  * Returns an array of a given object's own properties.
  *
@@ -1399,6 +1592,7 @@ function keys(obj) {
     error(32, false, void 0, {'Highcharts.keys': 'use Object.keys'});
     return Object.keys(obj);
 }
+
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
  *
@@ -1414,16 +1608,15 @@ function keys(obj) {
 function offset(el) {
     var docElem = doc.documentElement, box = (el.parentElement || el.parentNode) ?
         el.getBoundingClientRect() :
-        {top: 0, left: 0, width: 0, height: 0};
+        {top: 0, left: 0};
     return {
         top: box.top + (win.pageYOffset || docElem.scrollTop) -
             (docElem.clientTop || 0),
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
-            (docElem.clientLeft || 0),
-        width: box.width,
-        height: box.height
+            (docElem.clientLeft || 0)
     };
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
@@ -1452,6 +1645,7 @@ function objectEach(obj, fn, ctx) {
         }
     }
 }
+
 /**
  * Iterate over an array.
  *
@@ -1555,6 +1749,7 @@ objectEach({
         return Array.prototype[val].apply(arr, [].slice.call(arguments, 1));
     };
 });
+
 /* eslint-disable valid-jsdoc */
 /**
  * Add an event listener.
@@ -1627,6 +1822,7 @@ function addEvent(el, type, fn, options) {
         removeEvent(el, type, fn);
     };
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Remove an event that was added with {@link Highcharts#addEvent}.
@@ -1660,6 +1856,7 @@ function removeEvent(el, type, fn) {
             removeEventListener.call(el, type, fn, false);
         }
     }
+
     /**
      * @private
      * @param {any} eventCollection - collection
@@ -1685,6 +1882,7 @@ function removeEvent(el, type, fn) {
             }
         });
     }
+
     var owner = typeof el === 'function' && el.prototype || el;
     if (Object.hasOwnProperty.call(owner, 'hcEvents')) {
         var events = owner.hcEvents;
@@ -1705,6 +1903,7 @@ function removeEvent(el, type, fn) {
         }
     }
 }
+
 /* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
@@ -1733,17 +1932,14 @@ function fireEvent(el, type, eventArguments, defaultFunction) {
     var e, i;
     eventArguments = eventArguments || {};
     if (doc.createEvent &&
-        (el.dispatchEvent ||
-            (el.fireEvent &&
-                // Enable firing events on Highcharts instance.
-                el !== H))) {
+        (el.dispatchEvent || el.fireEvent)) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
-        eventArguments = extend(e, eventArguments);
+        extend(e, eventArguments);
         if (el.dispatchEvent) {
-            el.dispatchEvent(eventArguments);
+            el.dispatchEvent(e);
         } else {
-            el.fireEvent(type, eventArguments);
+            el.fireEvent(type, e);
         }
     } else if (el.hcEvents) {
         if (!eventArguments.target) {
@@ -1802,6 +1998,7 @@ function fireEvent(el, type, eventArguments, defaultFunction) {
         defaultFunction.call(el, eventArguments);
     }
 }
+
 var serialMode;
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
@@ -1809,7 +2006,7 @@ var serialMode;
  * counter.
  *
  * @example
- * let id = uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
@@ -1823,6 +2020,7 @@ var uniqueKey = (function () {
         return 'highcharts-' + (serialMode ? '' : hash) + id++;
     };
 }());
+
 /**
  * Activates a serial mode for element IDs provided by
  * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
@@ -1850,9 +2048,47 @@ var uniqueKey = (function () {
 function useSerialIds(mode) {
     return (serialMode = pick(mode, serialMode));
 }
+
 function isFunction(obj) {
     return typeof obj === 'function';
 }
+
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+var getOptions = H.getOptions = function () {
+    return H.defaultOptions;
+};
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+var setOptions = H.setOptions = function (options) {
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time, options.global, options.time));
+    }
+    return H.defaultOptions;
+};
 // Register Highcharts as a plugin in jQuery
 if (win.jQuery) {
     /**
@@ -1927,8 +2163,10 @@ var utilitiesModule = {
     extendClass: extendClass,
     find: find,
     fireEvent: fireEvent,
+    format: format,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
+    getOptions: getOptions,
     getStyle: getStyle,
     inArray: inArray,
     isArray: isArray,
@@ -1941,6 +2179,7 @@ var utilitiesModule = {
     keys: keys,
     merge: merge,
     normalizeTickInterval: normalizeTickInterval,
+    numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,
     pad: pad,
@@ -1948,6 +2187,7 @@ var utilitiesModule = {
     pInt: pInt,
     relativeLength: relativeLength,
     removeEvent: removeEvent,
+    setOptions: setOptions,
     splat: splat,
     stableSort: stableSort,
     syncTimeout: syncTimeout,

@@ -23,7 +23,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * @phpstan-type Group = array{
+ * @psalm-type Group = array{
  *  label: string,
  *  label_catalogue: string,
  *  icon: string,
@@ -61,7 +61,8 @@ class Pool
 
     /**
      * @var array
-     * @phpstan-var array<string, Group>
+     * @phpstan-var array<string, array<string, mixed>>
+     * @psalm-var array<string, Group>
      */
     protected $adminGroups = [];
 
@@ -608,7 +609,8 @@ class Pool
      * @deprecated since sonata-project/admin-bundle 3.86, will be dropped in 4.0. Pass $adminGroups as argument 3
      * to the __construct method instead.
      *
-     * @phpstan-param array<string, Group> $adminGroups
+     * @phpstan-param array<string, array<string, mixed>> $adminGroups
+     * @psalm-param array<string, Group> $adminGroups
      *
      * @return void
      */

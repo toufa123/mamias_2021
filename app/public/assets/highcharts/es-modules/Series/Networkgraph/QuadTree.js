@@ -12,6 +12,7 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

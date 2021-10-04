@@ -24,7 +24,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,6 +2,6 @@
 
     abstract class AbstractMachine
     {

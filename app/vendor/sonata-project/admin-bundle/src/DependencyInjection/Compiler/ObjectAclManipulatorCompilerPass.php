@@ -13,16 +13,13 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\DependencyInjection\Compiler;
 
+use Sonata\AdminBundle\Command\GenerateObjectAclCommand;
 use Sonata\AdminBundle\Util\ObjectAclManipulatorInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * This class injects available object ACL manipulators to services which depend on them.
- *
- * NEXT_MAJOR: Remove the "since" part of the internal annotation.
- *
- * @internal since sonata-project/admin-bundle version 4.0
  *
  * @author Javier Spagnoletti <phansys@gmail.com>
  */
@@ -52,7 +49,7 @@ final class ObjectAclManipulatorCompilerPass implements CompilerPassInterface
             $availableManagers[$id] = $container->getDefinition($id);
         }
 
-        $generateAdminCommandDefinition = $container->getDefinition('sonata.admin.command.generate_object_acl');
+        $generateAdminCommandDefinition = $container->getDefinition(GenerateObjectAclCommand::class);
         $generateAdminCommandDefinition->replaceArgument(1, $availableManagers);
     }
 }

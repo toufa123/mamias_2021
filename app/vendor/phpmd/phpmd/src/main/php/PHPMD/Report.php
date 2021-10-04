@@ -17,9 +17,6 @@
 
 namespace PHPMD;
 
-use ArrayIterator;
-use PHPMD\Baseline\BaselineValidator;
-
 /**
  * The report class collects all found violations and further information about
  * a PHPMD run.
@@ -55,14 +52,6 @@ class Report
      */
     private $errors = array();
 
-    /** @var BaselineValidator|null */
-    private $baselineValidator;
-
-    public function __construct(BaselineValidator $baselineValidator = null)
-    {
-        $this->baselineValidator = $baselineValidator;
-    }
-
     /**
      * Adds a rule violation to this report.
      *
@@ -71,10 +60,6 @@ class Report
      */
     public function addRuleViolation(RuleViolation $violation)
     {
-        if ($this->baselineValidator !== null && $this->baselineValidator->isBaselined($violation)) {
-            return;
-        }
-
         $fileName = $violation->getFileName();
         if (!isset($this->ruleViolations[$fileName])) {
             $this->ruleViolations[$fileName] = array();
@@ -119,7 +104,7 @@ class Report
             }
         }
 
-        return new ArrayIterator($violations);
+        return new \ArrayIterator($violations);
     }
 
     /**
@@ -155,7 +140,7 @@ class Report
      */
     public function getErrors()
     {
-        return new ArrayIterator($this->errors);
+        return new \ArrayIterator($this->errors);
     }
 
     /**

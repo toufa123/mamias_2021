@@ -25,6 +25,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -32,6 +33,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 /* *
  *
@@ -45,6 +47,7 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
  */
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
+
     function ScatterSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -58,6 +61,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -70,6 +74,7 @@ var ScatterSeries = /** @class */ (function (_super) {
      */
     ScatterSeries.prototype.applyJitter = function () {
         var series = this, jitter = this.options.jitter, len = this.points.length;
+
         /**
          * Return a repeatable, pseudo-random number based on an integer
          * seed.
@@ -79,6 +84,7 @@ var ScatterSeries = /** @class */ (function (_super) {
             var rand = Math.sin(seed) * 10000;
             return rand - Math.floor(rand);
         }
+
         if (jitter) {
             this.points.forEach(function (point, i) {
                 ['x', 'y'].forEach(function (dim, j) {

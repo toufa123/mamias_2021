@@ -25,13 +25,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+
 var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
+
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
@@ -60,6 +63,7 @@ import '../../Core/Options.js';
  */
 var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
+
     function PieSeries() {
         /* *
          *
@@ -80,6 +84,7 @@ var PieSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -143,7 +148,8 @@ var PieSeries = /** @class */ (function (_super) {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || palette.neutralColor20
+                    stroke: options.color ||
+                        palette.neutralColor20
                 });
             }
         } else if (this.graph) { // Destroy the graph object.
@@ -227,14 +233,13 @@ var PieSeries = /** @class */ (function (_super) {
             var animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
-                var shadowGroup = void 0;
                 shapeArgs = point.shapeArgs;
                 // If the point is sliced, use special translation, else use
                 // plot area translation
                 groupTranslation = point.getTranslate();
                 if (!chart.styledMode) {
                     // Put the shadow behind all points
-                    shadowGroup = point.shadowGroup;
+                    var shadowGroup = point.shadowGroup;
                     if (shadow && !shadowGroup) {
                         shadowGroup = point.shadowGroup = renderer
                             .g('shadow')
@@ -319,7 +324,8 @@ var PieSeries = /** @class */ (function (_super) {
             }
             end = startAngleRad + (cumulative * circ);
             // set the shape
-            var shapeArgs = {
+            point.shapeType = 'arc';
+            point.shapeArgs = {
                 x: positions[0],
                 y: positions[1],
                 r: positions[2] / 2,
@@ -327,14 +333,12 @@ var PieSeries = /** @class */ (function (_super) {
                 start: Math.round(start * precision) / precision,
                 end: Math.round(end * precision) / precision
             };
-            point.shapeType = 'arc';
-            point.shapeArgs = shapeArgs;
             // Used for distance calculation for specific point.
             point.labelDistance = pick((point.options.dataLabels &&
                 point.options.dataLabels.distance), labelDistance);
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
-            point.labelDistance = relativeLength(point.labelDistance, shapeArgs.r);
+            point.labelDistance = relativeLength(point.labelDistance, point.shapeArgs.r);
             // Saved for later dataLabels distance calculation.
             series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
             // The angle must stay within -90 and 270 (#2645)
@@ -969,7 +973,7 @@ var PieSeries = /** @class */ (function (_super) {
 extend(PieSeries.prototype, {
     axisTypes: [],
     directTouch: true,
-    drawGraph: void 0,
+    drawGraph: null,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: ColumnSeries.prototype.drawTracker,
     getCenter: CenteredSeriesMixin.getCenter,

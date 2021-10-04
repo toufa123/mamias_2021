@@ -11,9 +11,6 @@
 import A from './Animation/AnimationUtilities.js';
 
 var animObject = A.animObject, setAnimation = A.setAnimation;
-import F from './FormatUtilities.js';
-
-var format = F.format;
 import H from './Globals.js';
 
 var isFirefox = H.isFirefox, marginNames = H.marginNames, win = H.win;
@@ -21,9 +18,9 @@ import Point from './Series/Point.js';
 import U from './Utilities.js';
 
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined,
-    discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge,
-    pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort, syncTimeout = U.syncTimeout,
-    wrap = U.wrap;
+    discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber,
+    merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort,
+    syncTimeout = U.syncTimeout, wrap = U.wrap;
 /**
  * Gets fired when the legend item belonging to a point is clicked. The default
  * action is to toggle the visibility of the point. This can be prevented by
@@ -150,6 +147,7 @@ var Legend = /** @class */ (function () {
         this.chart = chart;
         this.init(chart, options);
     }
+
     /* *
      *
      *  Functions
@@ -381,6 +379,7 @@ var Legend = /** @class */ (function () {
                 this[key] = this[key].destroy();
             }
         }
+
         // Destroy items
         this.getAllItems().forEach(function (item) {
             ['legendItem', 'legendGroup'].forEach(destroyItems, item);
@@ -491,14 +490,14 @@ var Legend = /** @class */ (function () {
     Legend.prototype.renderItem = function (item) {
         var legend = this, chart = legend.chart, renderer = chart.renderer, options = legend.options,
             horizontal = options.layout === 'horizontal', symbolWidth = legend.symbolWidth,
-            symbolPadding = options.symbolPadding || 0, itemStyle = legend.itemStyle,
+            symbolPadding = options.symbolPadding, itemStyle = legend.itemStyle,
             itemHiddenStyle = legend.itemHiddenStyle, itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
             ltr = !options.rtl, bBox, li = item.legendItem, isSeries = !item.series,
             series = !isSeries && item.series.drawLegendSymbol ?
                 item.series :
                 item, seriesOptions = series.options, showCheckbox = legend.createCheckboxForItem &&
-            seriesOptions &&
-            seriesOptions.showCheckbox,
+                seriesOptions &&
+                seriesOptions.showCheckbox,
             // full width minus text width
             itemExtraWidth = symbolWidth + symbolPadding +
                 itemDistance + (showCheckbox ? 20 : 0), useHTML = options.useHTML,
@@ -539,18 +538,10 @@ var Legend = /** @class */ (function () {
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
                 li.attr('y', legend.baseline);
-                legend.symbolHeight =
-                    options.symbolHeight || legend.fontMetrics.f;
-                if (options.squareSymbol) {
-                    legend.symbolWidth = pick(options.symbolWidth, Math.max(legend.symbolHeight, 16));
-                    itemExtraWidth = legend.symbolWidth + symbolPadding +
-                        itemDistance + (showCheckbox ? 20 : 0);
-                    if (ltr) {
-                        li.attr('x', legend.symbolWidth + symbolPadding);
-                    }
-                }
             }
             // Draw the legend symbol inside the group box
+            legend.symbolHeight =
+                options.symbolHeight || legend.fontMetrics.f;
             series.drawLegendSymbol(legend, item);
             if (legend.setItemEvents) {
                 legend.setItemEvents(item, li, useHTML);
@@ -967,9 +958,7 @@ var Legend = /** @class */ (function () {
         }
         // Reset the legend height and adjust the clipping rectangle
         pages.length = 0;
-        if (legendHeight &&
-            spaceHeight > 0 &&
-            legendHeight > spaceHeight &&
+        if (legendHeight > spaceHeight &&
             navOptions.enabled !== false) {
             this.clipHeight = clipHeight =
                 Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);

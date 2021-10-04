@@ -70,13 +70,13 @@ EOT
 
             $prevIndex = $tokens->getPrevMeaningfulToken($index);
             $prevToken = $tokens[$prevIndex];
-            if (!$prevToken->equals('$') && !$prevToken->isObjectOperator()) {
+            if (!$prevToken->equals('$') && !$prevToken->isGivenKind(T_OBJECT_OPERATOR)) {
                 continue;
             }
 
             $openingBrace = CT::T_DYNAMIC_VAR_BRACE_OPEN;
             $closingBrace = CT::T_DYNAMIC_VAR_BRACE_CLOSE;
-            if ($prevToken->isObjectOperator()) {
+            if ($prevToken->isGivenKind(T_OBJECT_OPERATOR)) {
                 $openingBrace = CT::T_DYNAMIC_PROP_BRACE_OPEN;
                 $closingBrace = CT::T_DYNAMIC_PROP_BRACE_CLOSE;
             }

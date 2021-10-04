@@ -73,10 +73,10 @@ var palette = {
     /**
      * Positive indicator color
      */
-    positiveColor: '#06b535',
+    indicatorPositiveLine: '#06b535',
     /**
      * Negative indicator color
      */
-    negativeColor: '#f21313'
+    indicatorNegativeLine: '#f21313'
 };
 export default palette;

@@ -49,19 +49,19 @@ Example configuration:
 Background Options
 ~~~~~~~~~~~~~~~~~~
 
-**color:** ``string``
+:strong:`color:` ``string``
     Sets the background color HEX value. The default color is white (``#fff``).
 
-**size:** ``int[]``
+:strong:`size:` ``int[]``
     Sets the generated background size as an integer array containing the dimensions
     as width and height values.
 
-**position:** ``string``
+:strong:`position:` ``string``
     Sets the position of the input image on the newly created background image. Valid
     values: ``topleft``, ``top``, ``topright``, ``left``, ``center``, ``right``, ``bottomleft``,
     ``bottom``, and ``bottomright``.
 
-**transparency:** ``integer``
+:strong:`transparency:` ``integer``
     Sets the background alpha value. The value should be within a range of 0 - 100.
 
 
@@ -125,7 +125,7 @@ Example configuration:
 Interlace Options
 ~~~~~~~~~~~~~~~~~
 
-**mode:** ``string``
+:strong:`mode:` ``string``
     Sets the interlace mode to encode the file with. Valid values: ``none``, ``line``,
     ``plane``, and ``partition``.
 
@@ -197,15 +197,15 @@ Example configuration:
 Watermark Options
 ~~~~~~~~~~~~~~~~~
 
-**image:** ``string``
+:strong:`image:` ``string``
     Sets the location of the watermark image. The value of this option is prepended
     with the resolved value of the ``%kernel.project_dir%`` parameter.
 
-**size:** ``float``
+:strong:`size:` ``float``
     Sets the size of the watermark as a relative ration, relative to the original
     input image.
 
-**position:** ``string``
+:strong:`position:` ``string``
     Sets the position of the watermark on the input image. Valid values: ``topleft``,
     ``top``, ``topright``, ``left``, ``center``, ``right``, ``bottomleft``, ``bottom``,
     ``bottomright`` and ``multiple``.

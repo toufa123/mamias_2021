@@ -18,6 +18,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php class Foo { 
    -use Z; use A; }
    +use A; use Z; }

@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Vector plot series module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Series/Vector/VectorSeries.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Globals.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (A, H, SeriesRegistry, U) {
         /* *
          *
@@ -87,6 +89,7 @@
          */
         var VectorSeries = /** @class */ (function (_super) {
             __extends(VectorSeries, _super);
+
             function VectorSeries() {
                 /* *
                  *
@@ -107,6 +110,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions
@@ -156,18 +160,18 @@
             };
             /*
             drawLegendSymbol: function (legend, item) {
-                let options = legend.options,
-                    symbolHeight = legend.symbolHeight,
-                    square = options.squareSymbol,
-                    symbolWidth = square ? symbolHeight : legend.symbolWidth,
-                    path = this.arrow.call({
-                        lengthMax: 1,
-                        options: {
-                            vectorLength: symbolWidth
-                        }
-                    }, {
-                        length: 1
-                    });
+                var options = legend.options,
+                        symbolHeight = legend.symbolHeight,
+                        square = options.squareSymbol,
+                        symbolWidth = square ? symbolHeight : legend.symbolWidth,
+                        path = this.arrow.call({
+                            lengthMax: 1,
+                            options: {
+                                vectorLength: symbolWidth
+                            }
+                        }, {
+                            length: 1
+                        });
                 item.legendLine = this.chart.renderer.path(path)
                 .addClass('highcharts-point')
                 .attr({
@@ -188,7 +192,7 @@
                     var plotX = point.plotX,
                         plotY = point.plotY;
                     if (this.options.clip === false ||
-                        chart.isInsidePlot(plotX, plotY, {inverted: chart.inverted})) {
+                        chart.isInsidePlot(plotX, plotY, chart.inverted)) {
                         if (!point.graphic) {
                             point.graphic = this.chart.renderer
                                 .path()

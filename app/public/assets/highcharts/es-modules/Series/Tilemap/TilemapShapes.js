@@ -12,11 +12,15 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
+
 var noop = H.noop;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var _a = SeriesRegistry.seriesTypes, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
+
 var clamp = U.clamp, pick = U.pick;
+
 /**
  * Utility func to get padding definition from tile size division
  * @private
@@ -35,6 +39,7 @@ function tilePaddingFromTileSize(series, xDiv, yDiv) {
         yPad: (options.rowsize || 1) / -yDiv
     };
 }
+
 /* *
  *
  *  Registry

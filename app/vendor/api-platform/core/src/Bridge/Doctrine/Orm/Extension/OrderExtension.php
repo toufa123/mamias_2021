@@ -56,7 +56,7 @@ final class OrderExtension implements ContextAwareQueryCollectionExtensionInterf
             if (empty($defaultOrder)) {
                 $defaultOrder = $this->resourceMetadataFactory->create($resourceClass)->getAttribute('order');
             }
-            if (null !== $defaultOrder) {
+            if (\is_array($defaultOrder)) {
                 foreach ($defaultOrder as $field => $order) {
                     if (\is_int($field)) {
                         // Default direction

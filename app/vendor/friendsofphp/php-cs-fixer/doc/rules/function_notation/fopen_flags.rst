@@ -33,6 +33,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$a = fopen($foo, 'rwt');
    +$a = fopen($foo, 'rwb');
@@ -46,6 +47,7 @@ With configuration: ``['b_mode' => false]``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$a = fopen($foo, 'rwt');
    +$a = fopen($foo, 'rw');

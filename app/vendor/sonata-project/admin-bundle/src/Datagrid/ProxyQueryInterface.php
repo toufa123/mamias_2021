@@ -29,7 +29,7 @@ interface ProxyQueryInterface
     public function __call($name, $args);
 
     /**
-     * @return array<object>|\Traversable<object>
+     * @return mixed
      */
     public function execute();
 

@@ -12,7 +12,7 @@
 namespace Symfony\Component\Security\Acl\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Driver\Statement;
 use Symfony\Component\Security\Acl\Domain\Acl;
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\FieldEntry;
@@ -77,7 +77,7 @@ class AclProvider implements AclProviderInterface
         $sql = $this->getFindChildrenSql($parentOid, $directChildrenOnly);
 
         $children = [];
-        foreach ($this->connection->executeQuery($sql)->fetchAllAssociative() as $data) {
+        foreach ($this->connection->executeQuery($sql)->fetchAll() as $data) {
             $children[] = new ObjectIdentity($data['object_identifier'], $data['class_type']);
         }
 
@@ -384,7 +384,7 @@ QUERY;
      */
     final protected function retrieveObjectIdentityPrimaryKey(ObjectIdentityInterface $oid)
     {
-        return $this->connection->executeQuery($this->getSelectObjectIdentityIdSql($oid))->fetchOne();
+        return $this->connection->executeQuery($this->getSelectObjectIdentityIdSql($oid))->fetchColumn();
     }
 
     /**
@@ -421,7 +421,7 @@ QUERY;
         $sql = $this->getAncestorLookupSql($batch);
 
         $ancestorIds = [];
-        foreach ($this->connection->executeQuery($sql)->fetchAllAssociative() as $data) {
+        foreach ($this->connection->executeQuery($sql)->fetchAll() as $data) {
             // FIXME: skip ancestors which are cached
             // Fix: Oracle returns keys in uppercase
             $ancestorIds[] = reset($data);
@@ -481,7 +481,7 @@ QUERY;
      *
      * @throws \RuntimeException
      */
-    private function hydrateObjectIdentities(Result $stmt, array $oidLookup, array $sids)
+    private function hydrateObjectIdentities(Statement $stmt, array $oidLookup, array $sids)
     {
         $parentIdToFill = new \SplObjectStorage();
         $acls = $aces = $emptyArray = [];
@@ -506,8 +506,8 @@ QUERY;
 
         // fetchAll() consumes more memory than consecutive calls to fetch(),
         // but it is faster
-        foreach ($stmt->fetchAllNumeric() as $data) {
-            [$aclId,
+        foreach ($stmt->fetchAll(\PDO::FETCH_NUM) as $data) {
+            list($aclId,
                  $objectIdentifier,
                  $parentObjectIdentityId,
                  $entriesInheriting,
@@ -522,7 +522,7 @@ QUERY;
                  $auditSuccess,
                  $auditFailure,
                  $username,
-                 $securityIdentifier] = array_values($data);
+                 $securityIdentifier) = array_values($data);
 
             // has the ACL been hydrated during this hydration cycle?
             if (isset($acls[$aclId])) {

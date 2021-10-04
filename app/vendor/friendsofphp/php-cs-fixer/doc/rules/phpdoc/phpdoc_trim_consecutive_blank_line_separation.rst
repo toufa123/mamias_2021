@@ -14,7 +14,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,16 +2,13 @@
     /**
      * Summary.
      *

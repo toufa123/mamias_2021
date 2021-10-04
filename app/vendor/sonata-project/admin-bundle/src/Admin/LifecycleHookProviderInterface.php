@@ -13,9 +13,6 @@ declare(strict_types=1);
 
 namespace Sonata\AdminBundle\Admin;
 
-use Sonata\AdminBundle\Exception\LockException;
-use Sonata\AdminBundle\Exception\ModelManagerException;
-
 /**
  * This interface can be implemented to provide hooks that will be called
  * during the lifecycle of the object.
@@ -31,9 +28,6 @@ interface LifecycleHookProviderInterface
      *
      * @param object $object
      *
-     * @throws ModelManagerException
-     * @throws LockException
-     *
      * @return object
      *
      * @phpstan-param T $object
@@ -46,8 +40,6 @@ interface LifecycleHookProviderInterface
      *
      * @param object $object
      *
-     * @throws ModelManagerException
-     *
      * @return object
      *
      * @phpstan-param T $object
@@ -59,8 +51,6 @@ interface LifecycleHookProviderInterface
      * This method should call preRemove, do the removal, and call postRemove.
      *
      * @param object $object
-     *
-     * @throws ModelManagerException
      *
      * @phpstan-param T $object
      */

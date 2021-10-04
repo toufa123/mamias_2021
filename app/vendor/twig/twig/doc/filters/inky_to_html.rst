@@ -32,13 +32,8 @@ You can also use the filter on an included file:
 
         $ composer require twig/inky-extra
 
-    Then, on Symfony projects, install the ``twig/extra-bundle``:
-
-    .. code-block:: bash
-
-        $ composer require twig/extra-bundle
-
-    Otherwise, add the extension explicitly on the Twig environment::
+    Then, use the ``twig/extra-bundle`` on Symfony projects or add the extension
+    explicitly on the Twig environment::
 
         use Twig\Extra\Inky\InkyExtension;
 

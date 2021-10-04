@@ -98,7 +98,8 @@ class DateType extends AbstractType
     {
         $builder
             ->add('type', DateOperatorType::class, ['required' => false])
-            ->add('value', $options['field_type'], array_merge(['required' => false], $options['field_options']));
+            ->add('value', $options['field_type'], array_merge(['required' => false], $options['field_options']))
+        ;
     }
 
     /**
@@ -108,7 +109,7 @@ class DateType extends AbstractType
     {
         $resolver->setDefaults([
             'field_type' => FormDateType::class,
-            'field_options' => ['format' => FormDateType::HTML5_FORMAT],
+            'field_options' => ['date_format' => FormDateType::HTML5_FORMAT],
         ]);
     }
 }

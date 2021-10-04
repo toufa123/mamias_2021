@@ -25,14 +25,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import MapPointPoint from './MapPointPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge;
 import '../../Core/Options.js';
 import '../Scatter/ScatterSeries.js';
@@ -50,6 +53,7 @@ import '../Scatter/ScatterSeries.js';
  */
 var MapPointSeries = /** @class */ (function (_super) {
     __extends(MapPointSeries, _super);
+
     function MapPointSeries() {
         /* *
          *
@@ -68,6 +72,7 @@ var MapPointSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions

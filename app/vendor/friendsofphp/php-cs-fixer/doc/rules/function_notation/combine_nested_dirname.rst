@@ -19,6 +19,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -dirname(dirname(dirname($path)));
    +dirname($path, 3);

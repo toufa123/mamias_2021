@@ -12,29 +12,27 @@
 
 namespace PhpCsFixer\Fixer\ArrayNotation;
 
-use PhpCsFixer\AbstractProxyFixer;
+use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer;
-use PhpCsFixer\Fixer\DeprecatedFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
+use PhpCsFixer\FixerConfiguration\InvalidOptionsForEnvException;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
+use PhpCsFixer\Tokenizer\CT;
+use PhpCsFixer\Tokenizer\Token;
+use PhpCsFixer\Tokenizer\Tokens;
+use PhpCsFixer\Tokenizer\TokensAnalyzer;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Sebastiaan Stok <s.stok@rollerscapes.net>
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- *
- * @deprecated
  */
-final class TrailingCommaInMultilineArrayFixer extends AbstractProxyFixer implements ConfigurationDefinitionFixerInterface, DeprecatedFixerInterface
+final class TrailingCommaInMultilineArrayFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var TrailingCommaInMultilineFixer
-     */
-    private $fixer;
-
     /**
      * {@inheritdoc}
      */
@@ -63,42 +61,87 @@ SAMPLE
         );
     }
 
-    public function configure(array $configuration = null)
+    /**
+     * {@inheritdoc}
+     *
+     * Must run after NoMultilineWhitespaceAroundDoubleArrowFixer.
+     */
+    public function getPriority()
     {
-        $configuration['elements'] = [TrailingCommaInMultilineFixer::ELEMENTS_ARRAYS];
-        $this->getFixer()->configure($configuration);
-        $this->configuration = $configuration;
+        return 0;
     }
 
-    public function getConfigurationDefinition()
+    /**
+     * {@inheritdoc}
+     */
+    public function isCandidate(Tokens $tokens)
+    {
+        return $tokens->isAnyTokenKindsFound([T_ARRAY, CT::T_ARRAY_SQUARE_BRACE_OPEN]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    {
+        $tokensAnalyzer = new TokensAnalyzer($tokens);
+
+        for ($index = $tokens->count() - 1; $index >= 0; --$index) {
+            if ($tokensAnalyzer->isArray($index) && $tokensAnalyzer->isArrayMultiLine($index)) {
+                $this->fixArray($tokens, $index);
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
     {
         return new FixerConfigurationResolver([
-            $this->getFixer()->getConfigurationDefinition()->getOptions()[0],
+            (new FixerOptionBuilder('after_heredoc', 'Whether a trailing comma should also be placed after heredoc end.'))
+                ->setAllowedTypes(['bool'])
+                ->setDefault(false)
+                ->setNormalizer(static function (Options $options, $value) {
+                    if (\PHP_VERSION_ID < 70300 && $value) {
+                        throw new InvalidOptionsForEnvException('"after_heredoc" option can only be enabled with PHP 7.3+.');
+                    }
+
+                    return $value;
+                })
+                ->getOption(),
         ]);
     }
 
     /**
-     * {@inheritdoc}
+     * @param int $index
      */
-    public function getSuccessorsNames()
+    private function fixArray(Tokens $tokens, $index)
     {
-        return array_keys($this->proxyFixers);
-    }
+        $startIndex = $index;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createProxyFixers()
-    {
-        return [$this->getFixer()];
-    }
-
-    private function getFixer()
-    {
-        if (null === $this->fixer) {
-            $this->fixer = new TrailingCommaInMultilineFixer();
+        if ($tokens[$startIndex]->isGivenKind(T_ARRAY)) {
+            $startIndex = $tokens->getNextTokenOfKind($startIndex, ['(']);
+            $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $startIndex);
+        } else {
+            $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, $startIndex);
         }
 
-        return $this->fixer;
+        $beforeEndIndex = $tokens->getPrevMeaningfulToken($endIndex);
+        $beforeEndToken = $tokens[$beforeEndIndex];
+
+        // if there is some item between braces then add `,` after it
+        if (
+            $startIndex !== $beforeEndIndex && !$beforeEndToken->equals(',')
+            && ($this->configuration['after_heredoc'] || !$beforeEndToken->isGivenKind(T_END_HEREDOC))
+        ) {
+            $tokens->insertAt($beforeEndIndex + 1, new Token(','));
+
+            $endToken = $tokens[$endIndex];
+
+            if (!$endToken->isComment() && !$endToken->isWhitespace()) {
+                $tokens->ensureWhitespaceAtIndex($endIndex, 1, ' ');
+            }
+        }
     }
 }

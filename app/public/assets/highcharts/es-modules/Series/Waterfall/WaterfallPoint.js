@@ -24,11 +24,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';
+
 var isNumber = U.isNumber;
 import U from '../../Core/Utilities.js';
 /* *
@@ -38,12 +40,14 @@ import U from '../../Core/Utilities.js';
  * */
 var WaterfallPoint = /** @class */ (function (_super) {
     __extends(WaterfallPoint, _super);
+
     function WaterfallPoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.options = void 0;
         _this.series = void 0;
         return _this;
     }
+
     /* *
      *
      * Functions

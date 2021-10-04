@@ -134,12 +134,6 @@ final class ArgumentsAnalyzer
                 continue;
             }
 
-            if (\defined('T_ATTRIBUTE') && $token->isGivenKind(T_ATTRIBUTE)) {
-                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ATTRIBUTE, $index);
-
-                continue;
-            }
-
             if ($sawName) {
                 $info['default'] .= $token->getContent();
             } else {

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @see       https://github.com/laminas/laminas-code for the canonical source repository
+ * @copyright https://github.com/laminas/laminas-code/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas/laminas-code/blob/master/LICENSE.md New BSD License
+ */
+
 namespace Laminas\Code\Generator;
 
 use Laminas\Code\Reflection\PropertyReflection;
@@ -10,16 +16,26 @@ use function strtolower;
 
 class PropertyGenerator extends AbstractMemberGenerator
 {
-    public const FLAG_CONSTANT = 0x08;
-
-    protected bool $isConst = false;
-
-    protected ?PropertyValueGenerator $defaultValue = null;
-
-    private bool $omitDefaultValue = false;
+    const FLAG_CONSTANT = 0x08;
 
     /**
-     * @return static
+     * @var bool
+     */
+    protected $isConst;
+
+    /**
+     * @var PropertyValueGenerator
+     */
+    protected $defaultValue;
+
+    /**
+     * @var bool
+     */
+    private $omitDefaultValue = false;
+
+    /**
+     * @param  PropertyReflection $reflectionProperty
+     * @return PropertyGenerator
      */
     public static function fromReflection(PropertyReflection $reflectionProperty)
     {
@@ -29,7 +45,7 @@ class PropertyGenerator extends AbstractMemberGenerator
 
         $allDefaultProperties = $reflectionProperty->getDeclaringClass()->getDefaultProperties();
 
-        $defaultValue = $allDefaultProperties[$reflectionProperty->getName()] ?? null;
+        $defaultValue = $allDefaultProperties[$reflectionProperty->getName()];
         $property->setDefaultValue($defaultValue);
         if ($defaultValue === null) {
             $property->omitDefaultValue = true;
@@ -68,9 +84,10 @@ class PropertyGenerator extends AbstractMemberGenerator
      * @configkey static             bool
      * @configkey visibility         string
      * @configkey omitdefaultvalue   bool
+     *
      * @throws Exception\InvalidArgumentException
      * @param  array $array
-     * @return static
+     * @return PropertyGenerator
      */
     public static function fromArray(array $array)
     {
@@ -119,8 +136,8 @@ class PropertyGenerator extends AbstractMemberGenerator
     }
 
     /**
-     * @param ?string $name
-     * @param PropertyValueGenerator|string|array|null $defaultValue
+     * @param string $name
+     * @param PropertyValueGenerator|string|array $defaultValue
      * @param int $flags
      */
     public function __construct($name = null, $defaultValue = null, $flags = self::FLAG_PUBLIC)
@@ -163,7 +180,8 @@ class PropertyGenerator extends AbstractMemberGenerator
      * @param PropertyValueGenerator|mixed $defaultValue
      * @param string                       $defaultValueType
      * @param string                       $defaultValueOutputMode
-     * @return $this
+     *
+     * @return PropertyGenerator
      */
     public function setDefaultValue(
         $defaultValue,
@@ -180,7 +198,7 @@ class PropertyGenerator extends AbstractMemberGenerator
     }
 
     /**
-     * @return ?PropertyValueGenerator
+     * @return PropertyValueGenerator
      */
     public function getDefaultValue()
     {
@@ -211,8 +229,10 @@ class PropertyGenerator extends AbstractMemberGenerator
                     $this->name
                 ));
             }
-            return $output . $this->indentation . $this->getVisibility() . ' const ' . $name . ' = '
+            $output .= $this->indentation . $this->getVisibility() . ' const ' . $name . ' = '
                 . ($defaultValue !== null ? $defaultValue->generate() : 'null;');
+
+            return $output;
         }
 
         $output .= $this->indentation . $this->getVisibility() . ($this->isStatic() ? ' static' : '') . ' $' . $name;
@@ -225,6 +245,7 @@ class PropertyGenerator extends AbstractMemberGenerator
     }
 
     /**
+     * @param bool $omit
      * @return PropertyGenerator
      */
     public function omitDefaultValue(bool $omit = true)

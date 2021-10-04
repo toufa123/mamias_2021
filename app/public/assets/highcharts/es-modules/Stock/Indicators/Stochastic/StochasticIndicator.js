@@ -23,14 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Stochastic series type.
@@ -43,6 +46,7 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
  */
 var StochasticIndicator = /** @class */ (function (_super) {
     __extends(StochasticIndicator, _super);
+
     function StochasticIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -50,6 +54,7 @@ var StochasticIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     StochasticIndicator.prototype.init = function () {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -127,9 +132,6 @@ var StochasticIndicator = /** @class */ (function (_super) {
          * @excluding index, period
          */
         params: {
-            // Index and period are unchangeable, do not inherit (#15362)
-            index: void 0,
-            period: void 0,
             /**
              * Periods for Stochastic oscillator: [%K, %D].
              *

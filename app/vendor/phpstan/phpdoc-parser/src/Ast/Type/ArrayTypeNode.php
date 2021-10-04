@@ -2,12 +2,8 @@
 
 namespace PHPStan\PhpDocParser\Ast\Type;
 
-use PHPStan\PhpDocParser\Ast\NodeAttributes;
-
 class ArrayTypeNode implements TypeNode
 {
-
-	use NodeAttributes;
 
 	/** @var TypeNode */
 	public $type;

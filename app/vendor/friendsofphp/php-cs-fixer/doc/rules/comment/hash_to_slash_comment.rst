@@ -18,5 +18,6 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php # comment
    +<?php // comment

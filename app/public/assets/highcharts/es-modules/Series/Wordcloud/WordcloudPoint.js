@@ -26,16 +26,20 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend;
 var WordcloudPoint = /** @class */ (function (_super) {
     __extends(WordcloudPoint, _super);
+
     function WordcloudPoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -50,6 +54,7 @@ var WordcloudPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
+
     /* *
      *
      * Functions

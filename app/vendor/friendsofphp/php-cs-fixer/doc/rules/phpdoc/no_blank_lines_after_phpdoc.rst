@@ -14,8 +14,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-
+   @@ -3,6 +3,4 @@
     /**
      * This is the bar class.
      */

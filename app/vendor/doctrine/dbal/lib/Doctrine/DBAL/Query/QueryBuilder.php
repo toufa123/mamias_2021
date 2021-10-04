@@ -3,13 +3,12 @@
 namespace Doctrine\DBAL\Query;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\ForwardCompatibility;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\DBAL\Types\Type;
-use Doctrine\Deprecations\Deprecation;
 
 use function array_filter;
 use function array_key_exists;
@@ -84,7 +83,7 @@ class QueryBuilder
     /**
      * The complete SQL string for this query.
      *
-     * @var string|null
+     * @var string
      */
     private $sql;
 
@@ -121,7 +120,7 @@ class QueryBuilder
      *
      * @var int
      */
-    private $firstResult = 0;
+    private $firstResult;
 
     /**
      * The maximum number of results to retrieve or NULL to retrieve all results.
@@ -201,16 +200,14 @@ class QueryBuilder
     /**
      * Executes this query using the bound parameters and their types.
      *
-     * @return ForwardCompatibility\DriverStatement|int
+     * @return ResultStatement|int
      *
      * @throws Exception
      */
     public function execute()
     {
         if ($this->type === self::SELECT) {
-            return ForwardCompatibility\Result::ensure(
-                $this->connection->executeQuery($this->getSQL(), $this->params, $this->paramTypes)
-            );
+            return $this->connection->executeQuery($this->getSQL(), $this->params, $this->paramTypes);
         }
 
         return $this->connection->executeStatement($this->getSQL(), $this->params, $this->paramTypes);
@@ -272,7 +269,7 @@ class QueryBuilder
      *
      * @param int|string           $key   Parameter position or name
      * @param mixed                $value Parameter value
-     * @param int|string|Type|null $type  Parameter type
+     * @param int|string|Type|null $type  One of the {@link ParameterType} constants or DBAL type
      *
      * @return $this This QueryBuilder instance.
      */
@@ -486,15 +483,6 @@ class QueryBuilder
             return $this;
         }
 
-        if (is_array($select)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::select is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
-        }
-
         $selects = is_array($select) ? $select : func_get_args();
 
         return $this->add('select', $selects);
@@ -543,15 +531,6 @@ class QueryBuilder
 
         if (empty($select)) {
             return $this;
-        }
-
-        if (is_array($select)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::addSelect is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
         }
 
         $selects = is_array($select) ? $select : func_get_args();
@@ -932,15 +911,6 @@ class QueryBuilder
             return $this;
         }
 
-        if (is_array($groupBy)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::groupBy is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
-        }
-
         $groupBy = is_array($groupBy) ? $groupBy : func_get_args();
 
         return $this->add('groupBy', $groupBy, false);
@@ -968,15 +938,6 @@ class QueryBuilder
     {
         if (empty($groupBy)) {
             return $this;
-        }
-
-        if (is_array($groupBy)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::addGroupBy is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
         }
 
         $groupBy = is_array($groupBy) ? $groupBy : func_get_args();
@@ -1258,7 +1219,7 @@ class QueryBuilder
      */
     private function isLimitQuery()
     {
-        return $this->maxResults !== null || $this->firstResult !== 0;
+        return $this->maxResults !== null || $this->firstResult !== null;
     }
 
     /**

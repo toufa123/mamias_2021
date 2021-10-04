@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php $x = array(1 , "2");
    +<?php $x = array(1, "2");
 
@@ -40,6 +41,7 @@ With configuration: ``['after_heredoc' => true]``.
 
    --- Original
    +++ New
+   @@ -1,6 +1,5 @@
     <?php
         $x = [<<<EOD
     foo

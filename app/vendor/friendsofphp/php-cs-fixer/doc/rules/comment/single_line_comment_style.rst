@@ -29,6 +29,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,7 +1,7 @@
     <?php
    -/* asterisk comment */
    +// asterisk comment
@@ -37,12 +38,6 @@ Example #1
    -# hash comment
    +// hash comment
     $b = 2;
-
-    /*
-     * multi-line
-     * comment
-     */
-    $c = 3;
 
 Example #2
 ~~~~~~~~~~
@@ -53,6 +48,7 @@ With configuration: ``['comment_types' => ['asterisk']]``.
 
    --- Original
    +++ New
+   @@ -1,9 +1,7 @@
     <?php
    -/* first comment */
    +// first comment
@@ -64,12 +60,6 @@ With configuration: ``['comment_types' => ['asterisk']]``.
    +// second comment
     $b = 2;
 
-    /*
-     * third
-     * comment
-     */
-    $c = 3;
-
 Example #3
 ~~~~~~~~~~
 
@@ -79,6 +69,7 @@ With configuration: ``['comment_types' => ['hash']]``.
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php # comment
    +<?php // comment
 

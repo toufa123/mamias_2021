@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+
 var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 /* *
@@ -16,6 +17,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
  *  Functions
  *
  * */
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * Create symbols for the zoom buttons
@@ -43,6 +45,7 @@ function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBo
         ['Z']
     ];
 }
+
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, options) {
     var r = (options && options.r) || 0;
     return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);

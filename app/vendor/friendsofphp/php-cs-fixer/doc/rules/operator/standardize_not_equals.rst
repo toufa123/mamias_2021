@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$a = $b <> $c;
    +$a = $b != $c;

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import Highcharts from '../Core/Globals.js';
+
 var win = Highcharts.win, doc = win.document, domurl = win.URL || win.webkitURL || win;
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.

@@ -11,8 +11,10 @@
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import '../../Series/Networkgraph/Layouts.js';
+
 var Reingold = H.layouts['reingold-fruchterman'];
 import U from '../../Core/Utilities.js';
+
 var addEvent = U.addEvent, extendClass = U.extendClass, pick = U.pick;
 /* *
  *
@@ -79,15 +81,6 @@ H.layouts.packedbubble = extendClass(Reingold, {
                 }
             });
         }
-    },
-    isStable: function () {
-        var tempDiff = Math.abs(this.prevSystemTemperature -
-            this.systemTemperature);
-        var upScaledTemperature = 10 * this.systemTemperature /
-            Math.sqrt(this.nodes.length);
-        return Math.abs(upScaledTemperature) < 1 &&
-            tempDiff < 0.00001 ||
-            this.temperature <= 0;
     },
     setCircularPositions: function () {
         var layout = this, box = layout.box, nodes = layout.nodes, nodesLength = nodes.length + 1,

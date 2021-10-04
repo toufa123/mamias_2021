@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,11 +1,11 @@
     <?php
    -    FOREACH($a AS $B) {
    -        TRY {

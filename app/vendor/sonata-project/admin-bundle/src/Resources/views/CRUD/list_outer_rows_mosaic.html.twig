@@ -17,7 +17,7 @@ This template can be customized to match your needs. You should only extends the
 -->
 
 <tr>
-    <td colspan="{{ admin.list.elements|length - (app.request.isXmlHttpRequest ? (admin.list.has(constant('Sonata\\AdminBundle\\Datagrid\\ListMapper::NAME_ACTIONS')) + admin.list.has(constant('Sonata\\AdminBundle\\Datagrid\\ListMapper::NAME_BATCH'))) : 0) }}">
+    <td colspan="{{ admin.list.elements|length - (app.request.isXmlHttpRequest ? (admin.list.has('_action') + admin.list.has('batch')) : 0) }}">
         <div class="row">
             {% for object in admin.datagrid.results %}
                 {% set meta = admin.getObjectMetadata(object) %}
@@ -73,12 +73,12 @@ This template can be customized to match your needs. You should only extends the
                      objectId="{{ admin.id(object) }}">
                     {% if admin.hasAccess('edit', object) and admin.hasRoute('edit') %}
                         <a class="mosaic-inner-link"
-                           href="{{ admin.generateObjectUrl('edit', object) }}">
+                           href="{{ admin.generateUrl('edit', {'id' : object|sonata_urlsafeid(admin) }) }}">
                             {{ mosaic_content }}
                         </a>
                     {% elseif admin.hasAccess('show', object) and admin.hasRoute('show') %}
                         <a class="mosaic-inner-link"
-                           href="{{ admin.generateObjectUrl('show', object) }}">
+                           href="{{ admin.generateUrl('show', {'id' : object|sonata_urlsafeid(admin) }) }}">
                             {{ mosaic_content }}
                         </a>
                     {% else %}

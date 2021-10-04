@@ -14,6 +14,7 @@
 var HiddenAxis = /** @class */ (function () {
     function HiddenAxis() {
     }
+
     /**
      * Augments methods for the x axis in order to hide it completely. Used for
      * the X axis in gauges
@@ -34,7 +35,7 @@ var HiddenAxis = /** @class */ (function () {
         };
         axis.createLabelCollector = function () {
             return function () {
-                return;
+
             };
         };
         axis.setScale = function () {

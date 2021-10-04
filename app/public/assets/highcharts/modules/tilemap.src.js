@@ -1,9 +1,9 @@
 /**
- * @license Highmaps JS v9.1.0 (2021-05-03)
+ * @license Highmaps JS v9.0.0 (2021-02-02)
  *
  * Tilemap module
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Series/Tilemap/TilemapPoint.js', [_modules['Mixins/ColorSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (ColorSeriesModule, SeriesRegistry, U) {
         /* *
          *
@@ -76,6 +78,7 @@
          * */
         var TilemapPoint = /** @class */ (function (_super) {
             __extends(TilemapPoint, _super);
+
             function TilemapPoint() {
                 /* *
                  *
@@ -91,6 +94,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions
@@ -139,6 +143,7 @@
             ScatterSeries = _a.scatter;
         var clamp = U.clamp,
             pick = U.pick;
+
         /**
          * Utility func to get padding definition from tile size division
          * @private
@@ -157,6 +162,7 @@
                 yPad: (options.rowsize || 1) / -yDiv
             };
         }
+
         /* *
          *
          *  Registry
@@ -571,6 +577,7 @@
          */
         var TilemapSeries = /** @class */ (function (_super) {
             __extends(TilemapSeries, _super);
+
             function TilemapSeries() {
                 /* *
                  *
@@ -591,6 +598,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions

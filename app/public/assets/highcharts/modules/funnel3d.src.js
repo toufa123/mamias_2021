@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Highcharts funnel module
  *
- * (c) 2010-2021 Kacper Madej
+ * (c) 2010-2019 Kacper Madej
  *
  * License: www.highcharts.com/license
  */
@@ -23,11 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Series/Funnel3D/Funnel3DPoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -75,6 +77,7 @@
          * */
         var Funnel3DPoint = /** @class */ (function (_super) {
             __extends(Funnel3DPoint, _super);
+
             function Funnel3DPoint() {
                 /* *
                  *
@@ -89,6 +92,7 @@
                 _this.y = void 0;
                 return _this;
             }
+
             return Funnel3DPoint;
         }(ColumnSeries.prototype.pointClass));
         extend(Funnel3DPoint.prototype, {
@@ -372,8 +376,7 @@
              * Generates paths and zIndexes.
              * @private
              */
-            funnel3dPath: function (shapeArgs // @todo: Type it. It's an extended SVGAttributes.
-            ) {
+            funnel3dPath: function (shapeArgs) {
                 // Check getCylinderEnd for better error message if
                 // the cylinder module is missing
                 if (!this.getCylinderEnd) {
@@ -541,6 +544,7 @@
          */
         var Funnel3DSeries = /** @class */ (function (_super) {
             __extends(Funnel3DSeries, _super);
+
             function Funnel3DSeries() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -556,6 +560,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions
@@ -613,12 +618,12 @@
                 extend(this.xAxis.options, {
                     gridLineWidth: 0,
                     lineWidth: 0,
-                    title: void 0,
+                    title: null,
                     tickPositions: []
                 });
-                merge(true, this.yAxis.options, {
+                extend(this.yAxis.options, {
                     gridLineWidth: 0,
-                    title: void 0,
+                    title: null,
                     labels: {
                         enabled: false
                     }
@@ -663,7 +668,7 @@
                     y5,
                     //
                     h,
-                    shapeArgs; // @todo: Type it. It's an extended SVGAttributes.
+                    shapeArgs;
                 // Return the width at a specific y coordinate
                 series.getWidthAt = getWidthAt = function (y) {
                     var top = (centerY - height / 2);
@@ -773,7 +778,7 @@
                         x: centerX,
                         width: getWidthAt(point.plotY),
                         y: y1,
-                        bottom: shapeArgs.height || 0,
+                        bottom: shapeArgs.height,
                         fullWidth: width
                     };
                     if (!ignoreHiddenPoint || point.visible !== false) {

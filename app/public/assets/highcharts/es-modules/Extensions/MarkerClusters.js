@@ -13,17 +13,21 @@
  * */
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
+
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
 import O from '../Core/Options.js';
+
 var defaultOptions = O.defaultOptions;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+
 var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
+
 var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction,
     isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach,
     relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
@@ -368,6 +372,7 @@ function getClusterPosition(points) {
         y: sumY / pointsLen
     };
 }
+
 // Prepare array with sorted data objects to be
 // compared in getPointsState method.
 function getDataState(clusteredData, stateDataLen) {
@@ -383,6 +388,7 @@ function getDataState(clusteredData, stateDataLen) {
     });
     return state;
 }
+
 function fadeInElement(elem, opacity, animation) {
     elem
         .attr({
@@ -392,6 +398,7 @@ function fadeInElement(elem, opacity, animation) {
             opacity: 1
         }, animation);
 }
+
 function fadeInStatePoint(stateObj, opacity, animation, fadeinGraphic, fadeinDataLabel) {
     if (stateObj.point) {
         if (fadeinGraphic && stateObj.point.graphic) {
@@ -404,6 +411,7 @@ function fadeInStatePoint(stateObj, opacity, animation, fadeinGraphic, fadeinDat
         }
     }
 }
+
 function hideStatePoint(stateObj, hideGraphic, hideDataLabel) {
     if (stateObj.point) {
         if (hideGraphic && stateObj.point.graphic) {
@@ -414,6 +422,7 @@ function hideStatePoint(stateObj, hideGraphic, hideDataLabel) {
         }
     }
 }
+
 function destroyOldPoints(oldState) {
     if (oldState) {
         objectEach(oldState, function (state) {
@@ -423,6 +432,7 @@ function destroyOldPoints(oldState) {
         });
     }
 }
+
 function fadeInNewPointAndDestoryOld(newPointObj, oldPoints, animation, opacity) {
     // Fade in new point.
     fadeInStatePoint(newPointObj, opacity, animation, true, true);
@@ -433,16 +443,18 @@ function fadeInNewPointAndDestoryOld(newPointObj, oldPoints, animation, opacity)
         }
     });
 }
+
 // Generate unique stateId for a state element.
 function getStateId() {
     return Math.random().toString(36).substring(2, 7) + '-' + stateIdCounter++;
 }
+
 // Useful for debugging.
 // function drawGridLines(
 //     series: Highcharts.Series,
 //     options: Highcharts.MarkerClusterLayoutAlgorithmOptions
 // ): void {
-//     let chart = series.chart,
+//     var chart = series.chart,
 //         xAxis = series.xAxis,
 //         yAxis = series.yAxis,
 //         xAxisLen = series.xAxis.len,
@@ -487,7 +499,7 @@ function getStateId() {
 //                     gridOffset.plotTop + currentY < yAxisLen
 //                 ) {
 //                     if (j % 2 === 0 && i % 2 === 0) {
-//                         let rect = chart.renderer
+//                         var rect = chart.renderer
 //                             .rect(
 //                                 gridOffset.plotLeft + currentX,
 //                                 gridOffset.plotTop + currentY,

@@ -2,12 +2,8 @@
 
 namespace PHPStan\PhpDocParser\Ast\PhpDoc;
 
-use PHPStan\PhpDocParser\Ast\NodeAttributes;
-
 class GenericTagValueNode implements PhpDocTagValueNode
 {
-
-	use NodeAttributes;
 
 	/** @var string (may be empty) */
 	public $value;

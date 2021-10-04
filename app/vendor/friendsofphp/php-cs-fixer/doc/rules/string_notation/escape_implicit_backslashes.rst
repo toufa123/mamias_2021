@@ -62,7 +62,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
+   @@ -2,8 +2,8 @@
 
     $singleQuoted = 'String with \" and My\Prefix\\';
 
@@ -83,6 +83,7 @@ With configuration: ``['single_quoted' => true]``.
 
    --- Original
    +++ New
+   @@ -1,9 +1,9 @@
     <?php
 
    -$singleQuoted = 'String with \" and My\Prefix\\';
@@ -105,10 +106,7 @@ With configuration: ``['double_quoted' => false]``.
 
    --- Original
    +++ New
-    <?php
-
-    $singleQuoted = 'String with \" and My\Prefix\\';
-
+   @@ -5,5 +5,5 @@
     $doubleQuoted = "Interpret my \n but not my \a";
 
     $hereDoc = <<<HEREDOC
@@ -125,7 +123,7 @@ With configuration: ``['heredoc_syntax' => false]``.
 
    --- Original
    +++ New
-    <?php
+   @@ -2,8 +2,8 @@
 
     $singleQuoted = 'String with \" and My\Prefix\\';
 

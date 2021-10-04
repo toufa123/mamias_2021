@@ -18,7 +18,6 @@ use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -37,7 +36,7 @@ final class MakeVoter extends AbstractMaker
         return 'Creates a new security voter class';
     }
 
-    public function configureCommand(Command $command, InputConfiguration $inputConfig): void
+    public function configureCommand(Command $command, InputConfiguration $inputConf)
     {
         $command
             ->addArgument('name', InputArgument::OPTIONAL, 'The name of the security voter class (e.g. <fg=yellow>BlogPostVoter</>)')
@@ -45,7 +44,7 @@ final class MakeVoter extends AbstractMaker
         ;
     }
 
-    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
+    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
     {
         $voterClassNameDetails = $generator->createClassNameDetails(
             $input->getArgument('name'),
@@ -56,9 +55,7 @@ final class MakeVoter extends AbstractMaker
         $generator->generateClass(
             $voterClassNameDetails->getFullName(),
             'security/Voter.tpl.php',
-            [
-                'use_type_hints' => 50000 <= Kernel::VERSION_ID,
-            ]
+            []
         );
 
         $generator->writeChanges();
@@ -71,7 +68,7 @@ final class MakeVoter extends AbstractMaker
         ]);
     }
 
-    public function configureDependencies(DependencyBuilder $dependencies): void
+    public function configureDependencies(DependencyBuilder $dependencies)
     {
         $dependencies->addClassDependency(
             Voter::class,

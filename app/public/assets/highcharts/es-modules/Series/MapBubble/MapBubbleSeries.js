@@ -25,6 +25,7 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -33,6 +34,7 @@ import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge;
 import '../../Core/Options.js';
 import '../Bubble/BubbleSeries.js';
@@ -51,6 +53,7 @@ import '../Map/MapSeries.js';
  */
 var MapBubbleSeries = /** @class */ (function (_super) {
     __extends(MapBubbleSeries, _super);
+
     function MapBubbleSeries() {
         /* *
          *
@@ -68,6 +71,7 @@ var MapBubbleSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /**
      * A map bubble series is a bubble series laid out on top of a map
      * series, where each bubble is tied to a specific map area.

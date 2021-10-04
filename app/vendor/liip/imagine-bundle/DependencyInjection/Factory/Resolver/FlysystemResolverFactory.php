@@ -11,7 +11,6 @@
 
 namespace Liip\ImagineBundle\DependencyInjection\Factory\Resolver;
 
-use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -23,7 +22,7 @@ class FlysystemResolverFactory extends AbstractResolverFactory
      */
     public function create(ContainerBuilder $container, $resolverName, array $config)
     {
-        $resolverDefinition = $this->getChildResolverDefinition($this->getChildResolverName());
+        $resolverDefinition = $this->getChildResolverDefinition();
         $resolverDefinition->replaceArgument(0, new Reference($config['filesystem_service']));
         $resolverDefinition->replaceArgument(2, $config['root_url']);
         $resolverDefinition->replaceArgument(3, $config['cache_prefix']);
@@ -69,17 +68,5 @@ class FlysystemResolverFactory extends AbstractResolverFactory
                     ->defaultValue('public')
                 ->end()
             ->end();
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getChildResolverName()
-    {
-        if (interface_exists(FilesystemOperator::class)) {
-            return 'flysystem2';
-        }
-
-        return null;
     }
 }

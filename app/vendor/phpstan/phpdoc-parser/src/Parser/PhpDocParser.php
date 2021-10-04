@@ -41,21 +41,7 @@ class PhpDocParser
 			}
 		}
 
-		try {
-			$tokens->consumeTokenType(Lexer::TOKEN_CLOSE_PHPDOC);
-		} catch (\PHPStan\PhpDocParser\Parser\ParserException $e) {
-			$name = '';
-			if (count($children) > 0) {
-				$lastChild = $children[count($children) - 1];
-				if ($lastChild instanceof Ast\PhpDoc\PhpDocTagNode) {
-					$name = $lastChild->name;
-				}
-			}
-			$tokens->forwardToTheEnd();
-			return new Ast\PhpDoc\PhpDocNode([
-				new Ast\PhpDoc\PhpDocTagNode($name, new Ast\PhpDoc\InvalidTagValueNode($e->getMessage(), $e)),
-			]);
-		}
+		$tokens->consumeTokenType(Lexer::TOKEN_CLOSE_PHPDOC);
 
 		return new Ast\PhpDoc\PhpDocNode(array_values($children));
 	}
@@ -403,8 +389,8 @@ class PhpDocParser
 			);
 		}
 
-		$importedFrom = $tokens->currentTokenValue();
-		$tokens->consumeTokenType(Lexer::TOKEN_IDENTIFIER);
+		$importedFrom = $this->typeParser->parse($tokens);
+		assert($importedFrom instanceof IdentifierTypeNode);
 
 		$importedAs = null;
 		if ($tokens->tryConsumeTokenValue('as')) {
@@ -412,7 +398,7 @@ class PhpDocParser
 			$tokens->consumeTokenType(Lexer::TOKEN_IDENTIFIER);
 		}
 
-		return new Ast\PhpDoc\TypeAliasImportTagValueNode($importedAlias, new IdentifierTypeNode($importedFrom), $importedAs);
+		return new Ast\PhpDoc\TypeAliasImportTagValueNode($importedAlias, $importedFrom, $importedAs);
 	}
 
 	private function parseOptionalVariableName(TokenIterator $tokens): string

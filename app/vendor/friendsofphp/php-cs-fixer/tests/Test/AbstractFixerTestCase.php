@@ -219,11 +219,11 @@ abstract class AbstractFixerTestCase extends TestCase
 
     /**
      * @group legacy
+     * @expectedDeprecation PhpCsFixer\FixerDefinition\FixerDefinition::getConfigurationDescription is deprecated and will be removed in 3.0.
+     * @expectedDeprecation PhpCsFixer\FixerDefinition\FixerDefinition::getDefaultConfiguration is deprecated and will be removed in 3.0.
      */
     final public function testLegacyFixerDefinitions()
     {
-        $this->expectDeprecation('PhpCsFixer\\FixerDefinition\\FixerDefinition::getConfigurationDescription is deprecated and will be removed in 3.0.');
-        $this->expectDeprecation('PhpCsFixer\\FixerDefinition\\FixerDefinition::getDefaultConfiguration is deprecated and will be removed in 3.0.');
         $definition = $this->fixer->getDefinition();
 
         static::assertNull($definition->getConfigurationDescription(), sprintf('[%s] No configuration description expected.', $this->fixer->getName()));
@@ -323,7 +323,6 @@ abstract class AbstractFixerTestCase extends TestCase
                 'php_unit_test_annotation',
                 'php_unit_test_class_requires_covers',
                 'phpdoc_to_param_type',
-                'phpdoc_to_property_type',
                 'phpdoc_to_return_type',
                 'random_api_migration',
                 'semicolon_after_instruction',

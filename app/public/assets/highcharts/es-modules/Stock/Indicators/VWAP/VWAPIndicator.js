@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2021 Paweł Dalek
  *
- *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
+ *  Volume Weighted Average Price (VWAP) indicator for Highstock
  *
  *  License: www.highcharts.com/license
  *
@@ -27,12 +27,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var error = U.error, isArray = U.isArray, merge = U.merge;
 /* *
  *
@@ -50,6 +53,7 @@ var error = U.error, isArray = U.isArray, merge = U.merge;
  */
 var VWAPIndicator = /** @class */ (function (_super) {
     __extends(VWAPIndicator, _super);
+
     function VWAPIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -62,6 +66,7 @@ var VWAPIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -155,7 +160,6 @@ var VWAPIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
-            index: void 0,
             period: 30,
             /**
              * The id of volume series which is mandatory. For example using

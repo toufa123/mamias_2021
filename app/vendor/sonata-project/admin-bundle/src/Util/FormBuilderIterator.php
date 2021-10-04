@@ -35,7 +35,7 @@ class FormBuilderIterator extends \RecursiveArrayIterator
     /**
      * NEXT_MAJOR: Remove this property.
      *
-     * @deprecated since sonata-project/sonata-admin-bundle 3.95
+     * @deprecated since sonata-project/sonata-admin-bundle 3.x
      *
      * @var mixed[]
      */

@@ -12,18 +12,13 @@
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
-
-var format = F.format;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-
-var setOptions = O.setOptions;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase,
-    extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+    extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, setOptions = U.setOptions, splat = U.splat,
+    wrap = U.wrap;
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;
 var defaultXAxisOptions = {
@@ -216,13 +211,13 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 // calculate extremes.
 addEvent(Series, 'bindAxes', function (e) {
     if (this.chart.hasParallelCoordinates) {
-        var series_1 = this;
+        var series = this;
         this.chart.axes.forEach(function (axis) {
-            series_1.insert(axis.series);
+            series.insert(axis.series);
             axis.isDirty = true;
         });
-        series_1.xAxis = this.chart.xAxis[0];
-        series_1.yAxis = this.chart.yAxis[0];
+        series.xAxis = this.chart.xAxis[0];
+        series.yAxis = this.chart.yAxis[0];
         e.preventDefault();
     }
 });
@@ -250,7 +245,7 @@ addEvent(Series, 'afterTranslate', function () {
                     closestPointRangePx = Math.min(closestPointRangePx, Math.abs(point.plotX - lastPlotX));
                 }
                 lastPlotX = point.plotX;
-                point.isInside = chart.isInsidePlot(point.plotX, point.plotY, {inverted: chart.inverted});
+                point.isInside = chart.isInsidePlot(point.plotX, point.plotY, chart.inverted);
             } else {
                 point.isNull = true;
             }
@@ -269,6 +264,7 @@ addEvent(Series, 'destroy', function () {
         }, this);
     }
 });
+
 /**
  * @private
  */
@@ -324,6 +320,7 @@ function addFormattedValue(proceed) {
     }
     return config;
 }
+
 ['line', 'spline'].forEach(function (seriesName) {
     wrap(H.seriesTypes[seriesName].prototype.pointClass.prototype, 'getLabelConfig', addFormattedValue);
 });
@@ -341,6 +338,7 @@ var ParallelAxisAdditions = /** @class */ (function () {
     function ParallelAxisAdditions(axis) {
         this.axis = axis;
     }
+
     /* *
      *
      *  Functions
@@ -392,7 +390,9 @@ var ParallelAxis;
         addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(AxisClass, 'getSeriesExtremes', onGetSeriesExtremes);
     }
+
     ParallelAxis.compose = compose;
+
     /**
      * Update default options with predefined for a parallel coords.
      * @private
@@ -414,6 +414,7 @@ var ParallelAxis;
             }
         }
     }
+
     /**
      * Each axis should gather extremes from points on a particular position in
      * series.data. Not like the default one, which gathers extremes from all
@@ -429,19 +430,20 @@ var ParallelAxis;
             return;
         }
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            var index_1 = parallelCoordinates.position, currentPoints_1 = [];
+            var index = parallelCoordinates.position, currentPoints = [];
             axis.series.forEach(function (series) {
                 if (series.visible &&
-                    defined(series.yData[index_1])) {
+                    defined(series.yData[index])) {
                     // We need to use push() beacause of null points
-                    currentPoints_1.push(series.yData[index_1]);
+                    currentPoints.push(series.yData[index]);
                 }
             });
-            axis.dataMin = arrayMin(currentPoints_1);
-            axis.dataMax = arrayMax(currentPoints_1);
+            axis.dataMin = arrayMin(currentPoints);
+            axis.dataMax = arrayMax(currentPoints);
             e.preventDefault();
         }
     }
+
     /**
      * Add parallel addition
      * @private

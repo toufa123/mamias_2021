@@ -28,6 +28,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$foo = 'bar' . 3 . 'baz'.'qux';
    +$foo = 'bar'. 3 .'baz'.'qux';
@@ -41,6 +42,7 @@ With configuration: ``['spacing' => 'none']``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$foo = 'bar' . 3 . 'baz'.'qux';
    +$foo = 'bar'. 3 .'baz'.'qux';
@@ -54,6 +56,7 @@ With configuration: ``['spacing' => 'one']``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$foo = 'bar' . 3 . 'baz'.'qux';
    +$foo = 'bar' . 3 . 'baz' . 'qux';

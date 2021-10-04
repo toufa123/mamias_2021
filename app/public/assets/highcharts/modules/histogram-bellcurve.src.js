@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  * Author: Sebastian Domas
  *
  * License: www.highcharts.com/license
@@ -22,11 +22,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Mixins/DerivedSeries.js', [_modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (H, Series, U) {
         /* *
          *
@@ -212,6 +214,7 @@
                 return Math.ceil(2 * Math.pow(baseSeries.options.data.length, 1 / 3));
             }
         };
+
         /**
          * Returns a function for mapping number to the closed (right opened) bins
          * @private
@@ -227,6 +230,7 @@
                 return bins[--i];
             };
         }
+
         /* *
          *
          *  Class
@@ -241,6 +245,7 @@
          */
         var HistogramSeries = /** @class */ (function (_super) {
             __extends(HistogramSeries, _super);
+
             function HistogramSeries() {
                 /* *
                  *
@@ -256,6 +261,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Functions
@@ -485,6 +491,7 @@
          */
         var BellcurveSeries = /** @class */ (function (_super) {
             __extends(BellcurveSeries, _super);
+
             function BellcurveSeries() {
                 /* *
                  *
@@ -505,6 +512,7 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              *  Static Functions

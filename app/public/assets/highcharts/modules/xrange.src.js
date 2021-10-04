@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.1.0 (2021-05-03)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * X-range series
  *
- * (c) 2010-2021 Torstein Honsi, Lars A. V. Cabrera
+ * (c) 2010-2019 Torstein Honsi, Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,14 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/XRange/XRangePoint.js', [_modules['Core/Series/Point.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Point, SeriesRegistry, U) {
+    _registerModule(_modules, 'Series/XRange/XRangePoint.js', [_modules['Core/Series/Point.js'], _modules['Core/Series/SeriesRegistry.js']], function (Point, SeriesRegistry) {
         /* *
          *
          *  X-range series module
@@ -66,14 +67,14 @@
             };
         })();
         var ColumnSeries = SeriesRegistry.seriesTypes.column;
-        var extend = U.extend;
         /* *
          *
-         *  Class
+         *  Declarations
          *
          * */
         var XRangePoint = /** @class */ (function (_super) {
             __extends(XRangePoint, _super);
+
             function XRangePoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -84,9 +85,11 @@
                  * */
                 _this.options = void 0;
                 _this.series = void 0;
+                _this.tooltipDateKeys = ['x', 'x2'];
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              * Static properties
@@ -208,9 +211,6 @@
             };
             return XRangePoint;
         }(ColumnSeries.prototype.pointClass));
-        extend(XRangePoint.prototype, {
-            tooltipDateKeys: ['x', 'x2']
-        });
         /* *
          *
          *  Default Export
@@ -337,6 +337,7 @@
          */
         var XRangeSeries = /** @class */ (function (_super) {
             __extends(XRangeSeries, _super);
+
             function XRangeSeries() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -352,9 +353,10 @@
                 /*
                 // Override to remove stroke from points. For partial fill.
                 pointAttribs: function () {
-                    let series = this,
-                        retVal = columnType.prototype.pointAttribs
-                            .apply(series, arguments);
+                    var series = this,
+                            retVal = columnType.prototype.pointAttribs
+                                .apply(series,
+                        arguments);
     
                     //retVal['stroke-width'] = 0;
                     return retVal;
@@ -362,6 +364,7 @@
                 //*/
                 /* eslint-enable valid-jsdoc */
             }
+
             /* *
              *
              * Functions
@@ -389,6 +392,7 @@
             XRangeSeries.prototype.getColumnMetrics = function () {
                 var metrics,
                     chart = this.chart;
+
                 /**
                  * @private
                  */
@@ -399,6 +403,7 @@
                         s.yAxis = xAxis;
                     });
                 }
+
                 swapAxes();
                 metrics = columnProto.getColumnMetrics.call(this);
                 swapAxes();
@@ -484,13 +489,15 @@
              * @param {Highcharts.Point} point
              */
             XRangeSeries.prototype.translatePoint = function (point) {
+                var _a,
+                    _b;
                 var series = this,
                     xAxis = series.xAxis,
                     yAxis = series.yAxis,
                     metrics = series.columnMetrics,
                     options = series.options,
                     minPointLength = options.minPointLength || 0,
-                    oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
+                    oldColWidth = ((_a = point.shapeArgs) === null || _a === void 0 ? void 0 : _a.width) / 2,
                     seriesXOffset = series.pointXOffset = metrics.offset,
                     plotX = point.plotX,
                     posX = pick(point.x2,
@@ -498,6 +505,7 @@
                     plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
                     length = Math.abs(plotX2 - plotX),
                     widthDifference,
+                    shapeArgs,
                     partialFill,
                     inverted = this.chart.inverted,
                     borderWidth = pick(options.borderWidth, 1),
@@ -530,32 +538,30 @@
                     yAxis.categories) {
                     point.plotY = yAxis.translate(point.y, 0, 1, 0, 1, options.pointPlacement);
                 }
-                var shapeArgs = {
-                    x: Math.floor(Math.min(plotX,
-                        plotX2)) + crisper,
+                point.shapeArgs = {
+                    x: Math.floor(Math.min(plotX, plotX2)) + crisper,
                     y: Math.floor(point.plotY + yOffset) + crisper,
                     width: Math.round(Math.abs(plotX2 - plotX)),
                     height: pointHeight,
                     r: series.options.borderRadius
                 };
-                point.shapeArgs = shapeArgs;
                 // Move tooltip to default position
                 if (!inverted) {
                     point.tooltipPos[0] -= oldColWidth +
                         seriesXOffset -
-                        shapeArgs.width / 2;
+                        ((_b = point.shapeArgs) === null || _b === void 0 ? void 0 : _b.width) / 2;
                 } else {
                     point.tooltipPos[1] += seriesXOffset +
                         oldColWidth;
                 }
                 // Align data labels inside the shape and inside the plot area
-                dlLeft = shapeArgs.x;
-                dlRight = dlLeft + shapeArgs.width;
+                dlLeft = point.shapeArgs.x;
+                dlRight = dlLeft + point.shapeArgs.width;
                 if (dlLeft < 0 || dlRight > xAxis.len) {
                     dlLeft = clamp(dlLeft, 0, xAxis.len);
                     dlRight = clamp(dlRight, 0, xAxis.len);
                     dlWidth = dlRight - dlLeft;
-                    point.dlBox = merge(shapeArgs, {
+                    point.dlBox = merge(point.shapeArgs, {
                         x: dlLeft,
                         width: dlRight - dlLeft,
                         centerX: dlWidth ? dlWidth / 2 : null
@@ -571,9 +577,9 @@
                     series.columnMetrics.offset : -metrics.width / 2;
                 // Centering tooltip position (#14147)
                 if (!inverted) {
-                    tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * shapeArgs.width;
+                    tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * point.shapeArgs.width;
                 } else {
-                    tooltipPos[xIndex] += shapeArgs.width / 2;
+                    tooltipPos[xIndex] += point.shapeArgs.width / 2;
                 }
                 tooltipPos[yIndex] = clamp(tooltipPos[yIndex] + ((inverted ? -1 : 1) * tooltipYOffset), 0, yAxis.len - 1);
                 // Add a partShapeArgs to the point, based on the shapeArgs property
@@ -587,9 +593,14 @@
                     if (!isNumber(partialFill)) {
                         partialFill = 0;
                     }
-                    point.partShapeArgs = merge(shapeArgs, {
+                    shapeArgs = point.shapeArgs;
+                    point.partShapeArgs = {
+                        x: shapeArgs.x,
+                        y: shapeArgs.y,
+                        width: shapeArgs.width,
+                        height: shapeArgs.height,
                         r: series.options.borderRadius
-                    });
+                    };
                     clipRectWidth = Math.max(Math.round(length * partialFill + point.plotX -
                         plotX), 0);
                     point.clipRectArgs = {
@@ -727,25 +738,6 @@
                 return (this.chart.pointCount < (this.options.animationLimit || 250) ?
                     'animate' :
                     'attr');
-            };
-            /**
-             * @private
-             * @function Highcharts.XRangeSeries#isPointInside
-             */
-            XRangeSeries.prototype.isPointInside = function (point) {
-                var shapeArgs = point.shapeArgs,
-                    plotX = point.plotX,
-                    plotY = point.plotY;
-                if (!shapeArgs) {
-                    return _super.prototype.isPointInside.apply(this, arguments);
-                }
-                var isInside = typeof plotX !== 'undefined' &&
-                    typeof plotY !== 'undefined' &&
-                    plotY >= 0 &&
-                    plotY <= this.yAxis.len &&
-                    (shapeArgs.x || 0) + (shapeArgs.width || 0) >= 0 &&
-                    plotX <= this.xAxis.len;
-                return isInside;
             };
             /* *
              *

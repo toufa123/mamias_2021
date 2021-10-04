@@ -11,17 +11,22 @@
  * */
 'use strict';
 import A from '../../Animation/AnimationUtilities.js';
+
 var animObject = A.animObject;
 import Color from '../../Color/Color.js';
+
 var color = Color.parse;
 import H from '../../Globals.js';
+
 var charts = H.charts, deg2rad = H.deg2rad;
 import Math3D from '../../../Extensions/Math3D.js';
+
 var perspective = Math3D.perspective, shapeArea = Math3D.shapeArea;
 import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
+
 var defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick;
 /* *
  *
@@ -34,6 +39,7 @@ var cos = Math.cos, sin = Math.sin, PI = Math.PI, dFactor = (4 * (Math.sqrt(2) -
  *  Functions
  *
  * */
+
 /* eslint-disable valid-jsdoc */
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180 degrees.
@@ -65,6 +71,7 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
         cy + (ry * Math.sin(end)) + dy
     ]];
 }
+
 /* *
  *
  *  Composition
@@ -117,9 +124,10 @@ SVGRenderer.prototype.face3d = function (args) {
             delete hash.insidePlotArea;
             var chart = charts[renderer.chartIndex],
                 vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
-                path = renderer.toLinePath(vertexes2d, true), area = shapeArea(vertexes2d);
+                path = renderer.toLinePath(vertexes2d, true), area = shapeArea(vertexes2d),
+                visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
             hash.d = path;
-            hash.visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+            hash.visibility = visibility;
         }
         return SVGElement.prototype.attr.apply(this, arguments);
     };
@@ -222,12 +230,12 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 };
 // Generates a cuboid path and zIndexes
 SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-    var x = shapeArgs.x || 0, y = shapeArgs.y || 0, z = shapeArgs.z || 0,
+    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z || 0,
         // For side calculation (right/left)
         // there is a need for height (and other shapeArgs arguments)
         // to be at least 1px
-        h = shapeArgs.height || 0, w = shapeArgs.width || 0, d = shapeArgs.depth || 0, chart = charts[this.chartIndex],
-        front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight,
+        h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back,
+        top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight,
         options3d = chart.options.chart.options3d, alpha = options3d.alpha,
         // Priority for x axis is the biggest,
         // because of x direction has biggest influence on zIndex
@@ -271,6 +279,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         }], forcedSides = [], pickShape;
     // apply perspective
     pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
+
     /**
      * helper method to decide which side is visible
      * @private
@@ -315,6 +324,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         }
         return pArr[i];
     }
+
     /**
      * method creating the final side
      * @private
@@ -322,6 +332,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     function mapPath(i) {
         return pArr[i];
     }
+
     /**
      * First value - path with specific face
      * Second  value - added information about side for later calculations.
@@ -414,6 +425,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 SVGRenderer.prototype.arc3d = function (attribs) {
     var wrapper = this.g(), renderer = wrapper.renderer,
         customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
+
     /**
      * Get custom attributes. Don't mutate the original object and return an
      * object with only custom attr.
@@ -431,6 +443,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
         }
         return hasCA ? [ca, params] : false;
     }
+
     attribs = merge(attribs);
     attribs.alpha = (attribs.alpha || 0) * deg2rad;
     attribs.beta = (attribs.beta || 0) * deg2rad;
@@ -552,6 +565,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
                         return from[key] + (pick(to[key], from[key]) -
                             from[key]) * fx.pos;
                     }
+
                     if (fx.prop === randomProp) {
                         fx.elem.setPaths(merge(from, {
                             x: interpolate('x'),
@@ -598,15 +612,15 @@ SVGRenderer.prototype.arc3d = function (attribs) {
 };
 // Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
-    var cx = shapeArgs.x || 0, // x coordinate of the center
-        cy = shapeArgs.y || 0, // y coordinate of the center
-        start = shapeArgs.start || 0, // start angle
-        end = (shapeArgs.end || 0) - 0.00001, // end angle
-        r = shapeArgs.r || 0, // radius
+    var cx = shapeArgs.x, // x coordinate of the center
+        cy = shapeArgs.y, // y coordinate of the center
+        start = shapeArgs.start, // start angle
+        end = shapeArgs.end - 0.00001, // end angle
+        r = shapeArgs.r, // radius
         ir = shapeArgs.innerR || 0, // inner radius
         d = shapeArgs.depth || 0, // depth
-        alpha = shapeArgs.alpha || 0, // alpha rotation of the chart
-        beta = shapeArgs.beta || 0; // beta rotation of the chart
+        alpha = shapeArgs.alpha, // alpha rotation of the chart
+        beta = shapeArgs.beta; // beta rotation of the chart
     // Derived Variables
     var cs = Math.cos(start), // cosinus of the start angle
         ss = Math.sin(start), // sinus of the start angle
@@ -736,6 +750,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     // beta rotations
     var angleCorr = Math.atan2(dy, -dx), angleEnd = Math.abs(end + angleCorr), angleStart = Math.abs(start + angleCorr),
         angleMid = Math.abs((start + end) / 2 + angleCorr);
+
     /**
      * set to 0-PI range
      * @private
@@ -747,6 +762,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         }
         return angle;
     }
+
     angleEnd = toZeroPIRange(angleEnd);
     angleStart = toZeroPIRange(angleStart);
     angleMid = toZeroPIRange(angleMid);

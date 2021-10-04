@@ -27,15 +27,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
+
 var animObject = A.animObject;
 import H from '../../Core/Globals.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var Series = SeriesRegistry.series, ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import U from '../../Core/Utilities.js';
+
 var arrayMax = U.arrayMax, extend = U.extend, merge = U.merge, pick = U.pick;
 /* *
  *
@@ -53,6 +57,7 @@ var arrayMax = U.arrayMax, extend = U.extend, merge = U.merge, pick = U.pick;
  */
 var VectorSeries = /** @class */ (function (_super) {
     __extends(VectorSeries, _super);
+
     function VectorSeries() {
         /* *
          *
@@ -72,6 +77,7 @@ var VectorSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -118,7 +124,7 @@ var VectorSeries = /** @class */ (function (_super) {
     };
     /*
     drawLegendSymbol: function (legend, item) {
-        let options = legend.options,
+        var options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth,
@@ -149,7 +155,7 @@ var VectorSeries = /** @class */ (function (_super) {
         this.points.forEach(function (point) {
             var plotX = point.plotX, plotY = point.plotY;
             if (this.options.clip === false ||
-                chart.isInsidePlot(plotX, plotY, {inverted: chart.inverted})) {
+                chart.isInsidePlot(plotX, plotY, chart.inverted)) {
                 if (!point.graphic) {
                     point.graphic = this.chart.renderer
                         .path()

@@ -1,9 +1,9 @@
 /**
- * @license Highstock JS v9.1.0 (2021-05-03)
+ * @license Highstock JS v9.0.0 (2021-02-02)
  *
  * Drag-panes module
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  * Author: Kacper Madej
  *
  * License: www.highcharts.com/license
@@ -24,11 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
+
     _registerModule(_modules, 'Extensions/DragPanes.js', [_modules['Core/Globals.js'], _modules['Core/Axis/Axis.js'], _modules['Core/Color/Palette.js'], _modules['Core/Pointer.js'], _modules['Core/Utilities.js']], function (H, Axis, palette, Pointer, U) {
         /* *
          *

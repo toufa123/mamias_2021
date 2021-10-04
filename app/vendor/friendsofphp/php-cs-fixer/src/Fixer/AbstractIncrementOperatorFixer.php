@@ -42,7 +42,7 @@ abstract class AbstractIncrementOperatorFixer extends AbstractFixer
             return $this->findStart($tokens, $index);
         }
 
-        if ($prevToken->isObjectOperator()) {
+        if ($prevToken->isGivenKind(T_OBJECT_OPERATOR)) {
             return $this->findStart($tokens, $prevIndex);
         }
 

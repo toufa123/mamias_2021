@@ -18,6 +18,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,5 +1,4 @@
     <?php
     function foo () {
    -    return 1 + 2

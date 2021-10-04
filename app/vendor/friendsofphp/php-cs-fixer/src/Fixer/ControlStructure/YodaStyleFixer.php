@@ -600,7 +600,7 @@ return $foo === count($bar);
             }
 
             // $a-> or a-> (as in $b->a->c)
-            if ($current->isGivenKind([T_STRING, T_VARIABLE]) && $next->isObjectOperator()) {
+            if ($current->isGivenKind([T_STRING, T_VARIABLE]) && $next->isGivenKind(T_OBJECT_OPERATOR)) {
                 $index = $tokens->getNextMeaningfulToken($nextIndex);
                 $expectString = true;
 
@@ -623,7 +623,7 @@ return $foo === count($bar);
 
                 $index = $tokens->getNextMeaningfulToken($index);
 
-                if (!$tokens[$index]->equalsAny(['[', [CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN, '{']]) && !$tokens[$index]->isObjectOperator()) {
+                if (!$tokens[$index]->equalsAny([[T_OBJECT_OPERATOR, '->'], '[', [CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN, '{']])) {
                     return false;
                 }
 
@@ -647,7 +647,7 @@ return $foo === count($bar);
 
                 $index = $tokens->getNextMeaningfulToken($index);
 
-                if (!$tokens[$index]->isObjectOperator()) {
+                if (!$tokens[$index]->isGivenKind(T_OBJECT_OPERATOR)) {
                     return false;
                 }
 

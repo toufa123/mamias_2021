@@ -19,6 +19,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,7 +1,7 @@
     <?php
     /**
    - * @{TUTORIAL}

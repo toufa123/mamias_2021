@@ -69,6 +69,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,25 +1,27 @@
     <?php
 
    -class Foo {
@@ -118,6 +119,7 @@ With configuration: ``['allow_single_line_closure' => true]``.
 
    --- Original
    +++ New
+   @@ -1,4 +1,5 @@
     <?php
     $positive = function ($item) { return $item >= 0; };
     $negative = function ($item) {
@@ -134,6 +136,7 @@ With configuration: ``['position_after_functions_and_oop_constructs' => 'same']`
 
    --- Original
    +++ New
+   @@ -1,27 +1,25 @@
     <?php
 
    -class Foo

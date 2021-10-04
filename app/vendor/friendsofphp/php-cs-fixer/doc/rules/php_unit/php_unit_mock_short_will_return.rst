@@ -20,9 +20,7 @@ Example #1
 
    --- Original
    +++ New
-    <?php
-    final class MyTest extends \PHPUnit_Framework_TestCase
-    {
+   @@ -4,10 +4,10 @@
         public function testSomeTest()
         {
             $someMock = $this->createMock(Some::class);

@@ -10,6 +10,7 @@
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
 import AST from '../HTML/AST.js';
+
 var doc = H.doc, SVG_NS = H.SVG_NS;
 var attr = U.attr, erase = U.erase, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
 /**
@@ -30,6 +31,7 @@ var TextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
+
     /**
      * Build an SVG representation of the pseudo HTML given in the object's
      * svgElement.

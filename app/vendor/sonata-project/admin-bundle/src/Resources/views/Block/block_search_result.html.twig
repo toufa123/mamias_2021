@@ -15,12 +15,8 @@ file that was distributed with this source code.
     {# NEXT_MAJOR: Remove the following line #}
     {% set show_empty_boxes = show_empty_boxes|default(sonata_admin.adminPool.container.getParameter('sonata.admin.configuration.global_search.empty_boxes')) %}
     {% set visibility_class = 'sonata-search-result-' ~ show_empty_boxes %}
-    {% set current_page_results = [] %}
-    {# NEXT_MAJOR: remove the attribute check and just use .countResults() #}
-    {% set results_count = pager ? (attribute(pager, 'countResults') is defined ? pager.countResults() : pager.getNbResults()) : 0 %}
-    {% if results_count > 0 %}
-        {# NEXT_MAJOR: remove the attribute check and just use .currentPageResults #}
-        {% set current_page_results = attribute(pager, 'getCurrentPageResults') is defined ? pager.currentPageResults : pager.results %}
+    {# NEXT_MAJOR: remove the attribute check and just use .currentPageResults #}
+    {% if pager and (attribute(pager, 'getCurrentPageResults') is defined ? pager.currentPageResults : pager.results)|length %}
         {% set visibility_class = 'sonata-search-result-show' %}
     {% endif %}
 
@@ -36,8 +32,10 @@ file that was distributed with this source code.
                 </h3>
 
                 <div class="box-tools pull-right">
-                    {% if results_count > 0 %}
-                        <span class="badge">{{ results_count }}</span>
+                    {# NEXT_MAJOR: remove the attribute check and just use .countResults() #}
+                    {% if pager and (attribute(pager, 'countResults') is defined ? pager.countResults() : pager.getNbResults()) > 0 %}
+                        {# NEXT_MAJOR: remove the attribute check and just use .countResults() #}
+                        <span class="badge">{{ (attribute(pager, 'countResults') is defined ? pager.countResults() : pager.getNbResults()) }}</span>
                     {% elseif admin.hasRoute('create') and admin.hasAccess('create') %}
                         <a href="{{ admin.generateUrl('create') }}" class="btn btn-box-tool">
                             <i class="fa fa-plus" aria-hidden="true"></i>
@@ -50,33 +48,15 @@ file that was distributed with this source code.
                     {% endif %}
                 </div>
             </div>
-            {% if results_count > 0 %}
+            {# NEXT_MAJOR: remove the attribute check and just use .currentPageResults #}
+            {% if pager and (attribute(pager, 'getCurrentPageResults') is defined ? pager.currentPageResults : pager.results)|length %}
                 <div class="box-body no-padding">
-                    <ul class="nav nav-stacked sonata-search-result-list products-list">
-                        {% for result in current_page_results %}
+                    <ul class="nav nav-stacked sonata-search-result-list">
+                        {# NEXT_MAJOR: remove the attribute check and just use .currentPageResults #}
+                        {% for result in (attribute(pager, 'getCurrentPageResults') is defined ? pager.currentPageResults : pager.results) %}
                             {% set link = admin.getSearchResultLink(result) %}
                             {% if link %}
-                                <li class="item no-padding">
-                                    <a class="main pull-left" href="{{ link }}">{{ admin.toString(result) }}</a>
-                                    <span class="matches pull-right">
-                                        {% for name, filter in filters %}
-                                            {% set match = name|split('.')|reduce((carry, v) => carry ? attribute(carry, v) : null, result) %}
-
-                                            {#
-                                                Some model managers are not respecting the "sonata_admin.global_search.case_sensitive" configuration option.
-                                                If you see no matching filters for a search result, it is probably the reason. In that case,
-                                                you SHOULD consider using `false` as value for this option.
-                                            #}
-                                            {% if match and ((filter.option('case_sensitive') is not same as(false) and term in match)
-                                                or filter.option('case_sensitive') is same as(false) and term|lower in match|lower)
-                                            %}
-                                                <a class="label label-primary" href="{{ admin.generateUrl('list', {'filter': {(filter.formName): {'value': term}}}) }}">
-                                                    {{ filter.option('label')|trans({}, filter.option('translation_domain', admin.translationDomain)) }}
-                                                </a>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </span>
-                                </li>
+                                <li><a href="{{ link }}">{{ admin.toString(result) }}</a></li>
                             {% else %}
                                 <li><a>{{ admin.toString(result) }}</a></li>
                             {% endif %}

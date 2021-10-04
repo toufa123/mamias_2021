@@ -27,13 +27,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import NodesMixin from '../../Mixins/Nodes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var SankeySeries = SeriesRegistry.seriesTypes.sankey;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend;
 /* *
  *
@@ -42,6 +45,7 @@ var extend = U.extend;
  * */
 var DependencyWheelPoint = /** @class */ (function (_super) {
     __extends(DependencyWheelPoint, _super);
+
     function DependencyWheelPoint() {
         /* *
          *
@@ -61,6 +65,7 @@ var DependencyWheelPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -73,7 +78,7 @@ var DependencyWheelPoint = /** @class */ (function (_super) {
      */
     DependencyWheelPoint.prototype.getDataLabelPath = function (label) {
         var renderer = this.series.chart.renderer, shapeArgs = this.shapeArgs,
-            upperHalf = this.angle < 0 || this.angle > Math.PI, start = shapeArgs.start || 0, end = shapeArgs.end || 0;
+            upperHalf = this.angle < 0 || this.angle > Math.PI, start = shapeArgs.start, end = shapeArgs.end;
         if (!this.dataLabelPath) {
             this.dataLabelPath = renderer
                 .arc({

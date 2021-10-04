@@ -25,17 +25,21 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnRangePoint from './ColumnRangePoint.js';
 import H from '../../Core/Globals.js';
+
 var noop = H.noop;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var _a = SeriesRegistry.seriesTypes, AreaRangeSeries = _a.arearange, ColumnSeries = _a.column;
 var columnProto = ColumnSeries.prototype;
 var arearangeProto = AreaRangeSeries.prototype;
 import U from '../../Core/Utilities.js';
+
 var clamp = U.clamp, merge = U.merge, pick = U.pick, extend = U.extend;
 /**
  * The column range is a cartesian series type with higher and lower
@@ -91,6 +95,7 @@ var columnRangeOptions = {
  */
 var ColumnRangeSeries = /** @class */ (function (_super) {
     __extends(ColumnRangeSeries, _super);
+
     function ColumnRangeSeries() {
         /* *
          *
@@ -108,6 +113,7 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions
@@ -126,6 +132,7 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
         var series = this, yAxis = series.yAxis, xAxis = series.xAxis, startAngleRad = xAxis.startAngleRad, start,
             chart = series.chart, isRadial = series.xAxis.isRadial,
             safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999, plotHigh;
+
         // eslint-disable-next-line valid-jsdoc
         /**
          * Don't draw too far outside plot area (#6835)
@@ -134,11 +141,12 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
         function safeBounds(pixelPos) {
             return clamp(pixelPos, -safeDistance, safeDistance);
         }
+
         columnProto.translate.apply(series);
         // Set plotLow and plotHigh
         series.points.forEach(function (point) {
-            var shapeArgs = point.shapeArgs || {}, minPointLength = series.options.minPointLength, heightDifference,
-                height, y;
+            var shapeArgs = point.shapeArgs, minPointLength = series.options.minPointLength, heightDifference, height,
+                y;
             point.plotHigh = plotHigh = safeBounds(yAxis.translate(point.high, 0, 1, 0, 1));
             point.plotLow = safeBounds(point.plotY);
             // adjust shape
@@ -161,17 +169,16 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
             } else {
                 shapeArgs.height = height;
                 shapeArgs.y = y;
-                var _a = shapeArgs.x, x = _a === void 0 ? 0 : _a, _b = shapeArgs.width, width = _b === void 0 ? 0 : _b;
                 point.tooltipPos = chart.inverted ?
                     [
                         yAxis.len + yAxis.pos - chart.plotLeft - y -
                         height / 2,
                         xAxis.len + xAxis.pos - chart.plotTop -
-                        x - width / 2,
+                        shapeArgs.x - shapeArgs.width / 2,
                         height
                     ] : [
-                        xAxis.left - chart.plotLeft + x +
-                        width / 2,
+                        xAxis.left - chart.plotLeft + shapeArgs.x +
+                        shapeArgs.width / 2,
                         yAxis.pos - chart.plotTop + y + height / 2,
                         height
                     ]; // don't inherit from column tooltip position - #3372

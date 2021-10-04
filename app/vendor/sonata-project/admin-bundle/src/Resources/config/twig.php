@@ -11,8 +11,6 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-use Sonata\AdminBundle\DependencyInjection\Compiler\AliasDeprecatedPublicServicesCompilerPass;
-use Sonata\AdminBundle\Twig\Extension\BreadcrumbsExtension;
 use Sonata\AdminBundle\Twig\Extension\CanonicalizeExtension;
 use Sonata\AdminBundle\Twig\Extension\GroupExtension;
 use Sonata\AdminBundle\Twig\Extension\PaginationExtension;
@@ -27,16 +25,31 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigura
 return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->parameters()
 
-        ->set('sonata.admin.twig.extension.x_editable_type_mapping', XEditableExtension::FIELD_DESCRIPTION_MAPPING);
+        ->set('sonata.admin.twig.extension.x_editable_type_mapping', [
+            'choice' => 'select',
+            'boolean' => 'select',
+            'text' => 'text',
+            'textarea' => 'textarea',
+            'html' => 'textarea',
+            'email' => 'email',
+            'string' => 'text',
+            'smallint' => 'text',
+            'bigint' => 'text',
+            'integer' => 'number',
+            'decimal' => 'number',
+            'currency' => 'number',
+            'percent' => 'number',
+            'url' => 'url',
+            'date' => 'date',
+        ])
+    ;
 
     // Use "service" function for creating references to services when dropping support for Symfony 4.4
     // Use "param" function for creating references to parameters when dropping support for Symfony 5.1
     $containerConfigurator->services()
 
         ->set('sonata.admin.twig.extension', SonataAdminExtension::class)
-            // NEXT_MAJOR: Remove public and sonata.container.private tag.
             ->public()
-            ->tag(AliasDeprecatedPublicServicesCompilerPass::PRIVATE_TAG_NAME, ['version' => '3.98'])
             ->tag('twig.extension')
             ->args([
                 new ReferenceConfigurator('sonata.admin.pool'),
@@ -59,9 +72,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ->tag('twig.extension')
             ->args([
                 new ReferenceConfigurator('sonata.admin.global_template_registry'),
-                // NEXT_MAJOR: Remove next line.
                 new ReferenceConfigurator('service_container'),
-                new ReferenceConfigurator('sonata.admin.pool'),
             ])
 
         ->set('sonata.admin.group.extension', GroupExtension::class)
@@ -100,10 +111,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 new ReferenceConfigurator('service_container'),
                 (new ReferenceConfigurator('logger'))->nullOnInvalid(),
             ])
-
-        ->set('sonata.admin.twig.breadcrumbs_extension', BreadcrumbsExtension::class)
-            ->tag('twig.extension')
-            ->args([
-                new ReferenceConfigurator('sonata.admin.breadcrumbs_builder'),
-            ]);
+    ;
 };

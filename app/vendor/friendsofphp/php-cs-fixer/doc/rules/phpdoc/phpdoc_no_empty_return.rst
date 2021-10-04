@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,5 +1,4 @@
     <?php
     /**
    - * @return null
@@ -27,6 +28,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1,5 +1,4 @@
     <?php
     /**
    - * @return void

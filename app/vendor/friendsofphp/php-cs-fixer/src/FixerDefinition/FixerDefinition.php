@@ -12,8 +12,6 @@
 
 namespace PhpCsFixer\FixerDefinition;
 
-use PhpCsFixer\Utils;
-
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
@@ -43,9 +41,9 @@ final class FixerDefinition implements FixerDefinitionInterface
         $riskyDescription = null
     ) {
         if (6 === \func_num_args()) {
-            Utils::triggerDeprecation('Arguments #5 and #6 of FixerDefinition::__construct() are deprecated and will be removed in 3.0, use argument #4 instead.');
+            @trigger_error('Arguments #5 and #6 of FixerDefinition::__construct() are deprecated and will be removed in 3.0, use argument #4 instead.', E_USER_DEPRECATED);
         } elseif (5 === \func_num_args()) {
-            Utils::triggerDeprecation('Argument #5 of FixerDefinition::__construct() is deprecated and will be removed in 3.0.');
+            @trigger_error('Argument #5 of FixerDefinition::__construct() is deprecated and will be removed in 3.0.', E_USER_DEPRECATED);
         } else {
             $riskyDescription = $configurationDescription;
             $configurationDescription = null;
@@ -71,14 +69,14 @@ final class FixerDefinition implements FixerDefinitionInterface
 
     public function getConfigurationDescription()
     {
-        Utils::triggerDeprecation(sprintf('%s is deprecated and will be removed in 3.0.', __METHOD__));
+        @trigger_error(sprintf('%s is deprecated and will be removed in 3.0.', __METHOD__), E_USER_DEPRECATED);
 
         return $this->configurationDescription;
     }
 
     public function getDefaultConfiguration()
     {
-        Utils::triggerDeprecation(sprintf('%s is deprecated and will be removed in 3.0.', __METHOD__));
+        @trigger_error(sprintf('%s is deprecated and will be removed in 3.0.', __METHOD__), E_USER_DEPRECATED);
 
         return $this->defaultConfiguration;
     }

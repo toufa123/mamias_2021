@@ -18,5 +18,6 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?= "foo";
    +<?php echo "foo";

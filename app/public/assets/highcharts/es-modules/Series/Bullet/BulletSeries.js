@@ -25,13 +25,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import BulletPoint from './BulletPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import '../Column/ColumnSeries.js';
 /* *
@@ -50,6 +53,7 @@ import '../Column/ColumnSeries.js';
  */
 var BulletSeries = /** @class */ (function (_super) {
     __extends(BulletSeries, _super);
+
     function BulletSeries() {
         /* *
          *
@@ -69,6 +73,7 @@ var BulletSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      * Functions
@@ -88,16 +93,12 @@ var BulletSeries = /** @class */ (function (_super) {
             animationLimit = options.animationLimit || 250;
         _super.prototype.drawPoints.apply(this, arguments);
         series.points.forEach(function (point) {
-            var pointOptions = point.options, targetGraphic = point.targetGraphic, targetShapeArgs,
+            var pointOptions = point.options, shapeArgs, targetGraphic = point.targetGraphic, targetShapeArgs,
                 targetVal = point.target, pointVal = point.y, width, height, targetOptions, y;
             if (isNumber(targetVal) && targetVal !== null) {
                 targetOptions = merge(options.targetOptions, pointOptions.targetOptions);
                 height = targetOptions.height;
-                var shapeArgs = point.shapeArgs;
-                // #15547
-                if (point.dlBox && shapeArgs && !isNumber(shapeArgs.width)) {
-                    shapeArgs = point.dlBox;
-                }
+                shapeArgs = point.shapeArgs;
                 width = relativeLength(targetOptions.width, shapeArgs.width);
                 y = series.yAxis.translate(targetVal, false, true, false, true) - targetOptions.height / 2 - 0.5;
                 targetShapeArgs = series.crispCol.apply({

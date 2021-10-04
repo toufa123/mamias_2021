@@ -29,6 +29,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -declare(ticks =  1);
    +declare(ticks=1);
@@ -42,6 +43,7 @@ With configuration: ``['space' => 'single']``.
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -declare(ticks=1);
    +declare(ticks = 1);

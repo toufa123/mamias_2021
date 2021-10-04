@@ -11,9 +11,9 @@
  * */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
+import U from '../../Core/Utilities.js';
 
-var setOptions = O.setOptions;
+var setOptions = U.setOptions;
 Highcharts.theme = {
     colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',
         '#82914E', '#86777F', '#42A07B'],

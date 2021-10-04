@@ -20,13 +20,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, isNumber = U.isNumber;
 /* *
  *
@@ -35,6 +38,7 @@ var extend = U.extend, isNumber = U.isNumber;
  * */
 var VennPoint = /** @class */ (function (_super) {
     __extends(VennPoint, _super);
+
     function VennPoint() {
         /* *
          *
@@ -47,6 +51,7 @@ var VennPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -64,7 +69,7 @@ var VennPoint = /** @class */ (function (_super) {
     return VennPoint;
 }(ScatterSeries.prototype.pointClass));
 extend(VennPoint.prototype, {
-    draw: DrawPointMixin.drawPoint
+    draw: DrawPointMixin.draw
 });
 /* *
  *

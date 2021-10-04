@@ -29,12 +29,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TimelinePoint from './TimelinePoint.js';
@@ -58,6 +60,7 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined
  */
 var TimelineSeries = /** @class */ (function (_super) {
     __extends(TimelineSeries, _super);
+
     function TimelineSeries() {
         /* *
          *
@@ -78,6 +81,7 @@ var TimelineSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
+
     /* *
      *
      *  Functions
@@ -291,7 +295,7 @@ var TimelineSeries = /** @class */ (function (_super) {
             series.yData[i] = 1;
         }
         _super.prototype.processData.call(this, arguments);
-        return;
+
     };
     /**
      * The timeline series presents given events along a drawn line.
@@ -320,10 +324,6 @@ var TimelineSeries = /** @class */ (function (_super) {
         colorByPoint: true,
         stickyTracking: false,
         ignoreHiddenPoint: true,
-        /**
-         * @ignore
-         * @private
-         */
         legendType: 'point',
         lineWidth: 4,
         tooltip: {
@@ -391,7 +391,7 @@ var TimelineSeries = /** @class */ (function (_super) {
             /**
              * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
              * @default function () {
-             *   let format;
+             *   var format;
              *
              *   if (!this.series.chart.styledMode) {
              *       format = '<span style="color:' + this.point.color +

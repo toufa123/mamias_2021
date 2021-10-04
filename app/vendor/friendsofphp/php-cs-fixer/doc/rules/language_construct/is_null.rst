@@ -34,6 +34,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,2 +1,2 @@
     <?php
    -$a = is_null($b);
    +$a = null === $b;

@@ -1,7 +1,17 @@
 <?php
 
+/**
+ * @see       https://github.com/laminas/laminas-code for the canonical source repository
+ * @copyright https://github.com/laminas/laminas-code/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas/laminas-code/blob/master/LICENSE.md New BSD License
+ */
+
 namespace Laminas\Code\Reflection;
 
+use Laminas\Code\Annotation\AnnotationCollection;
+use Laminas\Code\Annotation\AnnotationManager;
+use Laminas\Code\Scanner\AnnotationScanner;
+use Laminas\Code\Scanner\FileScanner;
 use ReflectionClass;
 
 use function array_shift;
@@ -14,14 +24,33 @@ use function strstr;
 
 class ClassReflection extends ReflectionClass implements ReflectionInterface
 {
-    /** @var DocBlockReflection|null */
+    /**
+     * @var AnnotationScanner
+     */
+    protected $annotations;
+
+    /**
+     * @var DocBlockReflection
+     */
     protected $docBlock;
+
+    /**
+     * Return the reflection file of the declaring file.
+     *
+     * @return FileReflection
+     */
+    public function getDeclaringFile()
+    {
+        $instance = new FileReflection($this->getFileName());
+
+        return $instance;
+    }
 
     /**
      * Return the classes DocBlock reflection object
      *
      * @return DocBlockReflection|false
-     * @throws Exception\ExceptionInterface When missing DocBock or invalid reflection class.
+     * @throws Exception\ExceptionInterface for missing DocBock or invalid reflection class
      */
     public function getDocBlock()
     {
@@ -36,6 +65,34 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
         $this->docBlock = new DocBlockReflection($this);
 
         return $this->docBlock;
+    }
+
+    /**
+     * @param  AnnotationManager $annotationManager
+     * @return AnnotationCollection|false
+     */
+    public function getAnnotations(AnnotationManager $annotationManager)
+    {
+        $docComment = $this->getDocComment();
+
+        if ($docComment == '') {
+            return false;
+        }
+
+        if ($this->annotations) {
+            return $this->annotations;
+        }
+
+        $fileScanner       = $this->createFileScanner($this->getFileName());
+        $nameInformation   = $fileScanner->getClassNameInformation($this->getName());
+
+        if (! $nameInformation) {
+            return false;
+        }
+
+        $this->annotations = new AnnotationScanner($annotationManager, $docComment, $nameInformation);
+
+        return $this->annotations;
     }
 
     /**
@@ -85,10 +142,10 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
      */
     public function getInterfaces()
     {
-        $phpReflections     = parent::getInterfaces();
+        $phpReflections  = parent::getInterfaces();
         $laminasReflections = [];
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
-            $instance             = new ClassReflection($phpReflection->getName());
+            $instance          = new ClassReflection($phpReflection->getName());
             $laminasReflections[] = $instance;
             unset($phpReflection);
         }
@@ -105,7 +162,9 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
      */
     public function getMethod($name)
     {
-        return new MethodReflection($this->getName(), parent::getMethod($name)->getName());
+        $method = new MethodReflection($this->getName(), parent::getMethod($name)->getName());
+
+        return $method;
     }
 
     /**
@@ -132,7 +191,7 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
      */
     public function getTraits()
     {
-        $vals   = [];
+        $vals = [];
         $traits = parent::getTraits();
         if ($traits === null) {
             return;
@@ -171,7 +230,7 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
      */
     public function getProperty($name)
     {
-        $phpReflection     = parent::getProperty($name);
+        $phpReflection  = parent::getProperty($name);
         $laminasReflection = new PropertyReflection($this->getName(), $phpReflection->getName());
         unset($phpReflection);
 
@@ -186,10 +245,10 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
      */
     public function getProperties($filter = -1)
     {
-        $phpReflections     = parent::getProperties($filter);
+        $phpReflections  = parent::getProperties($filter);
         $laminasReflections = [];
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
-            $instance             = new PropertyReflection($this->getName(), $phpReflection->getName());
+            $instance          = new PropertyReflection($this->getName(), $phpReflection->getName());
             $laminasReflections[] = $instance;
             unset($phpReflection);
         }
@@ -212,5 +271,20 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
     public function __toString()
     {
         return parent::__toString();
+    }
+
+    /**
+     * Creates a new FileScanner instance.
+     *
+     * By having this as a separate method it allows the method to be overridden
+     * if a different FileScanner is needed.
+     *
+     * @param  string $filename
+     *
+     * @return FileScanner
+     */
+    protected function createFileScanner($filename)
+    {
+        return new FileScanner($filename);
     }
 }

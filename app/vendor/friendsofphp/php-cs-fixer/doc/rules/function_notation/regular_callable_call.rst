@@ -21,6 +21,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,6 +1,6 @@
     <?php
    -    call_user_func("var_dump", 1, 2);
    +    var_dump(1, 2);
@@ -38,6 +39,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1,4 +1,4 @@
     <?php
    -call_user_func(function ($a, $b) { var_dump($a, $b); }, 1, 2);
    +(function ($a, $b) { var_dump($a, $b); })(1, 2);

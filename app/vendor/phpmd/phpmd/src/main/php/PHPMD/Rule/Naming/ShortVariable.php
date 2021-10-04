@@ -96,7 +96,7 @@ class ShortVariable extends AbstractRule implements ClassAware, MethodAware, Fun
             $this->checkNodeImage($declarator);
         }
 
-        $variables = $node->findChildrenOfTypeVariable();
+        $variables = $node->findChildrenOfType('Variable');
         foreach ($variables as $variable) {
             $this->checkNodeImage($variable);
         }
@@ -171,9 +171,7 @@ class ShortVariable extends AbstractRule implements ClassAware, MethodAware, Fun
      */
     protected function isNameAllowedInContext(AbstractNode $node)
     {
-        $parent = $node->getParent();
-
-        if ($parent && $parent->isInstanceOf('ForeachStatement')) {
+        if ($this->isChildOf($node, 'ForeachStatement')) {
             return $this->isInitializedInLoop($node);
         }
 

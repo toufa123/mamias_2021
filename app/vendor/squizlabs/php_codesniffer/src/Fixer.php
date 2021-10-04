@@ -255,10 +255,6 @@ class Fixer
             unlink($tempName);
         }
 
-        if ($diff === null) {
-            return '';
-        }
-
         if ($colors === false) {
             return $diff;
         }

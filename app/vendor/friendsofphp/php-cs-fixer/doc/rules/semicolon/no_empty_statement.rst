@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php $a = 1;;
    +<?php $a = 1;
 
@@ -24,6 +25,7 @@ Example #2
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php echo 1;2;
    +<?php echo 1;
 
@@ -34,6 +36,7 @@ Example #3
 
    --- Original
    +++ New
+   @@ -1,3 +1,3 @@
     <?php while(foo()){
    -    continue 1;
    +    continue ;

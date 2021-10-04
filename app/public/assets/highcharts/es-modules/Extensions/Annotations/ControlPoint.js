@@ -12,6 +12,7 @@
  * @return {Highcharts.PositionObject}
  */
 import U from '../../Core/Utilities.js';
+
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import eventEmitterMixin from './Mixins/EventEmitterMixin.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -72,6 +73,7 @@ var ControlPoint = /** @class */ (function () {
         this.options = options;
         this.index = pick(options.index, index);
     }
+
     /**
      * Set the visibility of the control point.
      *

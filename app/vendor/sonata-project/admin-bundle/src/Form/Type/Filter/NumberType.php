@@ -88,7 +88,8 @@ class NumberType extends AbstractType
     {
         $builder
             ->add('type', NumberOperatorType::class, ['required' => false])
-            ->add('value', $options['field_type'], array_merge(['required' => false], $options['field_options']));
+            ->add('value', $options['field_type'], array_merge(['required' => false], $options['field_options']))
+        ;
     }
 
     /**

@@ -25,13 +25,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var SplineSeries = SeriesRegistry.seriesTypes.spline;
 import U from '../../Core/Utilities.js';
+
 var merge = U.merge, extend = U.extend;
 /* *
  *
@@ -49,6 +52,7 @@ var merge = U.merge, extend = U.extend;
  */
 var AreaSplineRangeSeries = /** @class */ (function (_super) {
     __extends(AreaSplineRangeSeries, _super);
+
     function AreaSplineRangeSeries() {
         /* *
          *
@@ -66,6 +70,7 @@ var AreaSplineRangeSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /**
      * The area spline range is a cartesian series type with higher and
      * lower Y values along an X axis. The area inside the range is colored, and

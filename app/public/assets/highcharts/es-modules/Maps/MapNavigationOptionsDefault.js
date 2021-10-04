@@ -10,6 +10,7 @@
 'use strict';
 import O from '../Core/Options.js';
 import U from '../Core/Utilities.js';
+
 var extend = U.extend;
 /* *
  *

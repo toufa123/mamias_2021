@@ -10,6 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
+
 var addEvent = U.addEvent, getMagnitude = U.getMagnitude, normalizeTickInterval = U.normalizeTickInterval,
     timeUnits = U.timeUnits;
 /* eslint-disable valid-jsdoc */
@@ -22,6 +23,7 @@ var DateTimeAxisAdditions = /** @class */ (function () {
     function DateTimeAxisAdditions(axis) {
         this.axis = axis;
     }
+
     /* *
      *
      *  Functions
@@ -115,6 +117,7 @@ var DateTimeAxisAdditions = /** @class */ (function () {
 var DateTimeAxis = /** @class */ (function () {
     function DateTimeAxis() {
     }
+
     /* *
      *
      *  Static Functions

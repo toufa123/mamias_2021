@@ -23,18 +23,24 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
+
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
+
 /* eslint-disable require-jsdoc */
-function populateAverage(xVal, yVal, i, period, index) {
-    var mmY = yVal[i - 1][index] - yVal[i - period - 1][index], mmX = xVal[i - 1];
+function populateAverage(points, xVal, yVal, i, period) {
+    var mmY = yVal[i - 1][3] - yVal[i - period - 1][3], mmX = xVal[i - 1];
+    points.shift(); // remove point until range < period
     return [mmX, mmY];
 }
+
 /* eslint-enable require-jsdoc */
 /**
  * The Momentum series type.
@@ -47,6 +53,7 @@ function populateAverage(xVal, yVal, i, period, index) {
  */
 var MomentumIndicator = /** @class */ (function (_super) {
     __extends(MomentumIndicator, _super);
+
     function MomentumIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -54,26 +61,31 @@ var MomentumIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     MomentumIndicator.prototype.getValues = function (series, params) {
-        var period = params.period, index = params.index, xVal = series.xData, yVal = series.yData,
-            yValLen = yVal ? yVal.length : 0, yValue = yVal[0], MM = [], xData = [], yData = [], i, MMPoint;
+        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0,
+            xValue = xVal[0], yValue = yVal[0], MM = [], xData = [], yData = [], index, i, points, MMPoint;
         if (xVal.length <= period) {
             return;
         }
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {
-            yValue = yVal[0][index];
+            yValue = yVal[0][3];
         } else {
             return;
         }
+        // Starting point
+        points = [
+            [xValue, yValue]
+        ];
         // Calculate value one-by-one for each period in visible data
         for (i = (period + 1); i < yValLen; i++) {
-            MMPoint = populateAverage(xVal, yVal, i, period, index);
+            MMPoint = populateAverage(points, xVal, yVal, i, period, index);
             MM.push(MMPoint);
             xData.push(MMPoint[0]);
             yData.push(MMPoint[1]);
         }
-        MMPoint = populateAverage(xVal, yVal, i, period, index);
+        MMPoint = populateAverage(points, xVal, yVal, i, period, index);
         MM.push(MMPoint);
         xData.push(MMPoint[0]);
         yData.push(MMPoint[1]);
@@ -98,7 +110,7 @@ var MomentumIndicator = /** @class */ (function (_super) {
      */
     MomentumIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         params: {
-            index: 3
+            period: 14
         }
     });
     return MomentumIndicator;

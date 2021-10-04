@@ -13,10 +13,13 @@
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
+
 var doc = H.doc;
 import U from '../../Core/Utilities.js';
+
 var error = U.error;
 var mainCanvas;
+
 /**
  * Create a canvas + context and attach it to the target
  *
@@ -147,4 +150,5 @@ function createAndAttachRenderer(chart, series) {
     target.ogl.setSize(width, height);
     return target.ogl;
 }
+
 export default createAndAttachRenderer;

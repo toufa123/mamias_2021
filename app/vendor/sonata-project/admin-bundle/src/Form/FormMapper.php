@@ -15,7 +15,6 @@ namespace Sonata\AdminBundle\Form;
 
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Builder\FormContractorInterface;
-use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\Type\CollectionType;
 use Sonata\AdminBundle\Mapper\BaseGroupedMapper;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType as SymfonyCollectionType;
@@ -40,31 +39,18 @@ class FormMapper extends BaseGroupedMapper
      */
     protected $builder;
 
-    /**
-     * NEXT_MAJOR: Make the property private.
-     *
-     * @var AdminInterface
-     */
-    protected $admin;
-
     public function __construct(
         FormContractorInterface $formContractor,
         FormBuilderInterface $formBuilder,
         AdminInterface $admin
     ) {
-        $this->builder = $formContractor;
-        $this->admin = $admin;
+        parent::__construct($formContractor, $admin);
         $this->formBuilder = $formBuilder;
-    }
-
-    public function getAdmin()
-    {
-        return $this->admin;
     }
 
     public function reorder(array $keys)
     {
-        $this->getAdmin()->reorderFormGroup($this->getCurrentGroupName(), $keys);
+        $this->admin->reorderFormGroup($this->getCurrentGroupName(), $keys);
 
         return $this;
     }
@@ -83,7 +69,7 @@ class FormMapper extends BaseGroupedMapper
             return $this;
         }
 
-        if (isset($fieldDescriptionOptions['role']) && !$this->getAdmin()->isGranted($fieldDescriptionOptions['role'])) {
+        if (isset($fieldDescriptionOptions['role']) && !$this->admin->isGranted($fieldDescriptionOptions['role'])) {
             return $this;
         }
 
@@ -123,21 +109,21 @@ class FormMapper extends BaseGroupedMapper
         }
 
         // NEXT_MAJOR: Remove the check and use `createFieldDescription`.
-        if (method_exists($this->getAdmin(), 'createFieldDescription')) {
-            $fieldDescription = $this->getAdmin()->createFieldDescription(
+        if (method_exists($this->admin, 'createFieldDescription')) {
+            $fieldDescription = $this->admin->createFieldDescription(
                 $name instanceof FormBuilderInterface ? $name->getName() : $name,
                 $fieldDescriptionOptions
             );
         } else {
-            $fieldDescription = $this->getAdmin()->getModelManager()->getNewFieldDescriptionInstance(
-                $this->getAdmin()->getClass(),
+            $fieldDescription = $this->admin->getModelManager()->getNewFieldDescriptionInstance(
+                $this->admin->getClass(),
                 $name instanceof FormBuilderInterface ? $name->getName() : $name,
                 $fieldDescriptionOptions
             );
         }
 
         // Note that the builder var is actually the formContractor:
-        $this->builder->fixFieldDescription($this->getAdmin(), $fieldDescription);
+        $this->builder->fixFieldDescription($this->admin, $fieldDescription);
 
         if ($fieldName !== $name) {
             $fieldDescription->setName($fieldName);
@@ -173,7 +159,7 @@ class FormMapper extends BaseGroupedMapper
                  * previously `form.label_foo__bar_baz` and now is `form.label_foo_bar_baz`
                  * to be consistent with others labels like `show.label_foo_bar_baz`.
                  */
-                $options['label'] = $this->getAdmin()->getLabelTranslatorStrategy()->getLabel($child, 'form', 'label');
+                $options['label'] = $this->admin->getLabelTranslatorStrategy()->getLabel($child, 'form', 'label');
             }
 
             // NEXT_MAJOR: Remove this block.
@@ -192,7 +178,7 @@ class FormMapper extends BaseGroupedMapper
             }
         }
 
-        $this->getAdmin()->addFormFieldDescription($fieldName, $fieldDescription);
+        $this->admin->addFormFieldDescription($fieldName, $fieldDescription);
         $this->formBuilder->add($child, $type, $options);
 
         return $this;
@@ -223,8 +209,8 @@ class FormMapper extends BaseGroupedMapper
     public function remove($key)
     {
         $key = $this->sanitizeFieldName($key);
-        $this->getAdmin()->removeFormFieldDescription($key);
-        $this->getAdmin()->removeFieldFromFormGroup($key);
+        $this->admin->removeFormFieldDescription($key);
+        $this->admin->removeFieldFromFormGroup($key);
         $this->formBuilder->remove($key);
 
         return $this;
@@ -315,24 +301,24 @@ class FormMapper extends BaseGroupedMapper
     {
         // NEXT_MAJOR: Remove the argument "sonata_deprecation_mute" in the following call.
 
-        return $this->getAdmin()->getFormGroups('sonata_deprecation_mute');
+        return $this->admin->getFormGroups('sonata_deprecation_mute');
     }
 
     protected function setGroups(array $groups)
     {
-        $this->getAdmin()->setFormGroups($groups);
+        $this->admin->setFormGroups($groups);
     }
 
     protected function getTabs()
     {
         // NEXT_MAJOR: Remove the argument "sonata_deprecation_mute" in the following call.
 
-        return $this->getAdmin()->getFormTabs('sonata_deprecation_mute');
+        return $this->admin->getFormTabs('sonata_deprecation_mute');
     }
 
     protected function setTabs(array $tabs)
     {
-        $this->getAdmin()->setFormTabs($tabs);
+        $this->admin->setFormTabs($tabs);
     }
 
     protected function getName()
@@ -340,6 +326,3 @@ class FormMapper extends BaseGroupedMapper
         return 'form';
     }
 }
-
-// NEXT_MAJOR: Remove next line.
-interface_exists(FieldDescriptionInterface::class);

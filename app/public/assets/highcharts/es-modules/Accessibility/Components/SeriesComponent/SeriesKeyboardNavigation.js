@@ -16,9 +16,6 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
 var seriesTypes = SeriesRegistry.seriesTypes;
-import H from '../../../Core/Globals.js';
-
-var doc = H.doc;
 import U from '../../../Core/Utilities.js';
 
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
@@ -41,6 +38,7 @@ Series.prototype.keyboardMoveVertical = true;
         seriesTypes[type].prototype.keyboardMoveVertical = false;
     }
 });
+
 /**
  * Get the index of a point in a series. This is needed when using e.g. data
  * grouping.
@@ -66,6 +64,7 @@ function getPointIndex(point) {
         return index;
     }
 }
+
 /**
  * Determine if series navigation should be skipped
  *
@@ -91,6 +90,7 @@ function isSkipSeries(series) {
             seriesNavOptions.pointNavigationEnabledThreshold <=
             series.points.length);
 }
+
 /**
  * Determine if navigation for a point should be skipped
  *
@@ -103,15 +103,13 @@ function isSkipSeries(series) {
  */
 function isSkipPoint(point) {
     var a11yOptions = point.series.chart.options.accessibility;
-    var pointA11yDisabled = (point.options.accessibility &&
-        point.options.accessibility.enabled === false);
     return point.isNull &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
         point.isInside === false ||
-        pointA11yDisabled ||
         isSkipSeries(point.series);
 }
+
 /**
  * Get the point in a series that is closest (in pixel distance) to a reference
  * point. Optionally supply weight factors for x and y directions.
@@ -152,6 +150,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
     }
     return defined(minIx) ? series.points[minIx] : void 0;
 }
+
 /**
  * Highlights a point (show tooltip and display hover state).
  *
@@ -362,6 +361,7 @@ Chart.prototype.highlightAdjacentPointVertical = function (down) {
     });
     return bestPoint ? bestPoint.highlight() : false;
 };
+
 /**
  * @private
  * @param {Highcharts.Chart} chart
@@ -375,6 +375,7 @@ function highlightFirstValidPointInChart(chart) {
     }, false);
     return res;
 }
+
 /**
  * @private
  * @param {Highcharts.Chart} chart
@@ -394,6 +395,7 @@ function highlightLastValidPointInChart(chart) {
     }
     return res;
 }
+
 /**
  * @private
  * @param {Highcharts.Chart} chart
@@ -404,6 +406,7 @@ function updateChartFocusAfterDrilling(chart) {
         chart.focusElement.removeFocusBorder();
     }
 }
+
 /**
  * @private
  * @class
@@ -413,6 +416,7 @@ function SeriesKeyboardNavigation(chart, keyCodes) {
     this.keyCodes = keyCodes;
     this.chart = chart;
 }
+
 extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardNavigation */ {
     /**
      * Init the keyboard navigation
@@ -437,18 +441,6 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             setTimeout(function () {
                 keyboardNavigation.onDrillupAll();
             }, 10);
-        });
-        // Heatmaps et al. alter z-index in setState, causing elements
-        // to lose focus
-        e.addEvent(Point, 'afterSetState', function () {
-            var point = this;
-            var pointEl = point.graphic && point.graphic.element;
-            if (chart.highlightedPoint === point &&
-                doc.activeElement !== pointEl &&
-                pointEl &&
-                pointEl.focus) {
-                pointEl.focus();
-            }
         });
     },
     onDrillupAll: function () {
@@ -486,8 +478,9 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                 [[keys.enter, keys.space], function (keyCode, event) {
                     var point = chart.highlightedPoint;
                     if (point) {
-                        event.point = point;
-                        fireEvent(point.series, 'click', event);
+                        fireEvent(point.series, 'click', extend(event, {
+                            point: point
+                        }));
                         point.firePointEvent('click');
                     }
                     return this.response.success;
@@ -555,14 +548,11 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      * @private
      */
     onHandlerTerminate: function () {
+        var _a, _b;
         var chart = this.chart;
         var curPoint = chart.highlightedPoint;
-        if (chart.tooltip) {
-            chart.tooltip.hide(0);
-        }
-        if (chart.highlightedPoint && chart.highlightedPoint.onMouseOut) {
-            chart.highlightedPoint.onMouseOut();
-        }
+        (_a = chart.tooltip) === null || _a === void 0 ? void 0 : _a.hide(0);
+        (_b = curPoint === null || curPoint === void 0 ? void 0 : curPoint.onMouseOut) === null || _b === void 0 ? void 0 : _b.call(curPoint);
         delete chart.highlightedPoint;
     },
     /**

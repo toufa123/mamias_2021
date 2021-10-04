@@ -14,6 +14,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php $a = $a   ?1 :0;
    +<?php $a = $a ? 1 : 0;
 

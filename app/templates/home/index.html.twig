@@ -170,11 +170,12 @@
     <script>
         data = [];
         var data =  {{ NbperCountry1 |raw }};
-        //console.log(data);
+        console.log(data);
         //$.each(data, function () {
         //    this.value = (this.value < 1 ? 1 : this.value);
         //});
         //var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
+
         $.getJSON('{{ asset('assets/geojson/cp.geojson') }}', function (geojson) {
             // Initiate the chart
             $('#highcontainer').highcharts('Map', {
@@ -239,18 +240,7 @@
                 },
                 plotOptions: {
                     series: {
-                        shadow: true,
-                        dataLabels: {
-                            format: '{point.z}',
-                            enabled: true,
-                            formatter: function () {
-                                //console.log(this.key);
-                                console.log(this.y);
-                                if (this.key == 'Morocco') {
-                                    this.point.dataLabel.attr({x: 50});
-                                }
-                            }
-                        }
+                        shadow: true
                     },
                     candlestick: {
                         lineColor: '#404048'
@@ -272,16 +262,14 @@
                     //mapData: geojson,
                     joinBy: ['NAME', 'country'],
                     data: data,
-                    name: 'Number of NIS'
+                    name: 'Number of NIS',
                     //minSize: 8,
                     //maxSize: '20%',
-                    //dataLabels: {
-                    //    enabled: true,
-                    //    allowOverlap: false,
-                    //    format: '{point.z}',
-
-                    //}
-                    , tooltip: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: false,
+                        format: '{point.z}'
+                    }, tooltip: {
                         pointFormat: '<p class="text-custom"> <b>{point.country}<b>: {point.z}</p>'
                     }
 
@@ -388,7 +376,5 @@
                 }]
             });
         });
-
-
     </script>
 {% endblock %}

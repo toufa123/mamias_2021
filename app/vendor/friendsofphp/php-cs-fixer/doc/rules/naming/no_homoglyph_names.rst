@@ -19,6 +19,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1 +1 @@
    -<?php $nаmе = 'wrong "a" character';
    +<?php $name = 'wrong "a" character';
 

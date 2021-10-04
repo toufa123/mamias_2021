@@ -25,15 +25,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
-var LinearRegressionIndicator = SeriesRegistry.seriesTypes.linearRegression;
+var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, LinearRegressionIndicator = _a.linearRegression;
 import U from '../../../Core/Utilities.js';
 
-var extend = U.extend, merge = U.merge;
+var isArray = U.isArray, extend = U.extend, merge = U.merge;
 /* *
  *
  * Class
@@ -50,6 +51,7 @@ var extend = U.extend, merge = U.merge;
  */
 var LinearRegressionSlopesIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionSlopesIndicator, _super);
+
     function LinearRegressionSlopesIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -62,6 +64,7 @@ var LinearRegressionSlopesIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
      *
      *  Functions

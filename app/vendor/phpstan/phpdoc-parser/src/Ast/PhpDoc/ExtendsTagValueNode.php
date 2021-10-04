@@ -2,13 +2,10 @@
 
 namespace PHPStan\PhpDocParser\Ast\PhpDoc;
 
-use PHPStan\PhpDocParser\Ast\NodeAttributes;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 
 class ExtendsTagValueNode implements PhpDocTagValueNode
 {
-
-	use NodeAttributes;
 
 	/** @var GenericTypeNode */
 	public $type;

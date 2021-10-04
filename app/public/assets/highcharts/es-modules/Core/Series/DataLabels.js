@@ -11,9 +11,6 @@
 import A from '../Animation/AnimationUtilities.js';
 
 var getDeferredAnimation = A.getDeferredAnimation;
-import F from '../FormatUtilities.js';
-
-var format = F.format;
 import H from '../Globals.js';
 
 var noop = H.noop;
@@ -25,8 +22,8 @@ var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Utilities.js';
 
 var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent,
-    isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength,
-    splat = U.splat, stableSort = U.stableSort;
+    format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick,
+    relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -68,12 +65,14 @@ H.distribute = function (boxes, len, maxDistance) {
     var i, overlapping = true, origBoxes = boxes, // Original array will be altered with added .pos
         restBoxes = [], // The outranked overshoot
         box, target, total = 0, reducedLen = origBoxes.reducedLen || len;
+
     /**
      * @private
      */
     function sortByTarget(a, b) {
         return a.target - b.target;
     }
+
     // If the total size exceeds the len, remove those boxes with the lowest
     // rank
     i = boxes.length;
@@ -190,6 +189,7 @@ Series.prototype.drawDataLabels = function () {
         dataLabelAnim = seriesDlOptions.animation, animationConfig = seriesDlOptions.defer ?
         getDeferredAnimation(chart, dataLabelAnim, series) :
         {defer: 0, duration: 0}, renderer = chart.renderer;
+
     /**
      * Handle the dataLabels.filter option.
      * @private
@@ -212,6 +212,7 @@ Series.prototype.drawDataLabels = function () {
         }
         return true;
     }
+
     /**
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
@@ -238,6 +239,7 @@ Series.prototype.drawDataLabels = function () {
         }
         return res;
     }
+
     // Merge in plotOptions.dataLabels for series
     seriesDlOptions = mergeArrays(mergeArrays(chart.options.plotOptions &&
         chart.options.plotOptions.series &&
@@ -426,11 +428,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
         plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999), plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(), baseline, rotation = options.rotation, normRotation, negRotation,
         align = options.align, rotCorr, // rotation correction
-        isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), {
-            inverted: inverted,
-            paneCoordinates: true,
-            series: series
-        }),
+        isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), inverted),
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         alignAttr, // the final position;
@@ -443,17 +441,10 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
                 (
                     // If the data label is inside the align box, it is enough
                     // that parts of the align box is inside the plot area
-                    // (#12370). When stacking, it is always inside regardless
-                    // of the option (#15148).
-                    pick(options.inside, !!this.options.stacking) &&
-                    alignTo &&
-                    chart.isInsidePlot(plotX, inverted ?
+                    // (#12370)
+                    options.inside && alignTo && chart.isInsidePlot(plotX, inverted ?
                         alignTo.x + 1 :
-                        alignTo.y + alignTo.height - 1, {
-                        inverted: inverted,
-                        paneCoordinates: true,
-                        series: series
-                    }))), setStartPos = function (alignOptions) {
+                        alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(point, dataLabel, isNew, isInsidePlot, alignOptions);
             }
@@ -508,7 +499,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             dataLabel.alignAttr = alignAttr;
         } else {
             setStartPos(alignTo); // data sorting
-            dataLabel.align(options, void 0, alignTo);
+            dataLabel.align(options, null, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
         // Handle justify or crop
@@ -517,14 +508,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             // Now check that the data label is within the plot area
         } else if (pick(options.crop, true)) {
             visible =
-                chart.isInsidePlot(alignAttr.x, alignAttr.y, {
-                    paneCoordinates: true,
-                    series: series
-                }) &&
-                chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height, {
-                    paneCoordinates: true,
-                    series: series
-                });
+                chart.isInsidePlot(alignAttr.x, alignAttr.y) &&
+                chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
         }
         // When we're using a shape, make it possible with a connector or an
         // arrow pointing to thie point
@@ -617,7 +602,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
         padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
     var _a = options.x, x = _a === void 0 ? 0 : _a, _b = options.y, y = _b === void 0 ? 0 : _b;
     // Off left
-    off = (alignAttr.x || 0) + padding;
+    off = alignAttr.x + padding;
     if (off < 0) {
         if (align === 'right' && x >= 0) {
             options.align = 'left';
@@ -628,7 +613,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
         justified = true;
     }
     // Off right
-    off = (alignAttr.x || 0) + bBox.width - padding;
+    off = alignAttr.x + bBox.width - padding;
     if (off > chart.plotWidth) {
         if (align === 'left' && x <= 0) {
             options.align = 'right';
@@ -650,7 +635,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
         justified = true;
     }
     // Off bottom
-    off = (alignAttr.y || 0) + bBox.height - padding;
+    off = alignAttr.y + bBox.height - padding;
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
@@ -927,7 +912,7 @@ if (seriesTypes.pie) {
                     pick(pointDataLabelsOptions.connectorWidth, 1);
                 // Draw the connector
                 if (connectorWidth) {
-                    var isNew = void 0;
+                    var isNew;
                     connector = point.connector;
                     dataLabel = point.dataLabel;
                     if (dataLabel &&
@@ -979,7 +964,7 @@ if (seriesTypes.pie) {
     // TODO: depracated - remove it
     /*
     seriesTypes.pie.prototype.connectorPath = function (labelPos) {
-        let x = labelPos.x,
+        var x = labelPos.x,
             y = labelPos.y;
         return pick(this.options.dataLabels.softConnector, true) ? [
             'M',

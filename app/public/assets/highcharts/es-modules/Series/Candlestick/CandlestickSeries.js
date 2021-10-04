@@ -25,21 +25,37 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import O from '../../Core/Options.js';
+
 var defaultOptions = O.defaultOptions;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, OHLCSeries = _a.ohlc;
 import U from '../../Core/Utilities.js';
+
 var merge = U.merge;
 /* *
  *
  *  Code
  *
  * */
+/**
+ * A candlestick chart is a style of financial chart used to describe price
+ * movements over time.
+ *
+ * @sample stock/demo/candlestick/
+ *         Candlestick chart
+ *
+ * @extends      plotOptions.ohlc
+ * @excluding    borderColor,borderRadius,borderWidth
+ * @product      highstock
+ * @optionparent plotOptions.candlestick
+ */
 /**
  * The candlestick series type.
  *
@@ -51,12 +67,8 @@ var merge = U.merge;
  */
 var CandlestickSeries = /** @class */ (function (_super) {
     __extends(CandlestickSeries, _super);
+
     function CandlestickSeries() {
-        /* *
-         *
-         * Static properties
-         *
-         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -68,6 +80,7 @@ var CandlestickSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+
     /* *
      *
      * Functions
@@ -173,18 +186,11 @@ var CandlestickSeries = /** @class */ (function (_super) {
         });
         /* eslint-enable valid-jsdoc */
     };
-    /**
-     * A candlestick chart is a style of financial chart used to describe price
-     * movements over time.
+    /* *
      *
-     * @sample stock/demo/candlestick/
-     *         Candlestick chart
+     * Static properties
      *
-     * @extends      plotOptions.ohlc
-     * @excluding    borderColor,borderRadius,borderWidth
-     * @product      highstock
-     * @optionparent plotOptions.candlestick
-     */
+     * */
     CandlestickSeries.defaultOptions = merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
         /**
          * The specific line color for up candle sticks. The default is to
@@ -295,7 +301,7 @@ export default CandlestickSeries;
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding dataParser, dataURL, marker
+ * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.candlestick
  */

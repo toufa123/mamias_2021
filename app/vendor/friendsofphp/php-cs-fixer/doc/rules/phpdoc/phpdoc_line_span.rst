@@ -47,6 +47,7 @@ Example #1
 
    --- Original
    +++ New
+   @@ -1,6 +1,8 @@
     <?php
 
     class Foo{
@@ -66,6 +67,7 @@ With configuration: ``['property' => 'single']``.
 
    --- Original
    +++ New
+   @@ -1,8 +1,6 @@
     <?php
 
     class Foo{

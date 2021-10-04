@@ -33,7 +33,6 @@ class ModelToIdPropertyTransformer implements DataTransformerInterface
 {
     /**
      * @var ModelManagerInterface
-     * @phpstan-var ModelManagerInterface<T>
      */
     protected $modelManager;
 
@@ -66,8 +65,7 @@ class ModelToIdPropertyTransformer implements DataTransformerInterface
      * @param callable|null   $toStringCallback
      *
      * @phpstan-template P
-     * @phpstan-param ModelManagerInterface<T>         $modelManager
-     * @phpstan-param class-string<T>                  $className
+     * @phpstan-param class-string<T> $className
      * @phpstan-param null|callable(object, P): string $toStringCallback
      */
     public function __construct(
@@ -119,23 +117,19 @@ class ModelToIdPropertyTransformer implements DataTransformerInterface
             $value[$key] = (string) $id;
         }
 
-        if ([] === $value) {
-            $result = $value;
-        } else {
-            $query = $this->modelManager->createQuery($this->className);
-            $this->modelManager->addIdentifiersToQuery($this->className, $query, $value);
-            $result = $this->modelManager->executeQuery($query);
-        }
+        $query = $this->modelManager->createQuery($this->className);
+        $this->modelManager->addIdentifiersToQuery($this->className, $query, $value);
+        $result = $this->modelManager->executeQuery($query);
 
         return TraversableToCollection::transform($result);
     }
 
     /**
-     * @param object|array<object>|\Traversable<object>|null $value
+     * @param object|object[]|null $value
      *
      * @return mixed[]
      *
-     * @phpstan-param T|array<T>|\Traversable<T>|null $value
+     * @phpstan-param T|T[]|null $value
      */
     public function transform($value)
     {
@@ -145,8 +139,8 @@ class ModelToIdPropertyTransformer implements DataTransformerInterface
             return $result;
         }
 
-        $isArray = \is_array($value);
         if ($this->multiple) {
+            $isArray = \is_array($value);
             if (!$isArray && substr(\get_class($value), -1 * \strlen($this->className)) === $this->className) {
                 throw new \InvalidArgumentException(
                     'A multiple selection must be passed a collection not a single value.'
@@ -154,7 +148,7 @@ class ModelToIdPropertyTransformer implements DataTransformerInterface
                     .' is set for many-to-many or one-to-many relations.'
                 );
             }
-            if ($isArray || ($value instanceof \Traversable)) {
+            if ($isArray || ($value instanceof \ArrayAccess)) {
                 $collection = $value;
             } else {
                 throw new \InvalidArgumentException(
@@ -166,7 +160,7 @@ class ModelToIdPropertyTransformer implements DataTransformerInterface
         } else {
             if (substr(\get_class($value), -1 * \strlen($this->className)) === $this->className) {
                 $collection = [$value];
-            } elseif ($isArray || $value instanceof \Traversable) {
+            } elseif ($value instanceof \ArrayAccess) {
                 throw new \InvalidArgumentException(
                     'A single selection must be passed a single value not a collection.'
                     .' Make sure that form option "multiple=false" is set for many-to-one relation and "multiple=true"'
