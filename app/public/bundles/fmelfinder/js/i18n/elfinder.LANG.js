@@ -112,26 +112,27 @@
 			'errArchiveExec'       : 'Error while archiving files: "$1"',
 			'errExtractExec'       : 'Error while extracting files: "$1"',
 			'errNetUnMount'        : 'Unable to unmount.', // from v2.1 added 30.04.2012
-			'errConvUTF8'          : 'Not convertible to UTF-8', // from v2.1 added 08.04.2014
-			'errFolderUpload'      : 'Try the modern browser, If you\'d like to upload the folder.', // from v2.1 added 26.6.2015
-			'errSearchTimeout'     : 'Timed out while searching "$1". Search result is partial.', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : 'Re-authorization is required.', // from v2.1.10 added 24.3.2016
-			'errMaxTargets'        : 'Max number of selectable items is $1.', // from v2.1.17 added 17.10.2016
-			'errRestore'           : 'Unable to restore from the trash. Can\'t identify the restore destination.', // from v2.1.24 added 3.5.2017
-			'errEditorNotFound'    : 'Editor not found to this file type.', // from v2.1.25 added 23.5.2017
-			'errServerError'       : 'Error occurred on the server side.', // from v2.1.25 added 16.6.2017
-			'errEmpty'             : 'Unable to empty folder "$1".', // from v2.1.25 added 22.6.2017
-			'moreErrors'           : 'There are $1 more errors.', // from v2.1.44 added 9.12.2018
+            'errConvUTF8': 'Not convertible to UTF-8', // from v2.1 added 08.04.2014
+            'errFolderUpload': 'Try the modern browser, If you\'d like to upload the folder.', // from v2.1 added 26.6.2015
+            'errSearchTimeout': 'Timed out while searching "$1". Search result is partial.', // from v2.1 added 12.1.2016
+            'errReauthRequire': 'Re-authorization is required.', // from v2.1.10 added 24.3.2016
+            'errMaxTargets': 'Max number of selectable items is $1.', // from v2.1.17 added 17.10.2016
+            'errRestore': 'Unable to restore from the trash. Can\'t identify the restore destination.', // from v2.1.24 added 3.5.2017
+            'errEditorNotFound': 'Editor not found to this file type.', // from v2.1.25 added 23.5.2017
+            'errServerError': 'Error occurred on the server side.', // from v2.1.25 added 16.6.2017
+            'errEmpty': 'Unable to empty folder "$1".', // from v2.1.25 added 22.6.2017
+            'moreErrors': 'There are $1 more errors.', // from v2.1.44 added 9.12.2018
+            'errMaxMkdirs': 'You can create up to $1 folders at one time.', // from v2.1.58 added 20.6.2021
 
-			/******************************* commands names ********************************/
-			'cmdarchive'   : 'Create archive',
-			'cmdback'      : 'Back',
-			'cmdcopy'      : 'Copy',
-			'cmdcut'       : 'Cut',
-			'cmddownload'  : 'Download',
-			'cmdduplicate' : 'Duplicate',
-			'cmdedit'      : 'Edit file',
-			'cmdextract'   : 'Extract files from archive',
+            /******************************* commands names ********************************/
+            'cmdarchive': 'Create archive',
+            'cmdback': 'Back',
+            'cmdcopy': 'Copy',
+            'cmdcut': 'Cut',
+            'cmddownload': 'Download',
+            'cmdduplicate': 'Duplicate',
+            'cmdedit': 'Edit file',
+            'cmdextract': 'Extract files from archive',
 			'cmdforward'   : 'Forward',
 			'cmdgetfile'   : 'Select files',
 			'cmdhelp'      : 'About this software',

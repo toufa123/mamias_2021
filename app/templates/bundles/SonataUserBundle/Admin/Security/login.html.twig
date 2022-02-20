@@ -1,111 +1,116 @@
-{% extends 'auth.html.twig' %}
+{% extends 'secure.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
 {% block title %}Authentification{% endblock %}
 
 {% block body %}
-
     <div class="row">
-        <div class="col-lg-6">
-            <div class="wrapper-page2">
-                <img src="{{ asset('resources/images/signin.svg') }}"
-                     alt="MAMIAS 3.0" style="width:100%;height:auto">
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="wrapper-page">
-                <div class="property-card">
-                    <div class="text-center account-logo-box">
-                        <h2 class="text-uppercase">
+        <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('resources/images/login.jpg') }}"
+                                  alt="Login page"></div>
+        <div class="col-xl-7 p-0">
+            <div class="login-card">
 
-                            <a href="{{ path('home') }}" class="text-success">
-                                            <span><img src="{{ asset('resources/logo/Logo-Mamias-web.png') }}"
-                                                       alt="MAMIAS 3.0"></span>
-                            </a>
-                        </h2>
 
+                <form class="theme-form login-form needs-validation" novalidate=""
+                      action="{{ path("sonata_user_admin_security_check") }}"
+                      method="post">
+                    <div class="text-center">
+                        <a href="{{ path('home') }}">
+                            <img src="{{ asset('resources/logo/Logo-Mamias-web.png') }}"
+                                 alt="MAMIAS 3.0">
+                        </a>
                     </div>
-                    <div class="property-content bg-white">
-                        {% if error is defined %}
-                            {% if error %}
-                                <div class="alert alert-danger" role="alert">
-                                    {{ error.messageKey|trans(error.messageData, 'security') }}
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                        <form class="" id="loginform" action="{{ path("sonata_user_admin_security_check") }}"
-                              method="post">
-                            {% if csrf_token('authenticate') %}
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                            {% endif %}
+                    <h4>Login</h4>
+                    <h6>Welcome back! Log in to your account.</h6>
+                    {% if error %}
 
-                            <div class="form-group ">
-                                <div class="col-xs-12">
-                                    <input class="form-control" type="text" id="username" name="_username"
-                                           placeholder="{{ 'security.login.username'|trans({}, 'SonataUserBundle') }}"
+                        <div class="alert alert-danger dark alert-dismissible fade show" role="alert"><strong> {{ error.messageKey|trans(error.messageData, 'security') }}</strong>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close" data-bs-original-title="" title=""></button>
+                        </div>
 
-                                           required="required"/>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <input class="form-control" type="password" required="" name="_password"
-                                           placeholder="{{ 'security.login.password'|trans({}, 'SonataUserBundle') }}">
-                                </div>
-                            </div>
+                    {% endif %}
+                    {% if csrf_token('authenticate') %}
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                    {% endif %}
 
-                            <div class="form-group ">
-                                <div class="col-xs-12">
-                                    <div class="checkbox checkbox-primary">
-                                        <input id="checkbox-signup" type="checkbox" checked>
-                                        <label for="checkbox-signup">
-                                            Remember me
-                                        </label>
-                                    </div>
+                    <div class="form-group">
+                        <label>{{ 'security.login.username'|trans({}, 'SonataUserBundle') }}</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-user"></i></span>
 
-                                </div>
-                            </div>
-                            <div class="form-group text-center">
-                                <div class="col-sm-12">
-                                    <a href="{{ path('fos_user_resetting_request') }}"
-                                       class="text-muted float-right"><i
-                                                class="fa fa-lock m-r-5"></i> {{ 'forgotten_password'|trans({}, 'SonataUserBundle') }}
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="form-group ">
-                                <div class="col-xs-12">
+                            <input class="form-control" type="text" id="username" name="_username"
+                                   placeholder="{{ 'security.login.username'|trans({}, 'SonataUserBundle') }}"
 
-                                    <div id="recaptcha-container"></div>
-                                </div>
-                            </div>
+                                   required="required"/>
 
-                            <div class="form-group account-btn text-center m-t-20 ">
-                                <div class="col-sm-12 m-t-5 ">
-                                    <button
-                                            class="btn btn-block w-md btn-bordered btn-custom waves-effect waves-light m-t-10"
-                                            type="submit">{{ 'security.login.submit'|trans({}, 'FOSUserBundle') }}</button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <div class="clearfix"></div>
+                            <!--<input class="form-control" type="email" required="" placeholder="Test@gmail.com">-->
+                            <div class="invalid-tooltip">Please enter proper username.</div>
+                        </div>
                     </div>
-                </div>
-                <div class="row m-t-20">
-                    <div class="col-sm-12 text-center">
-                        <p class="text-muted">Don't have an account? <a
-                                    href="{{ path('fos_user_registration_register') }}"
-                                    class="text-custom m-l-5"><b>Register</b></a>
-                        </p>
+                    <div class="form-group">
+                        <label>{{ 'security.login.password'|trans({}, 'SonataUserBundle') }}</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-lock"></i></span>
+
+                            <input class="form-control" type="password" required="" id="password" name="_password"
+                                   placeholder="{{ 'security.login.password'|trans({}, 'SonataUserBundle') }}">
+
+                            <div class="invalid-tooltip">Please enter password.</div>
+
+                            <div class="show-hide"><i class="fa fa-eye" id="togglePassword"
+                                                      style="margin-left: -30px; cursor: pointer;"></i></div>
+                        </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <input id="checkbox1" class="checkbox_animated" type="checkbox">
+                            <label class="text-primary" for="checkbox1">Remember me</label>
+                        </div>
+                        <a class="link"
+                           href="{{ path('fos_user_resetting_request') }}">{{ 'forgotten_password'|trans({}, 'SonataUserBundle') }}</a>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block"
+                                type="submit">{{ 'security.login.submit'|trans({}, 'FOSUserBundle') }}</button>
+                    </div>
+                    <!--<div class="login-social-title">
+                        <h5>Sign in with</h5>
+                    </div>
+                    <div class="form-group">
+                        <ul class="login-social">
+                            <li><a href="https://www.linkedin.com/login" target="_blank"><i data-feather="linkedin"></i></a></li>
+                            <li><a href="https://www.linkedin.com/login" target="_blank"><i data-feather="twitter"></i></a></li>
+                            <li><a href="https://www.linkedin.com/login" target="_blank"><i data-feather="facebook"></i></a></li>
+                            <li><a href="https://www.instagram.com/login" target="_blank"><i data-feather="instagram"></i></a></li>
+                        </ul>
+                    </div>-->
+                    <p>Don't have account?<a class="ms-2" href="{{ path('fos_user_registration_register') }}">Create
+                            Account</a></p>
+                </form>
             </div>
         </div>
     </div>
 
 
+
+
 {% endblock %}
 {% block javascripts %}
+    <script>
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
 {% endblock %}
 

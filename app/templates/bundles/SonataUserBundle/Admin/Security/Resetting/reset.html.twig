@@ -7,9 +7,9 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 #}
 
-{% extends 'auth.html.twig' %}
+{% extends 'secure.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
-{% block title %}Authentification{% endblock %}
+{% block title %}Authentification2{% endblock %}
 {% block body %}
     <section>
         <div class="container-alt">
@@ -30,7 +30,6 @@ file that was distributed with this source code.
                             </div>
 
                             <div class="account-content">
-
                                 <p class="login-box-msg">{{ 'resetting.reset.submit'|trans({}, 'FOSUserBundle') }}</p>
                                 {{ form_start(form, { 'action': path('sonata_user_admin_resetting_reset', {'token': token}) }) }}
                                 <div class="form-group">

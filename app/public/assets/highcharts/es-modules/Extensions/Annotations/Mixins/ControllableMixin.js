@@ -287,8 +287,11 @@ var controllableMixin = {
      *
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
+     * @param {boolean|undefined} translateSecondPoint If the shape has two
+     * points attached to it, this option allows you to translate also
+     * the second point
      */
-    translateShape: function (dx, dy) {
+    translateShape: function (dx, dy, translateSecondPoint) {
         var chart = this.annotation.chart,
             // Annotation.options
             shapeOptions = this.annotation.userOptions,
@@ -296,6 +299,9 @@ var controllableMixin = {
             annotationIndex = chart.annotations.indexOf(this.annotation),
             chartOptions = chart.options.annotations[annotationIndex];
         this.translatePoint(dx, dy, 0);
+        if (translateSecondPoint) {
+            this.translatePoint(dx, dy, 1);
+        }
         // Options stored in:
         // - chart (for exporting)
         // - current config (for redraws)
@@ -363,7 +369,7 @@ var controllableMixin = {
         var annotation = this.annotation, options = merge(true, this.options, newOptions),
             parentGroup = this.graphic.parentGroup;
         this.destroy();
-        this.constructor(annotation, options);
+        this.constructor(annotation, options, this.index);
         this.render(parentGroup);
         this.redraw();
     }

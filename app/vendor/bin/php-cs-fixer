@@ -30,7 +30,7 @@ if (defined('HHVM_VERSION_ID')) {
     || \PHP_VERSION_ID >= 80100
 ) {
     fwrite(STDERR, "PHP needs to be a minimum version of PHP 5.6.0 and maximum version of PHP 8.0.*.\n");
-    fwrite(STDERR, 'Current PHP version: ' . PHP_VERSION . ".\n");
+    fwrite(STDERR, 'Current PHP version: '.PHP_VERSION.".\n");
 
     if (defined('PHP_VERSION_ID') && \PHP_VERSION_ID === 80000) {
         fwrite(STDERR, "PHP CS Fixer is not able run on PHP 8.0.0 due to bug in PHP tokenizer (https://bugs.php.net/bug.php?id=80462).\n");
@@ -83,7 +83,7 @@ if (class_exists('Phar')) {
 
 if ($require) {
     // OK, it's not, let give Composer autoloader a try!
-    $possibleFiles = [__DIR__ . '/../../autoload.php', __DIR__ . '/../autoload.php', __DIR__ . '/vendor/autoload.php'];
+    $possibleFiles = [__DIR__.'/../../autoload.php', __DIR__.'/../autoload.php', __DIR__.'/vendor/autoload.php'];
     $file = null;
     foreach ($possibleFiles as $possibleFile) {
         if (file_exists($possibleFile)) {

@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Solid angular gauge module
  *
- * (c) 2010-2019 Torstein Honsi
+ * (c) 2010-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Core/Axis/SolidGaugeAxis.js', [_modules['Core/Color/Color.js'], _modules['Core/Utilities.js']], function (Color, U) {
         /* *
          *
@@ -145,7 +143,6 @@
                     return color;
                 }
             };
-
             /* *
              *
              *  Functions
@@ -157,7 +154,6 @@
             function init(axis) {
                 extend(axis, methods);
             }
-
             SolidGaugeAxis.init = init;
         })(SolidGaugeAxis || (SolidGaugeAxis = {}));
         /* *
@@ -168,7 +164,7 @@
 
         return SolidGaugeAxis;
     });
-    _registerModule(_modules, 'Series/SolidGauge/SolidGaugeComposition.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Series/SolidGauge/SolidGaugeComposition.js', [_modules['Core/Renderer/SVG/SVGRenderer.js']], function (SVGRenderer) {
         /* *
          *
          *  Solid angular gauge module
@@ -180,8 +176,9 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var Renderer = H.Renderer;
-        var wrap = U.wrap;
+        var _a = SVGRenderer.prototype,
+            symbols = _a.symbols,
+            arc = _a.symbols.arc;
         /**
          * Additional options, depending on the actual symbol drawn.
          *
@@ -215,14 +212,13 @@
          * @return {Highcharts.SVGPathArray}
          *         Path of the created arc.
          */
-        wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) {
-            var arc = proceed,
-                path = arc(x,
-                    y,
-                    w,
-                    h,
-                    options);
-            if (options.rounded) {
+        symbols.arc = function (x, y, w, h, options) {
+            var path = arc(x,
+                y,
+                w,
+                h,
+                options);
+            if (options && options.rounded) {
                 var r = options.r || w,
                     smallR = (r - (options.innerR || 0)) / 2,
                     outerArcStart = path[0],
@@ -237,10 +233,10 @@
                 }
             }
             return path;
-        });
+        };
 
     });
-    _registerModule(_modules, 'Series/SolidGauge/SolidGaugeSeries.js', [_modules['Mixins/LegendSymbol.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Axis/SolidGaugeAxis.js'], _modules['Core/Utilities.js']], function (LegendSymbolMixin, SeriesRegistry, SolidGaugeAxis, U) {
+    _registerModule(_modules, 'Series/SolidGauge/SolidGaugeSeries.js', [_modules['Core/Legend/LegendSymbol.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Axis/SolidGaugeAxis.js'], _modules['Core/Utilities.js']], function (LegendSymbol, SeriesRegistry, SolidGaugeAxis, U) {
         /* *
          *
          *  Solid angular gauge module
@@ -397,7 +393,6 @@
          */
         var SolidGaugeSeries = /** @class */ (function (_super) {
             __extends(SolidGaugeSeries, _super);
-
             function SolidGaugeSeries() {
                 /* *
                  *
@@ -420,7 +415,6 @@
                 _this.thresholdAngleRad = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions
@@ -470,16 +464,16 @@
                                 options.radius, 100)) * center[2]) / 200),
                             innerRadius = ((pInt(pick(point.options.innerRadius,
                                 options.innerRadius, 60)) * center[2]) / 200),
-                            shapeArgs,
-                            d,
+                            shapeArgs = void 0,
+                            d = void 0,
                             toColor = yAxis.toColor(point.y,
                                 point),
                             axisMinAngle = Math.min(yAxis.startAngleRad,
                                 yAxis.endAngleRad),
                             axisMaxAngle = Math.max(yAxis.startAngleRad,
                                 yAxis.endAngleRad),
-                            minAngle,
-                            maxAngle;
+                            minAngle = void 0,
+                            maxAngle = void 0;
                         if (toColor === 'none') { // #3708
                             toColor = point.color || series.color || 'none';
                         }
@@ -550,7 +544,7 @@
             return SolidGaugeSeries;
         }(GaugeSeries));
         extend(SolidGaugeSeries.prototype, {
-            drawLegendSymbol: LegendSymbolMixin.drawRectangle
+            drawLegendSymbol: LegendSymbol.drawRectangle
         });
         SeriesRegistry.registerSeriesType('solidgauge', SolidGaugeSeries);
         /* *

@@ -19,6 +19,8 @@
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
+ *  series.accessibility.pointDescriptionFormatter ->
+ *      series.accessibility.point.descriptionFormatter
  *  series.skipKeyboardNavigation ->
  *      series.accessibility.keyboardNavigation.enabled
  *  point.description -> point.accessibility.description !!!! WARNING: No longer deprecated and handled, removed for HC8.
@@ -59,9 +61,7 @@
 /* eslint-enable max-len */
 'use strict';
 import U from '../../Core/Utilities.js';
-
 var error = U.error, pick = U.pick;
-
 /* eslint-disable valid-jsdoc */
 /**
  * Set a new option on a root prop, where the option is defined as an array of
@@ -80,7 +80,6 @@ function traverseSetOption(root, optionAsArray, val) {
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;
 }
-
 /**
  * If we have a clear root option node for old and new options and a mapping
  * between, we can use this generic function for the copy and warn logic.
@@ -94,7 +93,6 @@ function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNew
             return acc[cur];
         }, root);
     }
-
     var rootOld = getChildProp(chart.options, rootOldAsArray), rootNew = getChildProp(chart.options, rootNewAsArray);
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
         var _a;
@@ -107,12 +105,11 @@ function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNew
         }
     });
 }
-
 /**
  * @private
  */
 function copyDeprecatedChartOptions(chart) {
-    var chartOptions = chart.options.chart || {}, a11yOptions = chart.options.accessibility || {};
+    var chartOptions = chart.options.chart, a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (prop) {
         var _a;
         if (chartOptions[prop]) {
@@ -121,7 +118,6 @@ function copyDeprecatedChartOptions(chart) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -135,7 +131,6 @@ function copyDeprecatedAxisOptions(chart) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -146,10 +141,13 @@ function copyDeprecatedSeriesOptions(chart) {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
-            'accessibility', 'pointDescriptionFormatter'
+            'accessibility', 'point', 'descriptionFormatter'
         ],
         skipKeyboardNavigation: [
             'accessibility', 'keyboardNavigation', 'enabled'
+        ],
+        'accessibility.pointDescriptionFormatter': [
+            'accessibility', 'point', 'descriptionFormatter'
         ]
     };
     chart.series.forEach(function (series) {
@@ -157,6 +155,11 @@ function copyDeprecatedSeriesOptions(chart) {
         Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
             var _a;
             var optionVal = series.options[oldOption];
+            // Special case
+            if (oldOption === 'accessibility.pointDescriptionFormatter') {
+                optionVal = series.options.accessibility &&
+                    series.options.accessibility.pointDescriptionFormatter;
+            }
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(series.options, oldToNewSeriesOptions[oldOption],
@@ -169,7 +172,6 @@ function copyDeprecatedSeriesOptions(chart) {
         });
     });
 }
-
 /**
  * @private
  */
@@ -193,7 +195,6 @@ function copyDeprecatedTopLevelAccessibilityOptions(chart) {
         axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
     });
 }
-
 /**
  * @private
  */
@@ -203,7 +204,6 @@ function copyDeprecatedKeyboardNavigationOptions(chart) {
         mode: ['mode']
     });
 }
-
 /**
  * @private
  */
@@ -224,7 +224,6 @@ function copyDeprecatedLangOptions(chart) {
         tableSummary: ['table', 'tableSummary']
     });
 }
-
 /**
  * Copy options that are deprecated over to new options. Logs warnings to
  * console if deprecated options are used.
@@ -241,5 +240,4 @@ function copyDeprecatedOptions(chart) {
     copyDeprecatedKeyboardNavigationOptions(chart);
     copyDeprecatedLangOptions(chart);
 }
-
 export default copyDeprecatedOptions;

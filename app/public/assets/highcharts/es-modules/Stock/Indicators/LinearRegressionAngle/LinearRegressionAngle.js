@@ -25,15 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
-var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, LinearRegressionIndicator = _a.linearRegression;
+var LinearRegressionIndicator = SeriesRegistry.seriesTypes.linearRegression;
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -51,7 +49,6 @@ var extend = U.extend, merge = U.merge;
  */
 var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionAngleIndicator, _super);
-
     function LinearRegressionAngleIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -64,7 +61,6 @@ var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -94,10 +90,10 @@ var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/linearregressionangle
+     * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
-    LinearRegressionAngleIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+    LinearRegressionAngleIndicator.defaultOptions = merge(LinearRegressionIndicator.defaultOptions, {
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'
@@ -125,7 +121,7 @@ export default LinearRegressionAngleIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/linearregressionangle
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionangle
  */
 ''; // to include the above in the js output

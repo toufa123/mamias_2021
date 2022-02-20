@@ -16,7 +16,6 @@
     <link href="{{ asset('assets/plugins/datatables2/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
           type="text/css"/>
 
-
     <!-- select2 -->
     <link href="{{ asset('assets/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css') }}" rel="stylesheet"
           type="text/css"/>
@@ -465,8 +464,6 @@
                 //minimumInputLength: 3
 
             });
-
-
             $("#switch1").click(function () {
                 $("#panel").slideToggle();
                 $.cookie('switch1', true);
@@ -480,7 +477,6 @@
                 $("#speciesName").prop("disabled", false);
 
             }
-
             $("#reset").click(function () {
                 $('#speciesName').val(null).trigger('change');
                 $('#ecofunctional').val(null).trigger('change');
@@ -499,6 +495,5 @@
                 window.location.reload(true);
             })
         });
-
     </script>
 {% endblock %}

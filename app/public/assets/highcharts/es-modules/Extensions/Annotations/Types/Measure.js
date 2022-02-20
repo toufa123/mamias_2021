@@ -21,7 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -29,11 +28,10 @@ import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 
-var extend = U.extend, isNumber = U.isNumber, merge = U.merge;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Measure = /** @class */ (function (_super) {
     __extends(Measure, _super);
-
     /* *
      *
      *  Constructors
@@ -42,7 +40,6 @@ var Measure = /** @class */ (function (_super) {
     function Measure(chart, userOptions) {
         return _super.call(this, chart, userOptions) || this;
     }
-
     /* *
      *
      *  Functions
@@ -113,7 +110,16 @@ var Measure = /** @class */ (function (_super) {
         ];
     };
     Measure.prototype.addControlPoints = function () {
+        var inverted = this.chart.inverted, options = this.options.controlPointOptions;
         var selectType = this.options.typeOptions.selectType, controlPoint;
+        if (!defined(this.userOptions.controlPointOptions &&
+            this.userOptions.controlPointOptions.style.cursor)) {
+            if (selectType === 'x') {
+                options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
+            } else if (selectType === 'y') {
+                options.style.cursor = inverted ? 'ew-resize' : 'ns-resize';
+            }
+        }
         controlPoint = new ControlPoint(this.chart, this, this.options.controlPointOptions, 0);
         this.controlPoints.push(controlPoint);
         // add extra controlPoint for horizontal and vertical range
@@ -144,25 +150,27 @@ var Measure = /** @class */ (function (_super) {
                 backgroundColor: 'none',
                 color: 'black',
                 borderWidth: 0,
-                dashStyle: 'dash',
-                overflow: 'none',
+                dashStyle: 'Dash',
+                overflow: 'allow',
                 align: 'left',
-                vertical: 'top',
+                y: 0,
+                x: 0,
+                verticalAlign: 'top',
                 crop: true,
+                xAxis: 0,
+                yAxis: 0,
                 point: function (target) {
-                    var annotation = target.annotation, chart = annotation.chart, inverted = chart.inverted,
-                        xAxis = chart.xAxis[typeOptions.xAxis], yAxis = chart.yAxis[typeOptions.yAxis],
-                        top = chart.plotTop, left = chart.plotLeft;
+                    var annotation = target.annotation, options = target.options;
                     return {
-                        x: (inverted ? top : 10) +
-                            xAxis.toPixels(annotation.xAxisMin, !inverted),
-                        y: (inverted ? -left + 10 : top) +
-                            yAxis.toPixels(annotation.yAxisMin)
+                        x: annotation.xAxisMin,
+                        y: annotation.yAxisMin,
+                        xAxis: pick(typeOptions.xAxis, options.xAxis),
+                        yAxis: pick(typeOptions.yAxis, options.yAxis)
                     };
                 },
                 text: (formatter && formatter.call(this)) ||
                     Measure.calculations.defaultFormatter.call(this)
-            }, typeOptions.label));
+            }, typeOptions.label), void 0);
         }
     };
     /**
@@ -185,7 +193,7 @@ var Measure = /** @class */ (function (_super) {
         this.initShape(extend({
             type: 'path',
             points: this.shapePointsOptions()
-        }, this.options.typeOptions.background), false);
+        }, this.options.typeOptions.background), 2);
     };
     /**
      * Add internal crosshair shapes (on top and bottom).
@@ -239,12 +247,8 @@ var Measure = /** @class */ (function (_super) {
             // Add new crosshairs
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
-            this.initShape(extend({
-                d: pathH
-            }, crosshairOptionsX), false);
-            this.initShape(extend({
-                d: pathV
-            }, crosshairOptionsY), false);
+            this.initShape(extend({d: pathH}, crosshairOptionsX), 0);
+            this.initShape(extend({d: pathV}, crosshairOptionsY), 1);
         }
     };
     Measure.prototype.onDrag = function (e) {
@@ -789,5 +793,15 @@ Measure.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions,
             }
         }
     });
+/* *
+ *
+ *  Registry
+ *
+ * */
 Annotation.types.measure = Measure;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Measure;

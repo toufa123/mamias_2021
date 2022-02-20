@@ -25,16 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -50,7 +47,6 @@ var extend = U.extend, merge = U.merge;
  */
 var MapLineSeries = /** @class */ (function (_super) {
     __extends(MapLineSeries, _super);
-
     function MapLineSeries() {
         /* *
          *
@@ -69,7 +65,6 @@ var MapLineSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

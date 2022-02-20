@@ -33,9 +33,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+import CU from '../CenteredUtilities.js';
 
-var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
+var getCenter = CU.getCenter, getStartAndEndRadians = CU.getStartAndEndRadians;
 import H from '../../Core/Globals.js';
 
 var noop = H.noop;
@@ -45,10 +45,10 @@ var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSerie
     TreemapSeries = _a.treemap;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 
-var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions,
-    setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
+var getColor = TU.getColor, getLevelOptions = TU.getLevelOptions, setTreeValues = TU.setTreeValues,
+    updateRootId = TU.updateRootId;
 import U from '../../Core/Utilities.js';
 
 var error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString,
@@ -64,12 +64,10 @@ var rad2deg = 180 / Math.PI;
  *  Functions
  *
  * */
-
 // eslint-disable-next-line require-jsdoc
 function isBoolean(x) {
     return typeof x === 'boolean';
 }
-
 /**
  * Find a set of coordinates given a start coordinates, an angle, and a
  * distance.
@@ -98,7 +96,6 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
         y: y + (Math.sin(angle) * distance)
     };
 };
-
 // eslint-disable-next-line require-jsdoc
 function getDlOptions(params) {
     // Set options to new object to avoid problems with scope
@@ -208,7 +205,6 @@ function getDlOptions(params) {
     }
     return options;
 }
-
 // eslint-disable-next-line require-jsdoc
 function getAnimation(shape, params) {
     var point = params.point, radians = params.radians, innerR = params.innerR, idRoot = params.idRoot,
@@ -270,7 +266,6 @@ function getAnimation(shape, params) {
         to: to
     };
 }
-
 // eslint-disable-next-line require-jsdoc
 function getDrillId(point, idRoot, mapIdToNode) {
     var drillId, node = point.node, nodeRoot;
@@ -285,7 +280,6 @@ function getDrillId(point, idRoot, mapIdToNode) {
     }
     return drillId;
 }
-
 // eslint-disable-next-line require-jsdoc
 function cbSetTreeValuesBefore(node, options) {
     var mapIdToNode = options.mapIdToNode, nodeParent = mapIdToNode[node.parent], series = options.series,
@@ -310,7 +304,6 @@ function cbSetTreeValuesBefore(node, options) {
     }
     return node;
 }
-
 /* *
  *
  *  Class
@@ -318,7 +311,6 @@ function cbSetTreeValuesBefore(node, options) {
  * */
 var SunburstSeries = /** @class */ (function (_super) {
     __extends(SunburstSeries, _super);
-
     function SunburstSeries() {
         /* *
          *
@@ -343,7 +335,6 @@ var SunburstSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -405,9 +396,9 @@ var SunburstSeries = /** @class */ (function (_super) {
                 y: positions[1]
             }, innerR = positions[3] / 2, renderer = series.chart.renderer, animateLabels, animateLabelsCalled = false,
             addedHack = false, hackDataLabelAnimation = !!(animation &&
-            hasRendered &&
-            idRoot !== idPreviousRoot &&
-            series.dataLabelsGroup);
+                hasRendered &&
+                idRoot !== idPreviousRoot &&
+                series.dataLabelsGroup);
         if (hackDataLabelAnimation) {
             series.dataLabelsGroup.attr({opacity: 0});
             animateLabels = function () {
@@ -452,6 +443,7 @@ var SunburstSeries = /** @class */ (function (_super) {
                 plotX: shape.plotX,
                 plotY: shape.plotY,
                 value: node.val,
+                isInside: visible,
                 isNull: !visible // used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({
@@ -536,12 +528,12 @@ var SunburstSeries = /** @class */ (function (_super) {
             var values = childrenValues[index], angle = values.start + ((values.end - values.start) / 2),
                 radius = values.innerR + ((values.r - values.innerR) / 2), radians = (values.end - values.start),
                 isCircle = (values.innerR === 0 && radians > twoPi), center = (isCircle ?
-                {x: values.x, y: values.y} :
-                getEndPoint(values.x, values.y, angle, radius)), val = (child.val ?
-                (child.childrenTotal > child.val ?
-                    child.childrenTotal :
-                    child.val) :
-                child.childrenTotal);
+                    {x: values.x, y: values.y} :
+                    getEndPoint(values.x, values.y, angle, radius)), val = (child.val ?
+                    (child.childrenTotal > child.val ?
+                        child.childrenTotal :
+                        child.val) :
+                    child.childrenTotal);
             // The inner arc length is a convenience for data label filters.
             if (this.points[child.i]) {
                 this.points[child.i].innerArcLength = radians * values.innerR;
@@ -727,18 +719,6 @@ var SunburstSeries = /** @class */ (function (_super) {
          * @apioption plotOptions.sunburst.levels.levelSize
          */
         /**
-         * Can set a `rotation` on all points which lies on the same level.
-         *
-         * @type      {number}
-         * @apioption plotOptions.sunburst.levels.rotation
-         */
-        /**
-         * Can set a `rotationMode` on all points which lies on the same level.
-         *
-         * @type      {string}
-         * @apioption plotOptions.sunburst.levels.rotationMode
-         */
-        /**
          * When enabled the user can click on a point which is a parent and
          * zoom in on its children. Deprecated and replaced by
          * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
@@ -794,8 +774,7 @@ var SunburstSeries = /** @class */ (function (_super) {
              * resulting in a better layout, however multiple lines and
              * `textOutline` are not supported.
              *
-             * The `series.rotation` option takes precedence over
-             * `rotationMode`.
+             * The `rotation` option takes precedence over `rotationMode`.
              *
              * @type       {string}
              * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/

@@ -7,30 +7,30 @@
  * Version 2.1.0
  * Licensed under the MIT license.
  */
-(function ($) {
+(function($) {
     "use strict";
 
     var nextId = 0;
 
-    var Filestyle = function (element, options) {
+    var Filestyle = function(element, options) {
         this.options = options;
         this.$elementFilestyle = [];
         this.$element = $(element);
     };
 
     Filestyle.prototype = {
-        clear: function () {
+        clear : function() {
             this.$element.val('');
             this.$elementFilestyle.find(':text').val('');
             this.$elementFilestyle.find('.badge').remove();
         },
 
-        destroy: function () {
+        destroy : function() {
             this.$element.removeAttr('style').removeData('filestyle');
             this.$elementFilestyle.remove();
         },
 
-        disabled: function (value) {
+        disabled : function(value) {
             if (value === true || value === false) {
                 this.options.disabled = value;
                 this.$element.prop('disabled', this.options.disabled);
@@ -45,7 +45,7 @@
             }
         },
 
-        dragdrop: function (value) {
+        dragdrop : function(value) {
             if (value === true || value === false) {
                 this.options.dragdrop = value;
             } else {
@@ -53,7 +53,7 @@
             }
         },
 
-        buttonBefore: function (value) {
+        buttonBefore : function(value) {
             if (value === true) {
                 if (!this.options.buttonBefore) {
                     this.options.buttonBefore = value;
@@ -77,7 +77,7 @@
             }
         },
 
-        input: function (value) {
+        input : function(value) {
             if (value === true) {
                 if (!this.options.input) {
                     this.options.input = value;
@@ -102,7 +102,7 @@
             }
         },
 
-        size: function (value) {
+        size : function(value) {
             if (value !== undefined) {
                 this.options.size = value;
                 var btn = this.$elementFilestyle.find('label'), input = this.$elementFilestyle.find('input');
@@ -118,7 +118,7 @@
             }
         },
 
-        placeholder: function (value) {
+        placeholder : function(value) {
             if (value !== undefined) {
                 this.options.placeholder = value;
                 this.$elementFilestyle.find('input').attr('placeholder', value);
@@ -127,7 +127,7 @@
             }
         },
 
-        text: function (value) {
+        text : function(value) {
             if (value !== undefined) {
                 this.options.text = value;
                 this.$elementFilestyle.find('label .text').html(this.options.text);
@@ -136,22 +136,22 @@
             }
         },
 
-        btnClass: function (value) {
+        btnClass : function(value) {
             if (value !== undefined) {
                 this.options.btnClass = value;
                 this.$elementFilestyle.find('label').attr({
-                    'class': 'btn ' + this.options.btnClass + ' btn-' + this.options.size
+                    'class' : 'btn ' + this.options.btnClass + ' btn-' + this.options.size
                 });
             } else {
                 return this.options.btnClass;
             }
         },
 
-        badge: function (value) {
+        badge : function(value) {
             if (value === true) {
                 this.options.badge = value;
                 var files = this.pushNameFiles();
-                this.$elementFilestyle.find('label').append(' <span class="badge ' + this.options.badgeName + '">' + files.length + '</span>');
+                this.$elementFilestyle.find('label').append(' <span class="badge '+this.options.badgeName+'">' + files.length + '</span>');
             } else if (value === false) {
                 this.options.badge = value;
                 this.$elementFilestyle.find('.badge').remove();
@@ -160,18 +160,18 @@
             }
         },
 
-        badgeName: function (value) {
+        badgeName : function(value) {
             if (value !== undefined) {
                 this.options.badgeName = value;
                 this.$elementFilestyle.find('.badge').attr({
-                    'class': 'badge ' + this.options.badgeName
+                    'class' : 'badge ' + this.options.badgeName
                 });
             } else {
                 return this.options.badgeName;
             }
         },
 
-        htmlIcon: function (value) {
+        htmlIcon : function(value) {
             if (value !== undefined) {
                 this.options.htmlIcon = value;
             }
@@ -179,9 +179,9 @@
             return this.options.htmlIcon;
         },
 
-        htmlInput: function () {
+        htmlInput : function() {
             if (this.options.input) {
-                return '<input type="text" class="form-control ' + (this.options.size == 'nr' ? '' : 'form-control-' + this.options.size) + '" placeholder="' + this.options.placeholder + '" disabled> ';
+                return '<input type="text" class="form-control ' + (this.options.size == 'nr' ? '' : 'form-control-' + this.options.size) + '" placeholder="'+ this.options.placeholder +'" disabled> ';
             } else {
                 return '';
             }
@@ -189,11 +189,11 @@
 
         // puts the name of the input files
         // return files
-        pushNameFiles: function () {
+        pushNameFiles : function() {
             var content = '', files = [];
             if (this.$element[0].files === undefined) {
                 files[0] = {
-                    'name': this.$element[0] && this.$element[0].value
+                    'name' : this.$element[0] && this.$element[0].value
                 };
             } else {
                 files = this.$element[0].files;
@@ -212,7 +212,7 @@
             return files;
         },
 
-        constructor: function () {
+        constructor : function() {
             var _self = this,
                 html = '',
                 id = _self.$element.attr('id'),
@@ -223,7 +223,7 @@
             if (id === '' || !id) {
                 id = 'filestyle-' + nextId;
                 _self.$element.attr({
-                    'id': id
+                    'id' : id
                 });
                 nextId++;
             }
@@ -238,7 +238,7 @@
 
             html = _self.options.buttonBefore ? btn + _self.htmlInput() : _self.htmlInput() + btn;
             _self.$elementFilestyle = $('<div class="bootstrap-filestyle input-group"><div name="filedrag"></div>' + html + '</div>');
-            _self.$elementFilestyle.find('.group-span-filestyle').attr('tabindex', "0").keypress(function (e) {
+            _self.$elementFilestyle.find('.group-span-filestyle').attr('tabindex', "0").keypress(function(e) {
                 if (e.keyCode === 13 || e.charCode === 32) {
                     _self.$elementFilestyle.find('label').click();
                     return false;
@@ -247,8 +247,8 @@
 
             // hidding input file and add filestyle
             _self.$element.css({
-                'position': 'absolute',
-                'clip': 'rect(0px 0px 0px 0px)' // using 0px for work in IE8
+                'position' : 'absolute',
+                'clip' : 'rect(0px 0px 0px 0px)' // using 0px for work in IE8
             }).attr('tabindex', "-1").after(_self.$elementFilestyle);
 
             _self.$elementFilestyle.find(_self.options.buttonBefore ? 'label' : ':input').css({
@@ -259,7 +259,7 @@
             _self.$elementFilestyle.find('[name="filedrag"]').css({
                 position: 'absolute',
                 width: '100%',
-                height: _self.$elementFilestyle.height() + 'px',
+                height: _self.$elementFilestyle.height()+'px',
                 'z-index': -1
             });
 
@@ -276,7 +276,7 @@
                 var files = _self.pushNameFiles();
                 if (_self.options.badge) {
                     if (_self.$elementFilestyle.find('.badge').length == 0) {
-                        _self.$elementFilestyle.find('label').append(' <span class="badge ' + _self.options.badgeName + '">' + files.length + '</span>');
+                        _self.$elementFilestyle.find('label').append(' <span class="badge '+_self.options.badgeName+'">' + files.length + '</span>');
                     } else if (files.length == 0) {
                         _self.$elementFilestyle.find('.badge').remove();
                     } else {
@@ -292,7 +292,7 @@
             // Check if browser is Firefox
             if (window.navigator.userAgent.search(/firefox/i) > -1) {
                 // Simulating choose file for firefox
-                _self.$elementFilestyle.find('label').click(function () {
+                _self.$elementFilestyle.find('label').click(function() {
                     _self.$element.click();
                     return false;
                 });
@@ -338,7 +338,7 @@
                                 var files = _self.pushNameFiles();
                                 if (_self.options.badge) {
                                     if (_self.$elementFilestyle.find('.badge').length == 0) {
-                                        _self.$elementFilestyle.find('label').append(' <span class="badge ' + _self.options.badgeName + '">' + files.length + '</span>');
+                                        _self.$elementFilestyle.find('label').append(' <span class="badge '+_self.options.badgeName+'">' + files.length + '</span>');
                                     } else if (files.length == 0) {
                                         _self.$elementFilestyle.find('.badge').remove();
                                     } else {
@@ -358,24 +358,23 @@
 
     var old = $.fn.filestyle;
 
-    $.fn.filestyle = function (option, value) {
-        var get = '', element = this.each(function () {
+    $.fn.filestyle = function(option, value) {
+        var get = '', element = this.each(function() {
             if ($(this).attr('type') === 'file') {
-                var $this = $(this), data = $this.data('filestyle'),
-                    options = $.extend({}, $.fn.filestyle.defaults, option, typeof option === 'object' && option);
+                var $this = $(this), data = $this.data('filestyle'), options = $.extend({}, $.fn.filestyle.defaults, option, typeof option === 'object' && option);
 
                 if (!data) {
-                    $this.data('filestyle', (data = new Filestyle(this, options)));
+                    $this.data('filestyle', ( data = new Filestyle(this, options)));
                     data.constructor();
                 }
 
-                if (typeof option === 'string') {
+                if ( typeof option === 'string') {
                     get = data[option](value);
                 }
             }
         });
 
-        if (typeof get !== undefined) {
+        if ( typeof get !== undefined) {
             return get;
         } else {
             return element;
@@ -383,39 +382,38 @@
     };
 
     $.fn.filestyle.defaults = {
-        'text': 'Choose file',
-        'htmlIcon': '',
-        'btnClass': 'btn-secondary',
-        'size': 'nr',
-        'input': true,
-        'badge': false,
+        'text' : 'Choose file',
+        'htmlIcon' : '',
+        'btnClass' : 'btn-secondary',
+        'size' : 'nr',
+        'input' : true,
+        'badge' : false,
         'badgeName': 'badge-light',
-        'buttonBefore': false,
-        'dragdrop': true,
-        'disabled': false,
+        'buttonBefore' : false,
+        'dragdrop' : true,
+        'disabled' : false,
         'placeholder': '',
-        'onChange': function () {
-        }
+        'onChange': function () {}
     };
 
-    $.fn.filestyle.noConflict = function () {
+    $.fn.filestyle.noConflict = function() {
         $.fn.filestyle = old;
         return this;
     };
 
-    $(function () {
-        $('.filestyle').each(function () {
+    $(function() {
+        $('.filestyle').each(function() {
             var $this = $(this), options = {
-                'input': $this.attr('data-input') !== 'false',
-                'htmlIcon': $this.attr('data-icon'),
-                'buttonBefore': $this.attr('data-buttonBefore') === 'true',
-                'disabled': $this.attr('data-disabled') === 'true',
-                'size': $this.attr('data-size'),
-                'text': $this.attr('data-text'),
-                'btnClass': $this.attr('data-btnClass'),
-                'badge': $this.attr('data-badge') === 'true',
-                'dragdrop': $this.attr('data-dragdrop') !== 'false',
-                'badgeName': $this.attr('data-badgeName'),
+                'input' : $this.attr('data-input') !== 'false',
+                'htmlIcon' : $this.attr('data-icon'),
+                'buttonBefore' : $this.attr('data-buttonBefore') === 'true',
+                'disabled' : $this.attr('data-disabled') === 'true',
+                'size' : $this.attr('data-size'),
+                'text' : $this.attr('data-text'),
+                'btnClass' : $this.attr('data-btnClass'),
+                'badge' : $this.attr('data-badge') === 'true',
+                'dragdrop' : $this.attr('data-dragdrop') !== 'false',
+                'badgeName' : $this.attr('data-badgeName'),
                 'placeholder': $this.attr('data-placeholder')
             };
 

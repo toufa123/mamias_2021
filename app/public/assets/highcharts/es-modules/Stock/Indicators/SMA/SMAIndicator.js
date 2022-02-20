@@ -23,21 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import Chart from '../../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../../Core/Utilities.js';
 
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge, pick = U.pick,
     splat = U.splat;
 import './SMAComposition.js';
-
-var generateMessage = RequiredIndicatorMixin.generateMessage;
 /* *
  *
  *  Class
@@ -50,7 +46,6 @@ var generateMessage = RequiredIndicatorMixin.generateMessage;
  */
 var SMAIndicator = /** @class */ (function (_super) {
     __extends(SMAIndicator, _super);
-
     function SMAIndicator() {
         /* *
          *
@@ -71,7 +66,6 @@ var SMAIndicator = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -141,98 +135,107 @@ var SMAIndicator = /** @class */ (function (_super) {
      * @private
      */
     SMAIndicator.prototype.init = function (chart, options) {
-        var indicator = this, requiredIndicators = indicator.requireIndicators();
-        // Check whether all required indicators are loaded.
-        if (!requiredIndicators.allLoaded) {
-            return error(generateMessage(indicator.type, requiredIndicators.needed));
-        }
+        var indicator = this;
         _super.prototype.init.call(indicator, chart, options);
-        // Make sure we find series which is a base for an indicator
-        chart.linkSeries();
-        indicator.dataEventsToUnbind = [];
-
-        /**
-         * @private
-         * @return {void}
-         */
-        function recalculateValues() {
-            var oldData = indicator.points || [], oldDataLength = (indicator.xData || []).length,
-                processedData = (indicator.getValues(indicator.linkedParent, indicator.options.params) || {
-                    values: [],
-                    xData: [],
-                    yData: []
-                }), croppedDataValues = [], overwriteData = true, oldFirstPointIndex, oldLastPointIndex, croppedData,
-                min, max, i;
-            // We need to update points to reflect changes in all,
-            // x and y's, values. However, do it only for non-grouped
-            // data - grouping does it for us (#8572)
-            if (oldDataLength &&
-                !indicator.hasGroupedData &&
-                indicator.visible &&
-                indicator.points) {
-                // When data is cropped update only avaliable points (#9493)
-                if (indicator.cropped) {
-                    if (indicator.xAxis) {
-                        min = indicator.xAxis.min;
-                        max = indicator.xAxis.max;
-                    }
-                    croppedData = indicator.cropData(processedData.xData, processedData.yData, min, max);
-                    for (i = 0; i < croppedData.xData.length; i++) {
-                        // (#10774)
-                        croppedDataValues.push([
-                            croppedData.xData[i]
-                        ].concat(splat(croppedData.yData[i])));
-                    }
-                    oldFirstPointIndex = processedData.xData.indexOf(indicator.xData[0]);
-                    oldLastPointIndex = processedData.xData.indexOf(indicator.xData[indicator.xData.length - 1]);
-                    // Check if indicator points should be shifted (#8572)
-                    if (oldFirstPointIndex === -1 &&
-                        oldLastPointIndex === processedData.xData.length - 2) {
-                        if (croppedDataValues[0][0] === oldData[0].x) {
-                            croppedDataValues.shift();
-                        }
-                    }
-                    indicator.updateData(croppedDataValues);
-                    // Omit addPoint() and removePoint() cases
-                } else if (processedData.xData.length !== oldDataLength - 1 &&
-                    processedData.xData.length !== oldDataLength + 1) {
-                    overwriteData = false;
-                    indicator.updateData(processedData.values);
+        // Only after series are linked indicator can be processed.
+        var linkedSeriesUnbiner = addEvent(Chart, 'afterLinkSeries', function () {
+            var hasEvents = !!indicator.dataEventsToUnbind.length;
+            if (indicator.linkedParent) {
+                if (!hasEvents) {
+                    indicator.dataEventsToUnbind.push(addEvent(indicator.bindTo.series ?
+                        indicator.linkedParent :
+                        indicator.linkedParent.xAxis, indicator.bindTo.eventName, function () {
+                        indicator.recalculateValues();
+                    }));
                 }
+                if (indicator.calculateOn === 'init') {
+                    if (!indicator.processedYData) {
+                        indicator.recalculateValues();
+                    }
+                } else {
+                    if (!hasEvents) {
+                        var unbinder_1 = addEvent(indicator.chart, indicator.calculateOn, function () {
+                            indicator.recalculateValues();
+                            // Call this just once, on init
+                            unbinder_1();
+                        });
+                    }
+                }
+            } else {
+                return error('Series ' +
+                    indicator.options.linkedTo +
+                    ' not found! Check `linkedTo`.', false, chart);
             }
-            if (overwriteData) {
-                indicator.xData = processedData.xData;
-                indicator.yData = processedData.yData;
-                indicator.options.data = processedData.values;
+        }, {
+            order: 0
+        });
+        // Make sure we find series which is a base for an indicator
+        // chart.linkSeries();
+        indicator.dataEventsToUnbind = [];
+        indicator.eventsToUnbind.push(linkedSeriesUnbiner);
+    };
+    /**
+     * @private
+     * @return {void}
+     */
+    SMAIndicator.prototype.recalculateValues = function () {
+        var indicator = this, oldData = indicator.points || [], oldDataLength = (indicator.xData || []).length,
+            processedData = (indicator.getValues(indicator.linkedParent, indicator.options.params) || {
+                values: [],
+                xData: [],
+                yData: []
+            }), croppedDataValues = [], overwriteData = true, oldFirstPointIndex, oldLastPointIndex, croppedData, min,
+            max, i;
+        // We need to update points to reflect changes in all,
+        // x and y's, values. However, do it only for non-grouped
+        // data - grouping does it for us (#8572)
+        if (oldDataLength &&
+            !indicator.hasGroupedData &&
+            indicator.visible &&
+            indicator.points) {
+            // When data is cropped update only avaliable points (#9493)
+            if (indicator.cropped) {
+                if (indicator.xAxis) {
+                    min = indicator.xAxis.min;
+                    max = indicator.xAxis.max;
+                }
+                croppedData = indicator.cropData(processedData.xData, processedData.yData, min, max);
+                for (i = 0; i < croppedData.xData.length; i++) {
+                    // (#10774)
+                    croppedDataValues.push([
+                        croppedData.xData[i]
+                    ].concat(splat(croppedData.yData[i])));
+                }
+                oldFirstPointIndex = processedData.xData.indexOf(indicator.xData[0]);
+                oldLastPointIndex = processedData.xData.indexOf(indicator.xData[indicator.xData.length - 1]);
+                // Check if indicator points should be shifted (#8572)
+                if (oldFirstPointIndex === -1 &&
+                    oldLastPointIndex === processedData.xData.length - 2) {
+                    if (croppedDataValues[0][0] === oldData[0].x) {
+                        croppedDataValues.shift();
+                    }
+                }
+                indicator.updateData(croppedDataValues);
+                // Omit addPoint() and removePoint() cases
+            } else if (processedData.xData.length !== oldDataLength - 1 &&
+                processedData.xData.length !== oldDataLength + 1) {
+                overwriteData = false;
+                indicator.updateData(processedData.values);
             }
-            // Removal of processedXData property is required because on
-            // first translate processedXData array is empty
-            if (indicator.bindTo.series === false) {
-                delete indicator.processedXData;
-                indicator.isDirty = true;
-                indicator.redraw();
-            }
-            indicator.isDirtyData = false;
         }
-
-        if (!indicator.linkedParent) {
-            return error('Series ' +
-                indicator.options.linkedTo +
-                ' not found! Check `linkedTo`.', false, chart);
+        if (overwriteData) {
+            indicator.xData = processedData.xData;
+            indicator.yData = processedData.yData;
+            indicator.options.data = processedData.values;
         }
-        indicator.dataEventsToUnbind.push(addEvent(indicator.bindTo.series ?
-            indicator.linkedParent :
-            indicator.linkedParent.xAxis, indicator.bindTo.eventName, recalculateValues));
-        if (indicator.calculateOn === 'init') {
-            recalculateValues();
-        } else {
-            var unbinder = addEvent(indicator.chart, indicator.calculateOn, function () {
-                recalculateValues();
-                // Call this just once, on init
-                unbinder();
-            });
+        // Removal of processedXData property is required because on
+        // first translate processedXData array is empty
+        if (indicator.bindTo.series === false) {
+            delete indicator.processedXData;
+            indicator.isDirty = true;
+            indicator.redraw();
         }
-        // return indicator;
+        indicator.isDirtyData = false;
     };
     /**
      * @private
@@ -240,36 +243,22 @@ var SMAIndicator = /** @class */ (function (_super) {
     SMAIndicator.prototype.processData = function () {
         var series = this, compareToMain = series.options.compareToMain, linkedParent = series.linkedParent;
         _super.prototype.processData.apply(series, arguments);
-        if (linkedParent && linkedParent.compareValue && compareToMain) {
-            series.compareValue = linkedParent.compareValue;
+        if (series.dataModify &&
+            linkedParent &&
+            linkedParent.dataModify &&
+            linkedParent.dataModify.compareValue &&
+            compareToMain) {
+            series.dataModify.compareValue =
+                linkedParent.dataModify.compareValue;
         }
-
-    };
-    /**
-     * @private
-     */
-    SMAIndicator.prototype.requireIndicators = function () {
-        var obj = {
-            allLoaded: true
-        };
-        // Check whether all required indicators are loaded, else return
-        // the object with missing indicator's name.
-        this.requiredIndicators.forEach(function (indicator) {
-            if (SeriesRegistry.seriesTypes[indicator]) {
-                SeriesRegistry.seriesTypes[indicator].prototype.requireIndicators();
-            } else {
-                obj.allLoaded = false;
-                obj.needed = indicator;
-            }
-        });
-        return obj;
+        return;
     };
     /**
      * The parameter allows setting line series type and use OHLC indicators.
      * Data in OHLC format is required.
      *
      * @sample {highstock} stock/indicators/use-ohlc-data
-     *         Plot line on Y axis
+     *         Use OHLC data format to plot line chart
      *
      * @type      {boolean}
      * @product   highstock
@@ -334,7 +323,7 @@ var SMAIndicator = /** @class */ (function (_super) {
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              */
-            index: 0,
+            index: 3,
             /**
              * The base period for indicator calculations. This is the number of
              * data points which are taken into account for the indicator
@@ -354,8 +343,6 @@ extend(SMAIndicator.prototype, {
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [],
-    // Defines on which other indicators is this indicator based on.
-    requiredIndicators: [],
     useCommonDataGrouping: true
 });
 SeriesRegistry.registerSeriesType('sma', SMAIndicator);

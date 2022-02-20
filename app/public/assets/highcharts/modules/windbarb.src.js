@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Wind barb series module
  *
- * (c) 2010-2019 Torstein Honsi
+ * (c) 2010-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,14 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Mixins/OnSeries.js', [_modules['Series/Column/ColumnSeries.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (ColumnSeries, Series, U) {
+    _registerModule(_modules, 'Series/OnSeriesComposition.js', [_modules['Series/Column/ColumnSeries.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (ColumnSeries, Series, U) {
         /* *
          *
          *  (c) 2010-2021 Torstein Honsi
@@ -44,52 +43,83 @@
         var seriesProto = Series.prototype;
         var defined = U.defined,
             stableSort = U.stableSort;
-        /**
-         * @private
-         * @mixin onSeriesMixin
-         */
-        var onSeriesMixin = {
+        /* *
+         *
+         *  Composition
+         *
+         * */
+        var OnSeriesComposition;
+        (function (OnSeriesComposition) {
+            /* *
+             *
+             *  Declarations
+             *
+             * */
+            /* *
+             *
+             *  Properties
+             *
+             * */
+            var composedClasses = [];
+            /* *
+             *
+             *  Functions
+             *
+             * */
+
             /* eslint-disable valid-jsdoc */
             /**
-             * Override getPlotBox. If the onSeries option is valid,
-             return the plot box
-             * of the onSeries,
-             otherwise proceed as usual.
+             * @private
+             */
+            function compose(SeriesClass) {
+                if (composedClasses.indexOf(SeriesClass) === -1) {
+                    composedClasses.push(SeriesClass);
+                    var seriesProto_1 = SeriesClass.prototype;
+                    seriesProto_1.getPlotBox = getPlotBox;
+                    seriesProto_1.translate = translate;
+                }
+                return SeriesClass;
+            }
+
+            OnSeriesComposition.compose = compose;
+
+            /**
+             * Override getPlotBox. If the onSeries option is valid, return the plot box
+             * of the onSeries, otherwise proceed as usual.
              *
              * @private
-             * @function onSeriesMixin.getPlotBox
-             * @return {Highcharts.SeriesPlotBoxObject}
              */
-            getPlotBox: function () {
+            function getPlotBox() {
                 return seriesProto.getPlotBox.call((this.options.onSeries &&
                     this.chart.get(this.options.onSeries)) || this);
-            },
+            }
+
+            OnSeriesComposition.getPlotBox = getPlotBox;
+
             /**
              * Extend the translate method by placing the point on the related series
              *
              * @private
-             * @function onSeriesMixin.translate
-             * @return {void}
              */
-            translate: function () {
+            function translate() {
                 columnProto.translate.apply(this);
                 var series = this,
                     options = series.options,
                     chart = series.chart,
                     points = series.points,
-                    cursor = points.length - 1,
-                    point,
-                    lastPoint,
                     optionsOnSeries = options.onSeries,
                     onSeries = (optionsOnSeries &&
                         chart.get(optionsOnSeries)),
-                    onKey = options.onKey || 'y',
                     step = onSeries && onSeries.options.step,
                     onData = (onSeries && onSeries.points),
-                    i = onData && onData.length,
                     inverted = chart.inverted,
                     xAxis = series.xAxis,
-                    yAxis = series.yAxis,
+                    yAxis = series.yAxis;
+                var cursor = points.length - 1,
+                    point,
+                    lastPoint,
+                    onKey = options.onKey || 'y',
+                    i = onData && onData.length,
                     xOffset = 0,
                     leftPoint,
                     lastX,
@@ -182,10 +212,16 @@
                 });
                 this.onSeries = onSeries;
             }
-            /* eslint-enable valid-jsdoc */
-        };
 
-        return onSeriesMixin;
+            OnSeriesComposition.translate = translate;
+        })(OnSeriesComposition || (OnSeriesComposition = {}));
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+
+        return OnSeriesComposition;
     });
     _registerModule(_modules, 'Series/Windbarb/WindbarbPoint.js', [_modules['Core/Utilities.js'], _modules['Series/Column/ColumnSeries.js']], function (U, ColumnSeries) {
         /* *
@@ -231,7 +267,6 @@
          * */
         var WindbarbPoint = /** @class */ (function (_super) {
             __extends(WindbarbPoint, _super);
-
             function WindbarbPoint() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -247,7 +282,6 @@
                 _this.series = void 0;
                 return _this;
             }
-
             /* *
              *
              * Functions
@@ -266,7 +300,7 @@
 
         return WindbarbPoint;
     });
-    _registerModule(_modules, 'Series/Windbarb/WindbarbSeries.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Globals.js'], _modules['Mixins/OnSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js'], _modules['Series/Windbarb/WindbarbPoint.js']], function (A, H, OnSeriesMixin, SeriesRegistry, U, WindbarbPoint) {
+    _registerModule(_modules, 'Series/Windbarb/WindbarbSeries.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Globals.js'], _modules['Series/OnSeriesComposition.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js'], _modules['Series/Windbarb/WindbarbPoint.js']], function (A, H, OnSeriesComposition, SeriesRegistry, U, WindbarbPoint) {
         /* *
          *
          *  Wind barb series module
@@ -318,7 +352,6 @@
          */
         var WindbarbSeries = /** @class */ (function (_super) {
             __extends(WindbarbSeries, _super);
-
             function WindbarbSeries() {
                 /* *
                  *
@@ -337,7 +370,6 @@
                 _this.points = void 0;
                 return _this;
             }
-
             /* *
              *
              * Static functions
@@ -452,22 +484,6 @@
                 }
                 return path;
             };
-            WindbarbSeries.prototype.translate = function () {
-                var beaufortFloor = this.beaufortFloor,
-                    beaufortName = this.beaufortName;
-                OnSeriesMixin.translate.call(this);
-                this.points.forEach(function (point) {
-                    var level = 0;
-                    // Find the beaufort level (zero based)
-                    for (; level < beaufortFloor.length; level++) {
-                        if (beaufortFloor[level] > point.value) {
-                            break;
-                        }
-                    }
-                    point.beaufortLevel = level - 1;
-                    point.beaufort = beaufortName[level - 1];
-                });
-            };
             WindbarbSeries.prototype.drawPoints = function () {
                 var chart = this.chart,
                     yAxis = this.yAxis,
@@ -479,7 +495,7 @@
                     // Check if it's inside the plot area, but only for the X
                     // dimension.
                     if (this.options.clip === false ||
-                        chart.isInsidePlot(plotX, 0, false)) {
+                        chart.isInsidePlot(plotX, 0)) {
                         // Create the graphic the first time
                         if (!point.graphic) {
                             point.graphic = this.chart.renderer
@@ -533,6 +549,14 @@
             WindbarbSeries.prototype.getExtremes = function () {
                 return {};
             };
+            WindbarbSeries.prototype.shouldShowTooltip = function (plotX, plotY, options) {
+                if (options === void 0) {
+                    options = {};
+                }
+                options.ignoreX = this.chart.inverted;
+                options.ignoreY = !options.ignoreX;
+                return _super.prototype.shouldShowTooltip.call(this, plotX, plotY, options);
+            };
             /**
              * Wind barbs are a convenient way to represent wind speed and direction in
              * one graphical form. Wind direction is given by the stem direction, and
@@ -554,7 +578,7 @@
                 /**
                  * Data grouping options for the wind barbs. In Highcharts, this
                  * requires the `modules/datagrouping.js` module to be loaded. In
-                 * Highstock, data grouping is included.
+                 * Highcharts Stock, data grouping is included.
                  *
                  * @sample  highcharts/plotoptions/windbarb-datagrouping
                  *          Wind barb with data grouping
@@ -641,21 +665,36 @@
             });
             return WindbarbSeries;
         }(ColumnSeries));
+        OnSeriesComposition.compose(WindbarbSeries);
         extend(WindbarbSeries.prototype, {
-            pointArrayMap: ['value', 'direction'],
-            parallelArrays: ['x', 'value', 'direction'],
+            beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
+                24.5, 28.5, 32.7],
             beaufortName: ['Calm', 'Light air', 'Light breeze',
                 'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
                 'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
                 'Violent storm', 'Hurricane'],
-            beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-                24.5, 28.5, 32.7],
+            parallelArrays: ['x', 'value', 'direction'],
+            pointArrayMap: ['value', 'direction'],
+            pointClass: WindbarbPoint,
             trackerGroups: ['markerGroup'],
-            getPlotBox: OnSeriesMixin.getPlotBox,
-            // Don't invert the marker group (#4960)
-            invertGroups: noop
+            invertGroups: noop,
+            translate: function () {
+                var beaufortFloor = this.beaufortFloor,
+                    beaufortName = this.beaufortName;
+                OnSeriesComposition.translate.call(this);
+                this.points.forEach(function (point) {
+                    var level = 0;
+                    // Find the beaufort level (zero based)
+                    for (; level < beaufortFloor.length; level++) {
+                        if (beaufortFloor[level] > point.value) {
+                            break;
+                        }
+                    }
+                    point.beaufortLevel = level - 1;
+                    point.beaufort = beaufortName[level - 1];
+                });
+            }
         });
-        WindbarbSeries.prototype.pointClass = WindbarbPoint;
         /* *
          *
          * Registry

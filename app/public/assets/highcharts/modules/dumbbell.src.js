@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
- * (c) 2009-2019 Sebastian Bochan, Rafal Sebestjanski
+ * (c) 2009-2021 Sebastian Bochan, Rafal Sebestjanski
  *
  * License: www.highcharts.com/license
  */
@@ -21,13 +21,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/AreaRange/AreaRangePoint.js', [_modules['Series/Area/AreaSeries.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js']], function (AreaSeries, Point, U) {
         /* *
          *
@@ -72,7 +70,6 @@
          * */
         var AreaRangePoint = /** @class */ (function (_super) {
             __extends(AreaRangePoint, _super);
-
             function AreaRangePoint() {
                 /* *
                  *
@@ -92,7 +89,6 @@
                 _this.series = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions
@@ -218,7 +214,6 @@
          * */
         var DumbbellPoint = /** @class */ (function (_super) {
             __extends(DumbbellPoint, _super);
-
             function DumbbellPoint() {
                 /* *
                  *
@@ -233,7 +228,6 @@
                 _this.pointWidth = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions
@@ -290,6 +284,14 @@
                 }
                 point.connector[verb](series.getConnectorAttribs(point));
             };
+            DumbbellPoint.prototype.destroy = function () {
+                // #15560
+                if (!this.graphic) {
+                    this.graphic = this.connector;
+                    this.connector = void 0;
+                }
+                return _super.prototype.destroy.call(this);
+            };
             return DumbbellPoint;
         }(AreaRangePoint));
         extend(DumbbellPoint.prototype, {
@@ -303,7 +305,7 @@
 
         return DumbbellPoint;
     });
-    _registerModule(_modules, 'Series/Dumbbell/DumbbellSeries.js', [_modules['Series/Column/ColumnSeries.js'], _modules['Series/Dumbbell/DumbbellPoint.js'], _modules['Core/Globals.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js']], function (ColumnSeries, DumbbellPoint, H, palette, Series, SeriesRegistry, SVGRenderer, U) {
+    _registerModule(_modules, 'Series/Dumbbell/DumbbellSeries.js', [_modules['Series/Column/ColumnSeries.js'], _modules['Series/Dumbbell/DumbbellPoint.js'], _modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js']], function (ColumnSeries, DumbbellPoint, H, Series, SeriesRegistry, SVGRenderer, U) {
         /* *
          *
          *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
@@ -358,7 +360,6 @@
          */
         var DumbbellSeries = /** @class */ (function (_super) {
             __extends(DumbbellSeries, _super);
-
             function DumbbellSeries() {
                 /* *
                  *
@@ -378,7 +379,6 @@
                 _this.columnMetrics = void 0;
                 return _this;
             }
-
             /**
              *
              *  Functions
@@ -599,8 +599,8 @@
             DumbbellSeries.prototype.markerAttribs = function () {
                 var ret = areaRangeProto.markerAttribs.apply(this,
                     arguments);
-                ret.x = Math.floor(ret.x);
-                ret.y = Math.floor(ret.y);
+                ret.x = Math.floor(ret.x || 0);
+                ret.y = Math.floor(ret.y || 0);
                 return ret;
             };
             /**
@@ -669,7 +669,7 @@
                  * @since 8.0.0
                  * @product   highcharts highstock
                  */
-                lowColor: palette.neutralColor80,
+                lowColor: "#333333" /* neutralColor80 */,
                 /**
                  * Color of the line that connects the dumbbell point's values.
                  * By default it is the series' color.
@@ -809,7 +809,7 @@
          *
          * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since       8.0.0
-         * @default     ${palette.neutralColor80}
+         * @default     #333333
          * @product     highcharts highstock
          * @apioption   series.dumbbell.data.lowColor
          */

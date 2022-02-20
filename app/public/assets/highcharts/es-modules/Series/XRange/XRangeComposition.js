@@ -22,7 +22,6 @@
  * */
 import Axis from '../../Core/Axis/Axis.js';
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent, pick = U.pick;
 /**
  * Max x2 should be considered in xAxis extremes

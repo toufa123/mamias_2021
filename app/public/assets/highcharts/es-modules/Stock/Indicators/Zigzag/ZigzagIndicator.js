@@ -25,15 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge, extend = U.extend;
 /* *
  *
@@ -51,7 +48,6 @@ var merge = U.merge, extend = U.extend;
  */
 var ZigzagIndicator = /** @class */ (function (_super) {
     __extends(ZigzagIndicator, _super);
-
     function ZigzagIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -64,7 +60,6 @@ var ZigzagIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -183,6 +178,9 @@ var ZigzagIndicator = /** @class */ (function (_super) {
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * The point index which indicator calculations will base - low
              * value.

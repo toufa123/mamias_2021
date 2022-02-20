@@ -13,10 +13,12 @@
  * */
 import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
-import palette from '../Core/Color/Palette.js';
+import D from '../Core/DefaultOptions.js';
+
+var getOptions = D.getOptions;
 import U from '../Core/Utilities.js';
 
-var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;
+var addEvent = U.addEvent, extend = U.extend;
 var chartPrototype = Chart.prototype, defaultOptions = getOptions();
 // Add language option
 extend(defaultOptions.lang,
@@ -117,7 +119,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: palette.neutralColor60
+        color: "#666666" /* neutralColor60 */
     }
 };
 /**
@@ -130,7 +132,7 @@ defaultOptions.noData = {
  * @requires modules/no-data-to-display
  */
 chartPrototype.showNoData = function (str) {
-    var chart = this, options = chart.options, text = str || (options && options.lang.noData),
+    var chart = this, options = chart.options, text = str || (options && options.lang.noData) || '',
         noDataOptions = options && (options.noData || {});
     if (chart.renderer) { // Meaning chart is not destroyed
         if (!chart.noDataLabel) {

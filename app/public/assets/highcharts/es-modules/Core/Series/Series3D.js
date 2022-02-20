@@ -27,16 +27,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, isNumber = U.isNumber;
 /* *
  *
@@ -45,11 +42,9 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, is
  * */
 var Series3D = /** @class */ (function (_super) {
     __extends(Series3D, _super);
-
     function Series3D() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-
     /* *
      *
      *  Functions
@@ -70,8 +65,8 @@ var Series3D = /** @class */ (function (_super) {
         var series = this, seriesOptions = series.options, chart = series.chart,
             zAxis = pick(series.zAxis, chart.options.zAxis[0]), rawPoints = [], rawPoint, projectedPoints,
             projectedPoint, zValue, i, rawPointsX = [], stack = seriesOptions.stacking ?
-            (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
-            series.index || 0;
+                (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
+                series.index || 0;
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
         for (i = 0; i < series.data.length; i++) {

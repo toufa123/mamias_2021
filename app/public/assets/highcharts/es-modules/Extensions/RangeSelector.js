@@ -11,10 +11,9 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 
-var defaultOptions = O.defaultOptions;
-import palette from '../Core/Color/Palette.js';
+var defaultOptions = D.defaultOptions;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 
@@ -242,6 +241,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/enabled/
          *         Disable the range selector
          *
+         * @type {boolean|undefined}
          * @default {highstock} true
          */
         enabled: void 0,
@@ -484,7 +484,7 @@ extend(defaultOptions, {
          */
         inputStyle: {
             /** @ignore */
-            color: palette.highlightColor80,
+            color: "#335cad" /* highlightColor80 */,
             /** @ignore */
             cursor: 'pointer'
         },
@@ -501,7 +501,7 @@ extend(defaultOptions, {
          */
         labelStyle: {
             /** @ignore */
-            color: palette.neutralColor60
+            color: "#666666" /* neutralColor60 */
         }
     }
 });
@@ -575,7 +575,6 @@ var RangeSelector = /** @class */ (function () {
         // Run RangeSelector
         this.init(chart);
     }
-
     /**
      * The method to run when one of the buttons in the range selectors is
      * clicked
@@ -601,6 +600,7 @@ var RangeSelector = /** @class */ (function () {
         }
         // Set the fixed range before range is altered
         chart.fixedRange = range;
+        rangeSelector.setSelected(i);
         // Apply dataGrouping associated to button
         if (dataGrouping) {
             this.forcedDataGrouping = true;
@@ -661,6 +661,11 @@ var RangeSelector = /** @class */ (function () {
                 return;
             }
         } else if (type === 'all' && baseAxis) {
+            // If the navigator exist and the axis range is declared reset that
+            // range and from now on only use the range set by a user, #14742.
+            if (chart.navigator && chart.navigator.baseSeries[0]) {
+                chart.navigator.baseSeries[0].xAxis.options.range = void 0;
+            }
             newMin = dataMin;
             newMax = dataMax;
         }
@@ -670,7 +675,6 @@ var RangeSelector = /** @class */ (function () {
         if (defined(newMax)) {
             newMax += rangeOptions._offsetMax;
         }
-        rangeSelector.setSelected(i);
         if (this.dropdown) {
             this.dropdown.selectedIndex = i + 1;
         }
@@ -782,7 +786,7 @@ var RangeSelector = /** @class */ (function () {
         rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
             var range = rangeOptions._range, type = rangeOptions.type, count = rangeOptions.count || 1,
                 button = buttons[i], state = 0, disable, select, offsetRange = rangeOptions._offsetMax -
-                rangeOptions._offsetMin, isSelected = i === selected,
+                    rangeOptions._offsetMin, isSelected = i === selected,
                 // Disable buttons where the range exceeds what is allowed in
                 // the current view
                 isTooGreatRange = range >
@@ -967,12 +971,13 @@ var RangeSelector = /** @class */ (function () {
         if (input && dateBox && this.inputGroup) {
             var isTextInput = input.type === 'text';
             var _a = this.inputGroup, translateX = _a.translateX, translateY = _a.translateY;
+            var inputBoxWidth = this.options.inputBoxWidth;
             css(input, {
-                width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+                width: isTextInput ? ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') : 'auto',
                 height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
                 border: '2px solid silver'
             });
-            if (isTextInput) {
+            if (isTextInput && inputBoxWidth) {
                 css(input, {
                     left: (translateX + dateBox.x) + 'px',
                     top: translateY + 'px'
@@ -1034,7 +1039,7 @@ var RangeSelector = /** @class */ (function () {
             var parts = inputDate.split('-');
             date = Date.UTC(pInt(parts[0]), pInt(parts[1]) - 1, pInt(parts[2]));
         }
-        if (time && useUTC) {
+        if (time && useUTC && isNumber(date)) {
             date += time.getTimezoneOffset(date);
         }
         return date;
@@ -1051,7 +1056,6 @@ var RangeSelector = /** @class */ (function () {
         var _a = this, chart = _a.chart, div = _a.div, inputGroup = _a.inputGroup;
         var rangeSelector = this, chartStyle = chart.renderer.style || {}, renderer = chart.renderer,
             options = chart.options.rangeSelector, lang = defaultOptions.lang, isMin = name === 'min';
-
         /**
          * @private
          */
@@ -1085,14 +1089,14 @@ var RangeSelector = /** @class */ (function () {
                 }
             }
         }
-
         // Create the text label
-        var text = lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'];
+        var text = lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'] || '';
         var label = renderer
             .label(text, 0)
             .addClass('highcharts-range-label')
             .attr({
-                padding: text ? 2 : 0
+                padding: text ? 2 : 0,
+                height: text ? options.inputBoxHeight : 0
             })
             .add(inputGroup);
         // Create an SVG label that shows updated date ranges and and records
@@ -1132,7 +1136,7 @@ var RangeSelector = /** @class */ (function () {
             // Styles
             label.css(merge(chartStyle, options.labelStyle));
             dateBox.css(merge({
-                color: palette.neutralColor80
+                color: "#333333" /* neutralColor80 */
             }, chartStyle, options.inputStyle));
             css(input, extend({
                 position: 'absolute',
@@ -1167,9 +1171,9 @@ var RangeSelector = /** @class */ (function () {
         var keyDown = false;
         // handle changes in the input boxes
         input.onchange = function () {
-            updateExtremes();
-            // Blur input when clicking date input calendar
+            // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
+                updateExtremes();
                 rangeSelector.hideInput(name);
                 input.blur();
             }
@@ -1180,8 +1184,12 @@ var RangeSelector = /** @class */ (function () {
                 updateExtremes();
             }
         };
-        input.onkeydown = function () {
+        input.onkeydown = function (event) {
             keyDown = true;
+            // Arrow keys
+            if (event.keyCode === 38 || event.keyCode === 40) {
+                updateExtremes();
+            }
         };
         input.onkeyup = function () {
             keyDown = false;
@@ -1267,7 +1275,9 @@ var RangeSelector = /** @class */ (function () {
                 height: 0,
                 zIndex: inputsZIndex
             });
-            this.renderButtons();
+            if (this.buttonOptions.length) {
+                this.renderButtons();
+            }
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
             if (container.parentNode) {
@@ -1305,9 +1315,12 @@ var RangeSelector = /** @class */ (function () {
                     this.maxLabel,
                     this.maxDateBox
                 ].forEach(function (label) {
-                    if (label && label.width) {
-                        label.attr({x: x_1});
-                        x_1 += label.width + options.inputSpacing;
+                    if (label) {
+                        var width = label.getBBox().width;
+                        if (width) {
+                            label.attr({x: x_1});
+                            x_1 += width + options.inputSpacing;
+                        }
                     }
                 });
             }
@@ -1335,6 +1348,7 @@ var RangeSelector = /** @class */ (function () {
         // the buttons
         var width = buttonTheme.width || 28;
         delete buttonTheme.width;
+        delete buttonTheme.states;
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
         var dropdown = this.dropdown = createElement('select', void 0, {
             position: 'absolute',
@@ -1365,7 +1379,13 @@ var RangeSelector = /** @class */ (function () {
             });
         });
         this.zoomText = renderer
-            .text(lang.rangeSelectorZoom, 0, 15)
+            .label((lang && lang.rangeSelectorZoom) || '', 0)
+            .attr({
+                padding: options.buttonTheme.padding,
+                height: options.buttonTheme.height,
+                paddingLeft: 0,
+                paddingRight: 0
+            })
             .add(this.buttonGroup);
         if (!this.chart.styledMode) {
             this.zoomText.css(options.labelStyle);
@@ -1428,7 +1448,7 @@ var RangeSelector = /** @class */ (function () {
                 _this.titleCollision(chart) &&
                 verticalAlign === 'top' &&
                 position.align === 'right' && ((position.y -
-                    group.getBBox().height - 12) <
+                        group.getBBox().height - 12) <
                     ((navButtonOptions.y || 0) +
                         (navButtonOptions.height || 0) +
                         chart.spacing[0]))) {
@@ -1704,15 +1724,16 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.collapseButtons = function (xOffsetForExportButton) {
-        var _a;
-        var _b = this, buttons = _b.buttons, buttonOptions = _b.buttonOptions, dropdown = _b.dropdown,
-            options = _b.options, zoomText = _b.zoomText;
+        var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, chart = _a.chart, dropdown = _a.dropdown,
+            options = _a.options, zoomText = _a.zoomText;
+        var userButtonTheme = (chart.userOptions.rangeSelector &&
+            chart.userOptions.rangeSelector.buttonTheme) || {};
         var getAttribs = function (text) {
             return ({
                 text: text ? text + " \u25BE" : '▾',
                 width: 'auto',
-                paddingLeft: 8,
-                paddingRight: 8
+                paddingLeft: pick(options.buttonTheme.paddingLeft, userButtonTheme.padding, 8),
+                paddingRight: pick(options.buttonTheme.paddingRight, userButtonTheme.padding, 8)
             });
         };
         if (zoomText) {
@@ -1729,12 +1750,12 @@ var RangeSelector = /** @class */ (function () {
                 hasActiveButton = true;
             }
         });
-        if (!hasActiveButton && buttons.length > 0) {
+        if (!hasActiveButton) {
             if (dropdown) {
                 dropdown.selectedIndex = 0;
             }
             buttons[0].show();
-            buttons[0].attr(getAttribs((_a = this.zoomText) === null || _a === void 0 ? void 0 : _a.textStr));
+            buttons[0].attr(getAttribs(this.zoomText && this.zoomText.textStr));
         }
         var align = options.buttonPosition.align;
         this.positionButtons();
@@ -1763,8 +1784,8 @@ var RangeSelector = /** @class */ (function () {
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
-                paddingLeft: 'unset',
-                paddingRight: 'unset'
+                paddingLeft: pick(options.buttonTheme.paddingLeft, 'unset'),
+                paddingRight: pick(options.buttonTheme.paddingRight, 'unset')
             });
             if (button.state < 2) {
                 button.setState(0);
@@ -1964,7 +1985,6 @@ RangeSelector.prototype.inputTypeFormats = {
     'date': '%Y-%m-%d',
     'time': '%H:%M:%S'
 };
-
 /**
  * Get the preferred input type based on a date format string.
  *
@@ -1995,7 +2015,6 @@ function preferredInputType(format) {
     }
     return 'text';
 }
-
 /**
  * Get the axis min value based on the range option and the current max. For
  * stock charts this is extended via the {@link RangeSelector} so that if the
@@ -2051,7 +2070,6 @@ if (!H.RangeSelector) {
     var chartDestroyEvents_1 = [];
     var initRangeSelector_1 = function (chart) {
         var extremes, rangeSelector = chart.rangeSelector, legend, alignTo, verticalAlign;
-
         /**
          * @private
          */
@@ -2059,7 +2077,8 @@ if (!H.RangeSelector) {
             if (rangeSelector) {
                 extremes = chart.xAxis[0].getExtremes();
                 legend = chart.legend;
-                verticalAlign = rangeSelector === null || rangeSelector === void 0 ? void 0 : rangeSelector.options.verticalAlign;
+                verticalAlign = (rangeSelector &&
+                    rangeSelector.options.verticalAlign);
                 if (isNumber(extremes.min)) {
                     rangeSelector.render(extremes.min, extremes.max);
                 }
@@ -2079,7 +2098,6 @@ if (!H.RangeSelector) {
                 }
             }
         }
-
         if (rangeSelector) {
             var events = find(chartDestroyEvents_1, function (e) {
                 return e[0] === chart;
@@ -2102,8 +2120,8 @@ if (!H.RangeSelector) {
     };
     // Initialize rangeselector for stock charts
     addEvent(Chart, 'afterGetContainer', function () {
-        var _a;
-        if ((_a = this.options.rangeSelector) === null || _a === void 0 ? void 0 : _a.enabled) {
+        if (this.options.rangeSelector &&
+            this.options.rangeSelector.enabled) {
             this.rangeSelector = new RangeSelector(this);
         }
     });
@@ -2200,4 +2218,4 @@ if (!H.RangeSelector) {
     });
     H.RangeSelector = RangeSelector;
 }
-export default H.RangeSelector;
+export default RangeSelector;

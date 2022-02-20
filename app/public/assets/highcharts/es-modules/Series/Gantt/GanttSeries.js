@@ -31,14 +31,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import Axis from '../../Core/Axis/Axis.js';
+import Chart from '../../Core/Chart/Chart.js';
 import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var Series = SeriesRegistry.series, XRangeSeries = SeriesRegistry.seriesTypes.xrange;
+import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
 
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, splat = U.splat;
-import '../../Core/Axis/TreeGridAxis.js';
+import TreeGridAxis from '../../Core/Axis/TreeGridAxis.js';
+
+TreeGridAxis.compose(Axis, Chart, Series, Tick);
 import '../../Extensions/CurrentDateIndication.js';
 import '../../Extensions/StaticScale.js';
 import '../../Gantt/Pathfinder.js';
@@ -56,7 +61,6 @@ import '../../Gantt/Pathfinder.js';
  */
 var GanttSeries = /** @class */ (function (_super) {
     __extends(GanttSeries, _super);
-
     function GanttSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -70,7 +74,6 @@ var GanttSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -100,7 +103,7 @@ var GanttSeries = /** @class */ (function (_super) {
             cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, diamondShape;
         if (point.options.milestone) {
             if (isNumber(plotY) && point.y !== null && point.visible !== false) {
-                diamondShape = renderer.symbols.diamond(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+                diamondShape = renderer.symbols.diamond(shapeArgs.x || 0, shapeArgs.y || 0, shapeArgs.width || 0, shapeArgs.height || 0);
                 if (graphic) {
                     graphic[verb]({
                         d: diamondShape
@@ -132,9 +135,9 @@ var GanttSeries = /** @class */ (function (_super) {
         XRangeSeries.prototype.translatePoint.call(series, point);
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs;
-            size = shapeArgs.height;
+            size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
+                x: (shapeArgs.x || 0) - (size / 2),
                 y: shapeArgs.y,
                 width: size,
                 height: size
@@ -160,15 +163,15 @@ var GanttSeries = /** @class */ (function (_super) {
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: null,
             pointFormatter: function () {
-                var point = this, series = point.series, tooltip = series.chart.tooltip, xAxis = series.xAxis,
+                var point = this, series = point.series, xAxis = series.xAxis,
                     formats = series.tooltipOptions.dateTimeLabelFormats, startOfWeek = xAxis.options.startOfWeek,
                     ttOptions = series.tooltipOptions, format = ttOptions.xDateFormat, start, end,
                     milestone = point.options.milestone, retVal = '<b>' + (point.name || point.yCategory) + '</b>';
                 if (ttOptions.pointFormat) {
                     return point.tooltipFormatter(ttOptions.pointFormat);
                 }
-                if (!format) {
-                    format = splat(tooltip.getDateFormat(xAxis.closestPointRange, point.start, startOfWeek, formats))[0];
+                if (!format && isNumber(point.start)) {
+                    format = series.chart.time.getDateFormat(xAxis.closestPointRange, point.start, startOfWeek, formats || {});
                 }
                 start = series.chart.time.dateFormat(format, point.start);
                 end = series.chart.time.dateFormat(format, point.end);
@@ -206,8 +209,6 @@ var GanttSeries = /** @class */ (function (_super) {
     return GanttSeries;
 }(XRangeSeries));
 extend(GanttSeries.prototype, {
-    // Keyboard navigation, don't use nearest vertical mode
-    keyboardMoveVertical: false,
     pointArrayMap: ['start', 'end', 'y'],
     pointClass: GanttPoint,
     setData: Series.prototype.setData

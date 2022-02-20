@@ -25,18 +25,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
-import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The boxplot series type.
@@ -54,7 +50,6 @@ var extend = U.extend, merge = U.merge, pick = U.pick;
  * */
 var BoxPlotSeries = /** @class */ (function (_super) {
     __extends(BoxPlotSeries, _super);
-
     function BoxPlotSeries() {
         /* *
          *
@@ -72,7 +67,6 @@ var BoxPlotSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions
@@ -300,7 +294,7 @@ var BoxPlotSeries = /** @class */ (function (_super) {
          * @since   3.0
          * @product highcharts
          */
-        fillColor: palette.backgroundColor,
+        fillColor: "#ffffff" /* backgroundColor */,
         /**
          * The width of the line surrounding the box. If any of
          * [stemWidth](#plotOptions.boxplot.stemWidth),

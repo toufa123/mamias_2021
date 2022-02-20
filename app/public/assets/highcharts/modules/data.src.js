@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Data module
  *
- * (c) 2012-2019 Torstein Honsi
+ * (c) 2012-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,14 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Ajax.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Core/HttpUtilities.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (G, U) {
         /* *
          *
          *  (c) 2010-2021 Christer Vasseng, Torstein Honsi
@@ -40,40 +39,12 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var merge = U.merge,
+        var doc = G.doc;
+        var createElement = U.createElement,
+            discardElement = U.discardElement,
+            merge = U.merge,
             objectEach = U.objectEach;
-        /**
-         * @interface Highcharts.AjaxSettingsObject
-         */ /**
-         * The payload to send.
-         *
-         * @name Highcharts.AjaxSettingsObject#data
-         * @type {string|Highcharts.Dictionary<any>}
-         */ /**
-         * The data type expected.
-         * @name Highcharts.AjaxSettingsObject#dataType
-         * @type {"json"|"xml"|"text"|"octet"}
-         */ /**
-         * Function to call on error.
-         * @name Highcharts.AjaxSettingsObject#error
-         * @type {Function}
-         */ /**
-         * The headers; keyed on header name.
-         * @name Highcharts.AjaxSettingsObject#headers
-         * @type {Highcharts.Dictionary<string>}
-         */ /**
-         * Function to call on success.
-         * @name Highcharts.AjaxSettingsObject#success
-         * @type {Function}
-         */ /**
-         * The HTTP method to use. For example GET or POST.
-         * @name Highcharts.AjaxSettingsObject#type
-         * @type {string}
-         */ /**
-         * The URL to call.
-         * @name Highcharts.AjaxSettingsObject#url
-         * @type {string}
-         */
+
         /**
          * Perform an Ajax call.
          *
@@ -85,17 +56,17 @@
          * @return {false|undefined}
          *         Returns false, if error occured.
          */
-        H.ajax = function (attr) {
+        function ajax(attr) {
             var options = merge(true, {
-                    url: false,
-                    type: 'get',
-                    dataType: 'json',
-                    success: false,
-                    error: false,
-                    data: false,
-                    headers: {}
-                },
-                attr),
+                        url: false,
+                        type: 'get',
+                        dataType: 'json',
+                        success: false,
+                        error: false,
+                        data: false,
+                        headers: {}
+                    },
+                    attr),
                 headers = {
                     json: 'application/json',
                     xml: 'application/xml',
@@ -103,7 +74,6 @@
                     octet: 'application/octet-stream'
                 },
                 r = new XMLHttpRequest();
-
             /**
              * @private
              * @param {XMLHttpRequest} xhr - Internal request object.
@@ -117,7 +87,6 @@
                     // @todo Maybe emit a highcharts error event here
                 }
             }
-
             if (!options.url) {
                 return false;
             }
@@ -152,7 +121,8 @@
                 // empty
             }
             r.send(options.data || true);
-        };
+        }
+
         /**
          * Get a JSON resource over XHR, also supporting CORS without preflight.
          *
@@ -162,10 +132,9 @@
          * @param {Function} success
          *        The success callback. For error handling, use the `Highcharts.ajax`
          *        function instead.
-         * @return {void}
          */
-        H.getJSON = function (url, success) {
-            H.ajax({
+        function getJSON(url, success) {
+            HttpUtilities.ajax({
                 url: url,
                 success: success,
                 dataType: 'json',
@@ -175,15 +144,97 @@
                     'Content-Type': 'text/plain'
                 }
             });
-        };
-        var exports = {
-            ajax: H.ajax,
-            getJSON: H.getJSON
-        };
+        }
 
-        return exports;
+        /**
+         * The post utility
+         *
+         * @private
+         * @function Highcharts.post
+         *
+         * @param {string} url
+         * Post URL
+         *
+         * @param {object} data
+         * Post data
+         *
+         * @param {Highcharts.Dictionary<string>} [formAttributes]
+         * Additional attributes for the post request
+         */
+        function post(url, data, formAttributes) {
+            // create the form
+            var form = createElement('form',
+                merge({
+                        method: 'post',
+                        action: url,
+                        enctype: 'multipart/form-data'
+                    },
+                    formAttributes), {
+                    display: 'none'
+                },
+                doc.body);
+            // add the data
+            objectEach(data, function (val, name) {
+                createElement('input', {
+                    type: 'hidden',
+                    name: name,
+                    value: val
+                }, null, form);
+            });
+            // submit
+            form.submit();
+            // clean up
+            discardElement(form);
+        }
+
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+        var HttpUtilities = {
+            ajax: ajax,
+            getJSON: getJSON,
+            post: post
+        };
+        /**
+         * @interface Highcharts.AjaxSettingsObject
+         */ /**
+         * The payload to send.
+         *
+         * @name Highcharts.AjaxSettingsObject#data
+         * @type {string|Highcharts.Dictionary<any>}
+         */ /**
+         * The data type expected.
+         * @name Highcharts.AjaxSettingsObject#dataType
+         * @type {"json"|"xml"|"text"|"octet"}
+         */ /**
+         * Function to call on error.
+         * @name Highcharts.AjaxSettingsObject#error
+         * @type {Function}
+         */ /**
+         * The headers; keyed on header name.
+         * @name Highcharts.AjaxSettingsObject#headers
+         * @type {Highcharts.Dictionary<string>}
+         */ /**
+         * Function to call on success.
+         * @name Highcharts.AjaxSettingsObject#success
+         * @type {Function}
+         */ /**
+         * The HTTP method to use. For example GET or POST.
+         * @name Highcharts.AjaxSettingsObject#type
+         * @type {string}
+         */
+        /**
+         * The URL to call.
+         * @name Highcharts.AjaxSettingsObject#url
+         * @type {string}
+         */
+        (''); // keeps doclets above in JS file
+
+        return HttpUtilities;
     });
-    _registerModule(_modules, 'Extensions/Data.js', [_modules['Extensions/Ajax.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Ajax, Chart, H, Point, SeriesRegistry, U) {
+    _registerModule(_modules, 'Extensions/Data.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/HttpUtilities.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Chart, G, HU, Point, SeriesRegistry, U) {
         /* *
          *
          *  Data module
@@ -195,8 +246,8 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var ajax = Ajax.ajax;
-        var doc = H.doc;
+        var doc = G.doc;
+        var ajax = HU.ajax;
         var seriesTypes = SeriesRegistry.seriesTypes;
         var addEvent = U.addEvent,
             defined = U.defined,
@@ -431,8 +482,26 @@
          * @apioption data.firstRowAsNames
          */
         /**
-         * The key for a Google Spreadsheet to load. See [general information
-         * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
+         * The Google Spreadsheet API key required for access generated at [API Services
+         * / Credentials](https://console.cloud.google.com/apis/credentials). See a
+         * comprehensive tutorial for setting up the key at the
+         * [Hands-On Data Visualization](https://handsondataviz.org/google-sheets-api-key.html)
+         * book website.
+         *
+         * @sample {highcharts} highcharts/data/google-spreadsheet/
+         *         Load a Google Spreadsheet
+         *
+         * @type      {string}
+         * @since     9.2.2
+         * @apioption data.googleAPIKey
+         */
+        /**
+         * The key or `spreadsheetId` value for a Google Spreadsheet to load. See
+         * [developers.google.com](https://developers.google.com/sheets/api/guides/concepts)
+         * for how to find the `spreadsheetId`.
+         *
+         * In order for Google Sheets to load, a valid [googleAPIKey](#data.googleAPIKey)
+         * must also be given.
          *
          * @sample {highcharts} highcharts/data/google-spreadsheet/
          *         Load a Google Spreadsheet
@@ -442,13 +511,31 @@
          * @apioption data.googleSpreadsheetKey
          */
         /**
-         * The Google Spreadsheet worksheet to use in combination with
-         * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
-         * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
+         * The Google Spreadsheet `range` to use in combination with
+         * [googleSpreadsheetKey](#data.googleSpreadsheetKey). See
+         * [developers.google.com](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get)
+         * for details.
+         *
+         * If given, it takes precedence over `startColumn`, `endColumn`, `startRow` and
+         * `endRow`.
+         *
+         * @example
+         * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
+         * googleSpreadsheetRange: 'A:Z' // Load columns A to Z
          *
          * @sample {highcharts} highcharts/data/google-spreadsheet/
          *         Load a Google Spreadsheet
          *
+         * @type      {string|undefined}
+         * @since     9.2.2
+         * @apioption data.googleSpreadsheetRange
+         */
+        /**
+         * No longer works since v9.2.2, that uses Google Sheets API v4. Instead, use
+         * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
+         * specific sheet.
+         *
+         * @deprecated
          * @type      {string}
          * @since     4.0
          * @apioption data.googleSpreadsheetWorksheet
@@ -731,7 +818,6 @@
                 };
                 this.init(dataOptions, chartOptions, chart);
             }
-
             /* *
              *
              *  Functions
@@ -820,8 +906,8 @@
                     }, getPointArrayMap = function (type) {
                         return seriesTypes[type || 'line'].prototype.pointArrayMap;
                     }, globalType = (chartOptions &&
-                    chartOptions.chart &&
-                    chartOptions.chart.type), individualCounts = [], seriesBuilders = [], seriesIndex = 0,
+                        chartOptions.chart &&
+                        chartOptions.chart.type), individualCounts = [], seriesBuilders = [], seriesIndex = 0,
                     // If no series mapping is defined, check if the series array is
                     // defined with types.
                     seriesMapping = ((options && options.seriesMapping) ||
@@ -942,7 +1028,6 @@
                         '\t': 0
                     };
                 columns = this.columns = [];
-
                 /*
                     This implementation is quite verbose. It will be shortened once
                     it's stable and passes all the test.
@@ -986,7 +1071,6 @@
                  */
                 function parseRow(columnStr, rowNumber, noAdd, callbacks) {
                     var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
-
                     /**
                      * @private
                      */
@@ -995,7 +1079,6 @@
                         cl = columnStr[j - 1];
                         cn = columnStr[j + 1];
                     }
-
                     /**
                      * @private
                      */
@@ -1007,7 +1090,6 @@
                             dataTypes[column].push(type);
                         }
                     }
-
                     /**
                      * @private
                      */
@@ -1039,7 +1121,6 @@
                         ++column;
                         ++actualColumn;
                     }
-
                     if (!columnStr.trim().length) {
                         return;
                     }
@@ -1074,7 +1155,6 @@
                     }
                     push();
                 }
-
                 /**
                  * Attempt to guess the delimiter. We do a separate parse pass here
                  * because we need to count potential delimiters softly without making
@@ -1166,7 +1246,6 @@
                     }
                     return guessed;
                 }
-
                 /**
                  * Tries to guess the date format
                  *  - Check if either month candidate exceeds 12
@@ -1269,7 +1348,6 @@
                     }
                     return format;
                 }
-
                 /**
                  * @todo
                  * Figure out the best axis types for the data
@@ -1280,7 +1358,6 @@
                  */
                 function deduceAxisTypes() {
                 }
-
                 if (csv && options.beforeParse) {
                     csv = options.beforeParse.call(this, csv);
                 }
@@ -1321,7 +1398,7 @@
                         options.dateFormat = deduceDateFormat(columns[0]);
                     }
                     // lines.forEach(function (line, rowNo) {
-                    //    var trimmed = self.trim(line),
+                    //    let trimmed = self.trim(line),
                     //        isComment = trimmed.indexOf('#') === 0,
                     //        isBlank = trimmed === '',
                     //        items;
@@ -1421,7 +1498,6 @@
                 delete options.csvURL;
                 delete options.rowsURL;
                 delete options.columnsURL;
-
                 /**
                  * @private
                  */
@@ -1431,7 +1507,8 @@
                      * @private
                      */
                     function request(url, done, tp) {
-                        if (!url || url.indexOf('http') !== 0) {
+                        if (!url ||
+                            !/^(http|\/|\.\/|\.\.\/)/.test(url)) {
                             if (url && options.error) {
                                 options.error('Invalid URL');
                             }
@@ -1453,7 +1530,6 @@
                                     setTimeout(performFetch, updateIntervalMs);
                             }
                         }
-
                         ajax({
                             url: url,
                             dataType: tp || 'json',
@@ -1472,7 +1548,6 @@
                         });
                         return true;
                     }
-
                     if (!request(originalOptions.csvURL, function (res) {
                         chart.update({
                             data: {
@@ -1497,7 +1572,6 @@
                         }
                     }
                 }
-
                 performFetch(true);
                 return this.hasURLOption(options);
             };
@@ -1514,18 +1588,24 @@
                     options = this.options,
                     googleSpreadsheetKey = options.googleSpreadsheetKey,
                     chart = this.chart,
-                    // use sheet 1 as the default rather than od6
-                    // as the latter sometimes cause issues (it looks like it can
-                    // be renamed in some cases, ref. a fogbugz case).
-                    worksheet = options.googleSpreadsheetWorksheet || 1,
-                    startRow = options.startRow || 0,
-                    endRow = options.endRow || Number.MAX_VALUE,
-                    startColumn = options.startColumn || 0,
-                    endColumn = options.endColumn || Number.MAX_VALUE,
-                    refreshRate = (options.dataRefreshRate || 2) * 1000;
-                if (refreshRate < 4000) {
-                    refreshRate = 4000;
-                }
+                    refreshRate = Math.max((options.dataRefreshRate || 2) * 1000, 4000);
+                /**
+                 * Form the `values` field after range settings, unless the
+                 * googleSpreadsheetRange option is set.
+                 */
+                var getRange = function () {
+                    if (options.googleSpreadsheetRange) {
+                        return options.googleSpreadsheetRange;
+                    }
+                    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    var start = (alphabet.charAt(options.startColumn || 0) || 'A') +
+                        ((options.startRow || 0) + 1);
+                    var end = alphabet.charAt(pick(options.endColumn, -1)) || 'ZZ';
+                    if (defined(options.endRow)) {
+                        end += options.endRow + 1;
+                    }
+                    return start + ":" + end;
+                };
 
                 /**
                  * Fetch the actual spreadsheet using XMLHttpRequest.
@@ -1533,10 +1613,15 @@
                  */
                 function fetchSheet(fn) {
                     var url = [
-                        'https://spreadsheets.google.com/feeds/cells',
+                        'https://sheets.googleapis.com/v4/spreadsheets',
                         googleSpreadsheetKey,
-                        worksheet,
-                        'public/values?alt=json'
+                        'values',
+                        getRange(),
+                        '?alt=json&' +
+                        'majorDimension=COLUMNS&' +
+                        'valueRenderOption=UNFORMATTED_VALUE&' +
+                        'dateTimeRenderOption=FORMATTED_STRING&' +
+                        'key=' + options.googleAPIKey
                     ].join('/');
                     ajax({
                         url: url,
@@ -1546,7 +1631,7 @@
                             if (options.enablePolling) {
                                 setTimeout(function () {
                                     fetchSheet(fn);
-                                }, (options.dataRefreshRate || 2) * 1000);
+                                }, refreshRate);
                             }
                         },
                         error: function (xhr, text) {
@@ -1554,72 +1639,23 @@
                         }
                     });
                 }
-
                 if (googleSpreadsheetKey) {
                     delete options.googleSpreadsheetKey;
                     fetchSheet(function (json) {
                         // Prepare the data from the spreadsheat
-                        var columns = [],
-                            cells = json.feed.entry,
-                            cell,
-                            cellCount = (cells || []).length,
-                            colCount = 0,
-                            rowCount = 0,
-                            val,
-                            gr,
-                            gc,
-                            cellInner,
-                            i;
-                        if (!cells || cells.length === 0) {
+                        var columns = json.values;
+                        if (!columns || columns.length === 0) {
                             return false;
                         }
-                        // First, find the total number of columns and rows that
-                        // are actually filled with data
-                        for (i = 0; i < cellCount; i++) {
-                            cell = cells[i];
-                            colCount = Math.max(colCount, cell.gs$cell.col);
-                            rowCount = Math.max(rowCount, cell.gs$cell.row);
-                        }
-                        // Set up arrays containing the column data
-                        for (i = 0; i < colCount; i++) {
-                            if (i >= startColumn && i <= endColumn) {
-                                // Create new columns with the length of either
-                                // end-start or rowCount
-                                columns[i - startColumn] = [];
-                            }
-                        }
-                        // Loop over the cells and assign the value to the right
-                        // place in the column arrays
-                        for (i = 0; i < cellCount; i++) {
-                            cell = cells[i];
-                            gr = cell.gs$cell.row - 1; // rows start at 1
-                            gc = cell.gs$cell.col - 1; // columns start at 1
-                            // If both row and col falls inside start and end set the
-                            // transposed cell value in the newly created columns
-                            if (gc >= startColumn && gc <= endColumn &&
-                                gr >= startRow && gr <= endRow) {
-                                cellInner = cell.gs$cell || cell.content;
-                                val = null;
-                                if (cellInner.numericValue) {
-                                    if (cellInner.$t.indexOf('/') >= 0 ||
-                                        cellInner.$t.indexOf('-') >= 0) {
-                                        // This is a date - for future reference.
-                                        val = cellInner.$t;
-                                    } else if (cellInner.$t.indexOf('%') > 0) {
-                                        // Percentage
-                                        val = parseFloat(cellInner.numericValue) * 100;
-                                    } else {
-                                        val = parseFloat(cellInner.numericValue);
-                                    }
-                                } else if (cellInner.$t && cellInner.$t.length) {
-                                    val = cellInner.$t;
-                                }
-                                columns[gc - startColumn][gr - startRow] = val;
-                            }
-                        }
+                        // Find the maximum row count in order to extend shorter columns
+                        var rowCount = columns.reduce(function (rowCount,
+                                                                column) {
+                            return Math.max(rowCount,
+                                column.length);
+                        }, 0);
                         // Insert null for empty spreadsheet cells (#5298)
                         columns.forEach(function (column) {
-                            for (i = 0; i < column.length; i++) {
+                            for (var i = 0; i < rowCount; i++) {
                                 if (typeof column[i] === 'undefined') {
                                     column[i] = null;
                                 }
@@ -2136,8 +2172,8 @@
          *
          * @return {Highcharts.Data}
          */
-        H.data = function (dataOptions, chartOptions, chart) {
-            return new H.Data(dataOptions, chartOptions, chart);
+        G.data = function (dataOptions, chartOptions, chart) {
+            return new G.Data(dataOptions, chartOptions, chart);
         };
         // Extend Chart.init so that the Chart constructor accepts a new configuration
         // option group, data.
@@ -2153,7 +2189,7 @@
                  * @name Highcharts.Chart#data
                  * @type {Highcharts.Data|undefined}
                  */
-                chart.data = new H.Data(extend(userOptions.data, {
+                chart.data = new G.Data(extend(userOptions.data, {
                     afterComplete: function (dataOptions) {
                         var i,
                             series;
@@ -2349,12 +2385,20 @@
             };
             return SeriesBuilder;
         }());
-        H.Data = Data;
+        G.Data = Data;
 
-        return H.Data;
+        return G.Data;
     });
-    _registerModule(_modules, 'masters/modules/data.src.js', [], function () {
+    _registerModule(_modules, 'masters/modules/data.src.js', [_modules['Core/Globals.js'], _modules['Core/HttpUtilities.js'], _modules['Extensions/Data.js']], function (Highcharts, HttpUtilities, Data) {
 
+        var G = Highcharts;
+        // Functions
+        G.ajax = HttpUtilities.ajax;
+        G.getJSON = HttpUtilities.getJSON;
+        G.post = HttpUtilities.post;
+        // Classes
+        G.Data = Data;
+        G.HttpUtilities = HttpUtilities;
 
     });
 }));

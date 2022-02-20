@@ -9,13 +9,15 @@
  * */
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+
+var format = F.format;
 import H from '../Core/Globals.js';
 
 var win = H.win;
-import '../Core/Options.js';
 import U from '../Core/Utilities.js';
 
-var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
+var error = U.error, extend = U.extend, merge = U.merge, wrap = U.wrap;
 /**
  * Represents the loose structure of a geographic JSON file.
  *
@@ -141,11 +143,15 @@ var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap
  * The latitude.
  * @name Highcharts.MapLatLonObject#lat
  * @type {number}
- */
-/**
+ */ /**
  * The longitude.
  * @name Highcharts.MapLatLonObject#lon
  * @type {number}
+ */
+/**
+ * An array of longitude, latitude.
+ *
+ * @typedef {Array<number>} Highcharts.LonLatArray
  */
 ''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -168,7 +174,6 @@ function pointInPolygon(point, polygon) {
     }
     return c;
 }
-
 /**
  * Highmaps only. Get point from latitude and longitude using specified
  * transform definition.
@@ -201,8 +206,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
      * @product    highmaps
      * @apioption  chart.proj4
      */
-    var _a;
-    var proj4 = (((_a = this.userOptions.chart) === null || _a === void 0 ? void 0 : _a.proj4) || win.proj4);
+    var proj4 = this.options.chart.proj4 || win.proj4;
     if (!proj4) {
         error(21, false, this);
         return {
@@ -210,6 +214,11 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
             y: null
         };
     }
+    var _a = transform.jsonmarginX, jsonmarginX = _a === void 0 ? 0 : _a, _b = transform.jsonmarginY,
+        jsonmarginY = _b === void 0 ? 0 : _b, _c = transform.jsonres, jsonres = _c === void 0 ? 1 : _c,
+        _d = transform.scale, scale = _d === void 0 ? 1 : _d, _e = transform.xoffset, xoffset = _e === void 0 ? 0 : _e,
+        _f = transform.xpan, xpan = _f === void 0 ? 0 : _f, _g = transform.yoffset, yoffset = _g === void 0 ? 0 : _g,
+        _h = transform.ypan, ypan = _h === void 0 ? 0 : _h;
     var projected = proj4(transform.crs, [latLon.lon, latLon.lat]), cosAngle = transform.cosAngle ||
         (transform.rotation && Math.cos(transform.rotation)), sinAngle = transform.sinAngle ||
         (transform.rotation && Math.sin(transform.rotation)), rotated = transform.rotation ? [
@@ -217,12 +226,8 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
         -projected[0] * sinAngle + projected[1] * cosAngle
     ] : projected;
     return {
-        x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) +
-            (transform.xpan || 0)) * (transform.jsonres || 1) +
-            (transform.jsonmarginX || 0),
-        y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) +
-            (transform.ypan || 0)) * (transform.jsonres || 1) -
-            (transform.jsonmarginY || 0)
+        x: ((rotated[0] - xoffset) * scale + xpan) * jsonres + jsonmarginX,
+        y: -(((yoffset - rotated[1]) * scale + ypan) * jsonres - jsonmarginY)
     };
 };
 /**
@@ -248,21 +253,25 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
-    if (typeof win.proj4 === 'undefined') {
+    var proj4 = this.options.chart.proj4 || win.proj4;
+    if (!proj4) {
         error(21, false, this);
         return;
     }
+    if (point.y === null) {
+        return;
+    }
+    var _a = transform.jsonmarginX, jsonmarginX = _a === void 0 ? 0 : _a, _b = transform.jsonmarginY,
+        jsonmarginY = _b === void 0 ? 0 : _b, _c = transform.jsonres, jsonres = _c === void 0 ? 1 : _c,
+        _d = transform.scale, scale = _d === void 0 ? 1 : _d, _e = transform.xoffset, xoffset = _e === void 0 ? 0 : _e,
+        _f = transform.xpan, xpan = _f === void 0 ? 0 : _f, _g = transform.yoffset, yoffset = _g === void 0 ? 0 : _g,
+        _h = transform.ypan, ypan = _h === void 0 ? 0 : _h;
     var normalized = {
-            x: ((point.x -
-                (transform.jsonmarginX || 0)) / (transform.jsonres || 1) -
-                (transform.xpan || 0)) / (transform.scale || 1) +
-                (transform.xoffset || 0),
-            y: ((-point.y - (transform.jsonmarginY || 0)) / (transform.jsonres || 1) +
-                (transform.ypan || 0)) / (transform.scale || 1) +
-                (transform.yoffset || 0)
+            x: ((point.x - jsonmarginX) / jsonres - xpan) / scale + xoffset,
+            y: ((point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
         }, cosAngle = transform.cosAngle ||
-        (transform.rotation && Math.cos(transform.rotation)), sinAngle = transform.sinAngle ||
-        (transform.rotation && Math.sin(transform.rotation)),
+            (transform.rotation && Math.cos(transform.rotation)), sinAngle = transform.sinAngle ||
+            (transform.rotation && Math.sin(transform.rotation)),
         // Note: Inverted sinAngle to reverse rotation direction
         projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
             x: normalized.x * cosAngle + normalized.y * -sinAngle,
@@ -289,15 +298,15 @@ Chart.prototype.transformToLatLon = function (point, transform) {
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.fromPointToLatLon = function (point) {
-    var transforms = this.mapTransforms, transform;
+    var transforms = this.mapTransforms;
     if (!transforms) {
         error(22, false, this);
         return;
     }
-    for (transform in transforms) {
+    for (var transform in transforms) {
         if (Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone &&
-            pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+            pointInPolygon(point, transforms[transform].hitZone.coordinates[0])) {
             return this.transformToLatLon(point, transforms[transform]);
         }
     }
@@ -334,7 +343,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
         if (Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);
-            if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+            if (pointInPolygon(coords, transforms[transform].hitZone.coordinates[0])) {
                 return coords;
             }
         }
@@ -373,52 +382,33 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  *         An object ready for the `mapData` option.
  */
 H.geojson = function (geojson, hType, series) {
-    var mapData = [], path = [], polygonToPath = function (polygon) {
-        polygon.forEach(function (point, i) {
-            if (i === 0) {
-                path.push(['M', point[0], -point[1]]);
-            } else {
-                path.push(['L', point[0], -point[1]]);
-            }
-        });
-    };
-    hType = hType || 'map';
+    if (hType === void 0) {
+        hType = 'map';
+    }
+    var mapData = [];
+    var path = [];
     geojson.features.forEach(function (feature) {
-        var geometry = feature.geometry, type = geometry.type, coordinates = geometry.coordinates,
-            properties = feature.properties, point;
+        var geometry = feature.geometry || {}, type = geometry.type, coordinates = geometry.coordinates,
+            properties = feature.properties, pointOptions;
         path = [];
-        if (hType === 'map' || hType === 'mapbubble') {
-            if (type === 'Polygon') {
-                coordinates.forEach(polygonToPath);
-                path.push(['Z']);
-            } else if (type === 'MultiPolygon') {
-                coordinates.forEach(function (items) {
-                    items.forEach(polygonToPath);
-                });
-                path.push(['Z']);
+        if ((hType === 'map' || hType === 'mapbubble') &&
+            (type === 'Polygon' || type === 'MultiPolygon')) {
+            if (coordinates.length) {
+                pointOptions = {geometry: {coordinates: coordinates, type: type}};
             }
-            if (path.length) {
-                point = {path: path};
+        } else if (hType === 'mapline' &&
+            (type === 'LineString' ||
+                type === 'MultiLineString')) {
+            if (coordinates.length) {
+                pointOptions = {geometry: {coordinates: coordinates, type: type}};
             }
-        } else if (hType === 'mapline') {
-            if (type === 'LineString') {
-                polygonToPath(coordinates);
-            } else if (type === 'MultiLineString') {
-                coordinates.forEach(polygonToPath);
-            }
-            if (path.length) {
-                point = {path: path};
-            }
-        } else if (hType === 'mappoint') {
-            if (type === 'Point') {
-                point = {
-                    x: coordinates[0],
-                    y: -coordinates[1]
-                };
+        } else if (hType === 'mappoint' && type === 'Point') {
+            if (coordinates.length) {
+                pointOptions = {geometry: {coordinates: coordinates, type: type}};
             }
         }
-        if (point) {
-            mapData.push(extend(point, {
+        if (pointOptions) {
+            mapData.push(extend(pointOptions, {
                 name: properties.name || properties.NAME,
                 /**
                  * In Highmaps, when data is loaded from GeoJSON, the GeoJSON

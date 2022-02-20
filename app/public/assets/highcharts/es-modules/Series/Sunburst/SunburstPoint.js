@@ -29,16 +29,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var Point = SeriesRegistry.series.prototype.pointClass,
     TreemapPoint = SeriesRegistry.seriesTypes.treemap.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend;
 /* *
  *
@@ -47,7 +46,6 @@ var correctFloat = U.correctFloat, extend = U.extend;
  * */
 var SunburstPoint = /** @class */ (function (_super) {
     __extends(SunburstPoint, _super);
-
     function SunburstPoint() {
         /* *
          *
@@ -62,7 +60,6 @@ var SunburstPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -112,9 +109,6 @@ var SunburstPoint = /** @class */ (function (_super) {
     SunburstPoint.prototype.isValid = function () {
         return true;
     };
-    SunburstPoint.prototype.shouldDraw = function () {
-        return !this.isNull;
-    };
     return SunburstPoint;
 }(TreemapPoint));
 extend(SunburstPoint.prototype, {
@@ -122,6 +116,7 @@ extend(SunburstPoint.prototype, {
     haloPath: Point.prototype.haloPath,
     setState: Point.prototype.setState
 });
+DrawPointComposition.compose(SunburstPoint);
 /* *
  *
  *  Defaul Export

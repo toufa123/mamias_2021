@@ -13,23 +13,20 @@
  * */
 'use strict';
 import Color from '../../Core/Color/Color.js';
-
 var color = Color.parse;
 import H from '../../Core/Globals.js';
-
-var charts = H.charts, deg2rad = H.deg2rad, RendererProto = H.Renderer.prototype;
+var charts = H.charts, deg2rad = H.deg2rad;
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var merge = U.merge, pick = U.pick;
 /* *
  *
  *  Composition
  *
  * */
-var cuboidPath = RendererProto.cuboidPath;
+var rendererProto = RendererRegistry.getRendererType().prototype, cuboidPath = rendererProto.cuboidPath;
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
 var isSimplified = function (path) {
@@ -38,7 +35,7 @@ var isSimplified = function (path) {
     });
 };
 // cylinder extends cuboid
-var cylinderMethods = merge(RendererProto.elements3d.cuboid, {
+var cylinderMethods = merge(rendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
     fillSetter: function (fill) {
@@ -53,12 +50,12 @@ var cylinderMethods = merge(RendererProto.elements3d.cuboid, {
         return this;
     }
 });
-RendererProto.elements3d.cylinder = cylinderMethods;
-RendererProto.cylinder = function (shapeArgs) {
+rendererProto.elements3d.cylinder = cylinderMethods;
+rendererProto.cylinder = function (shapeArgs) {
     return this.element3d('cylinder', shapeArgs);
 };
 // Generates paths and zIndexes.
-RendererProto.cylinderPath = function (shapeArgs) {
+rendererProto.cylinderPath = function (shapeArgs) {
     var renderer = this, chart = charts[renderer.chartIndex],
         // decide zIndexes of parts based on cubiod logic, for consistency.
         cuboidData = cuboidPath.call(renderer, shapeArgs), isTopFirst = !cuboidData.isTop,
@@ -79,7 +76,7 @@ RendererProto.cylinderPath = function (shapeArgs) {
     };
 };
 // Returns cylinder Front path
-RendererProto.getCylinderFront = function (topPath, bottomPath) {
+rendererProto.getCylinderFront = function (topPath, bottomPath) {
     var path = topPath.slice(0, 3);
     if (isSimplified(bottomPath)) {
         var move = bottomPath[0];
@@ -100,7 +97,7 @@ RendererProto.getCylinderFront = function (topPath, bottomPath) {
     return path;
 };
 // Returns cylinder Back path
-RendererProto.getCylinderBack = function (topPath, bottomPath) {
+rendererProto.getCylinderBack = function (topPath, bottomPath) {
     var path = [];
     if (isSimplified(topPath)) {
         var move = topPath[0], line2 = topPath[2];
@@ -135,18 +132,20 @@ RendererProto.getCylinderBack = function (topPath, bottomPath) {
     return path;
 };
 // Retruns cylinder path for top or bottom
-RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
+rendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
+    var _a = shapeArgs.width, width = _a === void 0 ? 0 : _a, _b = shapeArgs.height, height = _b === void 0 ? 0 : _b,
+        _c = shapeArgs.alphaCorrection, alphaCorrection = _c === void 0 ? 0 : _c;
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
-    var depth = pick(shapeArgs.depth, shapeArgs.width), radius = Math.min(shapeArgs.width, depth) / 2,
+    var depth = pick(shapeArgs.depth, width, 0), radius = Math.min(width, depth) / 2,
         // Approximated longest diameter
         angleOffset = deg2rad * (chart.options.chart.options3d.beta - 90 +
-            (shapeArgs.alphaCorrection || 0)),
+            alphaCorrection),
         // Could be top or bottom of the cylinder
-        y = shapeArgs.y + (isBottom ? shapeArgs.height : 0),
+        y = (shapeArgs.y || 0) + (isBottom ? height : 0),
         // Use cubic Bezier curve to draw a cricle in x,z (y is constant).
         // More math. at spencermortensen.com/articles/bezier-circle/
-        c = 0.5519 * radius, centerX = shapeArgs.width / 2 + shapeArgs.x, centerZ = depth / 2 + shapeArgs.z,
+        c = 0.5519 * radius, centerX = width / 2 + (shapeArgs.x || 0), centerZ = depth / 2 + (shapeArgs.z || 0),
         // points could be generated in a loop, but readability will plummet
         points = [{
             x: 0,
@@ -230,7 +229,7 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
 // Returns curved path in format of:
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
-RendererProto.getCurvedPath = function (points) {
+rendererProto.getCurvedPath = function (points) {
     var path = [['M', points[0].x, points[0].y]], limit = points.length - 2, i;
     for (i = 1; i < limit; i += 3) {
         path.push([

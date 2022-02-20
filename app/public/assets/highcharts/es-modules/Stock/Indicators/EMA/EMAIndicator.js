@@ -23,15 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
 /* *
  *
@@ -49,7 +46,6 @@ var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
  */
 var EMAIndicator = /** @class */ (function (_super) {
     __extends(EMAIndicator, _super);
-
     function EMAIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -62,7 +58,6 @@ var EMAIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -121,13 +116,12 @@ var EMAIndicator = /** @class */ (function (_super) {
      * `linkedTo` option to be set.
      *
      * @sample stock/indicators/ema
-     *         Exponential moving average indicator
+     * Exponential moving average indicator
      *
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
     EMAIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
@@ -137,9 +131,10 @@ var EMAIndicator = /** @class */ (function (_super) {
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * By default index value used to be set to 0. Since Highstock 7
-             * by default index is set to 3 which means that the ema
-             * indicator will be calculated using Close values.
+             * By default index value used to be set to 0. Since
+             * Highcharts Stock 7 by default index is set to 3
+             * which means that the ema indicator will be
+             * calculated using Close values.
              */
             index: 3,
             period: 9 // @merge 14 in v6.2
@@ -163,7 +158,6 @@ export default EMAIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @apioption series.ema
  */
 ''; // adds doclet above to the transpiled file

@@ -23,18 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
-
-var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
+import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Williams %R series type.
@@ -47,7 +42,6 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
  */
 var WilliamsRIndicator = /** @class */ (function (_super) {
     __extends(WilliamsRIndicator, _super);
-
     function WilliamsRIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -55,7 +49,6 @@ var WilliamsRIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     WilliamsRIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, WR = [], // 0- date, 1- Williams %R
             xData = [], yData = [], slicedY, close = 3, low = 2, high = 1, extremes, R, HH, // Highest high value in period
@@ -73,7 +66,7 @@ var WilliamsRIndicator = /** @class */ (function (_super) {
         // with (+1)
         for (i = period - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - period + 1, i + 1);
-            extremes = getArrayExtremes(slicedY, low, high);
+            extremes = AU.getArrayExtremes(slicedY, low, high);
             LL = extremes[0];
             HH = extremes[1];
             CC = yVal[i][close];
@@ -113,6 +106,7 @@ var WilliamsRIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
+            index: void 0,
             /**
              * Period for Williams %R oscillator
              */

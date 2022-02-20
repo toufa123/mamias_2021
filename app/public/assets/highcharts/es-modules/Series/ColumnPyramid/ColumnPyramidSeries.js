@@ -25,16 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
-
 var colProto = ColumnSeries.prototype;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The ColumnPyramidSeries class
@@ -47,7 +44,6 @@ var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
  */
 var ColumnPyramidSeries = /** @class */ (function (_super) {
     __extends(ColumnPyramidSeries, _super);
-
     function ColumnPyramidSeries() {
         /* *
          *
@@ -65,7 +61,6 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions
@@ -78,7 +73,7 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
      */
     ColumnPyramidSeries.prototype.translate = function () {
         var series = this, chart = series.chart, options = series.options, dense = series.dense =
-            series.closestPointRange * series.xAxis.transA < 2,
+                series.closestPointRange * series.xAxis.transA < 2,
             borderWidth = series.borderWidth = pick(options.borderWidth, dense ? 0 : 1 // #3635
             ), yAxis = series.yAxis, threshold = options.threshold, translatedThreshold = series.translatedThreshold =
                 yAxis.getThreshold(threshold), minPointLength = pick(options.minPointLength, 5),
@@ -145,10 +140,10 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
             bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
             /*
                     /\
-                    /  \
+                   /  \
             x1,y1,------ x2,y1
-                    /      \
-                ----------
+                /      \
+               ----------
             x4,y2        x3,y2
             */
             x1 = barX - topXwidth + barW;
@@ -163,9 +158,9 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
             }
             // inverted chart
             if (chart.inverted) {
-                invBarPos = chart.plotWidth - barY;
-                stackHeight = (topPointY -
-                    (chart.plotWidth - translatedThreshold));
+                invBarPos = yAxis.width - barY;
+                stackHeight =
+                    topPointY - (yAxis.width - translatedThreshold);
                 // proportion tanges
                 topXwidth = (barW *
                     (topPointY - invBarPos)) / stackHeight;

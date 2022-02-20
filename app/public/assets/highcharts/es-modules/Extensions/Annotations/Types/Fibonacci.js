@@ -21,7 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -29,13 +28,15 @@ import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var createPathDGenerator = function (retracementIndex, isBackground) {
     return function () {
-        var annotation = this.annotation,
-            leftTop = this.anchor(annotation.startRetracements[retracementIndex]).absolutePosition,
+        var annotation = this.annotation;
+        if (!annotation.startRetracements || !annotation.endRetracements) {
+            return [];
+        }
+        var leftTop = this.anchor(annotation.startRetracements[retracementIndex]).absolutePosition,
             rightTop = this.anchor(annotation.endRetracements[retracementIndex]).absolutePosition, d = [
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
@@ -50,7 +51,6 @@ var createPathDGenerator = function (retracementIndex, isBackground) {
 };
 var Fibonacci = /** @class */ (function (_super) {
     __extends(Fibonacci, _super);
-
     /* *
      *
      * Constructors
@@ -59,7 +59,6 @@ var Fibonacci = /** @class */ (function (_super) {
     function Fibonacci(chart, options) {
         return _super.call(this, chart, options) || this;
     }
-
     /* *
      *
      * Functions
@@ -68,7 +67,7 @@ var Fibonacci = /** @class */ (function (_super) {
     Fibonacci.prototype.linkPoints = function () {
         _super.prototype.linkPoints.call(this);
         this.linkRetracementsPoints();
-
+        return;
     };
     Fibonacci.prototype.linkRetracementsPoints = function () {
         var points = this.points, startDiff = points[0].y - points[3].y, endDiff = points[1].y - points[2].y,
@@ -98,14 +97,17 @@ var Fibonacci = /** @class */ (function (_super) {
     };
     Fibonacci.prototype.addShapes = function () {
         Fibonacci.levels.forEach(function (_level, i) {
+            var _a = this.options.typeOptions, backgroundColors = _a.backgroundColors, lineColor = _a.lineColor,
+                lineColors = _a.lineColors;
             this.initShape({
                 type: 'path',
-                d: createPathDGenerator(i)
-            }, false);
+                d: createPathDGenerator(i),
+                stroke: lineColors[i] || lineColor
+            }, i);
             if (i > 0) {
                 this.initShape({
                     type: 'path',
-                    fill: this.options.typeOptions.backgroundColors[i - 1],
+                    fill: backgroundColors[i - 1],
                     strokeWidth: 0,
                     d: createPathDGenerator(i, true)
                 });
@@ -174,7 +176,7 @@ Fibonacci.prototype.defaultOptions = merge(Tunnel.prototype.defaultOptions,
             /**
              * The color of line.
              */
-            lineColor: 'grey',
+            lineColor: "#999999" /* neutralColor40 */,
             /**
              * An array of colors for the lines.
              */
@@ -204,4 +206,9 @@ Fibonacci.prototype.defaultOptions = merge(Tunnel.prototype.defaultOptions,
         }
     });
 Annotation.types.fibonacci = Fibonacci;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Fibonacci;

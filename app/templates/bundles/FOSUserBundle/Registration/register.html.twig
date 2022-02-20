@@ -1,189 +1,174 @@
-{% extends 'auth.html.twig' %}
+{% extends 'secure.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
 {% block title %}Authentification{% endblock %}
-{% block stylesheets %}
-    <style>
-        form .indicator {
-            height: 10px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            display: none;
-        }
 
-        form .indicator span {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            background: lightgrey;
-            border-radius: 5px;
-        }
-
-        form .indicator span:nth-child(2) {
-            margin: 0 3px;
-        }
-
-        form .indicator span.active:before {
-            position: absolute;
-            content: '';
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            border-radius: 5px;
-        }
-
-        .indicator span.weak:before {
-            background-color: #ff4757;
-        }
-
-        .indicator span.medium:before {
-            background-color: orange;
-        }
-
-        .indicator span.strong:before {
-            background-color: #23ad5c;
-        }
-
-        form .text {
-            font-size: 20px;
-            font-weight: 500;
-            display: none;
-            margin-bottom: -10px;
-        }
-
-        form .text.weak {
-            color: #ff4757;
-        }
-
-        form .text.medium {
-            color: orange;
-        }
-
-        form .text.strong {
-            color: #23ad5c;
-        }
-    </style>
-
-{% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="wrapper-page2">
-             <span><img src="{{ asset('resources/images/signup.svg') }}"
-                        alt="MAMIAS 3.0" style="width:100%;height:auto"></span>
-            </div>
+    <div class="row ">
+        <div class="col-xl-5">
+            <img class="bg-img-cover bg-center" src="{{ asset('resources/images/register2.jpg') }}"
+                 alt="Create Account">
         </div>
-        <div class="col-lg-6">
-            <div class="wrapper-page">
-                <div class="property-card">
-                    <div class="text-center account-logo-box">
-                        <h2 class="text-uppercase">
-                            <a href="{{ path('home') }}" class="text-success">
-                                            <span><img src="{{ asset('resources/logo/Logo-Mamias-web.png') }}"
-                                                       alt="MAMIAS 3.0"></span>
-                            </a>
-                        </h2>
-                        <!--<h4 class="text-uppercase font-bold m-b-0">Sign In</h4>-->
+        <div class="col-xl-7 p-0">
+            <div class="login-card">
+
+                <form class="theme-form login-form" action="{{ path('fos_user_registration_register') }}" method="post">
+
+                    <div class="text-center">
+                        <a href="{{ path('home') }}">
+                            <img  src="{{ asset('resources/logo/Logo-Mamias-web.png') }}"
+                                 alt="MAMIAS 3.0">
+                        </a>
                     </div>
-                    <div class="property-content">
-                        <form class="form-horizontal" action="{{ path('fos_user_registration_register') }}"
-                              method="post">
-                            {{ form_start(form,{'attr': {'novalidate': 'novalidate'}}) }}
+                    <hr>
+                    <h4>Create your account</h4>
+                    <h6>Enter your personal details to create account</h6>
 
-                            {{ form_errors(form) }}
+                    {{ form_start(form,{'attr': {'novalidate': 'novalidate'}}) }}
 
-                            <div class="form-group primary m-b-10 ">
-                                <div class="col-xs-12">
-                                    {{ form_errors(form.username) }}
-                                    {{ form_widget(form.username, {'attr': {'placeholder': 'User Name'}}) }}
-                                </div>
-                            </div>
-                            <div class="form-group m-b-10">
-                                <div class="col-xs-12">
-                                    {{ form_errors(form.email) }}
-                                    {{ form_widget(form.email, {'attr': {'placeholder': 'Email'}}) }}
-                                </div>
-                            </div>
+                    {{ form_errors(form) }}
 
-                            <div class="form-group m-b-10">
-                                <div class="col-xs-12">
-                                    {{ form_errors(form.plainPassword.first) }}
-                                    {{ form_widget(form.plainPassword.first,{'attr': {'placeholder': 'Password'}}) }}
-                                </div>
+                    {{ form_row(form._token) }}
+
+                    <div class="form-group">
+                        <label>{{ form_label(form.username) }}</label>
+                        <div class="small-group">
+                            <div class="input-group"><span class="input-group-text"><i class="icon-user"></i></span>
+                                <input type="text" id="fos_user_registration_form_username"
+                                       name="fos_user_registration_form[username]" required="required"
+                                       class="form-control">
+
 
                             </div>
-                            <div class="form-group m-b-10">
-
-                            </div>
-                            <div class="form-group m-b-10">
-                                <div class="col-xs-12">
-                                    {{ form_errors(form.plainPassword.second) }}
-                                    {{ form_widget(form.plainPassword.second, {'attr': {'placeholder': 'Repeat Password'}}) }}
-
-                                </div>
-                            </div>
-                            <div class="form-group m-b-10">
-                                <div class="col-xs-12">
-                                    {{ form_errors(form.country) }}
-                                    {{ form_widget(form.country, {'attr': {'placeholder': 'Country' }}) }}
-
-                                </div>
-                            </div>
-                            <div class="form-group m-b-10">
-                                <div class="col-xs-12">
-                                    <div class="checkbox checkbox-primary">
-                                        {{ form_errors(form.agreeTerms) }}
-                                        {{ form_label(form.agreeTerms) }}
-                                        {{ form_widget(form.agreeTerms) }}
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group account-btn text-center m-b-10">
-                                <div class="col-xs-12">
-                                    <button class="btn btn-block w-md btn-primary btn-bordered waves-effect waves-light"
-                                            type="submit">Register
-                                    </button>
-                                </div>
-                            </div>
-                            {{ form_end(form) }}
-                        </form>
+                            <!--<div class="input-group"><span class="input-group-text"><i class="icon-user"></i></span>
+                                <input class="form-control" type="email" required="" placeholder="Last Name">
+                            </div>-->
+                        </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label>{{ form_label(form.email) }}</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-email"></i></span>
+                            <input type="email" id="fos_user_registration_form_email"
+                                   name="fos_user_registration_form[email]" required="required" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ form_label(form.plainPassword.first) }}</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-lock"></i></span>
+                            <input type="password" id="fos_user_registration_form_plainPassword_first"
+                                   name="fos_user_registration_form[plainPassword][first]" required="required"
+                                   class="form-control">
+                            <div class="show-hide"><span class="show">                         </span></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ form_label(form.plainPassword.second) }}</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-lock"></i></span>
+                            <input type="password" id="fos_user_registration_form_plainPassword_second"
+                                   name="fos_user_registration_form[plainPassword][second]" required="required"
+                                   class="form-control">
+                            <div class="show-hide"><span class="show">                         </span></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ form_label(form.country) }}</label>
+                        <div class="input-group">
+                            <!--<div><span class="input-group-text"><i class="icofont icofont-world"></i></span></div>-->
+                            {{ form_widget(form.country, {'attr': {'placeholder': '', 'class':'form-control select2' }}) }}
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <input type="checkbox" id="fos_user_registration_form_agreeTerms"
+                                   name="fos_user_registration_form[agreeTerms]" required="required"
+                                   class="form-check-input" value="1">
+                            <label class="text-muted" for="fos_user_registration_form_agreeTerms">Agree with <span>Privacy Policy </span></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" type="submit">Create Account</button>
+                    </div>
+                    <!--<div class="login-social-title">
+                        <h5>Sign in with</h5>
+                    </div>
+                    <div class="form-group">
+                        <ul class="login-social">
+                            <li><a href="https://www.linkedin.com/login" target="_blank"><i data-feather="linkedin"></i></a></li>
+                            <li><a href="https://www.linkedin.com/login" target="_blank"><i data-feather="twitter"></i></a></li>
+                            <li><a href="https://www.linkedin.com/login" target="_blank"><i data-feather="facebook"></i></a></li>
+                            <li><a href="https://www.instagram.com/login" target="_blank"><i data-feather="instagram">                  </i></a></li>
+                        </ul>
+                    </div>-->
+
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                        <a href="{{ path('sonata_user_admin_security_logout') }}">
+                            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                        </a>
+                    {% else %}
+                        <p>Already have an account?<a class="ms-2"
+                                                      href="{{ path('sonata_user_admin_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+                        </p>
+
+                    {% endif %}
+
+
+                </form>
                 <div class="row m-t-20">
                     <div class="col-sm-12 text-center">
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-                            <a href="{{ path('sonata_user_admin_security_logout') }}">
-                                {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                            </a>
-                        {% else %}
-                            <p class="text-light-blue">Already have an account? <a
-                                        href="{{ path('sonata_user_admin_security_login') }}"
-                                        class=" text-primary m-l-5"><b>{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</b></a>
-                            </p>
-
-                        {% endif %}
 
 
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
+
+
+
+
+
+
 {% endblock %}
 
 {% block javascripts %}
-
+    <!-- Plugins JS start-->
+    <script src="{{ asset('assets/secure/js/select2.full.min.js') }}"></script>
     <script>
         var resizefunc = [];
 
+        jQuery(document).ready(function () {
 
+            $("#fos_user_registration_form_country").select2({
+                width: "50%",
+            });
+
+
+            /*----------------------------------------
+            passward show hide
+            ----------------------------------------*/
+            $('.show-hide').show();
+            $('.show-hide span').addClass('show');
+
+            $('.show-hide span').click(function () {
+                if ($(this).hasClass('show')) {
+                    $('input[name="login[password]"]').attr('type', 'text');
+                    $(this).removeClass('show');
+                } else {
+                    $('input[name="login[password]"]').attr('type', 'password');
+                    $(this).addClass('show');
+                }
+            });
+            $('form button[type="submit"]').on('click', function () {
+                $('.show-hide span').addClass('show');
+                $('.show-hide').parent().find('input[name="login[password]"]').attr('type', 'password');
+            });
+
+
+        });
     </script>
-
-
 
 {% endblock %}

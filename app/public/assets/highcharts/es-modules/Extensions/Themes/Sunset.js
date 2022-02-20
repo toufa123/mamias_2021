@@ -13,27 +13,57 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
+import D from '../../Core/DefaultOptions.js';
 
-var setOptions = U.setOptions;
-H.theme = {
-    colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
-    colorAxis: {
-        maxColor: '#60042E',
-        minColor: '#FDD089'
-    },
-    plotOptions: {
-        map: {
-            nullColor: '#fefefc'
+var setOptions = D.setOptions;
+/* *
+ *
+ *  Theme
+ *
+ * */
+var SunsetTheme;
+(function (SunsetTheme) {
+    /* *
+     *
+     *  Constants
+     *
+     * */
+    SunsetTheme.options = {
+        colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
+        colorAxis: {
+            maxColor: '#60042E',
+            minColor: '#FDD089'
+        },
+        plotOptions: {
+            map: {
+                nullColor: '#fefefc'
+            }
+        },
+        navigator: {
+            series: {
+                color: '#FF7F79',
+                lineColor: '#A0446E'
+            }
         }
-    },
-    navigator: {
-        series: {
-            color: '#FF7F79',
-            lineColor: '#A0446E'
-        }
+    };
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /**
+     * Apply the theme.
+     */
+    function apply() {
+        setOptions(SunsetTheme.options);
     }
-};
-// Apply the theme
-setOptions(H.theme);
+
+    SunsetTheme.apply = apply;
+})(SunsetTheme || (SunsetTheme = {}));
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default SunsetTheme;

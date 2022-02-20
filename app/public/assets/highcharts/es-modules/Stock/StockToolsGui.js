@@ -12,10 +12,13 @@
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import D from '../Core/DefaultOptions.js';
+
+var setOptions = D.setOptions;
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent,
-    getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick, setOptions = U.setOptions;
+    getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick;
 var DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
 setOptions({
     /**
@@ -53,8 +56,12 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHLC: 'HLC',
+                typeHollowCandlestick: 'Hollow Candlestick',
+                typeHeikinAshi: 'Heikin Ashi',
                 // Basic shapes:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 label: 'Label',
                 rectangle: 'Rectangle',
                 // Flags:
@@ -72,7 +79,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 infinityLine: 'Infinity line',
@@ -87,14 +94,17 @@ setOptions({
                 verticalArrow: 'Vertical arrow',
                 // Advanced:
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
-                parallelChannel: 'Parallel channel'
+                parallelChannel: 'Parallel channel',
+                timeCycles: 'Time Cycles'
             }
         },
         navigation: {
             popup: {
                 // Annotations:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 segment: 'Segment',
@@ -102,7 +112,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 crooked3: 'Crooked 3 line',
@@ -113,6 +123,7 @@ setOptions({
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
@@ -120,6 +131,7 @@ setOptions({
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
+                timeCycles: 'Time Cycles',
                 // Flags:
                 flags: 'Flags',
                 // GUI elements:
@@ -136,7 +148,379 @@ setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+                // Indicators' searchbox (#16019):
+                noFilterMatch: 'No match',
+                // Indicators' params (#15170):
+                searchIndicators: 'Search Indicators',
+                clearFilter: '\u2715 clear filter',
+                index: 'Index',
+                period: 'Period',
+                periods: 'Periods',
+                standardDeviation: 'Standard deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor',
+                fastAvgPeriod: 'Fast average period',
+                slowAvgPeriod: 'Slow average period',
+                average: 'Average',
+                /**
+                 * Configure the aliases for indicator names.
+                 *
+                 * @product highstock
+                 * @since 9.3.0
+                 */
+                indicatorAliases: {
+                    // Overlays
+                    /**
+                     * Acceleration Bands alias.
+                     *
+                     * @default ['Acceleration Bands']
+                     * @type    {Array<string>}
+                     */
+                    abands: ['Acceleration Bands'],
+                    /**
+                     * Bollinger Bands alias.
+                     *
+                     * @default ['Bollinger Bands']
+                     * @type    {Array<string>}
+                     */
+                    bb: ['Bollinger Bands'],
+                    /**
+                     * Double Exponential Moving Average alias.
+                     *
+                     * @default ['Double Exponential Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    dema: ['Double Exponential Moving Average'],
+                    /**
+                     *  Exponential Moving Average alias.
+                     *
+                     * @default ['Exponential Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    ema: ['Exponential Moving Average'],
+                    /**
+                     *  Ichimoku Kinko Hyo alias.
+                     *
+                     * @default ['Ichimoku Kinko Hyo']
+                     * @type    {Array<string>}
+                     */
+                    ikh: ['Ichimoku Kinko Hyo'],
+                    /**
+                     *  Keltner Channels alias.
+                     *
+                     * @default ['Keltner Channels']
+                     * @type    {Array<string>}
+                     */
+                    keltnerchannels: ['Keltner Channels'],
+                    /**
+                     *  Linear Regression alias.
+                     *
+                     * @default ['Linear Regression']
+                     * @type    {Array<string>}
+                     */
+                    linearRegression: ['Linear Regression'],
+                    /**
+                     *  Pivot Points alias.
+                     *
+                     * @default ['Pivot Points']
+                     * @type    {Array<string>}
+                     */
+                    pivotpoints: ['Pivot Points'],
+                    /**
+                     *  Price Channel alias.
+                     *
+                     * @default ['Price Channel']
+                     * @type    {Array<string>}
+                     */
+                    pc: ['Price Channel'],
+                    /**
+                     *  Price Envelopes alias.
+                     *
+                     * @default ['Price Envelopes']
+                     * @type    {Array<string>}
+                     */
+                    priceenvelopes: ['Price Envelopes'],
+                    /**
+                     *  Parabolic SAR alias.
+                     *
+                     * @default ['Parabolic SAR']
+                     * @type    {Array<string>}
+                     */
+                    psar: ['Parabolic SAR'],
+                    /**
+                     *  Simple Moving Average alias.
+                     *
+                     * @default ['Simple Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    sma: ['Simple Moving Average'],
+                    /**
+                     *  Super Trend alias.
+                     *
+                     * @default ['Super Trend']
+                     * @type    {Array<string>}
+                     */
+                    supertrend: ['Super Trend'],
+                    /**
+                     *  Triple Exponential Moving Average alias.
+                     *
+                     * @default ['Triple Exponential Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    tema: ['Triple Exponential Moving Average'],
+                    /**
+                     *  Volume by Price alias.
+                     *
+                     * @default ['Volume by Price']
+                     * @type    {Array<string>}
+                     */
+                    vbp: ['Volume by Price'],
+                    /**
+                     *  Volume Weighted Moving Average alias.
+                     *
+                     * @default ['Volume Weighted Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    vwap: ['Volume Weighted Moving Average'],
+                    /**
+                     *  Weighted Moving Average alias.
+                     *
+                     * @default ['Weighted Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    wma: ['Weighted Moving Average'],
+                    /**
+                     *  Zig Zagalias.
+                     *
+                     * @default ['Zig Zag']
+                     * @type    {Array<string>}
+                     */
+                    zigzag: ['Zig Zag'],
+                    // Oscilators
+                    /**
+                     *  Absolute price indicator alias.
+                     *
+                     * @default ['Absolute price indicator']
+                     * @type    {Array<string>}
+                     */
+                    apo: ['Absolute price indicator'],
+                    /**
+                     * Accumulation/Distribution alias.
+                     *
+                     * @default ['Accumulation/Distribution’]
+                     * @type    {Array<string>}
+                     */
+                    ad: ['Accumulation/Distribution'],
+                    /**
+                     *  Aroon alias.
+                     *
+                     * @default ['Aroon']
+                     * @type    {Array<string>}
+                     */
+                    aroon: ['Aroon'],
+                    /**
+                     *  Aroon oscillator alias.
+                     *
+                     * @default ['Aroon oscillator']
+                     * @type    {Array<string>}
+                     */
+                    aroonoscillator: ['Aroon oscillator'],
+                    /**
+                     *  Average True Range alias.
+                     *
+                     * @default ['Average True Range’]
+                     * @type    {Array<string>}
+                     */
+                    atr: ['Average True Range'],
+                    /**
+                     *  Awesome oscillator alias.
+                     *
+                     * @default ['Awesome oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    ao: ['Awesome oscillator'],
+                    /**
+                     *  Commodity Channel Index alias.
+                     *
+                     * @default ['Commodity Channel Index’]
+                     * @type    {Array<string>}
+                     */
+                    cci: ['Commodity Channel Index'],
+                    /**
+                     *  Chaikin alias.
+                     *
+                     * @default ['Chaikin’]
+                     * @type    {Array<string>}
+                     */
+                    chaikin: ['Chaikin'],
+                    /**
+                     *  Chaikin Money Flow alias.
+                     *
+                     * @default ['Chaikin Money Flow’]
+                     * @type    {Array<string>}
+                     */
+                    cmf: ['Chaikin Money Flow'],
+                    /**
+                     *  Chande Momentum Oscillator alias.
+                     *
+                     * @default ['Chande Momentum Oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    cmo: ['Chande Momentum Oscillator'],
+                    /**
+                     *  Disparity Index alias.
+                     *
+                     * @default ['Disparity Index’]
+                     * @type    {Array<string>}
+                     */
+                    disparityindex: ['Disparity Index'],
+                    /**
+                     *  Directional Movement Index alias.
+                     *
+                     * @default ['Directional Movement Index’]
+                     * @type    {Array<string>}
+                     */
+                    dmi: ['Directional Movement Index'],
+                    /**
+                     *  Detrended price oscillator alias.
+                     *
+                     * @default ['Detrended price oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    dpo: ['Detrended price oscillator'],
+                    /**
+                     *  Klinger Oscillator alias.
+                     *
+                     * @default [‘Klinger Oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    klinger: ['Klinger Oscillator'],
+                    /**
+                     *  Linear Regression Angle alias.
+                     *
+                     * @default [‘Linear Regression Angle’]
+                     * @type    {Array<string>}
+                     */
+                    linearRegressionAngle: ['Linear Regression Angle'],
+                    /**
+                     *  Linear Regression Intercept alias.
+                     *
+                     * @default [‘Linear Regression Intercept’]
+                     * @type    {Array<string>}
+                     */
+                    linearRegressionIntercept: ['Linear Regression Intercept'],
+                    /**
+                     *  Linear Regression Slope alias.
+                     *
+                     * @default [‘Linear Regression Slope’]
+                     * @type    {Array<string>}
+                     */
+                    linearRegressionSlope: ['Linear Regression Slope'],
+                    /**
+                     *  Moving Average Convergence Divergence alias.
+                     *
+                     * @default ['Moving Average Convergence Divergence’]
+                     * @type    {Array<string>}
+                     */
+                    macd: ['Moving Average Convergence Divergence'],
+                    /**
+                     *  Money Flow Index alias.
+                     *
+                     * @default ['Money Flow Index’]
+                     * @type    {Array<string>}
+                     */
+                    mfi: ['Money Flow Index'],
+                    /**
+                     *  Momentum alias.
+                     *
+                     * @default [‘Momentum’]
+                     * @type    {Array<string>}
+                     */
+                    momentum: ['Momentum'],
+                    /**
+                     *  Normalized Average True Range alias.
+                     *
+                     * @default ['Normalized Average True Range’]
+                     * @type    {Array<string>}
+                     */
+                    natr: ['Normalized Average True Range'],
+                    /**
+                     *  On-Balance Volume alias.
+                     *
+                     * @default ['On-Balance Volume’]
+                     * @type    {Array<string>}
+                     */
+                    obv: ['On-Balance Volume'],
+                    /**
+                     * Percentage Price oscillator alias.
+                     *
+                     * @default ['Percentage Price oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    ppo: ['Percentage Price oscillator'],
+                    /**
+                     *  Rate of Change alias.
+                     *
+                     * @default ['Rate of Change’]
+                     * @type    {Array<string>}
+                     */
+                    roc: ['Rate of Change'],
+                    /**
+                     *  Relative Strength Index alias.
+                     *
+                     * @default ['Relative Strength Index’]
+                     * @type    {Array<string>}
+                     */
+                    rsi: ['Relative Strength Index'],
+                    /**
+                     *  Slow Stochastic alias.
+                     *
+                     * @default [‘Slow Stochastic’]
+                     * @type    {Array<string>}
+                     */
+                    slowstochastic: ['Slow Stochastic'],
+                    /**
+                     *  Stochastic alias.
+                     *
+                     * @default [‘Stochastic’]
+                     * @type    {Array<string>}
+                     */
+                    stochastic: ['Stochastic'],
+                    /**
+                     *  TRIX alias.
+                     *
+                     * @default [‘TRIX’]
+                     * @type    {Array<string>}
+                     */
+                    trix: ['TRIX'],
+                    /**
+                     *  Williams %R alias.
+                     *
+                     * @default [‘Williams %R’]
+                     * @type    {Array<string>}
+                     */
+                    williamsr: ['Williams %R']
+                }
             }
         }
     },
@@ -251,6 +635,7 @@ setOptions({
                      * @default [
                      *   'label',
                      *   'circle',
+                     *   'ellipse',
                      *   'rectangle'
                      * ]
                      *
@@ -258,6 +643,7 @@ setOptions({
                     items: [
                         'label',
                         'circle',
+                        'ellipse',
                         'rectangle'
                     ],
                     circle: {
@@ -268,6 +654,15 @@ setOptions({
                          *
                          */
                         symbol: 'circle.svg'
+                    },
+                    ellipse: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'ellipse.svg'
                     },
                     rectangle: {
                         /**
@@ -355,7 +750,7 @@ setOptions({
                      *   'ray',
                      *   'arrowRay',
                      *   'line',
-                     *   'arrowLine',
+                     *   'arrowInfinityLine',
                      *   'horizontalLine',
                      *   'verticalLine'
                      * ]
@@ -366,7 +761,7 @@ setOptions({
                         'ray',
                         'arrowRay',
                         'line',
-                        'arrowLine',
+                        'arrowInfinityLine',
                         'horizontalLine',
                         'verticalLine'
                     ],
@@ -410,7 +805,7 @@ setOptions({
                          */
                         symbol: 'line.svg'
                     },
-                    arrowLine: {
+                    arrowInfinityLine: {
                         /**
                          * A predefined background symbol for the button.
                          *
@@ -538,14 +933,18 @@ setOptions({
                      * @type {array}
                      * @default [
                      *   'fibonacci',
+                     *   'fibonacciTimeZones',
                      *   'pitchfork',
-                     *   'parallelChannel'
+                     *   'parallelChannel',
+                     *   'timeCycles'
                      * ]
                      */
                     items: [
                         'fibonacci',
+                        'fibonacciTimeZones',
                         'pitchfork',
-                        'parallelChannel'
+                        'parallelChannel',
+                        'timeCycles'
                     ],
                     pitchfork: {
                         /**
@@ -563,6 +962,14 @@ setOptions({
                          */
                         symbol: 'fibonacci.svg'
                     },
+                    fibonacciTimeZones: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'fibonacci-timezone.svg'
+                    },
                     parallelChannel: {
                         /**
                          * A predefined background symbol for the button.
@@ -570,6 +977,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'parallel-channel.svg'
+                    },
+                    timeCycles: {
+                        /**
+                         * A predefined backgroud symbol for the button.
+                         *
+                         * @type {string}
+                         */
+                        symbol: 'time-cycles.svg'
                     }
                 },
                 measure: {
@@ -690,12 +1105,16 @@ setOptions({
                      *   'typeOHLC',
                      *   'typeLine',
                      *   'typeCandlestick'
+                     *   'typeHollowCandlestick'
                      * ]
                      */
                     items: [
                         'typeOHLC',
                         'typeLine',
-                        'typeCandlestick'
+                        'typeCandlestick',
+                        'typeHollowCandlestick',
+                        'typeHLC',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -720,6 +1139,30 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hlc.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
+                    },
+                    typeHollowCandlestick: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hollow-candlestick.svg'
                     }
                 },
                 fullScreen: {
@@ -756,16 +1199,22 @@ addEvent(Chart, 'getMargins', function () {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
     }
+}, {
+    order: 0
 });
 ['beforeRender', 'beforeRedraw'].forEach(function (event) {
     addEvent(Chart, event, function () {
         if (this.stockTools) {
+            var optionsChart = this.options.chart;
             var listWrapper = this.stockTools.listWrapper, offsetWidth = listWrapper && ((listWrapper.startWidth +
                 getStyle(listWrapper, 'padding-left') +
                 getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
             var dirty = false;
             if (offsetWidth && offsetWidth < this.plotWidth) {
-                this.spacingBox.x += offsetWidth;
+                var nextX = pick(optionsChart.spacingLeft, optionsChart.spacing && optionsChart.spacing[3], 0) + offsetWidth;
+                var diff = nextX - this.spacingBox.x;
+                this.spacingBox.x = nextX;
+                this.spacingBox.width -= diff;
                 dirty = true;
             } else if (offsetWidth === 0) {
                 dirty = true;
@@ -824,7 +1273,6 @@ var Toolbar = /** @class */ (function () {
         }
         fireEvent(this, 'afterInit');
     }
-
     /**
      * Initialize the toolbar. Create buttons and submenu for each option
      * defined in `stockTools.gui`.
@@ -862,7 +1310,7 @@ var Toolbar = /** @class */ (function () {
         // create submenu container
         this.submenu = submenuWrapper = createElement(UL, {
             className: PREFIX + 'submenu-wrapper'
-        }, null, buttonWrapper);
+        }, void 0, buttonWrapper);
         // create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
         // show / hide submenu
@@ -980,22 +1428,22 @@ var Toolbar = /** @class */ (function () {
         buttonWrapper = createElement(LI, {
             className: pick(classMapping[btnName], '') + ' ' + userClassName,
             title: lang[btnName] || btnName
-        }, null, target);
+        }, void 0, target);
         // single button
         mainButton = createElement(SPAN, {
             className: PREFIX + 'menu-item-btn'
-        }, null, buttonWrapper);
+        }, void 0, buttonWrapper);
         // submenu
         if (items && items.length) {
             // arrow is a hook to show / hide submenu
             submenuArrow = createElement(SPAN, {
                 className: PREFIX + 'submenu-item-arrow ' +
                     PREFIX + 'arrow-right'
-            }, null, buttonWrapper);
-            submenuArrow.style['background-image'] = 'url(' +
+            }, void 0, buttonWrapper);
+            submenuArrow.style.backgroundImage = 'url(' +
                 this.iconsURL + 'arrow-bottom.svg)';
         } else {
-            mainButton.style['background-image'] = 'url(' +
+            mainButton.style.backgroundImage = 'url(' +
                 this.iconsURL + btnOptions.symbol + ')';
         }
         return {
@@ -1016,13 +1464,13 @@ var Toolbar = /** @class */ (function () {
         });
         stockToolbar.arrowUp = createElement(DIV, {
             className: PREFIX + 'arrow-up'
-        }, null, stockToolbar.arrowWrapper);
-        stockToolbar.arrowUp.style['background-image'] =
+        }, void 0, stockToolbar.arrowWrapper);
+        stockToolbar.arrowUp.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
         stockToolbar.arrowDown = createElement(DIV, {
             className: PREFIX + 'arrow-down'
-        }, null, stockToolbar.arrowWrapper);
-        stockToolbar.arrowDown.style['background-image'] =
+        }, void 0, stockToolbar.arrowWrapper);
+        stockToolbar.arrowDown.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
         wrapper.insertBefore(stockToolbar.arrowWrapper, wrapper.childNodes[0]);
         // attach scroll events
@@ -1039,14 +1487,14 @@ var Toolbar = /** @class */ (function () {
         _self.eventsToUnbind.push(addEvent(_self.arrowUp, 'click', function () {
             if (targetY > 0) {
                 targetY -= step;
-                toolbar.style['margin-top'] = -targetY + 'px';
+                toolbar.style.marginTop = -targetY + 'px';
             }
         }));
         _self.eventsToUnbind.push(addEvent(_self.arrowDown, 'click', function () {
             if (wrapper.offsetHeight + targetY <=
                 toolbar.offsetHeight + step) {
                 targetY += step;
-                toolbar.style['margin-top'] = -targetY + 'px';
+                toolbar.style.marginTop = -targetY + 'px';
             }
         }));
     };
@@ -1057,13 +1505,27 @@ var Toolbar = /** @class */ (function () {
     Toolbar.prototype.createHTML = function () {
         var stockToolbar = this, chart = stockToolbar.chart, guiOptions = stockToolbar.options,
             container = chart.container, navigation = chart.options.navigation,
-            bindingsClassName = navigation && navigation.bindingsClassName, listWrapper, toolbar, wrapper;
+            bindingsClassName = navigation && navigation.bindingsClassName, listWrapper, toolbar;
         // create main container
-        stockToolbar.wrapper = wrapper = createElement(DIV, {
+        var wrapper = stockToolbar.wrapper = createElement(DIV, {
             className: PREFIX + 'stocktools-wrapper ' +
                 guiOptions.className + ' ' + bindingsClassName
         });
-        container.parentNode.insertBefore(wrapper, container);
+        container.appendChild(wrapper);
+        // Mimic event behaviour of being outside chart.container
+        [
+            'mousedown',
+            'mousemove',
+            'click',
+            'touchstart'
+        ].forEach(function (eventType) {
+            addEvent(wrapper, eventType, function (e) {
+                return e.stopPropagation();
+            });
+        });
+        addEvent(wrapper, 'mouseover', function (e) {
+            return chart.pointer.onContainerMouseLeave(e);
+        });
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
             className: PREFIX + 'stocktools-toolbar ' +
@@ -1106,8 +1568,8 @@ var Toolbar = /** @class */ (function () {
         // Show hide toolbar
         this.showhideBtn = showhideBtn = createElement(DIV, {
             className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
-        }, null, wrapper);
-        showhideBtn.style['background-image'] =
+        }, void 0, wrapper);
+        showhideBtn.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
         if (!visible) {
             // hide
@@ -1146,9 +1608,13 @@ var Toolbar = /** @class */ (function () {
      *
      */
     Toolbar.prototype.switchSymbol = function (button, redraw) {
-        var buttonWrapper = button.parentNode, buttonWrapperClass = buttonWrapper.classList.value,
+        var buttonWrapper = button.parentNode, buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
@@ -1157,8 +1623,8 @@ var Toolbar = /** @class */ (function () {
         // set icon
         mainNavButton
             .querySelectorAll('.' + PREFIX + 'menu-item-btn')[0]
-            .style['background-image'] =
-            button.style['background-image'];
+            .style.backgroundImage =
+            button.style.backgroundImage;
         // set active class
         if (redraw) {
             this.selectButton(mainNavButton);
@@ -1197,13 +1663,17 @@ var Toolbar = /** @class */ (function () {
      *
      * @param {Object} - general options for Stock Tools
      */
-    Toolbar.prototype.update = function (options) {
+    Toolbar.prototype.update = function (options, redraw) {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);
         // If Stock Tools are updated, then bindings should be updated too:
         if (this.chart.navigationBindings) {
             this.chart.navigationBindings.update();
+        }
+        this.chart.isDirtyBox = true;
+        if (pick(redraw, true)) {
+            this.chart.redraw();
         }
     };
     /**
@@ -1219,9 +1689,6 @@ var Toolbar = /** @class */ (function () {
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
-        // redraw
-        this.chart.isDirtyBox = true;
-        this.chart.redraw();
     };
     /**
      * Redraw, GUI requires to verify if the navigation should be visible.
@@ -1233,7 +1700,7 @@ var Toolbar = /** @class */ (function () {
     Toolbar.prototype.getIconsURL = function () {
         return this.chart.options.navigation.iconsURL ||
             this.options.iconsURL ||
-            'https://code.highcharts.com/9.0.0/gfx/stock-icons/';
+            'https://code.highcharts.com/9.3.0/gfx/stock-icons/';
     };
     return Toolbar;
 }());
@@ -1243,6 +1710,7 @@ var Toolbar = /** @class */ (function () {
  */
 Toolbar.prototype.classMapping = {
     circle: PREFIX + 'circle-annotation',
+    ellipse: PREFIX + 'ellipse-annotation',
     rectangle: PREFIX + 'rectangle-annotation',
     label: PREFIX + 'label-annotation',
     segment: PREFIX + 'segment',
@@ -1250,7 +1718,7 @@ Toolbar.prototype.classMapping = {
     ray: PREFIX + 'ray',
     arrowRay: PREFIX + 'arrow-ray',
     line: PREFIX + 'infinity-line',
-    arrowLine: PREFIX + 'arrow-infinity-line',
+    arrowInfinityLine: PREFIX + 'arrow-infinity-line',
     verticalLine: PREFIX + 'vertical-line',
     horizontalLine: PREFIX + 'horizontal-line',
     crooked3: PREFIX + 'crooked3',
@@ -1259,10 +1727,12 @@ Toolbar.prototype.classMapping = {
     elliott5: PREFIX + 'elliott5',
     pitchfork: PREFIX + 'pitchfork',
     fibonacci: PREFIX + 'fibonacci',
+    fibonacciTimeZones: PREFIX + 'fibonacci-time-zones',
     parallelChannel: PREFIX + 'parallel-channel',
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',
     measureXY: PREFIX + 'measure-xy',
+    timeCycles: PREFIX + 'time-cycles',
     verticalCounter: PREFIX + 'vertical-counter',
     verticalLabel: PREFIX + 'vertical-label',
     verticalArrow: PREFIX + 'vertical-arrow',
@@ -1277,7 +1747,10 @@ Toolbar.prototype.classMapping = {
     zoomXY: PREFIX + 'zoom-xy',
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
+    typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
+    typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',
@@ -1292,7 +1765,7 @@ extend(Chart.prototype, {
     setStockTools: function (options) {
         var chartOptions = this.options, lang = chartOptions.lang,
             guiOptions = merge(chartOptions.stockTools && chartOptions.stockTools.gui, options && options.gui),
-            langOptions = lang.stockTools && lang.stockTools.gui;
+            langOptions = lang && lang.stockTools && lang.stockTools.gui;
         this.stockTools = new Toolbar(guiOptions, langOptions, this);
         if (this.stockTools.guiEnabled) {
             this.isDirtyBox = true;
@@ -1321,6 +1794,22 @@ addEvent(NavigationBindings, 'deselectButton', function (event) {
             button = button.parentNode.parentNode;
         }
         gui.selectButton(button);
+    }
+});
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(Chart, 'render', function () {
+    var chart = this, stockTools = chart.stockTools, button = stockTools &&
+        stockTools.toolbar &&
+        stockTools.toolbar.querySelector('.highcharts-current-price-indicator');
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+                'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+                'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
     }
 });
 H.Toolbar = Toolbar;

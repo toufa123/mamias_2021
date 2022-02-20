@@ -37,8 +37,8 @@ registration:
   confirmed: 'Congrats %username%, your account is now activated.'
   back: 'Back to the originating page.'
   submit: Register
-  flash:
-    user_created: 'The user has been created successfully.'
+    #flash:
+  #user_created: 'The user has been created successfully.'
   email:
     subject: 'Welcome %username%!'
     message: |
@@ -72,7 +72,7 @@ resetting:
       To reset your password - please visit %confirmationUrl%
 
       Regards,
-      the Team.
+      MAMIAS Team.
 
 # Global strings
 layout:

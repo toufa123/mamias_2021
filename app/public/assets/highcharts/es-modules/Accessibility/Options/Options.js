@@ -10,7 +10,6 @@
  *
  * */
 'use strict';
-import palette from '../../Core/Color/Palette.js';
 /**
  * Formatter callback for the accessibility announcement.
  *
@@ -43,6 +42,12 @@ import palette from '../../Core/Color/Palette.js';
  * @type {string|undefined}
  * @requires modules/accessibility
  * @since 7.1.0
+ */ /**
+ * Enable or disable exposing the point to assistive technology
+ * @name Highcharts.PointAccessibilityOptionsObject#enabled
+ * @type {boolean|undefined}
+ * @requires modules/accessibility
+ * @since 9.0.1
  */
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -71,7 +76,7 @@ import palette from '../../Core/Color/Palette.js';
  * @return {string}
  *         Formatted string for the screen reader module.
  */
-var options = {
+var Options = {
     /**
      * Options for configuring accessibility for the chart. Requires the
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
@@ -132,16 +137,22 @@ var options = {
              */
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, `<ul>`,
+             * Supported HTML tags are `<h1-6>`, `<p>`, `<div>`, `<a>`, `<ul>`,
              * `<ol>`, `<li>`, and `<button>`. Attributes are not supported,
              * except for id on `<div>`, `<a>`, and `<button>`. Id is required
              * on `<a>` and `<button>` in the format `<tag id="abcd">`. Numbers,
              * lower- and uppercase letters, "-" and "#" are valid characters in
              * IDs.
              *
+             * The headingTagName is an auto-detected heading (h1-h6) that
+             * corresponds to the heading level below the previous heading in
+             * the DOM.
+             *
+             * Set to empty string to remove the region altogether.
+             *
              * @since 8.0.0
              */
-            beforeChartFormat: '<h5>{chartTitle}</h5>' +
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}>' +
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
@@ -170,7 +181,7 @@ var options = {
              * Date format to use to describe range of datetime axes.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              *
@@ -230,7 +241,7 @@ var options = {
              * Defaults to the same format as in tooltip.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormatter](#accessibility.point.dateFormatter)
              *
@@ -243,7 +254,7 @@ var options = {
              * points on datetime axes when describing them to screen reader
              * users. Receives one argument, `point`, referring to the point
              * to describe. Should return a date format string compatible with
-             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormat](#accessibility.point.dateFormat)
              *
@@ -319,7 +330,7 @@ var options = {
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
          * are available:
-         *  - `all`: Adds regions for all series, legend, menu, information
+         *  - `all`: Adds regions for all series, legend, information
          *      region.
          *  - `one`: Adds a single landmark per chart.
          *  - `disabled`: No landmarks are added.
@@ -481,7 +492,7 @@ var options = {
                  */
                 style: {
                     /** @internal */
-                    color: palette.highlightColor80,
+                    color: "#335cad" /* highlightColor80 */,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */
@@ -497,8 +508,11 @@ var options = {
             /**
              * Order of tab navigation in the chart. Determines which elements
              * are tabbed to first. Available elements are: `series`, `zoom`,
-             * `rangeSelector`, `chartMenu`, `legend`. In addition, any custom
-             * components can be added here.
+             * `rangeSelector`, `chartMenu`, `legend` and `container`. In
+             * addition, any custom components can be added here. Adding
+             * `container` first in order will make the keyboard focus stop on
+             * the chart container first, requiring the user to tab again to
+             * enter the chart.
              *
              * @type  {Array<string>}
              * @since 7.1.0
@@ -632,6 +646,15 @@ var options = {
      * @apioption series.line.data.accessibility.description
      */
     /**
+     * Set to false to disable accessibility functionality for a specific point.
+     * The point will not be included in keyboard navigation, and will not be
+     * exposed to assistive technology.
+     *
+     * @type      {boolean}
+     * @since 9.0.1
+     * @apioption series.line.data.accessibility.enabled
+     */
+    /**
      * Accessibility options for a series.
      *
      * @declare    Highcharts.SeriesAccessibilityOptionsObject
@@ -654,22 +677,36 @@ var options = {
      * @apioption  plotOptions.series.accessibility.description
      */
     /**
-     * Formatter function to use instead of the default for point
-     * descriptions. Same as `accessibility.point.descriptionFormatter`, but for
-     * a single series.
-     *
-     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-     *
-     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-     * @since     7.1.0
-     * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
-     */
-    /**
      * Expose only the series element to screen readers, not its points.
      *
      * @type       {boolean}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.exposeAsGroupOnly
+     */
+    /**
+     * Point accessibility options for a series.
+     *
+     * @extends    accessibility.point
+     * @since 9.3.0
+     * @requires   modules/accessibility
+     * @apioption  plotOptions.series.accessibility.point
+     */
+    /**
+     * Formatter function to use instead of the default for point
+     * descriptions. Same as `accessibility.point.descriptionFormatter`, but
+     * applies to a series instead of the whole chart.
+     *
+     * Note: Prefer using [accessibility.point.valueDescriptionFormat](#plotOptions.series.accessibility.point.valueDescriptionFormat)
+     * instead if possible, as default functionality such as describing
+     * annotations will be preserved.
+     *
+     * @see [accessibility.point.valueDescriptionFormat](#plotOptions.series.accessibility.point.valueDescriptionFormat)
+     * @see [point.accessibility.description](#series.line.data.accessibility.description)
+     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+     *
+     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
+     * @since 9.3.0
+     * @apioption plotOptions.series.accessibility.point.descriptionFormatter
      */
     /**
      * Keyboard navigation for a series
@@ -791,4 +828,4 @@ var options = {
         }
     }
 };
-export default options;
+export default Options;

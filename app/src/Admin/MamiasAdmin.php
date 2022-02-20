@@ -171,7 +171,7 @@ final class MamiasAdmin extends AbstractAdmin
                 ->end()
                 ->with('Pathways')
                 ->add('vectors', null, ['label' => 'Pathway/Vectors'])
-                ->add('Pathway', CollectionType::class,
+                ->add('Pathway', Sonata\AdminBundle\Form\Type\CollectionType,
                     ['label' => 'Pathway CBD 2014', 'type_options' => ['delete' => true],
                     ], ['by_reference' => true, 'edit' => 'inline', 'inline' => 'table', 'required' => true])
                 ->end()

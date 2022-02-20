@@ -29,15 +29,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnPoint = SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 /* *
  *
@@ -46,7 +43,6 @@ var extend = U.extend;
  * */
 var CylinderPoint = /** @class */ (function (_super) {
     __extends(CylinderPoint, _super);
-
     function CylinderPoint() {
         /* *
          *
@@ -58,7 +54,6 @@ var CylinderPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-
     return CylinderPoint;
 }(ColumnPoint));
 extend(CylinderPoint.prototype, {

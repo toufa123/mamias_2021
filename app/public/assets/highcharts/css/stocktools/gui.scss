@@ -38,11 +38,12 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper {
-  display: block;
-  width: 40px;
-  height: 100%;
-  position: absolute;
-  z-index: 10;
+    display: block;
+    width: 40px;
+    height: 100%;
+    position: absolute;
+    z-index: 10;
+    top: 0px;
 }
 
 .highcharts-stocktools-popup {
@@ -97,7 +98,6 @@ $button-hover-color: #e6ebf5;
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   transform: rotate(90deg);
 }
-
 .highcharts-bindings-wrapper .highcharts-arrow-up {
   background-size: cover;
   outline: none;
@@ -185,7 +185,6 @@ $button-hover-color: #e6ebf5;
   position: relative;
   background-color: $button-background-color;
 }
-
 .highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn {
   cursor: default;
 }
@@ -209,6 +208,7 @@ $button-hover-color: #e6ebf5;
     height: 100%;
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    background-size: 32px 32px;
 }
 
 .highcharts-submenu-wrapper li > span.highcharts-menu-item-btn {
@@ -266,4 +266,8 @@ $button-hover-color: #e6ebf5;
     width: 50%;
     height: 20px;
     float: left;
+}
+
+li.highcharts-disabled-btn:hover, .highcharts-disabled-btn .highcharts-submenu-item-arrow:hover {
+    background-color: $button-background-color;
 }

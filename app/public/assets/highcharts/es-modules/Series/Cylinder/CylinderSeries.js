@@ -29,16 +29,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import CylinderPoint from './CylinderPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 import './CylinderComposition.js';
 /* *
@@ -60,7 +57,6 @@ import './CylinderComposition.js';
  */
 var CylinderSeries = /** @class */ (function (_super) {
     __extends(CylinderSeries, _super);
-
     function CylinderSeries() {
         /* *
          *
@@ -78,7 +74,6 @@ var CylinderSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /**
      * A cylinder graph is a variation of a 3d column graph. The cylinder graph
      * features cylindrical points.

@@ -2,7 +2,7 @@
  * Japanese translation
  * @author Tomoaki Yoshida <info@yoshida-studio.jp>
  * @author Naoki Sawada <hypweb+elfinder@gmail.com>
- * @version 2020-01-16
+ * @version 2021-06-02
  */
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -106,26 +106,27 @@
 			'errArchiveExec'       : 'ファイルのアーカイブ中にエラーが発生しました："$1"',
 			'errExtractExec'       : 'ファイルの抽出中にエラーが発生しました："$1"',
 			'errNetUnMount'        : 'アンマウントできません。', // from v2.1 added 30.04.2012
-			'errConvUTF8'          : 'UTF-8 に変換できませんでした。', // from v2.1 added 08.04.2014
-			'errFolderUpload'      : 'フォルダをアップロードしたいのであれば、モダンブラウザを試してください。', // from v2.1 added 26.6.2015
-			'errSearchTimeout'     : '"$1" を検索中にタイムアウトしました。検索結果は部分的です。', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : '再認可が必要です。', // from v2.1.10 added 24.3.2016
-			'errMaxTargets'        : '選択可能な最大アイテム数は $1 個です。', // from v2.1.17 added 17.10.2016
-			'errRestore'           : '宛先の特定ができないため、ごみ箱から戻せません。', // from v2.1.24 added 3.5.2017
-			'errEditorNotFound'    : 'このファイルタイプのエディターがありません。', // from v2.1.25 added 23.5.2017
-			'errServerError'       : 'サーバー側でエラーが発生しました。', // from v2.1.25 added 16.6.2017
-			'errEmpty'             : 'フォルダ"$1"を空にすることができません。', // from v2.1.25 added 22.6.2017
-			'moreErrors'           : 'さらに $1 件のエラーがあります。', // from v2.1.44 added 9.12.2018
+            'errConvUTF8': 'UTF-8 に変換できませんでした。', // from v2.1 added 08.04.2014
+            'errFolderUpload': 'フォルダをアップロードしたいのであれば、モダンブラウザを試してください。', // from v2.1 added 26.6.2015
+            'errSearchTimeout': '"$1" を検索中にタイムアウトしました。検索結果は部分的です。', // from v2.1 added 12.1.2016
+            'errReauthRequire': '再認可が必要です。', // from v2.1.10 added 24.3.2016
+            'errMaxTargets': '選択可能な最大アイテム数は $1 個です。', // from v2.1.17 added 17.10.2016
+            'errRestore': '宛先の特定ができないため、ごみ箱から戻せません。', // from v2.1.24 added 3.5.2017
+            'errEditorNotFound': 'このファイルタイプのエディターがありません。', // from v2.1.25 added 23.5.2017
+            'errServerError': 'サーバー側でエラーが発生しました。', // from v2.1.25 added 16.6.2017
+            'errEmpty': 'フォルダ"$1"を空にすることができません。', // from v2.1.25 added 22.6.2017
+            'moreErrors': 'さらに $1 件のエラーがあります。', // from v2.1.44 added 9.12.2018
+            'errMaxMkdirs': '一度に作成できるフォルダーは $1 個までです。', // from v2.1.58 added 20.6.2021
 
-			/******************************* commands names ********************************/
-			'cmdarchive'   : 'アーカイブ作成',
-			'cmdback'      : '戻る',
-			'cmdcopy'      : 'コピー',
-			'cmdcut'       : 'カット',
-			'cmddownload'  : 'ダウンロード',
-			'cmdduplicate' : '複製',
-			'cmdedit'      : 'ファイル編集',
-			'cmdextract'   : 'アーカイブを解凍',
+            /******************************* commands names ********************************/
+            'cmdarchive': 'アーカイブ作成',
+            'cmdback': '戻る',
+            'cmdcopy': 'コピー',
+            'cmdcut': 'カット',
+            'cmddownload': 'ダウンロード',
+            'cmdduplicate': '複製',
+            'cmdedit': 'ファイル編集',
+            'cmdextract': 'アーカイブを解凍',
 			'cmdforward'   : '進む',
 			'cmdgetfile'   : 'ファイル選択',
 			'cmdhelp'      : 'このソフトウェアについて',

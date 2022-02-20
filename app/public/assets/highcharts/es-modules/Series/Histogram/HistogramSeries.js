@@ -26,13 +26,11 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 
@@ -56,7 +54,6 @@ var binsNumberFormulas = {
         return Math.ceil(2 * Math.pow(baseSeries.options.data.length, 1 / 3));
     }
 };
-
 /**
  * Returns a function for mapping number to the closed (right opened) bins
  * @private
@@ -72,7 +69,6 @@ function fitToBinLeftClosed(bins) {
         return bins[--i];
     };
 }
-
 /* *
  *
  *  Class
@@ -87,7 +83,6 @@ function fitToBinLeftClosed(bins) {
  */
 var HistogramSeries = /** @class */ (function (_super) {
     __extends(HistogramSeries, _super);
-
     function HistogramSeries() {
         /* *
          *
@@ -102,7 +97,6 @@ var HistogramSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -232,13 +226,9 @@ var HistogramSeries = /** @class */ (function (_super) {
     return HistogramSeries;
 }(ColumnSeries));
 extend(HistogramSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
+    hasDerivedData: DerivedComposition.hasDerivedData
 });
+DerivedComposition.compose(HistogramSeries);
 SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
 /* *
  *

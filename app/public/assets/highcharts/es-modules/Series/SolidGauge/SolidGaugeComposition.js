@@ -10,12 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
-var Renderer = H.Renderer;
-import U from '../../Core/Utilities.js';
-
-var wrap = U.wrap;
+var _a = SVGRenderer.prototype, symbols = _a.symbols, arc = _a.symbols.arc;
 /**
  * Additional options, depending on the actual symbol drawn.
  *
@@ -49,9 +46,9 @@ var wrap = U.wrap;
  * @return {Highcharts.SVGPathArray}
  *         Path of the created arc.
  */
-wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) {
-    var arc = proceed, path = arc(x, y, w, h, options);
-    if (options.rounded) {
+symbols.arc = function (x, y, w, h, options) {
+    var path = arc(x, y, w, h, options);
+    if (options && options.rounded) {
         var r = options.r || w, smallR = (r - (options.innerR || 0)) / 2, outerArcStart = path[0],
             innerArcStart = path[2];
         if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
@@ -63,4 +60,4 @@ wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) 
         }
     }
     return path;
-});
+};

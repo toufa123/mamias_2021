@@ -34,20 +34,20 @@ security:
             context: user
             form_login:
                 provider: fos_userbundle
-                failure_path: /admin/login
-                login_path: /admin/login
+                failure_path: sonata_user_admin_security_login
+                login_path: sonata_user_admin_security_login
                 use_forward: false
                 check_path: /admin/login_check
                 use_referer: true
-                #default_target_path:   /admin/dashboard
+                default_target_path:   sonata_admin_dashboard
                 #csrf_token_generator: security.csrf.token_manager
                 success_handler: redirect.after.login
             logout:
-                path: /admin/logout
+                path: sonata_user_admin_security_logout
                 target: /
             anonymous: ~
             logout_on_user_change: true
-            access_denied_url: /admin/login
+            access_denied_url: sonata_user_admin_security_login
 
             # -> end custom configuration
 

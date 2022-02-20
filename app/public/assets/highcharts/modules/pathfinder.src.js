@@ -1,9 +1,9 @@
 /**
- * @license Highcharts Gantt JS v9.0.0 (2021-02-02)
+ * @license Highcharts Gantt JS v9.3.0 (2021-10-21)
  *
  * Pathfinder
  *
- * (c) 2016-2019 Øystein Moseng
+ * (c) 2016-2021 Øystein Moseng
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/ArrowSymbols.js', [_modules['Core/Renderer/SVG/SVGRenderer.js']], function (SVGRenderer) {
         /* *
          *
@@ -39,6 +37,13 @@
          *  License: www.highcharts.com/license
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+         *
+         * */
+        var symbols = SVGRenderer.prototype.symbols;
+
+        /* *
+         *
+         *  Functions
          *
          * */
         /**
@@ -71,14 +76,15 @@
          * @return {Highcharts.SVGPathArray}
          *         Path array
          */
-        SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
+        function arrow(x, y, w, h) {
             return [
                 ['M', x, y + h / 2],
                 ['L', x + w, y],
                 ['L', x, y + h / 2],
                 ['L', x + w, y + h]
             ];
-        };
+        }
+
         /**
          * Creates a half-width arrow symbol. Like a triangle, except not filled.
          * ```
@@ -107,9 +113,10 @@
          * @return {Highcharts.SVGPathArray}
          *         Path array
          */
-        SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
-            return SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
-        };
+        function arrowHalf(x, y, w, h) {
+            return arrow(x, y, w / 2, h);
+        }
+
         /**
          * Creates a left-oriented triangle.
          * ```
@@ -138,36 +145,15 @@
          * @return {Highcharts.SVGPathArray}
          *         Path array
          */
-        SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
+        function triangleLeft(x, y, w, h) {
             return [
                 ['M', x + w, y],
                 ['L', x, y + h / 2],
                 ['L', x + w, y + h],
                 ['Z']
             ];
-        };
-        /**
-         * Alias function for triangle-left.
-         *
-         * @private
-         * @function
-         *
-         * @param {number} x
-         *        x position of the arrow
-         *
-         * @param {number} y
-         *        y position of the arrow
-         *
-         * @param {number} w
-         *        width of the arrow
-         *
-         * @param {number} h
-         *        height of the arrow
-         *
-         * @return {Highcharts.SVGPathArray}
-         *         Path array
-         */
-        SVGRenderer.prototype.symbols['arrow-filled'] = SVGRenderer.prototype.symbols['triangle-left'];
+        }
+
         /**
          * Creates a half-width, left-oriented triangle.
          * ```
@@ -196,34 +182,25 @@
          * @return {Highcharts.SVGPathArray}
          *         Path array
          */
-        SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
-            return SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
-        };
-        /**
-         * Alias function for triangle-left-half.
-         *
-         * @private
-         * @function
-         *
-         * @param {number} x
-         *        x position of the arrow
-         *
-         * @param {number} y
-         *        y position of the arrow
-         *
-         * @param {number} w
-         *        width of the arrow
-         *
-         * @param {number} h
-         *        height of the arrow
-         *
-         * @return {Highcharts.SVGPathArray}
-         *         Path array
-         */
-        SVGRenderer.prototype.symbols['arrow-filled-half'] = SVGRenderer.prototype.symbols['triangle-left-half'];
+        function triangleLeftHalf(x, y, w, h) {
+            return triangleLeft(x, y, w / 2, h);
+        }
 
+        symbols.arrow = arrow;
+        symbols['arrow-filled'] = triangleLeft;
+        symbols['arrow-filled-half'] = triangleLeftHalf;
+        symbols['arrow-half'] = arrowHalf;
+        symbols['triangle-left'] = triangleLeft;
+        symbols['triangle-left-half'] = triangleLeftHalf;
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+
+        return symbols;
     });
-    _registerModule(_modules, 'Gantt/Connection.js', [_modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js']], function (H, O, Point, U) {
+    _registerModule(_modules, 'Gantt/Connection.js', [_modules['Core/Globals.js'], _modules['Core/DefaultOptions.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js']], function (H, D, Point, U) {
         /* *
          *
          *  (c) 2016 Highsoft AS
@@ -257,7 +234,7 @@
          * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
          */
         ''; // detach doclets above
-        var defaultOptions = O.defaultOptions;
+        var defaultOptions = D.defaultOptions;
         var addEvent = U.addEvent,
             defined = U.defined,
             error = U.error,
@@ -512,7 +489,6 @@
          * @requires  highcharts-gantt
          * @apioption series.xrange.data.connect
          */
-
         /**
          * The ID of the point to connect to.
          *
@@ -540,10 +516,10 @@
             // Prefer using shapeArgs (columns)
             if (shapeArgs) {
                 return {
-                    xMin: shapeArgs.x,
-                    xMax: shapeArgs.x + shapeArgs.width,
-                    yMin: shapeArgs.y,
-                    yMax: shapeArgs.y + shapeArgs.height
+                    xMin: shapeArgs.x || 0,
+                    xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+                    yMin: shapeArgs.y || 0,
+                    yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
                 };
             }
             // Otherwise use plotX/plotY and bb
@@ -555,7 +531,6 @@
                 yMax: point.plotY + bb.height / 2
             } : null;
         }
-
         /**
          * Calculate margin to place around obstacles for the pathfinder in pixels.
          * Returns a minimum of 1 pixel margin.
@@ -619,7 +594,6 @@
                 ), 1 // 1 is the minimum margin
             );
         }
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The Connection class. Used internally to represent a connection between two
@@ -1103,7 +1077,6 @@
                 };
             }
         });
-
         /**
          * Warn if using legacy options. Copy the options over. Note that this will
          * still break if using the legacy options in chart.update, addSeries etc.
@@ -1142,7 +1115,6 @@
         var min = Math.min,
             max = Math.max,
             abs = Math.abs;
-
         /**
          * Get index of last obstacle before xMin. Employs a type of binary search, and
          * thus requires that obstacles are sorted by xMin value.
@@ -1181,7 +1153,6 @@
             }
             return left > 0 ? left - 1 : 0;
         }
-
         /**
          * Test if a point lays within an obstacle.
          *
@@ -1203,7 +1174,6 @@
                 point.y <= obstacle.yMax &&
                 point.y >= obstacle.yMin);
         }
-
         /**
          * Find the index of an obstacle that wraps around a point.
          * Returns -1 if not found.
@@ -1232,7 +1202,6 @@
             }
             return -1;
         }
-
         /**
          * Get SVG path array from array of line segments.
          *
@@ -1255,7 +1224,6 @@
             }
             return path;
         }
-
         /**
          * Limits obstacle max/mins in all directions to bounds. Modifies input
          * obstacle.
@@ -1277,7 +1245,6 @@
             obstacle.xMin = max(obstacle.xMin, bounds.xMin);
             obstacle.xMax = min(obstacle.xMax, bounds.xMax);
         }
-
         /**
          * Get an SVG path from a starting coordinate to an ending coordinate.
          * Draws a straight line.
@@ -1304,7 +1271,6 @@
                 obstacles: [{start: start, end: end}]
             };
         }
-
         /**
          * Find a path from a starting coordinate to an ending coordinate, using
          * right angles only, and taking only starting/ending obstacle into
@@ -1330,9 +1296,9 @@
          *         renderer, as well as an array of new obstacles making up this
          *         path.
          */
-        var simpleConnect = extend(function (start,
-                                             end,
-                                             options) {
+        var simpleConnect = function (start,
+                                      end,
+                                      options) {
             var segments = [],
                 endSegment,
                 dir = pick(options.startDirectionX,
@@ -1364,7 +1330,6 @@
                 point[fromKey] = to[toKey || fromKey] + (offset || 0);
                 return point;
             }
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Return waypoint outside obstacle.
@@ -1375,7 +1340,6 @@
                     abs(point[direction] - obstacle[direction + 'Max']);
                 return copyFromPoint(point, direction, obstacle, direction + (useMax ? 'Max' : 'Min'), useMax ? 1 : -1);
             }
-
             // Pull out end point
             if (endObstacleIx > -1) {
                 endObstacle = chartObstacles[endObstacleIx];
@@ -1437,9 +1401,8 @@
                 path: pathFromSegments(segments),
                 obstacles: segments
             };
-        }, {
-            requiresObstacles: true
-        });
+        };
+        simpleConnect.requiresObstacles = true;
         /**
          * Find a path from a starting coordinate to an ending coordinate, taking
          * obstacles into consideration. Might not always find the optimal path,
@@ -1470,9 +1433,9 @@
          *         renderer, as well as an array of new obstacles making up this
          *         path.
          */
-        var fastAvoid = extend(function (start,
-                                         end,
-                                         options) {
+        var fastAvoid = function (start,
+                                  end,
+                                  options) {
             /*
                 Algorithm rules/description
                 - Find initial direction
@@ -1497,7 +1460,7 @@
         rather pick the one closer to the end point
             */
             var dirIsX = pick(options.startDirectionX,
-                abs(end.x - start.x) > abs(end.y - start.y)),
+                    abs(end.x - start.x) > abs(end.y - start.y)),
                 dir = dirIsX ? 'x' : 'y',
                 segments,
                 useMax,
@@ -1522,7 +1485,6 @@
                     softMinX),
                 endObstacleIx = findLastObstacleBefore(chartObstacles,
                     softMaxX);
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * How far can you go between two points before hitting an obstacle?
@@ -1589,7 +1551,6 @@
                 }
                 return toPoint;
             }
-
             /**
              * Decide in which direction to dodge or get out of an obstacle.
              * Considers desired direction, which way is shortest, soft and hard
@@ -1622,10 +1583,10 @@
                 var softBounds = bounds.soft, hardBounds = bounds.hard, dir = dirIsX ? 'x' : 'y',
                     toPointMax = {x: fromPoint.x, y: fromPoint.y}, toPointMin = {x: fromPoint.x, y: fromPoint.y},
                     minPivot, maxPivot, maxOutOfSoftBounds = obstacle[dir + 'Max'] >=
-                    softBounds[dir + 'Max'], minOutOfSoftBounds = obstacle[dir + 'Min'] <=
-                    softBounds[dir + 'Min'], maxOutOfHardBounds = obstacle[dir + 'Max'] >=
-                    hardBounds[dir + 'Max'], minOutOfHardBounds = obstacle[dir + 'Min'] <=
-                    hardBounds[dir + 'Min'],
+                        softBounds[dir + 'Max'], minOutOfSoftBounds = obstacle[dir + 'Min'] <=
+                        softBounds[dir + 'Min'], maxOutOfHardBounds = obstacle[dir + 'Max'] >=
+                        hardBounds[dir + 'Max'], minOutOfHardBounds = obstacle[dir + 'Min'] <=
+                        hardBounds[dir + 'Min'],
                     // Find out if we should prefer one direction over the other if
                     // we can choose freely
                     minDistance = abs(obstacle[dir + 'Min'] - fromPoint[dir]),
@@ -1659,7 +1620,6 @@
                     (maxOutOfHardBounds ? false : useMax); // Not out on min
                 return useMax;
             }
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Find a clear path between point.
@@ -1784,7 +1744,6 @@
                 segments = segments.concat(clearPathTo(segments[segments.length - 1].end, toPoint, !dirIsX));
                 return segments;
             }
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Extract point to outside of obstacle in whichever direction is
@@ -1793,9 +1752,9 @@
              */
             function extractFromObstacle(obstacle, point, goalPoint) {
                 var dirIsX = min(obstacle.xMax - point.x,
-                    point.x - obstacle.xMin) <
-                    min(obstacle.yMax - point.y,
-                        point.y - obstacle.yMin),
+                            point.x - obstacle.xMin) <
+                        min(obstacle.yMax - point.y,
+                            point.y - obstacle.yMin),
                     bounds = {
                         soft: options.hardBounds,
                         hard: options.hardBounds
@@ -1813,7 +1772,6 @@
                     y: obstacle[useMax ? 'yMax' : 'yMin'] + (useMax ? 1 : -1)
                 };
             }
-
             // Cut the obstacle array to soft bounds for optimization in large
             // datasets.
             chartObstacles =
@@ -1851,9 +1809,8 @@
                 path: pathFromSegments(segments),
                 obstacles: segments
             };
-        }, {
-            requiresObstacles: true
-        });
+        };
+        fastAvoid.requiresObstacles = true;
         // Define the available pathfinding algorithms.
         // Algorithms take up to 3 arguments: starting point, ending point, and an
         // options object.
@@ -1865,7 +1822,7 @@
 
         return algorithms;
     });
-    _registerModule(_modules, 'Gantt/Pathfinder.js', [_modules['Gantt/Connection.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js'], _modules['Gantt/PathfinderAlgorithms.js']], function (Connection, Chart, H, O, Point, U, pathfinderAlgorithms) {
+    _registerModule(_modules, 'Gantt/Pathfinder.js', [_modules['Gantt/Connection.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/DefaultOptions.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js'], _modules['Gantt/PathfinderAlgorithms.js']], function (Connection, Chart, H, D, Point, U, pathfinderAlgorithms) {
         /* *
          *
          *  (c) 2016 Highsoft AS
@@ -1899,7 +1856,7 @@
          * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
          */
         ''; // detach doclets above
-        var defaultOptions = O.defaultOptions;
+        var defaultOptions = D.defaultOptions;
         var addEvent = U.addEvent,
             defined = U.defined,
             error = U.error,
@@ -2154,7 +2111,6 @@
          * @requires  highcharts-gantt
          * @apioption series.xrange.data.connect
          */
-
         /**
          * The ID of the point to connect to.
          *
@@ -2182,10 +2138,10 @@
             // Prefer using shapeArgs (columns)
             if (shapeArgs) {
                 return {
-                    xMin: shapeArgs.x,
-                    xMax: shapeArgs.x + shapeArgs.width,
-                    yMin: shapeArgs.y,
-                    yMax: shapeArgs.y + shapeArgs.height
+                    xMin: shapeArgs.x || 0,
+                    xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+                    yMin: shapeArgs.y || 0,
+                    yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
                 };
             }
             // Otherwise use plotX/plotY and bb
@@ -2197,7 +2153,6 @@
                 yMax: point.plotY + bb.height / 2
             } : null;
         }
-
         /**
          * Calculate margin to place around obstacles for the pathfinder in pixels.
          * Returns a minimum of 1 pixel margin.
@@ -2261,7 +2216,6 @@
                 ), 1 // 1 is the minimum margin
             );
         }
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The Pathfinder class.
@@ -2360,7 +2314,7 @@
                 });
                 // Clear connections that should not be updated, and move old info over
                 // to new connections.
-                for (var j = 0, k, found, lenOld = oldConnections.length, lenNew = pathfinder.connections.length; j < lenOld; ++j) {
+                for (var j = 0, k = void 0, found = void 0, lenOld = oldConnections.length, lenNew = pathfinder.connections.length; j < lenOld; ++j) {
                     found = false;
                     for (k = 0; k < lenNew; ++k) {
                         if (oldConnections[j].fromPoint ===
@@ -2448,7 +2402,7 @@
                     calculatedMargin;
                 for (var i = 0, sLen = series.length; i < sLen; ++i) {
                     if (series[i].visible && !series[i].options.isInternal) {
-                        for (var j = 0, pLen = series[i].points.length, bb, point; j < pLen; ++j) {
+                        for (var j = 0, pLen = series[i].points.length, bb = void 0, point = void 0; j < pLen; ++j) {
                             point = series[i].points[j];
                             if (point.visible) {
                                 bb = getPointBB(point);
@@ -2691,7 +2645,6 @@
                 };
             }
         });
-
         /**
          * Warn if using legacy options. Copy the options over. Note that this will
          * still break if using the legacy options in chart.update, addSeries etc.
@@ -2711,7 +2664,6 @@
                     'Use "chart.connectors" or "series.connectors" instead.');
             }
         }
-
         // Initialize Pathfinder for charts
         Chart.prototype.callbacks.push(function (chart) {
             var options = chart.options;

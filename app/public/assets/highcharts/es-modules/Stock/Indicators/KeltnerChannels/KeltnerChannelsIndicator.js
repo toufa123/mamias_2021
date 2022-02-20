@@ -23,16 +23,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
-var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ATRIndicator = _a.atr;
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
 /**
  * The Keltner Channels series type.
@@ -45,7 +43,6 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
  */
 var KeltnerChannelsIndicator = /** @class */ (function (_super) {
     __extends(KeltnerChannelsIndicator, _super);
-
     function KeltnerChannelsIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
@@ -53,7 +50,6 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     KeltnerChannelsIndicator.prototype.init = function () {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -124,6 +120,12 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
      */
     KeltnerChannelsIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         params: {
+            /**
+             * The point index which indicator calculations will base. For
+             * example using OHLC data, index=2 means the indicator will be
+             * calculated using Low values.
+             */
+            index: 0,
             period: 20,
             /**
              * The ATR period.
@@ -180,17 +182,13 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
     return KeltnerChannelsIndicator;
 }(SMAIndicator));
 extend(KeltnerChannelsIndicator.prototype, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
     nameBase: 'Keltner Channels',
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
-    requiredIndicators: ['ema', 'atr'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(KeltnerChannelsIndicator);
 SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 /* *
  *
@@ -202,7 +200,7 @@ export default KeltnerChannelsIndicator;
  * A Keltner Channels indicator. If the [type](#series.keltnerchannels.type)
  * option is not specified, it is inherited from[chart.type](#chart.type).
  *
- * @extends      series,plotOptions.sma
+ * @extends      series,plotOptions.keltnerchannels
  * @since        7.0.0
  * @product      highstock
  * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

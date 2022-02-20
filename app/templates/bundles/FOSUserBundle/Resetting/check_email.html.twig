@@ -1,47 +1,36 @@
-{% extends 'auth.html.twig' %}
+{% extends 'secure.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
-{% block title %}Authentification{% endblock %}
+{% block title %}Check Email{% endblock %}
 
 {% block body %}
-
-    <section>
-        <div class="container-alt">
-            <div class="row">
-                <div class="col-sm-12">
-
-                    <div class="wrapper-page">
-
-                        <div class="m-t-40 account-pages">
-                            <div class="text-center account-logo-box">
-                                <h2 class="text-uppercase">
-                                    <a href="{{ path('home') }}" class="text-success">
+    <div class="row">
+        <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('resources/images/check.jpg') }}"
+                                   alt="Login page"></div>
+        <div class="col-xl-7 p-0">
+            <div class="login-card">
+                <div class="col-sm-12 col-xl-6">
+                    <div class="card card-absolute b-primary">
+                        <h5 class="text-white"></h5>
+                        <div class="card-header bg-white b-primary">
+                            <h5 class="text-white"><a href="{{ path('home') }}" class="text-success">
                                 <span><img src="{{ asset('resources/logo/Logo-Mamias-web.png') }}" alt="MAMIAS 3.0"
                                            height="36"></span>
-                                    </a>
-                                </h2>
-                                <!--<h4 class="text-uppercase font-bold m-b-0">Sign In</h4>-->
-                            </div>
-
-                            <div class="account-content">
-
-                                <p> {{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}</p>
-
-
-                                <div class="clearfix"></div>
-
-
-                            </div>
+                                </a></h5>
                         </div>
-                        <!-- end card-box-->
-
-
+                        <div class="card-body">
+                            <p>{{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}</p>
+                        </div>
                     </div>
-                    <!-- end wrapper -->
-
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+
+
+
+
+
+
     <!-- END HOME -->
 
 {% endblock %}

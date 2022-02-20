@@ -11,6 +11,9 @@
  * */
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
+import D from '../../Core/DefaultOptions.js';
+
+var getOptions = D.getOptions;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -18,9 +21,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 
-var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber,
-    pick = U.pick, wrap = U.wrap;
-import '../../Core/Options.js';
+var addEvent = U.addEvent, error = U.error, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+import '../../Core/DefaultOptions.js';
 import butils from './BoostUtils.js';
 import boostable from './Boostables.js';
 import boostableMap from './BoostableMap.js';
@@ -48,7 +50,7 @@ Chart.prototype.isChartSeriesBoosting = function () {
 /**
  * Get the clip rectangle for a target, either a series or the chart. For the
  * chart, we need to consider the maximum extent of its Y axes, in case of
- * Highstock panes and navigator.
+ * Highcharts Stock panes and navigator.
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect
@@ -94,8 +96,8 @@ Series.prototype.getPoint = function (boostPoint) {
         point = (new this.pointClass()).init(// eslint-disable-line new-cap
             this, this.options.data[boostPoint.i], xData ? xData[boostPoint.i] : void 0);
         point.category = pick(this.xAxis.categories ?
-            this.xAxis.categories[point.x] :
-            point.x, // @todo simplify
+                this.xAxis.categories[point.x] :
+                point.x, // @todo simplify
             point.x);
         point.dist = boostPoint.dist;
         point.distX = boostPoint.distX;
@@ -203,7 +205,6 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
             this[method + 'Canvas']();
         }
     }
-
     wrap(Series.prototype, method, branch);
     // A special case for some types - their translate method is already wrapped
     if (method === 'translate') {
@@ -224,19 +225,23 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 // If the series is a heatmap or treemap, or if the series is not boosting
 // do the default behaviour. Otherwise, process if the series has no extremes.
 wrap(Series.prototype, 'processData', function (proceed) {
-    var series = this, dataToMeasure = this.options.data, firstPoint;
+    var series = this;
+    var dataToMeasure = this.options.data;
 
     /**
      * Used twice in this function, first on this.options.data, the second
      * time it runs the check again after processedXData is built.
+     * If the data is going to be grouped, the series shouldn't be boosted.
      * @private
-     * @todo Check what happens with data grouping
      */
     function getSeriesBoosting(data) {
+        // Check if will be grouped.
+        if (series.forceCrop) {
+            return false;
+        }
         return series.chart.isChartSeriesBoosting() || ((data ? data.length : 0) >=
             (series.options.boostThreshold || Number.MAX_VALUE));
     }
-
     if (boostEnabled(this.chart) && boostableMap[this.type]) {
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap, do
@@ -256,9 +261,12 @@ wrap(Series.prototype, 'processData', function (proceed) {
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
-            firstPoint = this.getFirstValidPoint(this.options.data);
-            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                error(12, false, this.chart);
+            var firstPoint = void 0;
+            if (this.options.data && this.options.data.length) {
+                firstPoint = this.getFirstValidPoint(this.options.data);
+                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                    error(12, false, this.chart);
+                }
             }
             this.enterBoost();
         } else if (this.exitBoost) {
@@ -353,6 +361,7 @@ Series.prototype.hasExtremes = function (checkX) {
  * @function Highcharts.Series#destroyGraphics
  */
 Series.prototype.destroyGraphics = function () {
+    var _this = this;
     var series = this, points = this.points, point, i;
     if (points) {
         for (i = 0; i < points.length; i = i + 1) {
@@ -367,6 +376,15 @@ Series.prototype.destroyGraphics = function () {
             series[prop] = series[prop].destroy();
         }
     });
+    if (this.getZonesGraphs) {
+        var props = this.getZonesGraphs([['graph', 'highcharts-graph']]);
+        props.forEach(function (prop) {
+            var zoneGraph = _this[prop[0]];
+            if (zoneGraph) {
+                _this[prop[0]] = zoneGraph.destroy();
+            }
+        });
+    }
 };
 // Set default options
 boostable.forEach(function (type) {

@@ -72,8 +72,10 @@ import Axis from '../../Core/Axis/Axis.js';
 var MockPoint = /** @class */ (function () {
     function MockPoint(chart, target, options) {
         this.isInside = void 0;
+        this.negative = void 0;
         this.plotX = void 0;
         this.plotY = void 0;
+        this.ttBelow = void 0;
         this.x = void 0;
         this.y = void 0;
         /* *
@@ -146,7 +148,6 @@ var MockPoint = /** @class */ (function () {
          */
         this.applyOptions(this.getOptions());
     }
-
     /**
      * Create a mock point from a real Highcharts point.
      *
@@ -397,7 +398,8 @@ var MockPoint = /** @class */ (function () {
      */
     MockPoint.prototype.rotate = function (cx, cy, radians) {
         if (!this.hasDynamicOptions()) {
-            var cos = Math.cos(radians), sin = Math.sin(radians), x = this.plotX, y = this.plotY, tx, ty;
+            var cos = Math.cos(radians), sin = Math.sin(radians), x = this.plotX, y = this.plotY, tx = void 0,
+                ty = void 0;
             x -= cx;
             y -= cy;
             tx = x * cos - y * sin;

@@ -24,7 +24,7 @@ class RegistrationFormType extends AbstractType
         $builder
             ->add('username', TextType::class, [
                 'constraints' => [
-                    new NotBlank(['message' => 'Please enter a valid email address.']),
+                    new NotBlank(['message' => 'Please enter a valid username.']),
                 ],
             ])
             ->add('email', EmailType::class, [

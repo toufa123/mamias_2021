@@ -25,24 +25,20 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Color from '../../Core/Color/Color.js';
-
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 import PackedBubblePoint from './PackedBubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, BubbleSeries = SeriesRegistry.seriesTypes.bubble;
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent,
     isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../../Series/Networkgraph/DraggableNodes.js';
-
 var dragNodesMixin = H.dragNodesMixin;
 import './PackedBubbleComposition.js';
 /* *
@@ -59,7 +55,6 @@ import './PackedBubbleComposition.js';
  */
 var PackedBubbleSeries = /** @class */ (function (_super) {
     __extends(PackedBubbleSeries, _super);
-
     function PackedBubbleSeries() {
         /* *
          *
@@ -81,7 +76,6 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -239,7 +233,15 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
      */
     PackedBubbleSeries.prototype.createParentNodes = function () {
         var series = this, chart = series.chart, parentNodeLayout = series.parentNodeLayout, nodeAdded,
-            parentNode = series.parentNode, PackedBubblePoint = series.pointClass;
+            parentNode = series.parentNode, PackedBubblePoint = series.pointClass,
+            layoutOptions = series.layout.options, parentMarkerOptions = {
+                radius: series.parentNodeRadius,
+                lineColor: series.color,
+                fillColor: color(series.color).brighten(0.4).get()
+            };
+        if (layoutOptions.parentNodeOptions) {
+            parentMarkerOptions = merge(layoutOptions.parentNodeOptions.marker || {}, parentMarkerOptions);
+        }
         series.parentNodeMass = 0;
         series.points.forEach(function (p) {
             series.parentNodeMass +=
@@ -256,11 +258,17 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
             if (!parentNode) {
                 parentNode = (new PackedBubblePoint()).init(this, {
                     mass: series.parentNodeRadius / 2,
-                    marker: {
-                        radius: series.parentNodeRadius
-                    },
+                    marker: parentMarkerOptions,
                     dataLabels: {
                         inside: false
+                    },
+                    states: {
+                        normal: {
+                            marker: parentMarkerOptions
+                        },
+                        hover: {
+                            marker: parentMarkerOptions
+                        }
                     },
                     dataLabelOnNull: true,
                     degree: series.parentNodeRadius,
@@ -345,11 +353,11 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
                 fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
-                'stroke-width': nodeMarker.lineWidth
-            }, visibility = series.visible ? 'inherit' : 'hidden';
+                'stroke-width': pick(nodeMarker.lineWidth, series.options.lineWidth)
+            };
         // create the group for parent Nodes if doesn't exist
         if (!this.parentNodesGroup) {
-            series.parentNodesGroup = series.plotGroup('parentNodesGroup', 'parentNode', visibility, 0.1, chart.seriesGroup);
+            series.parentNodesGroup = series.plotGroup('parentNodesGroup', 'parentNode', series.visible ? 'inherit' : 'hidden', 0.1, chart.seriesGroup);
             series.group.attr({
                 zIndex: 2
             });
@@ -458,21 +466,21 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
      */
     PackedBubbleSeries.prototype.onMouseUp = function (point) {
         if (point.fixedPosition && !point.removed) {
-            var distanceXY, distanceR, layout = this.layout, parentNodeLayout = this.parentNodeLayout;
-            if (parentNodeLayout && layout.options.dragBetweenSeries) {
+            var distanceXY_1, distanceR_1, layout_1 = this.layout, parentNodeLayout = this.parentNodeLayout;
+            if (parentNodeLayout && layout_1.options.dragBetweenSeries) {
                 parentNodeLayout.nodes.forEach(function (node) {
                     if (point && point.marker &&
                         node !== point.series.parentNode) {
-                        distanceXY = layout.getDistXY(point, node);
-                        distanceR = (layout.vectorLength(distanceXY) -
+                        distanceXY_1 = layout_1.getDistXY(point, node);
+                        distanceR_1 = (layout_1.vectorLength(distanceXY_1) -
                             node.marker.radius -
                             point.marker.radius);
-                        if (distanceR < 0) {
+                        if (distanceR_1 < 0) {
                             node.series.addPoint(merge(point.options, {
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);
-                            layout.removeElementFromCollection(point, layout.nodes);
+                            layout_1.removeElementFromCollection(point, layout_1.nodes);
                             point.remove();
                         }
                     }
@@ -572,6 +580,33 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
         return arr;
     };
     /**
+     * Function that checks for a parentMarker and sets the correct opacity.
+     * @private
+     * @param {Highcharts.Pack} point
+     * Candidate point for opacity correction.
+     * @param {string} [state]
+     * The point state, can be either `hover`, `select` or 'normal'. If
+     * undefined, normal state is assumed.
+     *
+     * @return {Highcharts.SVGAttributes}
+     * The presentational attributes to be set on the point.
+     */
+    PackedBubbleSeries.prototype.pointAttribs = function (point, state) {
+        var options = this.options, hasParentMarker = point && point.isParentNode;
+        var attr, fillOpacity, markerOptions = options.marker;
+        if (hasParentMarker &&
+            options.layoutAlgorithm &&
+            options.layoutAlgorithm.parentNodeOptions) {
+            markerOptions = options.layoutAlgorithm.parentNodeOptions.marker;
+        }
+        fillOpacity = markerOptions.fillOpacity;
+        attr = Series.prototype.pointAttribs.call(this, point, state);
+        if (fillOpacity !== 1) {
+            attr['fill-opacity'] = fillOpacity;
+        }
+        return attr;
+    };
+    /**
      * Function that is adding one bubble based on positions and sizes of
      * two other bubbles, lastBubble is the last added bubble, newOrigin is
      * the bubble for positioning new bubbles. nextBubble is the curently
@@ -584,15 +619,15 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
      */
     PackedBubbleSeries.prototype.positionBubble = function (lastBubble, newOrigin, nextBubble) {
         var sqrt = Math.sqrt, asin = Math.asin, acos = Math.acos, pow = Math.pow, abs = Math.abs, distance = sqrt(// dist between lastBubble and newOrigin
-            pow((lastBubble[0] - newOrigin[0]), 2) +
-            pow((lastBubble[1] - newOrigin[1]), 2)), alfa = acos(
-            // from cosinus theorem: alfa is an angle used for
-            // calculating correct position
-            (pow(distance, 2) +
-                pow(nextBubble[2] + newOrigin[2], 2) -
-                pow(nextBubble[2] + lastBubble[2], 2)) / (2 * (nextBubble[2] + newOrigin[2]) * distance)), beta = asin(// from sinus theorem.
-            abs(lastBubble[0] - newOrigin[0]) /
-            distance),
+                pow((lastBubble[0] - newOrigin[0]), 2) +
+                pow((lastBubble[1] - newOrigin[1]), 2)), alfa = acos(
+                // from cosinus theorem: alfa is an angle used for
+                // calculating correct position
+                (pow(distance, 2) +
+                    pow(nextBubble[2] + newOrigin[2], 2) -
+                    pow(nextBubble[2] + lastBubble[2], 2)) / (2 * (nextBubble[2] + newOrigin[2]) * distance)), beta = asin(// from sinus theorem.
+                abs(lastBubble[0] - newOrigin[0]) /
+                distance),
             // providing helping variables, related to angle between
             // lastBubble and newOrigin
             gamma = (lastBubble[1] - newOrigin[1]) < 0 ? 0 : Math.PI,
@@ -774,19 +809,21 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
                 // update the series points with the val from positions
                 // array
                 point = data[positions[i][4]];
-                radius = positions[i][2];
+                radius = pick(positions[i][2], void 0);
                 if (!useSimulation) {
                     point.plotX = (positions[i][0] - chart.plotLeft +
                         chart.diffX);
                     point.plotY = (positions[i][1] - chart.plotTop +
                         chart.diffY);
                 }
-                point.marker = extend(point.marker, {
-                    radius: radius,
-                    width: 2 * radius,
-                    height: 2 * radius
-                });
-                point.radius = radius;
+                if (isNumber(radius)) {
+                    point.marker = extend(point.marker, {
+                        radius: radius,
+                        width: 2 * radius,
+                        height: 2 * radius
+                    });
+                    point.radius = radius;
+                }
             }
         }
         if (useSimulation) {
@@ -922,7 +959,9 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
              * @since 7.0.0
              */
             formatter: function () {
-                return this.point.value;
+                var numberFormatter = this.series.chart.numberFormatter;
+                var value = this.point.value;
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             /**
              * @type      {string}
@@ -1057,7 +1096,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
                 marker: {
                     fillColor: null,
                     fillOpacity: 1,
-                    lineWidth: 1,
+                    lineWidth: null,
                     lineColor: null,
                     symbol: 'circle'
                 }

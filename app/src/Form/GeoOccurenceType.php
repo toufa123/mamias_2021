@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\GeoOccurence;
 use App\Entity\Mamias;
+use App\Entity\Country;
 use Doctrine\ORM\EntityRepository;
 use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
 use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrue as RecaptchaTrue;
@@ -16,14 +17,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class GeoOccurenceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('country', null, ['label' => 'Country', 'required' => true,
-                //,'help' => 'Choose a country'
+            ->add('country', EntityType::class, ['label' => 'Country', 'required' => true,
+                'class' => Country::class,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->orderBy('u.id', 'ASC');
+                },//,'help' => 'Choose a country'
             ])
             ->add(
                 'mamias',
@@ -32,6 +38,7 @@ class GeoOccurenceType extends AbstractType
                     'class' => Mamias::class,
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('u')
+                            //->innerJoin('u', 'relation', 'p', 'u.relation = p.id')
                             ->orderBy('u.relation', 'ASC');
                     },
                     'choice_label' => 'relation',
@@ -41,25 +48,29 @@ class GeoOccurenceType extends AbstractType
             )
             ->add('Location', null, ['label' => 'Coordinates', 'required' => true, 'empty_data' => '',
                 'help' => ' Move marker to get location',])
-            ->add('imageFile', VichImageType::class, ['label' => 'Photo',
-                'required' => true,
-                'allow_delete' => true,
+
+            ->add('imageFile', FileType::class, ['label' => 'Photo',
+                //'attr' => ['class' => 'filestyle']
+                ])
+
+            //->add('imageFile', VichImageType::class, ['label' => 'Photo',
+            //    'required' => true,
+            //    'allow_delete' => true,
                 //'download_label' => 'azerty',
-                'download_uri' => false,
-                'image_uri' => false,
-                'attr' => [
-                    'type' => 'file',
-                    'class' => 'filestyle',
-                    'data-buttontext' => 'Select a photo',
-                    'data-buttonname' => 'btn-custom',
-                    'data-preview-file-type' => 'text',
-                    'multiple' => '',
-                    'data-allowed-file-extensions' => '["jpeg", "png", "jpg"]',
-                    'language' => 'fr',
-                ],
-            ])
-            //->add('latitude', null, ['label' => 'Latitude', 'required' => true])
-            //->add('longitude', null, ['label' => 'Longitude', 'required' => true,])
+            //    'download_uri' => false,
+            //    'image_uri' => false,
+            //    'attr' => [
+            //        'type' => 'file',
+            //        'class' => 'filestyle',
+                    //'data-buttontext' => 'Select a photo',
+                    //'data-buttonname' => 'btn-custom',
+                    //'data-preview-file-type' => 'text',
+                    //'multiple' => '',
+                    //'data-allowed-file-extensions' => '["jpeg", "png", "jpg"]',
+
+            //    ],
+            //])
+
             ->add('date_occurence', DateType::class, ['widget' => 'single_text', 'html5' => false,
                 'format' => 'dd-mm-yyyy', 'help' => 'Reporting date',
                 'label' => 'Reporting date',
@@ -72,7 +83,7 @@ class GeoOccurenceType extends AbstractType
                 'label' => 'Type of observation',
                 'required' => false, 'help' => 'type of observation',])
             ->add('nvalues', IntegerType::class, ['label' => 'Values', 'required' => false,
-                    'help' => 'nb of indivudals or Coverage in m2',]
+                    'help' => 'value of nb of indivudals or value of Coverage in m2',]
             )
             ->add('EstimatedMeasured', ChoiceType::class, ['choices' => ['Estimated' => 'Estimated',
                 'Measured' => 'Measured',],

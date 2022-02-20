@@ -9,10 +9,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Axis from '../../Core/Axis/Axis.js';
-import U from '../../Core/Utilities.js';
+import D from '../../Core/DefaultOptions.js';
 
-var setOptions = U.setOptions;
+var setOptions = D.setOptions;
 import VMLAxis3D from './VMLAxis3D.js';
 
 var VMLRenderer3D = /** @class */ (function () {

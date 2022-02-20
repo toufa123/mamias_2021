@@ -25,15 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var isNumber = U.isNumber;
 /* *
  *
@@ -42,7 +39,6 @@ var isNumber = U.isNumber;
  * */
 var FlagsPoint = /** @class */ (function (_super) {
     __extends(FlagsPoint, _super);
-
     function FlagsPoint() {
         /* *
          *
@@ -54,7 +50,6 @@ var FlagsPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -68,6 +63,13 @@ var FlagsPoint = /** @class */ (function (_super) {
         // #9233 - Prevent from treating flags as null points (even if
         // they have no y values defined).
         return isNumber(this.y) || typeof this.y === 'undefined';
+    };
+    /**
+     * @private
+     */
+    FlagsPoint.prototype.hasNewShapeType = function () {
+        var shape = this.options.shape || this.series.options.shape;
+        return this.graphic && shape && shape !== this.graphic.symbolKey;
     };
     return FlagsPoint;
 }(ColumnSeries.prototype.pointClass));

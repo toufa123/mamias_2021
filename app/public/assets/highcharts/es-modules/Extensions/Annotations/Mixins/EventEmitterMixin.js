@@ -5,7 +5,6 @@
  * */
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-
 var addEvent = U.addEvent, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick,
     removeEvent = U.removeEvent;
 /* eslint-disable valid-jsdoc */
@@ -109,11 +108,19 @@ var eventEmitterMixin = {
             prevChartY = e.chartY;
         }, H.isTouchDevice ? {passive: false} : void 0);
         emitter.removeMouseUp = addEvent(H.doc, H.isTouchDevice ? 'touchend' : 'mouseup', function (e) {
+            // Sometimes the target is the annotation and sometimes its the
+            // controllable
+            var annotation = pick(emitter.target && emitter.target.annotation, emitter.target);
+            if (annotation) {
+                // Keep annotation selected after dragging control point
+                annotation.cancelClick = emitter.hasDragged;
+            }
             emitter.cancelClick = emitter.hasDragged;
             emitter.hasDragged = false;
             emitter.chart.hasDraggedAnnotation = false;
             // ControlPoints vs Annotation:
-            fireEvent(pick(emitter.target, emitter), 'afterUpdate');
+            fireEvent(pick(annotation, // #15952
+                emitter), 'afterUpdate');
             emitter.onMouseUp(e);
         }, H.isTouchDevice ? {passive: false} : void 0);
     },
@@ -131,22 +138,24 @@ var eventEmitterMixin = {
      * capability as well as the extended ones.
      */
     onDrag: function (e) {
-        if (this.chart.isInsidePlot(e.chartX - this.chart.plotLeft, e.chartY - this.chart.plotTop)) {
-            var translation = this.mouseMoveToTranslation(e);
+        if (this.chart.isInsidePlot(e.chartX - this.chart.plotLeft, e.chartY - this.chart.plotTop, {
+            visiblePlotOnly: true
+        })) {
+            var translation_1 = this.mouseMoveToTranslation(e);
             if (this.options.draggable === 'x') {
-                translation.y = 0;
+                translation_1.y = 0;
             }
             if (this.options.draggable === 'y') {
-                translation.x = 0;
+                translation_1.x = 0;
             }
             if (this.points.length) {
-                this.translate(translation.x, translation.y);
+                this.translate(translation_1.x, translation_1.y);
             } else {
                 this.shapes.forEach(function (shape) {
-                    shape.translate(translation.x, translation.y);
+                    shape.translate(translation_1.x, translation_1.y);
                 });
                 this.labels.forEach(function (label) {
-                    label.translate(translation.x, translation.y);
+                    label.translate(translation_1.x, translation_1.y);
                 });
             }
             this.redraw(false);

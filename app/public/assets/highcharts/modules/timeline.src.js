@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Timeline series
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  * Author: Daniel Studencki
  *
  * License: www.highcharts.com/license
@@ -24,14 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/Timeline/TimelinePoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
+    _registerModule(_modules, 'Series/Timeline/TimelinePoint.js', [_modules['Core/Series/Point.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Point, SeriesRegistry, U) {
         /* *
          *
          *  Timeline Series.
@@ -83,7 +82,6 @@
          * */
         var TimelinePoint = /** @class */ (function (_super) {
             __extends(TimelinePoint, _super);
-
             function TimelinePoint() {
                 /* *
                  *
@@ -97,7 +95,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -222,6 +219,11 @@
                     series.chart.redraw();
                 }
             };
+            TimelinePoint.prototype.applyOptions = function (options, x) {
+                options = Point.prototype.optionsToObject.call(this, options);
+                this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
+                return _super.prototype.applyOptions.call(this, options, x);
+            };
             return TimelinePoint;
         }(Series.prototype.pointClass));
         /* *
@@ -232,7 +234,7 @@
 
         return TimelinePoint;
     });
-    _registerModule(_modules, 'Series/Timeline/TimelineSeries.js', [_modules['Mixins/LegendSymbol.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Renderer/SVG/SVGElement.js'], _modules['Series/Timeline/TimelinePoint.js'], _modules['Core/Utilities.js']], function (LegendSymbolMixin, palette, SeriesRegistry, SVGElement, TimelinePoint, U) {
+    _registerModule(_modules, 'Series/Timeline/TimelineSeries.js', [_modules['Core/Legend/LegendSymbol.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Renderer/SVG/SVGElement.js'], _modules['Series/Timeline/TimelinePoint.js'], _modules['Core/Utilities.js']], function (LegendSymbol, SeriesRegistry, SVGElement, TimelinePoint, U) {
         /* *
          *
          *  Timeline Series.
@@ -296,7 +298,6 @@
          */
         var TimelineSeries = /** @class */ (function (_super) {
             __extends(TimelineSeries, _super);
-
             function TimelineSeries() {
                 /* *
                  *
@@ -318,7 +319,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -380,27 +380,19 @@
             };
             TimelineSeries.prototype.distributeDL = function () {
                 var series = this,
-                    dataLabelsOptions = series.options.dataLabels,
-                    options,
-                    pointDLOptions,
-                    newOptions = {},
-                    visibilityIndex = 1,
-                    distance = dataLabelsOptions.distance;
-                series.points.forEach(function (point) {
-                    if (point.visible && !point.isNull) {
-                        options = point.options;
-                        pointDLOptions = point.options.dataLabels;
-                        if (!series.hasRendered) {
-                            point.userDLOptions =
-                                merge({}, pointDLOptions);
-                        }
-                        newOptions[series.chart.inverted ? 'x' : 'y'] =
-                            dataLabelsOptions.alternate && visibilityIndex % 2 ?
-                                -distance : distance;
-                        options.dataLabels = merge(newOptions, point.userDLOptions);
+                    dataLabelsOptions = series.options.dataLabels;
+                var visibilityIndex = 1;
+                if (dataLabelsOptions) {
+                    var distance_1 = dataLabelsOptions.distance || 0;
+                    series.points.forEach(function (point) {
+                        var _a;
+                        point.options.dataLabels = merge((_a = {},
+                            _a[series.chart.inverted ? 'x' : 'y'] = dataLabelsOptions.alternate && visibilityIndex % 2 ?
+                                -distance_1 : distance_1,
+                            _a), point.userDLOptions);
                         visibilityIndex++;
-                    }
-                });
+                    });
+                }
             };
             TimelineSeries.prototype.generatePoints = function () {
                 var series = this;
@@ -552,7 +544,7 @@
                     series.yData[i] = 1;
                 }
                 _super.prototype.processData.call(this, arguments);
-
+                return;
             };
             /**
              * The timeline series presents given events along a drawn line.
@@ -581,6 +573,10 @@
                 colorByPoint: true,
                 stickyTracking: false,
                 ignoreHiddenPoint: true,
+                /**
+                 * @ignore
+                 * @private
+                 */
                 legendType: 'point',
                 lineWidth: 4,
                 tooltip: {
@@ -611,11 +607,11 @@
                      *         Alternate disabled
                      */
                     alternate: true,
-                    backgroundColor: palette.backgroundColor,
+                    backgroundColor: "#ffffff" /* backgroundColor */,
                     borderWidth: 1,
-                    borderColor: palette.neutralColor40,
+                    borderColor: "#999999" /* neutralColor40 */,
                     borderRadius: 3,
-                    color: palette.neutralColor80,
+                    color: "#333333" /* neutralColor80 */,
                     /**
                      * The color of the line connecting the data label to the point.
                      * The default color is the same as the point's color.
@@ -648,7 +644,7 @@
                     /**
                      * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
                      * @default function () {
-                     *   var format;
+                     *   let format;
                      *
                      *   if (!this.series.chart.styledMode) {
                      *       format = '<span style="color:' + this.point.color +
@@ -708,7 +704,7 @@
         }(LineSeries));
         extend(TimelineSeries.prototype, {
             // Use a simple symbol from LegendSymbolMixin
-            drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+            drawLegendSymbol: LegendSymbol.drawRectangle,
             // Use a group of trackers from TrackerMixin
             drawTracker: ColumnSeries.prototype.drawTracker,
             pointClass: TimelinePoint,

@@ -12,15 +12,11 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
-
 var clamp = U.clamp, pick = U.pick;
-
 /**
  * Utility func to get padding definition from tile size division
  * @private
@@ -39,7 +35,6 @@ function tilePaddingFromTileSize(series, xDiv, yDiv) {
         yPad: (options.rowsize || 1) / -yDiv
     };
 }
-
 /* *
  *
  *  Registry
@@ -78,7 +73,7 @@ var TilemapShapes = {
             series.generatePoints();
             series.points.forEach(function (point) {
                 var x1 = clamp(Math.floor(xAxis.len -
-                    xAxis.translate(point.x - xPad * 2, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
+                        xAxis.translate(point.x - xPad * 2, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
                     x2 = clamp(Math.floor(xAxis.len -
                         xAxis.translate(point.x - xPad, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
                     x3 = clamp(Math.floor(xAxis.len -
@@ -93,9 +88,9 @@ var TilemapShapes = {
                     // preserve the angles of the shape.
                     midPointPadding = pointPadding *
                         Math.abs(x2 - x1) / Math.abs(y3 - y2), xMidPadding = xAxis.reversed ?
-                    -midPointPadding : midPointPadding, xPointPadding = xAxis.reversed ?
-                    -pointPadding : pointPadding, yPointPadding = yAxis.reversed ?
-                    -pointPadding : pointPadding;
+                        -midPointPadding : midPointPadding, xPointPadding = xAxis.reversed ?
+                        -pointPadding : pointPadding, yPointPadding = yAxis.reversed ?
+                        -pointPadding : pointPadding;
                 // Shift y-values for every second grid column
                 if (point.x % 2) {
                     yShift = yShift || Math.round(Math.abs(y3 - y1) / 2) *
@@ -162,7 +157,7 @@ var TilemapShapes = {
             series.generatePoints();
             series.points.forEach(function (point) {
                 var x1 = clamp(Math.round(xAxis.len -
-                    xAxis.translate(point.x - xPad, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
+                        xAxis.translate(point.x - xPad, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
                     x2 = clamp(Math.round(xAxis.len -
                         xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
                     x3 = clamp(Math.round(xAxis.len -
@@ -175,8 +170,8 @@ var TilemapShapes = {
                     // preserve the angles of the shape.
                     midPointPadding = pointPadding *
                         Math.abs(x2 - x1) / Math.abs(y3 - y2), xPointPadding = xAxis.reversed ?
-                    -midPointPadding : midPointPadding, yPointPadding = yAxis.reversed ?
-                    -pointPadding : pointPadding;
+                        -midPointPadding : midPointPadding, yPointPadding = yAxis.reversed ?
+                        -pointPadding : pointPadding;
                 // Shift y-values for every second grid column
                 // We have to reverse the shift for reversed y-axes
                 if (point.x % 2) {
@@ -230,7 +225,7 @@ var TilemapShapes = {
             series.generatePoints();
             series.points.forEach(function (point) {
                 var x = clamp(Math.round(xAxis.len -
-                    xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
+                        xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
                     y = clamp(Math.round(yAxis.translate(point.y, 0, 1, 0, 0)), -yAxis.len, 2 * yAxis.len),
                     pointPadding = seriesPointPadding, hasPerPointPadding = false;
                 // If there is point padding defined on a single point, add it

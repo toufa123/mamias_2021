@@ -33,7 +33,8 @@
           type="text/css"/>
     <link href="{{ asset('assets/plugins/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet"
           type="text/css"/>
-
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/js/jquery.tooltipster.js"></script>
     <!-- Custom box css -->
     <link rel="stylesheet" href="{{ asset('assets/plugins/custombox/css/custombox.min.css') }}"/>
     <link rel="stylesheet" href="{{ asset('assets/plugins/jquery-fab/dist/css/jquery-fab.css') }}"/>
@@ -48,6 +49,8 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
     <script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
+
+
 </head>
 <body>
 <!-- Navigation Bar-->
@@ -427,19 +430,21 @@
                 <span class="m-fab-icon-default"><i class="fa fa-plus"></i></span>
                 <span class="m-fab-icon-open"><i class="fa fa-times"></i></span>
             </div>
+            
+               
             <ul class="m-fab-menu">
-                <li><a href="{{ path('faq') }}" class="m-item m-fab-blue"
-                       title="FAQ">
+                <li><a href="{{ path('faq') }}" class="m-item m-fab-blue" data-toggle="tooltip" data-placement="left" title="FAQ" data-original-title=""
+                      >
                         <i class="fa fa-question"></i></a></li>
-                <li><a href="#top" class="m-item m-fab-blue" title="Scroll up">
+                <li><a href="#top" class="m-item m-fab-blue" data-toggle="tooltip" data-placement="left" title="" data-original-title="Scroll up">
                         <i class="fa fa-arrow-up"></i></a></li>
 
-                <li><a href="https://twitter.com/sparacinfos" target="_blank"
-                       class="m-item m-fab-blue"> <i class="fab fa-twitter" title="Follow us on twitter"></i></a>
+                <li><a href="https://twitter.com/sparacinfos" target="_blank" data-toggle="tooltip" data-placement="left" title="" data-original-title="Follow us on Twitter"
+                       class="m-item m-fab-blue"> <i class="fab fa-twitter"></i></a>
                 </li>
 
-                <li><a href="https://www.facebook.com/SPARACinfos/" target="_blank"
-                       class="m-item m-fab-blue"> <i class="fab fa-facebook-f" title="Follow us on Facebook"></i></a>
+                <li><a href="https://www.facebook.com/SPARACinfos/" target="_blank" data-toggle="tooltip" data-placement="left" title="" data-original-title="Follow us on Facebook"
+                       class="m-item m-fab-blue"> <i class="fab fa-facebook-f"></i></a>
                 </li>
             </ul>
         </div>
@@ -1102,10 +1107,20 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
 <!-- jQuery  -->
-<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"></script>
+<!--<script src="{{ asset('assets/js/jquery.min.js') }}"></script>-->
+<script
+    src="https://code.jquery.com/jquery-migrate-3.3.2.min.js"
+    integrity="sha256-Ap4KLoCf1rXb52q+i3p0k2vjBsmownyBTE1EqlRiMwA="
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js"
+        integrity="sha512-BmM0/BQlqh02wuK5Gz9yrbe7VyIVwOzD1o40yi1IsTjriX/NGF37NyXHfmFzIlMmoSIBXgqDiG1VNU6kB5dBbA=="
+        crossorigin="anonymous"></script>
 <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('assets/js/detect.js') }}"></script>
 <script src="{{ asset('assets/js/fastclick.js') }}"></script>
@@ -1119,10 +1134,11 @@
 <script src="{{ asset('assets/plugins/timepicker/bootstrap-timepicker.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
-<script src="{{ asset('assets/socialite/Socialite-master/socialite.js') }}"></script>
+<!--<script src="{{ asset('assets/socialite/Socialite-master/socialite.js') }}"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.5/waypoints.min.js"></script>
 <!-- Tooltipster js -->
-<script src="{{ asset('assets/plugins/tooltipster/tooltipster.bundle.min.js') }}"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/js/jquery.tooltipster.js"></script>
 <!-- Modal-Effect -->
 <script src="{{ asset('assets/plugins/custombox/js/custombox.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/custombox/js/legacy.min.js') }}"></script>

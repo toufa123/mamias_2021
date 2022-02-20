@@ -23,18 +23,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
-
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -43,21 +39,18 @@ function getBaseForBand(low, high, factor) {
     return (((correctFloat(high - low)) /
         ((correctFloat(high + low)) / 2)) * 1000) * factor;
 }
-
 /**
  * @private
  */
 function getPointUB(high, base) {
     return high * (correctFloat(1 + 2 * base));
 }
-
 /**
  * @private
  */
 function getPointLB(low, base) {
     return low * (correctFloat(1 - 2 * base));
 }
-
 /* eslint-enable valid-jsdoc */
 /**
  * The ABands series type
@@ -70,7 +63,6 @@ function getPointLB(low, base) {
  */
 var ABandsIndicator = /** @class */ (function (_super) {
     __extends(ABandsIndicator, _super);
-
     function ABandsIndicator() {
         /* *
          *
@@ -88,7 +80,6 @@ var ABandsIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -212,16 +203,13 @@ var ABandsIndicator = /** @class */ (function (_super) {
     return ABandsIndicator;
 }(SMAIndicator));
 extend(ABandsIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
     pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    toYData: MultipleLinesMixin.toYData,
-    translate: MultipleLinesMixin.translate
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(ABandsIndicator);
 SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
 /* *
  *

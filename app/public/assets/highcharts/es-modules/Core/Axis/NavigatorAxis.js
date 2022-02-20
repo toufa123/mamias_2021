@@ -9,10 +9,8 @@
  * */
 'use strict';
 import H from '../Globals.js';
-
 var isTouchDevice = H.isTouchDevice;
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
@@ -28,7 +26,6 @@ var NavigatorAxisAdditions = /** @class */ (function () {
     function NavigatorAxisAdditions(axis) {
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -94,7 +91,6 @@ var NavigatorAxisAdditions = /** @class */ (function () {
 var NavigatorAxis = /** @class */ (function () {
     function NavigatorAxis() {
     }
-
     /* *
      *
      *  Static Functions
@@ -136,7 +132,7 @@ var NavigatorAxis = /** @class */ (function () {
                     // initialized with a range (#6612), otherwise zoom all the way
                     // out.
                 } else if (((!isTouchDevice && zoomType === 'xy') ||
-                    (isTouchDevice && pinchType === 'xy')) &&
+                        (isTouchDevice && pinchType === 'xy')) &&
                     axis.options.range) {
                     previousZoom = navigatorAxis.previousZoom;
                     if (defined(e.newMin)) {

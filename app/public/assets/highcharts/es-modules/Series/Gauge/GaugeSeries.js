@@ -25,20 +25,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
-import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, pick = U.pick, pInt = U.pInt;
 /* *
  *
@@ -57,7 +52,6 @@ var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, 
  */
 var GaugeSeries = /** @class */ (function (_super) {
     __extends(GaugeSeries, _super);
-
     function GaugeSeries() {
         /* *
          *
@@ -77,7 +71,6 @@ var GaugeSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -95,9 +88,9 @@ var GaugeSeries = /** @class */ (function (_super) {
             var dialOptions = merge(options.dial, point.dial),
                 radius = ((pInt(pick(dialOptions.radius, '80%')) * center[2]) /
                     200), baseLength = ((pInt(pick(dialOptions.baseLength, '70%')) * radius) /
-                100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
-                100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1,
-                overshoot = options.overshoot,
+                    100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
+                    100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1;
+            var overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
             // Handle the wrap and overshoot options
             if (isNumber(overshoot) || options.wrap === false) {
@@ -157,7 +150,7 @@ var GaugeSeries = /** @class */ (function (_super) {
                     stroke: dialOptions.borderColor || 'none',
                     'stroke-width': dialOptions.borderWidth || 0,
                     fill: dialOptions.backgroundColor ||
-                        palette.neutralColor100
+                        "#000000" /* neutralColor100 */
                 });
             }
         });
@@ -181,9 +174,9 @@ var GaugeSeries = /** @class */ (function (_super) {
                 series.pivot.attr({
                     'stroke-width': pivotOptions.borderWidth || 0,
                     stroke: pivotOptions.borderColor ||
-                        palette.neutralColor20,
+                        "#cccccc" /* neutralColor20 */,
                     fill: pivotOptions.backgroundColor ||
-                        palette.neutralColor100
+                        "#000000" /* neutralColor100 */
                 });
             }
         }
@@ -280,7 +273,7 @@ var GaugeSeries = /** @class */ (function (_super) {
          * @product highcharts
          */
         dataLabels: {
-            borderColor: palette.neutralColor20,
+            borderColor: "#cccccc" /* neutralColor20 */,
             borderRadius: 3,
             borderWidth: 1,
             crop: false,
@@ -518,7 +511,7 @@ extend(GaugeSeries.prototype, {
 SeriesRegistry.registerSeriesType('gauge', GaugeSeries);
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 export default GaugeSeries;

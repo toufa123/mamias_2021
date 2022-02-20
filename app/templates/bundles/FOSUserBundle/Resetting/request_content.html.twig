@@ -1,49 +1,30 @@
-{% extends 'auth.html.twig' %}
+{% extends 'secure.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
-{% block title %}Authentification{% endblock %}
+{% block title %}Password Reset{% endblock %}
 {% block body %}
     <div class="row">
-        <div class="col-lg-6">
-            <span><img src="{{ asset('assets/images/instructions.svg') }}"
-                       alt="MAMIAS 3.0"></span>
-        </div>
-        <div class="col-lg-6">
-            <div class="wrapper-page">
-                <div class="property-card">
-                    <div class="text-center account-logo-box">
-                        <h2 class="text-uppercase">
-                            <a href="{{ path('home') }}" class="text-success">
-                                            <span><img src="{{ asset('resources/logo/Logo-Mamias-web.png') }}"
-                                                       alt="MAMIAS 3.0"></span>
-                            </a>
-                        </h2>
+        <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('resources/images/forget.jpg') }}"
+                                   alt="Login page"></div>
+        <div class="col-xl-7 p-0">
+            <div class="login-card">
+                <div class="col-sm-12">
+                    <div class="card-body">
+                        <form class="theme-form login-form b-primary" action="{{ path('fos_user_resetting_send_email') }}" method="POST">
+                            <div class="form-group">
 
-                    </div>
-                    <div class="property-content">
-                        <form action="{{ path('fos_user_resetting_send_email') }}" method="POST">
-                            <div>
-                                <label for="username">{{ 'resetting.request.username'|trans }}</label>
-                                <input class="form-control" type="text" id="username" name="username"
+                                <label class="col-form-label pt-0" for="username">{{ 'resetting.request.username'|trans }}</label>
+                                <input class="form-control b-primary" type="text" id="username" name="username"
                                        required="required"/>
                             </div>
-                            <div class="clearfix"></div>
-                            <div class="clearfix"></div>
-
-                            <div class="form-group account-btn text-center ">
-                                <div class=" m-t-15 ">
-                                    <button
-                                            class="btn btn-block w-md btn-bordered btn-primary waves-effect waves-light m-t-10">{{ 'resetting.request.submit'|trans }}</button>
-                                </div>
+                            <div class="form-group">
+                                <button
+                                    class="btn btn-block w-md btn-bordered btn-primary waves-effect waves-light m-t-10">{{ 'resetting.request.submit'|trans }}</button>
                             </div>
+
                         </form>
                     </div>
                 </div>
-
             </div>
-        </div>
     </div>
-    </div>
-
-
 
 {% endblock %}

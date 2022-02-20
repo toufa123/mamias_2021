@@ -10,7 +10,6 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-
 /**
  * The default pathfinder algorithm to use for a chart. It is possible to define
  * your own algorithms by adding them to the
@@ -34,9 +33,9 @@ import H from '../Core/Globals.js';
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 ''; // detach doclets above
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 
-var defaultOptions = O.defaultOptions;
+var defaultOptions = D.defaultOptions;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 
@@ -288,7 +287,6 @@ extend(defaultOptions, {
  * @requires  highcharts-gantt
  * @apioption series.xrange.data.connect
  */
-
 /**
  * The ID of the point to connect to.
  *
@@ -315,10 +313,10 @@ function getPointBB(point) {
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
     // Otherwise use plotX/plotY and bb
@@ -330,7 +328,6 @@ function getPointBB(point) {
         yMax: point.plotY + bb.height / 2
     } : null;
 }
-
 /**
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
@@ -350,8 +347,8 @@ function calculateObstacleMargin(obstacles) {
         distance = function (a, b, bbMargin) {
             // Count the distance even if we are slightly off
             var margin = pick(bbMargin, 10), yOverlap = a.yMax + margin > b.yMin - margin &&
-                a.yMin - margin < b.yMax + margin, xOverlap = a.xMax + margin > b.xMin - margin &&
-                a.xMin - margin < b.xMax + margin,
+                    a.yMin - margin < b.yMax + margin, xOverlap = a.xMax + margin > b.xMin - margin &&
+                    a.xMin - margin < b.xMax + margin,
                 xDistance = yOverlap ? (a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax) : Infinity,
                 yDistance = xOverlap ? (a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax) : Infinity;
             // If the rectangles collide, try recomputing with smaller margin.
@@ -386,7 +383,6 @@ function calculateObstacleMargin(obstacles) {
         ), 1 // 1 is the minimum margin
     );
 }
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Connection class. Used internally to represent a connection between two
@@ -419,7 +415,6 @@ var Connection = /** @class */ (function () {
         this.toPoint = void 0;
         this.init(from, to, options);
     }
-
     /**
      * Initialize the Connection object. Used as constructor only.
      *
@@ -513,8 +508,8 @@ var Connection = /** @class */ (function () {
     Connection.prototype.addMarker = function (type, options, path) {
         var connection = this, chart = connection.fromPoint.series.chart, pathfinder = chart.pathfinder,
             renderer = chart.renderer, point = (type === 'start' ?
-            connection.fromPoint :
-            connection.toPoint), anchor = point.getPathfinderAnchorPoint(options), markerVector, radians, rotation, box,
+                connection.fromPoint :
+                connection.toPoint), anchor = point.getPathfinderAnchorPoint(options), markerVector, radians, rotation, box,
             width, height, pathVector, segment;
         if (!options.enabled) {
             return;
@@ -831,7 +826,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         };
     }
 });
-
 /**
  * Warn if using legacy options. Copy the options over. Note that this will
  * still break if using the legacy options in chart.update, addSeries etc.
@@ -851,5 +845,4 @@ function warnLegacy(chart) {
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }
-
 export default Connection;

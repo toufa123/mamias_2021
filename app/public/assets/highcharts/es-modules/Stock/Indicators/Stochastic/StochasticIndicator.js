@@ -27,14 +27,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import AU from '../ArrayUtilities.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The Stochastic series type.
  *
@@ -46,15 +51,18 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
  */
 var StochasticIndicator = /** @class */ (function (_super) {
     __extends(StochasticIndicator, _super);
-
     function StochasticIndicator() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
         return _this;
     }
-
     StochasticIndicator.prototype.init = function () {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -84,7 +92,7 @@ var StochasticIndicator = /** @class */ (function (_super) {
         for (i = periodK - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - periodK + 1, i + 1);
             // Calculate %K
-            extremes = ReduceArrayMixin.getArrayExtremes(slicedY, low, high);
+            extremes = AU.getArrayExtremes(slicedY, low, high);
             LL = extremes[0]; // Lowest low in %K periods
             CL = yVal[i][close] - LL;
             HL = extremes[1] - LL;
@@ -132,6 +140,9 @@ var StochasticIndicator = /** @class */ (function (_super) {
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * Periods for Stochastic oscillator: [%K, %D].
              *
@@ -180,12 +191,9 @@ extend(StochasticIndicator.prototype, {
     pointArrayMap: ['y', 'smoothed'],
     parallelArrays: ['x', 'y', 'smoothed'],
     pointValKey: 'y',
-    linesApiNames: ['smoothedLine'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    linesApiNames: ['smoothedLine']
 });
+MultipleLinesComposition.compose(StochasticIndicator);
 SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
 /* *
  *

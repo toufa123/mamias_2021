@@ -1,44 +1,28 @@
-{% extends 'auth.html.twig' %}
+{% extends 'secure.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
-{% block title %}Authentification{% endblock %}
+{% block title %}Reset Password{% endblock %}
 {% block body %}
-    <section>
-        <div class="container-alt">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="wrapper-page">
-                        <div class="m-t-40 account-pages">
-                            <div class="text-center account-logo-box">
-                                <h2 class="text-uppercase">
-                                    <a href="{{ path('home') }}" class="text-success">
-                                <span><img src="{{ asset('resources/logo/Logo-Mamias-web.png') }}" alt="MAMIAS 3.0"
-                                           height="36"></span>
-                                    </a>
-                                </h2>
-                                <!--<h4 class="text-uppercase font-bold m-b-0">Sign In</h4>-->
-                            </div>
 
-                            <div class="account-content">
+    <div class="row">
 
-                                {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}) }) }}
-                                {{ form_widget(form) }}
-                                <div>
-                                    <input type="submit" value="{{ 'resetting.reset.submit'|trans }}"/>
-                                </div>
-
-
-                                <div class="clearfix"></div>
-
-                            </div>
-                        </div>
-                        <!-- end card-box-->
-
-                    </div>
-                    <!-- end wrapper -->
-
+        <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('resources/images/forget.jpg') }}"
+                                   alt="Login page"></div>
+        <div class="col-xl-7 p-0">
+            <div class="login-card">
+                {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'theme-form login-form' } }) }}
+                <div class="form-group">
+                 {{ form_widget(form) }}
                 </div>
-            </div>
+                <div class="form-group">
+                    <button
+                        class="btn btn-block w-md btn-bordered btn-primary waves-effect waves-light m-t-10">{{ 'resetting.reset.submit'|trans }}</button>
+                </div>
+
+
+
         </div>
-    </section>
+    </div>
+
+
 
 {% endblock %}

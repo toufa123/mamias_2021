@@ -15,67 +15,23 @@ import U from './Utilities.js';
 
 var defined = U.defined, error = U.error, extend = U.extend, isObject = U.isObject, merge = U.merge,
     objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
-/**
- * Normalized interval.
+/* *
  *
- * @interface Highcharts.TimeNormalizedObject
- */ /**
- * The count.
+ *  Constants
  *
- * @name Highcharts.TimeNormalizedObject#count
- * @type {number}
- */ /**
- * The interval in axis values (ms).
+ * */
+var hasNewSafariBug = H.isSafari &&
+    win.Intl &&
+    win.Intl.DateTimeFormat.prototype.formatRange;
+// To do: Remove this when we no longer need support for Safari < v14.1
+var hasOldSafariBug = H.isSafari &&
+    win.Intl &&
+    !win.Intl.DateTimeFormat.prototype.formatRange;
+/* *
  *
- * @name Highcharts.TimeNormalizedObject#unitRange
- * @type {number}
- */
-/**
- * Function of an additional date format specifier.
+ *  Class
  *
- * @callback Highcharts.TimeFormatCallbackFunction
- *
- * @param {number} timestamp
- *        The time to format.
- *
- * @return {string}
- *         The formatted portion of the date.
- */
-/**
- * Time ticks.
- *
- * @interface Highcharts.AxisTickPositionsArray
- * @extends global.Array<number>
- */ /**
- * @name Highcharts.AxisTickPositionsArray#info
- * @type {Highcharts.TimeTicksInfoObject|undefined}
- */
-/**
- * A callback to return the time zone offset for a given datetime. It
- * takes the timestamp in terms of milliseconds since January 1 1970,
- * and returns the timezone offset in minutes. This provides a hook
- * for drawing time based charts in specific time zones using their
- * local DST crossover dates, with the help of external libraries.
- *
- * @callback Highcharts.TimezoneOffsetCallbackFunction
- *
- * @param {number} timestamp
- * Timestamp in terms of milliseconds since January 1 1970.
- *
- * @return {number}
- * Timezone offset in minutes.
- */
-/**
- * Allows to manually load the `moment.js` library from Highcharts options
- * instead of the `window`.
- * In case of loading the library from a `script` tag,
- * this option is not needed, it will be loaded from there by default.
- *
- * @type {function}
- * @since 8.2.0
- * @apioption time.moment
- */
-''; // detach doclets above
+ * */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Time class. Time settings are applied in general for each page using
@@ -95,7 +51,7 @@ var defined = U.defined, error = U.error, extend = U.extend, isObject = U.isObje
  * });
  *
  * // Apply time settings by instance
- * var chart = Highcharts.chart('container', {
+ * let chart = Highcharts.chart('container', {
  *     time: {
  *         timezone: 'America/New_York'
  *     },
@@ -149,7 +105,6 @@ var Time = /** @class */ (function () {
         this.getTimezoneOffset = this.timezoneOffsetFunction();
         this.update(options);
     }
-
     /* *
      *
      *  Functions
@@ -230,7 +185,9 @@ var Time = /** @class */ (function () {
             return date.setTime(ms);
         }
         // UTC time with no timezone handling
-        if (this.useUTC) {
+        if (this.useUTC ||
+            (hasNewSafariBug && unit === 'FullYear') // leap calculation in UTC only
+        ) {
             return date['setUTC' + unit](value);
         }
         // Else, local time
@@ -305,7 +262,7 @@ var Time = /** @class */ (function () {
                 // 02:30 am is repeated since the clock is set back from 3 am to
                 // 2 am. We need to make the same time as local Date does.
             } else if (offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-                !H.isSafari) {
+                !hasOldSafariBug) {
                 d -= 36e5;
             }
         } else {
@@ -403,17 +360,17 @@ var Time = /** @class */ (function () {
      *         The formatted date.
      */
     Time.prototype.dateFormat = function (format, timestamp, capitalize) {
-        var _a;
         if (!defined(timestamp) || isNaN(timestamp)) {
-            return ((_a = H.defaultOptions.lang) === null || _a === void 0 ? void 0 : _a.invalidDate) || '';
+            return (H.defaultOptions.lang &&
+                H.defaultOptions.lang.invalidDate ||
+                '');
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
         var time = this, date = new this.Date(timestamp),
             // get the basic time values
             hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date),
             month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang,
-            langWeekdays = lang === null || lang === void 0 ? void 0 : lang.weekdays,
-            shortWeekdays = lang === null || lang === void 0 ? void 0 : lang.shortWeekdays,
+            langWeekdays = (lang && lang.weekdays), shortWeekdays = (lang && lang.shortWeekdays),
             // List all format keys. Custom formats can be added from the
             // outside.
             replacements = extend({
@@ -518,9 +475,10 @@ var Time = /** @class */ (function () {
      * @return {Highcharts.AxisTickPositionsArray}
      */
     Time.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
-        var time = this, Date = time.Date, tickPositions = [], i, higherRanks = {}, minYear, // used in months and years as a basis for Date.UTC()
+        var time = this, Date = time.Date, tickPositions = [], higherRanks = {},
             // When crossing DST, use the max. Resolves #6278.
-            minDate = new Date(min), interval = normalizedInterval.unitRange, count = normalizedInterval.count || 1,
+            minDate = new Date(min), interval = normalizedInterval.unitRange, count = normalizedInterval.count || 1;
+        var i, minYear, // used in months and years as a basis for Date.UTC()
             variableDayLength, minDay;
         startOfWeek = pick(startOfWeek, 1);
         if (defined(min)) { // #1300
@@ -641,7 +599,139 @@ var Time = /** @class */ (function () {
         });
         return tickPositions;
     };
+    /**
+     * Get the optimal date format for a point, based on a range.
+     *
+     * @private
+     * @function Highcharts.Time#getDateFormat
+     *
+     * @param {number} range
+     *        The time range
+     *
+     * @param {number} timestamp
+     *        The timestamp of the date
+     *
+     * @param {number} startOfWeek
+     *        An integer representing the first day of the week, where 0 is
+     *        Sunday.
+     *
+     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
+     *        A map of time units to formats.
+     *
+     * @return {string}
+     *         The optimal date format for a point.
+     */
+    Time.prototype.getDateFormat = function (range, timestamp, startOfWeek, dateTimeLabelFormats) {
+        var dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp), blank = '01-01 00:00:00.000', strpos = {
+            millisecond: 15,
+            second: 12,
+            minute: 9,
+            hour: 6,
+            day: 3
+        };
+        var format, n, lastN = 'millisecond'; // for sub-millisecond data, #4223
+        for (n in timeUnits) { // eslint-disable-line guard-for-in
+            // If the range is exactly one week and we're looking at a
+            // Sunday/Monday, go for the week format
+            if (range === timeUnits.week &&
+                +this.dateFormat('%w', timestamp) === startOfWeek &&
+                dateStr.substr(6) === blank.substr(6)) {
+                n = 'week';
+                break;
+            }
+            // The first format that is too great for the range
+            if (timeUnits[n] > range) {
+                n = lastN;
+                break;
+            }
+            // If the point is placed every day at 23:59, we need to show
+            // the minutes as well. #2637.
+            if (strpos[n] &&
+                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])) {
+                break;
+            }
+            // Weeks are outside the hierarchy, only apply them on
+            // Mondays/Sundays like in the first condition
+            if (n !== 'week') {
+                lastN = n;
+            }
+        }
+        if (n) {
+            format = this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
+        }
+        return format;
+    };
     return Time;
 }());
-H.Time = Time;
-export default H.Time;
+/* *
+ *
+ * Default export
+ *
+ * */
+export default Time;
+/* *
+ *
+ * API Declarations
+ *
+ * */
+/**
+ * Normalized interval.
+ *
+ * @interface Highcharts.TimeNormalizedObject
+ */ /**
+ * The count.
+ *
+ * @name Highcharts.TimeNormalizedObject#count
+ * @type {number}
+ */ /**
+ * The interval in axis values (ms).
+ *
+ * @name Highcharts.TimeNormalizedObject#unitRange
+ * @type {number}
+ */
+/**
+ * Function of an additional date format specifier.
+ *
+ * @callback Highcharts.TimeFormatCallbackFunction
+ *
+ * @param {number} timestamp
+ *        The time to format.
+ *
+ * @return {string}
+ *         The formatted portion of the date.
+ */
+/**
+ * Time ticks.
+ *
+ * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
+ */ /**
+ * @name Highcharts.AxisTickPositionsArray#info
+ * @type {Highcharts.TimeTicksInfoObject|undefined}
+ */
+/**
+ * A callback to return the time zone offset for a given datetime. It
+ * takes the timestamp in terms of milliseconds since January 1 1970,
+ * and returns the timezone offset in minutes. This provides a hook
+ * for drawing time based charts in specific time zones using their
+ * local DST crossover dates, with the help of external libraries.
+ *
+ * @callback Highcharts.TimezoneOffsetCallbackFunction
+ *
+ * @param {number} timestamp
+ * Timestamp in terms of milliseconds since January 1 1970.
+ *
+ * @return {number}
+ * Timezone offset in minutes.
+ */
+/**
+ * Allows to manually load the `moment.js` library from Highcharts options
+ * instead of the `window`.
+ * In case of loading the library from a `script` tag,
+ * this option is not needed, it will be loaded from there by default.
+ *
+ * @type {function}
+ * @since 8.2.0
+ * @apioption time.moment
+ */
+''; // keeps doclets above in JS file

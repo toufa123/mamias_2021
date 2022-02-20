@@ -9,11 +9,10 @@
  *
  * */
 'use strict';
-import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 
-var addEvent = U.addEvent, defined = U.defined, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick,
-    wrap = U.wrap;
+var addEvent = U.addEvent, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
  */
@@ -30,7 +29,6 @@ var TreeGridTick;
      *
      * */
     var applied = false;
-
     /* *
      *
      *  Functions
@@ -57,9 +55,7 @@ var TreeGridTick;
             applied = true;
         }
     }
-
     TreeGridTick.compose = compose;
-
     /**
      * @private
      */
@@ -69,7 +65,6 @@ var TreeGridTick;
             tick.treeGrid = new Additions(tick);
         }
     }
-
     /**
      * @private
      */
@@ -81,7 +76,6 @@ var TreeGridTick;
             });
         }
     }
-
     /**
      * @private
      */
@@ -92,38 +86,33 @@ var TreeGridTick;
             label.css({textDecoration: css.textDecoration});
         }
     }
-
     /**
      * @private
      */
     function renderLabelIcon(tick, params) {
         var treeGrid = tick.treeGrid, isNew = !treeGrid.labelIcon, renderer = params.renderer, labelBox = params.xy,
-            options = params.options, width = options.width, height = options.height, iconCenter = {
-                x: labelBox.x - (width / 2) - options.padding,
+            options = params.options, width = options.width || 0, height = options.height || 0, iconCenter = {
+                x: labelBox.x - (width / 2) - (options.padding || 0),
                 y: labelBox.y - (height / 2)
             }, rotation = params.collapsed ? 90 : 180, shouldRender = params.show && isNumber(iconCenter.y);
         var icon = treeGrid.labelIcon;
         if (!icon) {
             treeGrid.labelIcon = icon = renderer
-                .path(renderer.symbols[options.type](options.x, options.y, width, height))
+                .path(renderer.symbols[options.type](options.x || 0, options.y || 0, width, height))
                 .addClass('highcharts-label-icon')
                 .add(params.group);
         }
         // Set the new position, and show or hide
-        if (!shouldRender) {
-            icon.attr({y: -9999}); // #1338
-        }
+        icon.attr({y: shouldRender ? 0 : -9999}); // #14904, #1338
         // Presentational attributes
         if (!renderer.styledMode) {
             icon
                 .attr({
-                    'stroke-width': 1,
-                    'fill': pick(params.color, palette.neutralColor60)
-                })
-                .css({
                     cursor: 'pointer',
+                    'fill': pick(params.color, "#666666" /* neutralColor60 */),
+                    'stroke-width': 1,
                     stroke: options.lineColor,
-                    strokeWidth: options.lineWidth
+                    strokeWidth: options.lineWidth || 0
                 });
         }
         // Update the icon positions
@@ -133,7 +122,6 @@ var TreeGridTick;
             rotation: rotation
         });
     }
-
     /**
      * @private
      */
@@ -154,13 +142,13 @@ var TreeGridTick;
             level = (node && node.depth) || 1;
             result.x += (
                 // Add space for symbols
-                ((symbolOptions.width) + (symbolOptions.padding * 2)) +
+                ((symbolOptions.width || 0) +
+                    ((symbolOptions.padding || 0) * 2)) +
                 // Apply indentation
                 ((level - 1) * indentation));
         }
         return result;
     }
-
     /**
      * @private
      */
@@ -230,7 +218,6 @@ var TreeGridTick;
             });
         }
     }
-
     /* *
      *
      *  Classes
@@ -252,7 +239,6 @@ var TreeGridTick;
         function Additions(tick) {
             this.tick = tick;
         }
-
         /* *
          *
          *  Functions

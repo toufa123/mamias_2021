@@ -19,14 +19,20 @@ var getAxisDescription = ChartUtilities.getAxisDescription,
     getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement,
     getSeriesA11yElement = ChartUtilities.getSeriesA11yElement,
     unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+import F from '../../../Core/FormatUtilities.js';
+
+var format = F.format, numberFormat = F.numberFormat;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 
 var reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 
-var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick,
-    defined = U.defined;
+var find = U.find, isNumber = U.isNumber, pick = U.pick, defined = U.defined;
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -45,7 +51,6 @@ function findFirstPointWithGraphic(point) {
             p.graphic.element);
     }) || null;
 }
-
 /**
  * @private
  */
@@ -55,7 +60,6 @@ function shouldAddDummyPoint(point) {
     var isSunburst = point.series && point.series.is('sunburst'), isNull = point.isNull;
     return isNull && !isSunburst;
 }
-
 /**
  * @private
  */
@@ -70,7 +74,6 @@ function makeDummyElement(point, pos) {
     });
     return dummy;
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -79,8 +82,8 @@ function makeDummyElement(point, pos) {
 function addDummyPointElement(point) {
     var series = point.series, firstPointWithGraphic = findFirstPointWithGraphic(point),
         firstGraphic = firstPointWithGraphic && firstPointWithGraphic.graphic, parentGroup = firstGraphic ?
-        firstGraphic.parentGroup :
-        series.graph || series.group, dummyPos = firstPointWithGraphic ? {
+            firstGraphic.parentGroup :
+            series.graph || series.group, dummyPos = firstPointWithGraphic ? {
             x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
             y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
         } : {
@@ -96,7 +99,6 @@ function addDummyPointElement(point) {
         return dummyElement.element;
     }
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -109,7 +111,6 @@ function hasMorePointsThanDescriptionThreshold(series) {
         series.points &&
         series.points.length >= threshold);
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -120,7 +121,6 @@ function shouldSetScreenReaderPropsOnPoints(series) {
     return !hasMorePointsThanDescriptionThreshold(series) &&
         !seriesA11yOptions.exposeAsGroupOnly;
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -133,14 +133,13 @@ function shouldSetKeyboardNavPropsOnPoints(series) {
         seriesNavOptions.pointNavigationEnabledThreshold ||
         seriesNavOptions.pointNavigationEnabledThreshold === false));
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
  * @return {boolean}
  */
 function shouldDescribeSeriesElement(series) {
-    var chart = series.chart, chartOptions = chart.options.chart || {},
+    var chart = series.chart, chartOptions = chart.options.chart,
         chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
         hasMultipleSeries = chart.series.length > 1,
         describeSingleSeriesOption = chart.options.accessibility.series.describeSingleSeries,
@@ -149,7 +148,6 @@ function shouldDescribeSeriesElement(series) {
     return !noDescribe3D && (hasMultipleSeries || describeSingleSeriesOption ||
         exposeAsGroupOnlyOption || hasMorePointsThanDescriptionThreshold(series));
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -157,16 +155,17 @@ function shouldDescribeSeriesElement(series) {
  * @return {string}
  */
 function pointNumberToString(point, value) {
-    var chart = point.series.chart, a11yPointOptions = chart.options.accessibility.point || {},
-        tooltipOptions = point.series.tooltipOptions || {}, lang = chart.options.lang;
+    var series = point.series, chart = series.chart, a11yPointOptions = chart.options.accessibility.point || {},
+        seriesA11yPointOptions = series.options.accessibility && series.options.accessibility.point || {},
+        tooltipOptions = series.tooltipOptions || {}, lang = chart.options.lang;
     if (isNumber(value)) {
-        return numberFormat(value, a11yPointOptions.valueDecimals ||
+        return numberFormat(value, seriesA11yPointOptions.valueDecimals ||
+            a11yPointOptions.valueDecimals ||
             tooltipOptions.valueDecimals ||
             -1, lang.decimalPoint, lang.accessibility.thousandsSep || lang.thousandsSep);
     }
     return value;
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -179,7 +178,6 @@ function getSeriesDescriptionText(series) {
         series: series
     }) || '';
 }
-
 /**
  * @private
  * @param {Highcharts.series} series
@@ -193,7 +191,6 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
         series: series
     });
 }
-
 /**
  * Get accessible time description for a point on a datetime axis.
  *
@@ -204,20 +201,19 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
  * The description as string.
  */
 function getPointA11yTimeDescription(point) {
-    var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
-    if (hasDateXAxis) {
-        var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call({
-            getDateFormat: Tooltip.prototype.getDateFormat,
-            chart: chart
-        }, point, chart.options.tooltip, series.xAxis), dateFormat = a11yOptions.dateFormatter &&
-            a11yOptions.dateFormatter(point) ||
-            a11yOptions.dateFormat ||
-            tooltipDateFormat;
-        return chart.time.dateFormat(dateFormat, point.x, void 0);
+    var series = point.series, chart = series.chart,
+        seriesA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
+        a11yOptions = chart.options.accessibility.point || {}, dateXAxis = series.xAxis && series.xAxis.dateTime;
+    if (dateXAxis) {
+        var tooltipDateFormat = dateXAxis.getXDateFormat(point.x || 0, chart.options.tooltip.dateTimeLabelFormats),
+            dateFormat = seriesA11yOptions.dateFormatter && seriesA11yOptions.dateFormatter(point) ||
+                a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
+                seriesA11yOptions.dateFormat ||
+                a11yOptions.dateFormat ||
+                tooltipDateFormat;
+        return chart.time.dateFormat(dateFormat, point.x || 0, void 0);
     }
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -231,7 +227,6 @@ function getPointXDescription(point) {
     return point.name || timeDesc || pointCategory ||
         (canUseId ? point.id : fallback);
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -248,7 +243,6 @@ function getPointArrayMapValueDescription(point, prefix, suffix) {
         return desc + (desc.length ? ', ' : '') + keyToValStr(key);
     }, '');
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -256,11 +250,16 @@ function getPointArrayMapValueDescription(point, prefix, suffix) {
  */
 function getPointValue(point) {
     var series = point.series, a11yPointOpts = series.chart.options.accessibility.point || {},
-        tooltipOptions = series.tooltipOptions || {}, valuePrefix = a11yPointOpts.valuePrefix ||
-        tooltipOptions.valuePrefix || '', valueSuffix = a11yPointOpts.valueSuffix ||
-        tooltipOptions.valueSuffix || '', fallbackKey = (typeof point.value !==
+        seriesA11yPointOpts = series.chart.options.accessibility && series.chart.options.accessibility.point || {},
+        tooltipOptions = series.tooltipOptions || {}, valuePrefix = seriesA11yPointOpts.valuePrefix ||
+            a11yPointOpts.valuePrefix ||
+            tooltipOptions.valuePrefix ||
+            '', valueSuffix = seriesA11yPointOpts.valueSuffix ||
+            a11yPointOpts.valueSuffix ||
+            tooltipOptions.valueSuffix ||
+            '', fallbackKey = (typeof point.value !==
         'undefined' ?
-        'value' : 'y'), fallbackDesc = pointNumberToString(point, point[fallbackKey]);
+            'value' : 'y'), fallbackDesc = pointNumberToString(point, point[fallbackKey]);
     if (point.isNull) {
         return series.chart.langFormat('accessibility.series.nullPointValue', {
             point: point
@@ -273,8 +272,8 @@ function getPointValue(point) {
 }
 
 /**
- * Return the description for the annotation(s) connected to a point, or empty
- * string if none.
+ * Return the description for the annotation(s) connected to a point, or
+ * empty string if none.
  *
  * @private
  * @param {Highcharts.Point} point The data point to get the annotation info from.
@@ -287,17 +286,18 @@ function getPointAnnotationDescription(point) {
     var context = {point: point, annotations: annotations};
     return annotations.length ? chart.langFormat(langKey, context) : '';
 }
-
 /**
  * Return string with information about point.
  * @private
  * @return {string}
  */
 function getPointValueDescription(point) {
-    var series = point.series, chart = series.chart, pointValueDescriptionFormat = chart.options.accessibility
-            .point.valueDescriptionFormat, showXDescription = pick(series.xAxis &&
-        series.xAxis.options.accessibility &&
-        series.xAxis.options.accessibility.enabled, !chart.angular),
+    var series = point.series, chart = series.chart, seriesA11yOptions = series.options.accessibility,
+        seriesValueDescFormat = seriesA11yOptions && seriesA11yOptions.point &&
+            seriesA11yOptions.point.valueDescriptionFormat, pointValueDescriptionFormat = seriesValueDescFormat ||
+            chart.options.accessibility.point.valueDescriptionFormat, showXDescription = pick(series.xAxis &&
+            series.xAxis.options.accessibility &&
+            series.xAxis.options.accessibility.enabled, !chart.angular),
         xDesc = showXDescription ? getPointXDescription(point) : '', context = {
             point: point,
             index: defined(point.index) ? (point.index + 1) : '',
@@ -307,7 +307,6 @@ function getPointValueDescription(point) {
         };
     return format(pointValueDescriptionFormat, context, chart);
 }
-
 /**
  * Return string with information about point.
  * @private
@@ -324,7 +323,6 @@ function defaultPointDescriptionFormatter(point) {
     point.accessibility.valueDescription = valText;
     return valText + userDescText + seriesNameText + pointAnnotationsText;
 }
-
 /**
  * Set a11y props on a point element
  * @private
@@ -333,16 +331,15 @@ function defaultPointDescriptionFormatter(point) {
  */
 function setPointScreenReaderAttribs(point, pointElement) {
     var series = point.series, a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesA11yOptions = series.options.accessibility || {},
-        label = stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
-            seriesA11yOptions.pointDescriptionFormatter(point) ||
+        seriesPointA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
+        label = stripHTMLTags(seriesPointA11yOptions.descriptionFormatter &&
+            seriesPointA11yOptions.descriptionFormatter(point) ||
             a11yPointOptions.descriptionFormatter &&
             a11yPointOptions.descriptionFormatter(point) ||
             defaultPointDescriptionFormatter(point));
     pointElement.setAttribute('role', 'img');
     pointElement.setAttribute('aria-label', label);
 }
-
 /**
  * Add accessible info to individual point elements of a series
  * @private
@@ -355,13 +352,18 @@ function describePointsInSeries(series) {
         series.points.forEach(function (point) {
             var pointEl = point.graphic && point.graphic.element ||
                 shouldAddDummyPoint(point) && addDummyPointElement(point);
+            var pointA11yDisabled = (point.options &&
+                point.options.accessibility &&
+                point.options.accessibility.enabled === false);
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
-                pointEl.style.outline = '0';
-                if (setScreenReaderProps) {
+                if (!series.chart.styledMode) {
+                    pointEl.style.outline = 'none';
+                }
+                if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
                 } else {
                     pointEl.setAttribute('aria-hidden', true);
@@ -370,7 +372,6 @@ function describePointsInSeries(series) {
         });
     }
 }
-
 /**
  * Return string with information about series.
  * @private
@@ -391,7 +392,6 @@ function defaultSeriesDescriptionFormatter(series) {
         summary = chart.langFormat('accessibility.series.summary.' + series.type + combinationSuffix, summaryContext) || chart.langFormat('accessibility.series.summary.default' + combinationSuffix, summaryContext);
     return summary + (description ? ' ' + description : '') + (shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo : '') + (shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo : '');
 }
-
 /**
  * Set a11y props on a series element
  * @private
@@ -408,12 +408,13 @@ function describeSeriesElement(series, seriesElement) {
         seriesElement.setAttribute('role', 'region');
     } /* else do not add role */
     seriesElement.setAttribute('tabindex', '-1');
-    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
+    if (!series.chart.styledMode) {
+        seriesElement.style.outline = 'none'; // Don't show browser outline on click, despite tabindex
+    }
     seriesElement.setAttribute('aria-label', stripHTMLTags(a11yOptions.series.descriptionFormatter &&
         a11yOptions.series.descriptionFormatter(series) ||
         defaultSeriesDescriptionFormatter(series)));
 }
-
 /**
  * Put accessible info on series and points of a series.
  * @param {Highcharts.Series} series The series to add info on.
@@ -439,13 +440,14 @@ function describeSeries(series) {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 var SeriesDescriber = {
-    describeSeries: describeSeries,
     defaultPointDescriptionFormatter: defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter: defaultSeriesDescriptionFormatter,
-    getPointA11yTimeDescription: getPointA11yTimeDescription,
-    getPointXDescription: getPointXDescription,
-    getPointValue: getPointValue,
-    getPointValueDescription: getPointValueDescription
+    describeSeries: describeSeries
 };
 export default SeriesDescriber;

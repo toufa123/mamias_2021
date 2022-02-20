@@ -10,7 +10,6 @@
  *
  * */
 'use strict';
-
 /* eslint-disable valid-jsdoc */
 /**
  * Vertex Buffer abstraction.
@@ -29,7 +28,7 @@
  * @return {*}
  */
 function GLVertexBuffer(gl, shader, dataComponents
-                        /* , type */
+/* , type */
 ) {
     var buffer = false, vertAttribute = false, components = dataComponents || 2, preAllocated = false, iterator = 0,
         // farray = false,
@@ -49,7 +48,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         components = dataComponents || 2;
         data = [];
     }
-
     /**
      * Build the buffer
      * @private
@@ -82,7 +80,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         farray = false;
         return true;
     }
-
     /**
      * Bind the buffer
      * @private
@@ -97,7 +94,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
         // gl.enableVertexAttribArray(vertAttribute);
     }
-
     /**
      * Render the buffer
      * @private
@@ -119,11 +115,13 @@ function GLVertexBuffer(gl, shader, dataComponents
         if (!to || to > length) {
             to = length;
         }
+        if (from >= to) {
+            return false;
+        }
         drawMode = drawMode || 'points';
         gl.drawArrays(gl[drawMode.toUpperCase()], from / components, (to - from) / components);
         return true;
     }
-
     /**
      * @private
      */
@@ -135,7 +133,6 @@ function GLVertexBuffer(gl, shader, dataComponents
             preAllocated[++iterator] = b;
         }
     }
-
     /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
@@ -146,7 +143,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         iterator = -1;
         preAllocated = new Float32Array(size);
     }
-
     // /////////////////////////////////////////////////////////////////////////
     return {
         destroy: destroy,
@@ -158,5 +154,4 @@ function GLVertexBuffer(gl, shader, dataComponents
         push: push
     };
 }
-
 export default GLVertexBuffer;

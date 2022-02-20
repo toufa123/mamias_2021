@@ -25,28 +25,21 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
-
 var colProto = ColumnSeries.prototype;
 import DumbbellPoint from './DumbbellPoint.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
-import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
-
 var seriesProto = Series.prototype;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var _a = SeriesRegistry.seriesTypes, AreaRangeSeries = _a.arearange, columnRangeProto = _a.columnrange.prototype;
 var areaRangeProto = AreaRangeSeries.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The dumbbell series type
@@ -59,7 +52,6 @@ var extend = U.extend, merge = U.merge, pick = U.pick;
  */
 var DumbbellSeries = /** @class */ (function (_super) {
     __extends(DumbbellSeries, _super);
-
     function DumbbellSeries() {
         /* *
          *
@@ -78,7 +70,6 @@ var DumbbellSeries = /** @class */ (function (_super) {
         _this.columnMetrics = void 0;
         return _this;
     }
-
     /**
      *
      *  Functions
@@ -104,7 +95,7 @@ var DumbbellSeries = /** @class */ (function (_super) {
             dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle),
             pointTop = pick(point.plotLow, point.plotY),
             pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true), pointHeight = chart.inverted ?
-            yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs, origProps;
+                yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs, origProps;
         if (point.state) {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }
@@ -272,8 +263,8 @@ var DumbbellSeries = /** @class */ (function (_super) {
      */
     DumbbellSeries.prototype.markerAttribs = function () {
         var ret = areaRangeProto.markerAttribs.apply(this, arguments);
-        ret.x = Math.floor(ret.x);
-        ret.y = Math.floor(ret.y);
+        ret.x = Math.floor(ret.x || 0);
+        ret.y = Math.floor(ret.y || 0);
         return ret;
     };
     /**
@@ -342,7 +333,7 @@ var DumbbellSeries = /** @class */ (function (_super) {
          * @since 8.0.0
          * @product   highcharts highstock
          */
-        lowColor: palette.neutralColor80,
+        lowColor: "#333333" /* neutralColor80 */,
         /**
          * Color of the line that connects the dumbbell point's values.
          * By default it is the series' color.
@@ -483,7 +474,7 @@ export default DumbbellSeries;
  *
  * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @since       8.0.0
- * @default     ${palette.neutralColor80}
+ * @default     #333333
  * @product     highcharts highstock
  * @apioption   series.dumbbell.data.lowColor
  */

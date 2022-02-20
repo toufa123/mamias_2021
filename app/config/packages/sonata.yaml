@@ -27,6 +27,7 @@ fos_ck_editor:
             filebrowserImageBrowseRoute: elfinder
         default:
             toolbar: full
+            #extraPlugins: "N1ED-editor"
             filebrowserBrowseRoute: elfinder
             filebrowserBrowseRouteParameters: [ ]
             filebrowserImageBrowseRoute: elfinder
@@ -41,6 +42,7 @@ fos_ck_editor:
             #filebrowserImageUploadRouteParameters:
             #    provider: sonata.media.provider.image
             #context: my-context # Optional, to upload in a custom context
+
 
 sonata_formatter:
     ckeditor:

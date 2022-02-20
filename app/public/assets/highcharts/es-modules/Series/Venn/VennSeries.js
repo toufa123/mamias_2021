@@ -42,25 +42,15 @@ var animObject = A.animObject;
 import Color from '../../Core/Color/Color.js';
 
 var color = Color.parse;
-import GeometryMixin from '../../Mixins/Geometry.js';
+import CU from '../../Core/Geometry/CircleUtilities.js';
 
-var getCenterOfPoints = GeometryMixin.getCenterOfPoints,
-    getDistanceBetweenPoints = GeometryMixin.getDistanceBetweenPoints;
-import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
+var getAreaOfIntersectionBetweenCircles = CU.getAreaOfIntersectionBetweenCircles,
+    getCirclesIntersectionPolygon = CU.getCirclesIntersectionPolygon,
+    isCircle1CompletelyOverlappingCircle2 = CU.isCircle1CompletelyOverlappingCircle2,
+    isPointInsideAllCircles = CU.isPointInsideAllCircles, isPointOutsideAllCircles = CU.isPointOutsideAllCircles;
+import GU from '../../Core/Geometry/GeometryUtilities.js';
 
-var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle,
-    getAreaOfIntersectionBetweenCircles = GeometryCirclesModule.getAreaOfIntersectionBetweenCircles,
-    getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection,
-    getCirclesIntersectionPolygon = GeometryCirclesModule.getCirclesIntersectionPolygon,
-    getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles,
-    isCircle1CompletelyOverlappingCircle2 = GeometryCirclesModule.isCircle1CompletelyOverlappingCircle2,
-    isPointInsideAllCircles = GeometryCirclesModule.isPointInsideAllCircles,
-    isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle,
-    isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
-import NelderMeadMixin from '../../Mixins/NelderMead.js';
-
-var nelderMead = NelderMeadMixin.nelderMead;
-import palette from '../../Core/Color/Palette.js';
+var getCenterOfPoints = GU.getCenterOfPoints;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
@@ -84,7 +74,6 @@ var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.
  */
 var VennSeries = /** @class */ (function (_super) {
     __extends(VennSeries, _super);
-
     function VennSeries() {
         /* *
          *
@@ -104,7 +93,6 @@ var VennSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Static Functions
@@ -154,7 +142,7 @@ var VennSeries = /** @class */ (function (_super) {
             margin: -Number.MAX_VALUE
         }).point;
         // Use nelder mead to optimize the initial label position.
-        var optimal = nelderMead(function (p) {
+        var optimal = VennUtils.nelderMead(function (p) {
             return -(VennUtils.getMarginFromCircles({x: p[0], y: p[1]}, internal, external));
         }, [best.x, best.y]);
         // Update best to be the point which was found to have the best margin.
@@ -322,7 +310,7 @@ var VennSeries = /** @class */ (function (_super) {
     /* eslint-disable valid-jsdoc */
     VennSeries.prototype.animate = function (init) {
         if (!init) {
-            var series = this, animOptions = animObject(series.options.animation);
+            var series = this, animOptions_1 = animObject(series.options.animation);
             series.points.forEach(function (point) {
                 var args = point.shapeArgs;
                 if (point.graphic && args) {
@@ -337,7 +325,7 @@ var VennSeries = /** @class */ (function (_super) {
                     }
                     point.graphic
                         .attr(attr)
-                        .animate(animate, animOptions);
+                        .animate(animate, animOptions_1);
                     // If shape is path, then fade it in after the circles
                     // animation
                     if (args.d) {
@@ -347,7 +335,7 @@ var VennSeries = /** @class */ (function (_super) {
                                     opacity: 1
                                 });
                             }
-                        }, animOptions.duration);
+                        }, animOptions_1.duration);
                     }
                 }
             }, series);
@@ -485,7 +473,7 @@ var VennSeries = /** @class */ (function (_super) {
                     style: {
                         width: dataLabelWidth
                     }
-                }, isObject(dlOptions) && dlOptions);
+                }, isObject(dlOptions, true) ? dlOptions : void 0);
             }
             // Set name for usage in tooltip and in data label.
             point.name = point.options.name || sets.join('∩');
@@ -516,7 +504,7 @@ var VennSeries = /** @class */ (function (_super) {
      * @optionparent plotOptions.venn
      */
     VennSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
-        borderColor: palette.neutralColor20,
+        borderColor: "#cccccc" /* neutralColor20 */,
         borderDashStyle: 'solid',
         borderWidth: 1,
         brighten: 0,
@@ -543,14 +531,14 @@ var VennSeries = /** @class */ (function (_super) {
              */
             hover: {
                 opacity: 1,
-                borderColor: palette.neutralColor80
+                borderColor: "#333333" /* neutralColor80 */
             },
             /**
              * @excluding halo
              */
             select: {
-                color: palette.neutralColor20,
-                borderColor: palette.neutralColor100,
+                color: "#cccccc" /* neutralColor20 */,
+                borderColor: "#000000" /* neutralColor100 */,
                 animation: false
             },
             inactive: {

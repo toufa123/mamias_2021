@@ -105,11 +105,17 @@ final class PageAdmin extends AbstractAdmin
                 [
                     'config' => [
                         'filebrowserBrowseRoute' => 'elfinder',
-                        'filebrowserBrowseRouteParameters' => [
-                            'instance' => 'default',
-                            'homeFolder' => '',
-                        ],
+                        'filebrowserBrowseRouteParameters' => ['instance' => 'default', 'homeFolder' => '']
+                        //'extraPlugins'=> 'N1ED-editor',
                     ],
+                    //'plugins' =>[
+                    //   'N1ED-editor' =>[
+                    //       'path' => '/bundles/fosckeditor/plugins/N1ED-editor/',
+                    //      'filename' =>'plugin.js'
+
+
+                    //]
+                    // ]
                 ],
 
                 ['label' => 'Content']

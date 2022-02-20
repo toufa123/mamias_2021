@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  * @module highcharts/modules/sunburst
  * @requires highcharts
  *
- * (c) 2016-2019 Highsoft AS
+ * (c) 2016-2021 Highsoft AS
  * Authors: Jon Arild Nygard
  *
  * License: www.highcharts.com/license

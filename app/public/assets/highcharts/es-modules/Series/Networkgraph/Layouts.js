@@ -12,11 +12,9 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
-
 var setAnimation = A.setAnimation;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction,
     pick = U.pick;
 import './Integrations.js';
@@ -446,7 +444,7 @@ extend(
             */
             // Exponential:
             /*
-            var alpha = 0.1;
+            let alpha = 0.1;
             layout.temperature = Math.sqrt(layout.nodes.length) *
                 Math.pow(alpha, layout.diffTemperature);
             */
@@ -492,7 +490,6 @@ addEvent(Chart, 'predraw', function () {
 });
 addEvent(Chart, 'render', function () {
     var systemsStable, afterRender = false;
-
     /**
      * @private
      */
@@ -514,7 +511,6 @@ addEvent(Chart, 'render', function () {
             afterRender = true;
         }
     }
-
     if (this.graphLayoutsLookup) {
         setAnimation(false, this);
         // Start simulation

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Item series type for Highcharts
  *
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/Item/ItemPoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -76,7 +74,6 @@
          * */
         var ItemPoint = /** @class */ (function (_super) {
             __extends(ItemPoint, _super);
-
             function ItemPoint() {
                 /* *
                  *
@@ -90,7 +87,6 @@
                 _this.series = void 0;
                 return _this;
             }
-
             return ItemPoint;
         }(PieSeries.prototype.pointClass));
         extend(ItemPoint.prototype, {
@@ -104,7 +100,7 @@
 
         return ItemPoint;
     });
-    _registerModule(_modules, 'Series/Item/ItemSeries.js', [_modules['Core/Globals.js'], _modules['Series/Item/ItemPoint.js'], _modules['Core/Options.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (H, ItemPoint, O, SeriesRegistry, U) {
+    _registerModule(_modules, 'Series/Item/ItemSeries.js', [_modules['Core/Globals.js'], _modules['Series/Item/ItemPoint.js'], _modules['Core/DefaultOptions.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (H, ItemPoint, D, SeriesRegistry, U) {
         /* *
          *
          *  (c) 2019-2021 Torstein Honsi
@@ -140,7 +136,7 @@
                 d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
             };
         })();
-        var defaultOptions = O.defaultOptions;
+        var defaultOptions = D.defaultOptions;
         var PieSeries = SeriesRegistry.seriesTypes.pie;
         var defined = U.defined,
             extend = U.extend,
@@ -169,7 +165,6 @@
          */
         var ItemSeries = /** @class */ (function (_super) {
             __extends(ItemSeries, _super);
-
             function ItemSeries() {
                 /* *
                  *
@@ -184,7 +179,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -427,7 +421,6 @@
                 // remove those with the highest angles.
                 var overshoot = finalItemCount - this.total -
                     (isCircle ? rows.length : 0);
-
                 /**
                  * @private
                  * @param {Highcharts.ItemRowContainerObject} item
@@ -440,7 +433,6 @@
                         overshoot--;
                     }
                 }
-
                 while (overshoot > 0) {
                     rows
                         // Return a simplified representation of the angle of

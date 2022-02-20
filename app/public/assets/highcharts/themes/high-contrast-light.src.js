@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
- * (c) 2009-2019 Highsoft AS
+ * (c) 2009-2021 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -21,14 +21,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Themes/HighContrastLight.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Highcharts, U) {
+    _registerModule(_modules, 'Extensions/Themes/HighContrastLight.js', [_modules['Core/DefaultOptions.js']], function (D) {
         /* *
          *
          *  (c) 2010-2021 Highsoft AS
@@ -44,33 +43,66 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var setOptions = U.setOptions;
-        Highcharts.theme = {
-            colors: [
-                '#5f98cf',
-                '#434348',
-                '#49a65e',
-                '#f45b5b',
-                '#708090',
-                '#b68c51',
-                '#397550',
-                '#c0493d',
-                '#4f4a7a',
-                '#b381b3'
-            ],
-            navigator: {
-                series: {
-                    color: '#5f98cf',
-                    lineColor: '#5f98cf'
+        var setOptions = D.setOptions;
+        /* *
+         *
+         *  Theme
+         *
+         * */
+        var HighContrastLightTheme;
+        (function (HighContrastLightTheme) {
+            /* *
+             *
+             *  Constants
+             *
+             * */
+            HighContrastLightTheme.options = {
+                colors: [
+                    '#5f98cf',
+                    '#434348',
+                    '#49a65e',
+                    '#f45b5b',
+                    '#708090',
+                    '#b68c51',
+                    '#397550',
+                    '#c0493d',
+                    '#4f4a7a',
+                    '#b381b3'
+                ],
+                navigator: {
+                    series: {
+                        color: '#5f98cf',
+                        lineColor: '#5f98cf'
+                    }
                 }
+            };
+
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /**
+             * Apply the theme.
+             */
+            function apply() {
+                setOptions(HighContrastLightTheme.options);
             }
-        };
-        // Apply the theme
-        setOptions(Highcharts.theme);
 
+            HighContrastLightTheme.apply = apply;
+        })(HighContrastLightTheme || (HighContrastLightTheme = {}));
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+
+        return HighContrastLightTheme;
     });
-    _registerModule(_modules, 'masters/themes/high-contrast-light.src.js', [], function () {
+    _registerModule(_modules, 'masters/themes/high-contrast-light.src.js', [_modules['Core/Globals.js'], _modules['Extensions/Themes/HighContrastLight.js']], function (H, HighContrastLightTheme) {
 
+        H.theme = HighContrastLightTheme.options;
+        HighContrastLightTheme.apply();
 
     });
 }));

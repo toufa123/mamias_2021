@@ -25,16 +25,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import U from '../../Core/Utilities.js';
 
-var merge = U.merge;
+var isNumber = U.isNumber, merge = U.merge;
 /* *
  *
  *  Class
@@ -42,7 +40,6 @@ var merge = U.merge;
  * */
 var MapPointPoint = /** @class */ (function (_super) {
     __extends(MapPointPoint, _super);
-
     function MapPointPoint() {
         /* *
          *
@@ -55,7 +52,6 @@ var MapPointPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -68,6 +64,10 @@ var MapPointPoint = /** @class */ (function (_super) {
             merge(options, this.series.chart.fromLatLonToPoint(options)) :
             options);
         return _super.prototype.applyOptions.call(this, mergedOptions, x);
+    };
+    MapPointPoint.prototype.isValid = function () {
+        return Boolean(this.options.geometry ||
+            (isNumber(this.x) && isNumber(this.y)));
     };
     return MapPointPoint;
 }(ScatterSeries.prototype.pointClass));

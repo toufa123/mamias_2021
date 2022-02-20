@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  * @module highcharts/modules/drilldown
  * @requires highcharts
  *

@@ -27,15 +27,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var XRangePoint = SeriesRegistry.seriesTypes.xrange.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-
 var pick = U.pick;
 /* *
  *
@@ -44,7 +41,6 @@ var pick = U.pick;
  * */
 var GanttPoint = /** @class */ (function (_super) {
     __extends(GanttPoint, _super);
-
     function GanttPoint() {
         /* *
          *
@@ -57,7 +53,6 @@ var GanttPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* eslint-disable valid-jsdoc */
     /**
      * @private
@@ -72,7 +67,6 @@ var GanttPoint = /** @class */ (function (_super) {
                 options[prop] = val;
             }
         }
-
         addIfExists('x', pick(options.start, options.x));
         addIfExists('x2', pick(options.end, options.x2));
         addIfExists('partialFill', pick(options.completed, options.partialFill));

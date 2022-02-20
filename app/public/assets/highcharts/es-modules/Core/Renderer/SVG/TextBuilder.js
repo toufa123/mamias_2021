@@ -7,12 +7,19 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../../Globals.js';
-import U from '../../Utilities.js';
+'use strict';
 import AST from '../HTML/AST.js';
+import H from '../../Globals.js';
 
-var doc = H.doc, SVG_NS = H.SVG_NS;
-var attr = U.attr, erase = U.erase, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var doc = H.doc, SVG_NS = H.SVG_NS, win = H.win;
+import U from '../../Utilities.js';
+
+var attr = U.attr, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * SVG Text Builder
  * @private
@@ -31,7 +38,6 @@ var TextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
-
     /**
      * Build an SVG representation of the pseudo HTML given in the object's
      * svgElement.
@@ -41,29 +47,28 @@ var TextBuilder = /** @class */ (function () {
      * @return {void}.
      */
     TextBuilder.prototype.buildSVG = function () {
-        var wrapper = this.svgElement;
-        var textNode = wrapper.element, renderer = wrapper.renderer, textStr = pick(wrapper.textStr, '').toString(),
-            hasMarkup = textStr.indexOf('<') !== -1, childNodes = textNode.childNodes, textCache, i = childNodes.length,
-            tempParent = this.width && !wrapper.added && renderer.box;
-        var regexMatchBreaks = /<br.*?>/g;
-        // The buildText code is quite heavy, so if we're not changing something
-        // that affects the text, skip it (#6113).
-        textCache = [
-            textStr,
-            this.ellipsis,
-            this.noWrap,
-            this.textLineHeight,
-            this.textOutline,
-            this.fontSize,
-            this.width
-        ].join(',');
+        var wrapper = this.svgElement, textNode = wrapper.element, renderer = wrapper.renderer,
+            textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1,
+            childNodes = textNode.childNodes, tempParent = this.width && !wrapper.added && renderer.box,
+            regexMatchBreaks = /<br.*?>/g,
+            // The buildText code is quite heavy, so if we're not changing
+            // something that affects the text, skip it (#6113).
+            textCache = [
+                textStr,
+                this.ellipsis,
+                this.noWrap,
+                this.textLineHeight,
+                this.textOutline,
+                this.fontSize,
+                this.width
+            ].join(',');
         if (textCache === wrapper.textCache) {
             return;
         }
         wrapper.textCache = textCache;
         delete wrapper.actualWidth;
         // Remove old text
-        while (i--) {
+        for (var i = childNodes.length; i--;) {
             textNode.removeChild(childNodes[i]);
         }
         // Simple strings, add text directly and return
@@ -117,9 +122,27 @@ var TextBuilder = /** @class */ (function () {
         var _this = this;
         var wrapper = this.svgElement;
         var x = attr(wrapper.element, 'x');
+        wrapper.firstLineMetrics = void 0;
+        // Remove empty tspans (including breaks) from the beginning because
+        // SVG's getBBox doesn't count empty lines. The use case is tooltip
+        // where the header is empty. By doing this in the DOM rather than in
+        // the AST, we can inspect the textContent directly and don't have to
+        // recurse down to look for valid content.
+        var firstChild;
+        while ((firstChild = wrapper.element.firstChild)) {
+            if (/^[\s\u200B]*$/.test(firstChild.textContent || ' ')) {
+                wrapper.element.removeChild(firstChild);
+            } else {
+                break;
+            }
+        }
         // Modify hard line breaks by applying the rendered line height
-        [].forEach.call(wrapper.element.querySelectorAll('tspan.highcharts-br'), function (br) {
+        [].forEach.call(wrapper.element.querySelectorAll('tspan.highcharts-br'), function (br, i) {
             if (br.nextSibling && br.previousSibling) { // #5261
+                if (i === 0 && br.previousSibling.nodeType === 1) {
+                    wrapper.firstLineMetrics = wrapper.renderer
+                        .fontMetrics(void 0, br.previousSibling);
+                }
                 attr(br, {
                     // Since the break is inserted in front of the next
                     // line, we need to use the next sibling for the line
@@ -208,7 +231,7 @@ var TextBuilder = /** @class */ (function () {
         var modifyChildren = (function (node) {
             var childNodes = [].slice.call(node.childNodes);
             childNodes.forEach(function (childNode) {
-                if (childNode.nodeType === Node.TEXT_NODE) {
+                if (childNode.nodeType === win.Node.TEXT_NODE) {
                     modifyTextNode(childNode, node);
                 } else {
                     // Reset word-wrap width readings after hard breaks
@@ -233,7 +256,7 @@ var TextBuilder = /** @class */ (function () {
     TextBuilder.prototype.getLineHeight = function (node) {
         var fontSizeStyle;
         // If the node is a text node, use its parent
-        var element = node.nodeType === Node.TEXT_NODE ?
+        var element = node.nodeType === win.Node.TEXT_NODE ?
             node.parentElement :
             node;
         if (!this.renderer.styledMode) {
@@ -305,15 +328,6 @@ var TextBuilder = /** @class */ (function () {
             }
         };
         nodes.forEach(modifyChild);
-        // Remove empty spans from the beginning because SVG's getBBox doesn't
-        // count empty lines. The use case is tooltip where the header is empty.
-        while (nodes[0]) {
-            if (nodes[0].tagName === 'tspan' && !nodes[0].children) {
-                nodes.splice(0, 1);
-            } else {
-                break;
-            }
-        }
     };
     /*
      * Truncate the text node contents to a given length. Used when the css

@@ -25,16 +25,15 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
-var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, LinearRegressionIndicator = _a.linearRegression;
+var LinearRegressionIndicator = SeriesRegistry.seriesTypes.linearRegression;
 import U from '../../../Core/Utilities.js';
 
-var isArray = U.isArray, extend = U.extend, merge = U.merge;
+var extend = U.extend, merge = U.merge;
 /* *
  *
  * Class
@@ -51,7 +50,6 @@ var isArray = U.isArray, extend = U.extend, merge = U.merge;
  */
 var LinearRegressionInterceptIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionInterceptIndicator, _super);
-
     function LinearRegressionInterceptIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -64,7 +62,6 @@ var LinearRegressionInterceptIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -84,7 +81,7 @@ var LinearRegressionInterceptIndicator = /** @class */ (function (_super) {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/linearregressionintercept
+     * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
      */
     LinearRegressionInterceptIndicator.defaultOptions = merge(LinearRegressionIndicator.defaultOptions);
@@ -110,7 +107,7 @@ export default LinearRegressionInterceptIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/linearregressionintercept
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionintercept
  */
 ''; // to include the above in the js output

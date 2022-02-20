@@ -19,10 +19,13 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import H from '../Core/Globals.js';
 
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
+import D from '../Core/DefaultOptions.js';
+
+var getOptions = D.getOptions, setOptions = D.setOptions;
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent,
-    getOptions = U.getOptions, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions;
+    isNumber = U.isNumber, pick = U.pick;
 /**
  * Function callback to execute while data rows are processed for exporting.
  * This allows the modification of data rows before processed into the final
@@ -47,26 +50,7 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
  * @type {Array<Array<string>>}
  */
 import DownloadURL from '../Extensions/DownloadURL.js';
-
 var downloadURL = DownloadURL.downloadURL;
-
-// Can we add this to utils? Also used in screen-reader.js
-/**
- * HTML encode some characters vulnerable for XSS.
- * @private
- * @param  {string} html The input string
- * @return {string} The excaped string
- */
-function htmlencode(html) {
-    return html
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;')
-        .replace(/\//g, '&#x2F;');
-}
-
 setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
@@ -120,7 +104,7 @@ setOptions({
          * converter, as demonstrated in the sample below.
          *
          * @sample  highcharts/export-data/categorized/ Categorized data
-         * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
+         * @sample  highcharts/export-data/stock-timeaxis/ Highcharts Stock time axis
          * @sample  highcharts/export-data/xlsx/
          *          Using a third party XLSX converter
          *
@@ -397,7 +381,7 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
             var categoryMap = {}, dateTimeValueAxisMap = {};
             pointArrayMap.forEach(function (prop) {
                 var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
-                    prop) + 'Axis',
+                        prop) + 'Axis',
                     // Points in parallel coordinates refers to all yAxis
                     // not only `series.yAxis`
                     axis = isNumber(pIdx) ?
@@ -439,8 +423,8 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
     this.setUpKeyToAxis();
     this.series.forEach(function (series) {
         var keys = series.options.keys, xAxis = series.xAxis, pointArrayMap = keys || getPointArray(series, xAxis),
-            valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(xAxis),
-            categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap), mockSeries, j;
+            valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(xAxis);
+        var categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap), mockSeries, j;
         if (series.options.includeInDataExport !== false &&
             !series.options.isInternal &&
             series.visible !== false // #55
@@ -590,7 +574,8 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
  *         CSV representation of the data
  */
 Chart.prototype.getCSV = function (useLocalDecimalPoint) {
-    var csv = '', rows = this.getDataRows(), csvOptions = this.options.exporting.csv,
+    var csv = '';
+    var rows = this.getDataRows(), csvOptions = this.options.exporting.csv,
         decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
             (1.1).toLocaleString()[1] :
             '.'),
@@ -651,7 +636,8 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         var html = "<" + node.tagName;
         if (attributes) {
             Object.keys(attributes).forEach(function (key) {
-                html += " " + key + "=\"" + attributes[key] + "\"";
+                var value = attributes[key];
+                html += " " + key + "=\"" + value + "\"";
             });
         }
         html += '>';
@@ -681,11 +667,12 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
  *         The abstract syntax tree
  */
 Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
+    var rowLength = 0;
     var treeChildren = [];
     var options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true),
-        rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0,
-        topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(),
+        rows = this.getDataRows(useMultiLevelHeaders), topHeaders = useMultiLevelHeaders ? rows.shift() : null,
+        subHeaders = rows.shift(),
         // Compare two rows for equality
         isRowEqual = function (row1, row2) {
             var i = row1.length;
@@ -799,7 +786,7 @@ Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
                 'class': 'highcharts-table-caption'
             },
             textContent: pick(options.exporting.tableCaption, (options.title.text ?
-                htmlencode(options.title.text) :
+                options.title.text :
                 'Chart'))
         });
     }
@@ -840,7 +827,6 @@ Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
     fireEvent(this, 'aftergetTableAST', e);
     return e.tree;
 };
-
 /**
  * Get a blob object from content, if blob is supported
  *
@@ -857,7 +843,7 @@ function getBlobFromContent(content, type) {
         nav.userAgent.indexOf('Chrome') < 0), domurl = win.URL || win.webkitURL || win;
     try {
         // MS specific
-        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
             var blob = new win.MSBlobBuilder();
             blob.append(content);
             return blob.getBlob('image/svg+xml');
@@ -873,6 +859,7 @@ function getBlobFromContent(content, type) {
     }
 }
 
+/* eslint-disable valid-jsdoc */
 /**
  * Generates a data URL of CSV for local download in the browser. This is the
  * default action for a click on the 'Download CSV' button.
@@ -967,12 +954,16 @@ Chart.prototype.toggleDataTable = function (show) {
         options.buttons &&
         options.buttons.contextButton.menuItems, lang = this.options.lang;
     if (exportingOptions &&
-        exportingOptions.menuItemDefinitions && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
+        exportingOptions.menuItemDefinitions &&
+        lang &&
+        lang.viewData &&
         lang.hideData &&
         menuItems &&
-        exportDivElements &&
-        exportDivElements.length) {
-        AST.setElementHTML(exportDivElements[menuItems.indexOf('viewData')], this.isDataTableVisible ? lang.hideData : lang.viewData);
+        exportDivElements) {
+        var exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        if (exportDivElement) {
+            AST.setElementHTML(exportDivElement, this.isDataTableVisible ? lang.hideData : lang.viewData);
+        }
     }
 };
 // Add "Download CSV" to the exporting menu.

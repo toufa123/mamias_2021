@@ -1,12 +1,12 @@
 /**
- * @license Highmaps JS v9.0.0 (2021-02-02)
+ * @license Highmaps JS v9.3.0 (2021-10-21)
  * @module highcharts/modules/tilemap
  * @requires highcharts
  * @requires highcharts/modules/map
  *
  * Tilemap module
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  *
  * License: www.highcharts.com/license
  */

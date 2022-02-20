@@ -226,27 +226,27 @@
 			'ntftrash'    : '휴지통으로 이동 중', // from v2.1.24 added 2.5.2017
 			'ntfrestore'  : '휴지통에서 복원 중', // from v2.1.24 added 3.5.2017
 			'ntfchkdir'   : '대상 폴더 점검 중', // from v2.1.24 added 3.5.2017
-			'ntfundo'     : '이전 작업 취소 중', // from v2.1.27 added 31.07.2017
-			'ntfredo'     : '취소된 작업 다시 하는 중', // from v2.1.27 added 31.07.2017
-			'ntfchkcontent' : '내용 확인 중', // from v2.1.41 added 3.8.2018
+            'ntfundo': '이전 작업 취소 중', // from v2.1.27 added 31.07.2017
+            'ntfredo': '취소된 작업 다시 하는 중', // from v2.1.27 added 31.07.2017
+            'ntfchkcontent': '내용 확인 중', // from v2.1.41 added 3.8.2018
 
-			/*********************************** volumes *********************************/
-			'volume_Trash' : '휴지통', //from v2.1.24 added 29.4.2017
+            /*********************************** volumes *********************************/
+            'volume_Trash': '휴지통', //from v2.1.24 added 29.4.2017
 
-			/************************************ dates **********************************/
-			'dateUnknown' : '알 수 없음',
-			'Today'       : '오늘',
-			'Yesterday'   : '내일',
-			'msJan'       : '1월',
-			'msFeb'       : '2월',
-			'msMar'       : '3월',
-			'msApr'       : '4월',
-			'msMay'       : '5월',
-			'msJun'       : '6월',
-			'msJul'       : '7월',
-			'msAug'       : '8월',
-			'msSep'       : '9월',
-			'msOct'       : '10월',
+            /************************************ dates **********************************/
+            'dateUnknown': '알 수 없음',
+            'Today': '오늘',
+            'Yesterday': '어제',
+            'msJan': '1월',
+            'msFeb': '2월',
+            'msMar': '3월',
+            'msApr': '4월',
+            'msMay': '5월',
+            'msJun': '6월',
+            'msJul': '7월',
+            'msAug': '8월',
+            'msSep': '9월',
+            'msOct': '10월',
 			'msNov'       : '11월',
 			'msDec'       : '12월',
 			'January'     : '1월',

@@ -25,18 +25,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var isArray = U.isArray, merge = U.merge, extend = U.extend;
 /* eslint-disable require-jsdoc */
-
 // Utils:
 function populateAverage(xVal, yVal, i, period, index) {
     /* Calculated as:
@@ -61,7 +57,6 @@ function populateAverage(xVal, yVal, i, period, index) {
     }
     return [xVal[i], rocY];
 }
-
 /* eslint-enable require-jsdoc */
 /* *
  *
@@ -79,7 +74,6 @@ function populateAverage(xVal, yVal, i, period, index) {
  */
 var ROCIndicator = /** @class */ (function (_super) {
     __extends(ROCIndicator, _super);
-
     function ROCIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -92,7 +86,6 @@ var ROCIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions

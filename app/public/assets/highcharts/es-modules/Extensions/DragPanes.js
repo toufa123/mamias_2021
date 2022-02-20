@@ -16,12 +16,17 @@ import H from '../Core/Globals.js';
 
 var hasTouch = H.hasTouch;
 import Axis from '../Core/Axis/Axis.js';
-import palette from '../Core/Color/Palette.js';
+import AxisDefaults from '../Core/Axis/AxisDefaults.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach,
     relativeLength = U.relativeLength, wrap = U.wrap;
+/* *
+ *
+ *  Class
+ *
+ * */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The AxisResizer class.
@@ -42,7 +47,6 @@ var AxisResizer = /** @class */ (function () {
         this.options = void 0;
         this.init(axis);
     }
-
     /**
      * Initialize the AxisResizer object.
      *
@@ -209,15 +213,15 @@ var AxisResizer = /** @class */ (function () {
             axesGroup.forEach(function (axisInfo, i) {
                 // Axes given as array index, axis object or axis id
                 var axis = isNumber(axisInfo) ?
-                    // If it's a number - it's an index
-                    chart.yAxis[axisInfo] :
-                    (
-                        // If it's first elem. in first group
-                        (!isNext && !i) ?
-                            // then it's an Axis object
-                            axisInfo :
-                            // else it should be an id
-                            chart.get(axisInfo)), axisOptions = axis && axis.options, optionsToUpdate = {}, hDelta = 0,
+                        // If it's a number - it's an index
+                        chart.yAxis[axisInfo] :
+                        (
+                            // If it's first elem. in first group
+                            (!isNext && !i) ?
+                                // then it's an Axis object
+                                axisInfo :
+                                // else it should be an id
+                                chart.get(axisInfo)), axisOptions = axis && axis.options, optionsToUpdate = {}, hDelta = 0,
                     height, top, minLength, maxLength;
                 // Skip if axis is not found
                 // or it is navigator's yAxis (#7732)
@@ -415,7 +419,7 @@ var AxisResizer = /** @class */ (function () {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: palette.neutralColor20,
+            lineColor: "#cccccc" /* neutralColor20 */,
             /**
              * Dash style of the control line.
              *
@@ -509,6 +513,6 @@ wrap(Pointer.prototype, 'drag', function (proceed) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
-merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
 H.AxisResizer = AxisResizer;
 export default H.AxisResizer;

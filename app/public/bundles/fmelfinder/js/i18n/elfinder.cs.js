@@ -2,7 +2,7 @@
  * Czech translation
  * @author RobiNN <kelcakrobo@gmail.com>
  * @author Jay Gridley <gridley.jay@hotmail.com>
- * @version 2020-03-15
+ * @version 2021-06-10
  */
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -14,22 +14,22 @@
 	}
 }(this, function(elFinder) {
 	elFinder.prototype.i18.cs = {
-		translator : 'RobiNN &lt;kelcakrobo@gmail.com&gt;, Jay Gridley &lt;gridley.jay@hotmail.com&gt;',
-		language   : 'Čeština',
-		direction  : 'ltr',
-		dateFormat : 'd. m. Y H:i', // will show like: 15. 03. 2020 16:45
-		fancyDateFormat : '$1 H:i', // will show like: Dnes 16:45
-		nonameDateFormat : 'ymd-His', // noname upload will show like: 200315-164551
-		messages   : {
+        translator: 'RobiNN &lt;kelcakrobo@gmail.com&gt;, Jay Gridley &lt;gridley.jay@hotmail.com&gt;',
+        language: 'Čeština',
+        direction: 'ltr',
+        dateFormat: 'd. m. Y H:i', // will show like: 10. 06. 2021 23:37
+        fancyDateFormat: '$1 H:i', // will show like: Dnes 23:37
+        nonameDateFormat: 'ymd-His', // noname upload will show like: 210610-233701
+        messages: {
 
-			/********************************** errors **********************************/
-			'error'                : 'Chyba',
-			'errUnknown'           : 'Neznámá chyba.',
-			'errUnknownCmd'        : 'Neznámý příkaz.',
-			'errJqui'              : 'Nedostačující konfigurace jQuery UI. Musí být zahrnuty komponenty Selectable, Draggable a Droppable.',
-			'errNode'              : 'elFinder vyžaduje vytvořený DOM Elementu.',
-			'errURL'               : 'Chybná konfigurace elFinderu! Není nastavena hodnota URL.',
-			'errAccess'            : 'Přístup zamítnut.',
+            /********************************** errors **********************************/
+            'error': 'Chyba',
+            'errUnknown': 'Neznámá chyba.',
+            'errUnknownCmd': 'Neznámý příkaz.',
+            'errJqui': 'Nedostačující konfigurace jQuery UI. Musí být zahrnuty komponenty Selectable, Draggable a Droppable.',
+            'errNode': 'elFinder vyžaduje vytvořený DOM Elementu.',
+            'errURL': 'Chybná konfigurace elFinderu! Není nastavena hodnota URL.',
+            'errAccess': 'Přístup zamítnut.',
 			'errConnect'           : 'Nepodařilo se připojit k backendu.',
 			'errAbort'             : 'Připojení zrušeno.',
 			'errTimeout'           : 'Vypšel limit pro připojení.',
@@ -106,26 +106,27 @@
 			'errArchiveExec'       : 'Při archivaci do souboru došlo k chybě: "$1"',
 			'errExtractExec'       : 'Chyba při extrahování souboru: "$1"',
 			'errNetUnMount'        : 'Nepodařilo se odpojit', // from v2.1 added 30.04.2012
-			'errConvUTF8'          : 'Nelze převést na UTF-8', // from v2.1 added 08.04.2014
-			'errFolderUpload'      : 'Chcete-li nahrát složku, zkuste moderní prohlížeč.', // from v2.1 added 26.6.2015
-			'errSearchTimeout'     : 'Vypršení časového limitu při hledání "$1". Je částečně výsledkem hledání.', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : 'Opětovné povolení je nutné.', // from v2.1.10 added 24.3.2016
-			'errMaxTargets'        : 'Maximální počet volitelných předmětů je $1.', // from v2.1.17 added 17.10.2016
-			'errRestore'           : 'Nelze obnovit z koše. Nelze identifikovat cíl obnovení.', // from v2.1.24 added 3.5.2017
-			'errEditorNotFound'    : 'Editor tohoto typu souboru nebyl nalezen.', // from v2.1.25 added 23.5.2017
-			'errServerError'       : 'Došlo k chybě na straně serveru.', // from v2.1.25 added 16.6.2017
-			'errEmpty'             : 'Nelze vyprázdnit složku "$1".', // from v2.1.25 added 22.6.2017
-			'moreErrors'           : 'Existují ještě další $1 chyby.', // from v2.1.44 added 9.12.2018
+            'errConvUTF8': 'Nelze převést na UTF-8', // from v2.1 added 08.04.2014
+            'errFolderUpload': 'Chcete-li nahrát složku, zkuste moderní prohlížeč.', // from v2.1 added 26.6.2015
+            'errSearchTimeout': 'Vypršení časového limitu při hledání "$1". Je částečně výsledkem hledání.', // from v2.1 added 12.1.2016
+            'errReauthRequire': 'Opětovné povolení je nutné.', // from v2.1.10 added 24.3.2016
+            'errMaxTargets': 'Maximální počet volitelných předmětů je $1.', // from v2.1.17 added 17.10.2016
+            'errRestore': 'Nelze obnovit z koše. Nelze identifikovat cíl obnovení.', // from v2.1.24 added 3.5.2017
+            'errEditorNotFound': 'Editor tohoto typu souboru nebyl nalezen.', // from v2.1.25 added 23.5.2017
+            'errServerError': 'Došlo k chybě na straně serveru.', // from v2.1.25 added 16.6.2017
+            'errEmpty': 'Nelze vyprázdnit složku "$1".', // from v2.1.25 added 22.6.2017
+            'moreErrors': 'Existují ještě další $1 chyby.', // from v2.1.44 added 9.12.2018
+            'errMaxMkdirs': 'Můžete vytvořit až $1 složek najednou.', // from v2.1.58 added 20.6.2021
 
-			/******************************* commands names ********************************/
-			'cmdarchive'   : 'Vytvořit archív',
-			'cmdback'      : 'Zpět',
-			'cmdcopy'      : 'Kopírovat',
-			'cmdcut'       : 'Vyjmout',
-			'cmddownload'  : 'Stáhnout',
-			'cmdduplicate' : 'Duplikovat',
-			'cmdedit'      : 'Upravit soubor',
-			'cmdextract'   : 'Rozbalit archív',
+            /******************************* commands names ********************************/
+            'cmdarchive': 'Vytvořit archív',
+            'cmdback': 'Zpět',
+            'cmdcopy': 'Kopírovat',
+            'cmdcut': 'Vyjmout',
+            'cmddownload': 'Stáhnout',
+            'cmdduplicate': 'Duplikovat',
+            'cmdedit': 'Upravit soubor',
+            'cmdextract': 'Rozbalit archív',
 			'cmdforward'   : 'Vpřed',
 			'cmdgetfile'   : 'Vybrat soubory',
 			'cmdhelp'      : 'O softwaru',

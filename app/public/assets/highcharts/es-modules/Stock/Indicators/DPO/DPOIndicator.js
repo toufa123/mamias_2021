@@ -23,18 +23,14 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, pick = U.pick;
 /* eslint-disable valid-jsdoc */
-
 // Utils:
 /**
  * @private
@@ -46,7 +42,6 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
     }
     return correctFloat(sum + price);
 }
-
 /* *
  *
  *  Class
@@ -63,7 +58,6 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
  */
 var DPOIndicator = /** @class */ (function (_super) {
     __extends(DPOIndicator, _super);
-
     function DPOIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -76,7 +70,6 @@ var DPOIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -142,6 +135,7 @@ var DPOIndicator = /** @class */ (function (_super) {
          * points.
          */
         params: {
+            index: 0,
             /**
              * Period for Detrended Price Oscillator
              */

@@ -23,16 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import U from '../../../Core/Utilities.js';
-
 var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
 /**
  * The DEMA series Type
@@ -45,7 +41,6 @@ var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
  */
 var DEMAIndicator = /** @class */ (function (_super) {
     __extends(DEMAIndicator, _super);
-
     function DEMAIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.EMApercent = void 0;
@@ -54,14 +49,6 @@ var DEMAIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
-    DEMAIndicator.prototype.init = function () {
-        var args = arguments, ctx = this;
-        RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
-            indicator.prototype.init.apply(ctx, args);
-
-        });
-    };
     DEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
         return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     };
@@ -127,7 +114,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
     /**
      * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/dema
      *         DEMA indicator
@@ -140,7 +127,6 @@ var DEMAIndicator = /** @class */ (function (_super) {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
@@ -155,17 +141,16 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  * */
 export default DEMAIndicator;
 /**
- * A `DEMA` series. If the [type](#series.ema.type) option is not
+ * A `DEMA` series. If the [type](#series.dema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.ema
+ * @extends   series,plotOptions.dema
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/dema
  * @apioption series.dema
  */

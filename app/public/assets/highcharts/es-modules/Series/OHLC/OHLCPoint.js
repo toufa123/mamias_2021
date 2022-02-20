@@ -25,13 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
-var ColumnSeries = SeriesRegistry.seriesTypes.column;
+var HLCSeries = SeriesRegistry.seriesTypes.hlc;
 /* *
  *
  *  Class
@@ -39,7 +38,6 @@ var ColumnSeries = SeriesRegistry.seriesTypes.column;
  * */
 var OHLCPoint = /** @class */ (function (_super) {
     __extends(OHLCPoint, _super);
-
     function OHLCPoint() {
         /* *
          *
@@ -47,18 +45,13 @@ var OHLCPoint = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.close = void 0;
-        _this.high = void 0;
-        _this.low = void 0;
         _this.open = void 0;
         _this.options = void 0;
-        _this.plotClose = void 0;
         _this.plotOpen = void 0;
         _this.series = void 0;
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -111,8 +104,19 @@ var OHLCPoint = /** @class */ (function (_super) {
         this.resolveUpColor();
         return zone;
     };
+    /**
+     * Extend the parent method by resolving up/down colors (#15849)
+     * @private
+     **/
+    OHLCPoint.prototype.applyOptions = function () {
+        _super.prototype.applyOptions.apply(this, arguments);
+        if (this.resolveColor) {
+            this.resolveColor();
+        }
+        return this;
+    };
     return OHLCPoint;
-}(ColumnSeries.prototype.pointClass));
+}(HLCSeries.prototype.pointClass));
 /* *
  *
  *  Default Export

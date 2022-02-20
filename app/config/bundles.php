@@ -53,4 +53,5 @@ return [
     Presta\SitemapBundle\PrestaSitemapBundle::class => ['all' => true],
     ConnectHolland\CookieConsentBundle\CHCookieConsentBundle::class => ['all' => true],
     Thormeier\BreadcrumbBundle\ThormeierBreadcrumbBundle::class => ['all' => true],
+
 ];

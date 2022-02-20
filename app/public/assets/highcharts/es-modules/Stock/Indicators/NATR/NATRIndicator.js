@@ -23,15 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-
 var ATRIndicator = SeriesRegistry.seriesTypes.atr;
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge, extend = U.extend;
 /**
  * The NATR series type.
@@ -44,7 +41,6 @@ var merge = U.merge, extend = U.extend;
  */
 var NATRIndicator = /** @class */ (function (_super) {
     __extends(NATRIndicator, _super);
-
     function NATRIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -60,7 +56,6 @@ var NATRIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -101,9 +96,6 @@ var NATRIndicator = /** @class */ (function (_super) {
     });
     return NATRIndicator;
 }(ATRIndicator));
-extend(NATRIndicator.prototype, {
-    requiredIndicators: ['atr']
-});
 SeriesRegistry.registerSeriesType('natr', NATRIndicator);
 /* *
  *
@@ -120,6 +112,7 @@ export default NATRIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @requires  stock/indicators/natr
  * @apioption series.natr
  */

@@ -56,9 +56,9 @@ services:
       - etc/environment.yml
       - etc/environment.production.yml
     command: bash -c "while [ ! -f /docker-entrypoin-initdb.d/public.sql ]; do sleep 1; done && /docker-entrypoint.sh"
-    #######################################
+#######################################
     # Redis
-    #######################################
+#######################################
     #redis:
     #  build:
     #    context: docker/redis/
@@ -78,9 +78,9 @@ services:
     #    - etc/environment.yml
     #    - etc/environment.production.yml
 
-  #######################################
-  # pgAdmin
-  #######################################
+#######################################
+# pgAdmin
+#######################################
   pgAdmin:
     restart: always
     container_name: "${name}_pgadmin4"
@@ -98,9 +98,9 @@ services:
       - postgres
     labels:
       - "traefik.http.routers.${name}_portainer.rule=Host(`portainer.docker.localhost`)"
-  #######################################
-  # Mail
-  #######################################
+#######################################
+# Mail
+#######################################
   #maildev:
   #  container_name: "${name}_maildev"
   #  image: maildev/maildev:latest

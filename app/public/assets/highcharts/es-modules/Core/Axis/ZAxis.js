@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -24,13 +25,11 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Axis from './Axis.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, splat = U.splat;
 /* eslint-disable valid-jsdoc */
 /**
@@ -41,7 +40,6 @@ var addEvent = U.addEvent, merge = U.merge, pick = U.pick, splat = U.splat;
 var ZChart = /** @class */ (function () {
     function ZChart() {
     }
-
     /* *
      *
      *  Static Functions
@@ -88,7 +86,6 @@ var ZChart = /** @class */ (function () {
  */
 var ZAxis = /** @class */ (function (_super) {
     __extends(ZAxis, _super);
-
     /* *
      *
      *  Constructors
@@ -99,7 +96,6 @@ var ZAxis = /** @class */ (function (_super) {
         _this.isZAxis = true;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -117,9 +113,8 @@ var ZAxis = /** @class */ (function (_super) {
         // loop through this axis' series
         axis.series.forEach(function (series) {
             if (series.visible ||
-                !(chart.options.chart &&
-                    chart.options.chart.ignoreHiddenSeries)) {
-                var seriesOptions = series.options, zData, threshold = seriesOptions.threshold;
+                !chart.options.chart.ignoreHiddenSeries) {
+                var seriesOptions = series.options, zData = void 0, threshold = seriesOptions.threshold;
                 axis.hasVisibleSeries = true;
                 // Validate threshold in logarithmic axes
                 if (axis.positiveValuesOnly && threshold <= 0) {
@@ -140,8 +135,7 @@ var ZAxis = /** @class */ (function (_super) {
         var axis = this;
         var chart = axis.chart;
         _super.prototype.setAxisSize.call(this);
-        axis.width = axis.len = (chart.options.chart &&
-            chart.options.chart.options3d &&
+        axis.width = axis.len = (chart.options.chart.options3d &&
             chart.options.chart.options3d.depth) || 0;
         axis.right = chart.chartWidth - axis.width - axis.left;
     };

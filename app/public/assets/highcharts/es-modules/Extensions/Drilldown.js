@@ -17,13 +17,15 @@ import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
+import F from '../Core/FormatUtilities.js';
+
+var format = F.format;
 import H from '../Core/Globals.js';
 
 var noop = H.noop;
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 
-var defaultOptions = O.defaultOptions;
-import palette from '../Core/Color/Palette.js';
+var defaultOptions = D.defaultOptions;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
@@ -33,8 +35,8 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 
-var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireEvent = U.fireEvent, format = U.format,
-    merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge,
+    objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 /**
  * Gets fired when a drilldown point is clicked, before the new series is added.
  * Note that when clicking a category label to trigger multiple series
@@ -231,7 +233,7 @@ defaultOptions.drilldown = {
         /** @ignore-option */
         cursor: 'pointer',
         /** @ignore-option */
-        color: palette.highlightColor100,
+        color: "#003399" /* highlightColor100 */,
         /** @ignore-option */
         fontWeight: 'bold',
         /** @ignore-option */
@@ -255,7 +257,7 @@ defaultOptions.drilldown = {
      */
     activeDataLabelStyle: {
         cursor: 'pointer',
-        color: palette.highlightColor100,
+        color: "#003399" /* highlightColor100 */,
         fontWeight: 'bold',
         textDecoration: 'underline'
     },
@@ -526,7 +528,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
         color: point.isNull ?
-            new Color(colorProp.color).setOpacity(0).get() :
+            Color.parse(colorProp.color).setOpacity(0).get() :
             colorProp.color,
         lowerSeriesOptions: ddOptions,
         pointOptions: oldSeries.options.data[pointIndex],
@@ -554,7 +556,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
     }
     // Run fancy cross-animation on supported and equal types
     if (oldSeries.type === newSeries.type) {
-        newSeries.animate = newSeries.animateDrilldown || noop;
+        newSeries.animate = (newSeries.animateDrilldown || noop);
         newSeries.options.animation = true;
     }
 };
@@ -591,25 +593,29 @@ Chart.prototype.getDrilldownBackText = function () {
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         lastLevel.series = lastLevel.seriesOptions;
-        return format(this.options.lang.drillUpText, lastLevel);
+        return format(this.options.lang.drillUpText || '', lastLevel);
     }
 };
 Chart.prototype.showDrillUpButton = function () {
     var chart = this, backText = this.getDrilldownBackText(), buttonOptions = chart.options.drilldown.drillUpButton,
-        attr, states;
+        attr, states, alignTo = (buttonOptions.relativeTo === 'chart' ||
+        buttonOptions.relativeTo === 'spacingBox' ?
+            null :
+            'scrollablePlotBox');
     if (!this.drillUpButton) {
         attr = buttonOptions.theme;
         states = attr && attr.states;
-        this.drillUpButton = this.renderer.button(backText, null, null, function () {
-            chart.drillUp();
-        }, attr, states && states.hover, states && states.select)
+        this.drillUpButton = this.renderer
+            .button(backText, null, null, function () {
+                chart.drillUp();
+            }, attr, states && states.hover, states && states.select)
             .addClass('highcharts-drillup-button')
             .attr({
                 align: buttonOptions.position.align,
                 zIndex: 7
             })
             .add()
-            .align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
+            .align(buttonOptions.position, false, alignTo);
     } else {
         this.drillUpButton.attr({
             text: backText
@@ -624,6 +630,9 @@ Chart.prototype.showDrillUpButton = function () {
  * @requires  modules/drilldown
  *
  * @function Highcharts.Chart#drillUp
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
  */
 Chart.prototype.drillUp = function () {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -753,7 +762,10 @@ addEvent(Chart, 'render', function () {
                         if (!axis.ddPoints[xData[i]]) {
                             axis.ddPoints[xData[i]] = [];
                         }
-                        axis.ddPoints[xData[i]].push(points ? points[i] : true);
+                        var index = i - (series.cropStart || 0);
+                        axis.ddPoints[xData[i]].push((points && index >= 0 && index < points.length) ?
+                            points[index] :
+                            true);
                     }
                 }
             }
@@ -774,7 +786,7 @@ addEvent(Chart, 'render', function () {
  */
 ColumnSeries.prototype.animateDrillupTo = function (init) {
     if (!init) {
-        var newSeries = this, level = newSeries.drilldownLevel;
+        var newSeries_1 = this, level_1 = newSeries_1.drilldownLevel;
         // First hide all items before animating in again
         this.points.forEach(function (point) {
             var dataLabel = point.dataLabel;
@@ -795,18 +807,18 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
         });
         // Do dummy animation on first point to get to complete
         syncTimeout(function () {
-            if (newSeries.points) { // May be destroyed in the meantime, #3389
+            if (newSeries_1.points) { // May be destroyed in the meantime, #3389
                 // Unable to drillup with nodes, #13711
-                var pointsWithNodes = [];
-                newSeries.data.forEach(function (el) {
-                    pointsWithNodes.push(el);
+                var pointsWithNodes_1 = [];
+                newSeries_1.data.forEach(function (el) {
+                    pointsWithNodes_1.push(el);
                 });
-                if (newSeries.nodes) {
-                    pointsWithNodes = pointsWithNodes.concat(newSeries.nodes);
+                if (newSeries_1.nodes) {
+                    pointsWithNodes_1 = pointsWithNodes_1.concat(newSeries_1.nodes);
                 }
-                pointsWithNodes.forEach(function (point, i) {
+                pointsWithNodes_1.forEach(function (point, i) {
                     // Fade in other points
-                    var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn',
+                    var verb = i === (level_1 && level_1.pointIndex) ? 'show' : 'fadeIn',
                         inherit = verb === 'show' ? true : void 0, dataLabel = point.dataLabel;
                     if (point.graphic) { // #3407
                         point.graphic[verb](inherit);
@@ -916,20 +928,20 @@ if (PieSeries) {
             }
             // Unable to drill down in the horizontal item series #13372
             if (this.center) {
-                var animateFrom = level.shapeArgs, start = animateFrom.start, angle = animateFrom.end - start,
-                    startAngle = angle / this.points.length, styledMode = this.chart.styledMode;
+                var animateFrom_1 = level.shapeArgs, start_1 = animateFrom_1.start, angle = animateFrom_1.end - start_1,
+                    startAngle_1 = angle / this.points.length, styledMode_1 = this.chart.styledMode;
                 if (!init) {
                     this.points.forEach(function (point, i) {
                         var animateTo = point.shapeArgs;
-                        if (!styledMode) {
-                            animateFrom.fill = level.color;
+                        if (!styledMode_1) {
+                            animateFrom_1.fill = level.color;
                             animateTo.fill = point.color;
                         }
                         if (point.graphic) {
                             point.graphic
-                                .attr(merge(animateFrom, {
-                                    start: start + i * startAngle,
-                                    end: start + (i + 1) * startAngle
+                                .attr(merge(animateFrom_1, {
+                                    start: start_1 + i * startAngle_1,
+                                    end: start_1 + (i + 1) * startAngle_1
                                 }))[animationOptions ? 'animate' : 'attr'](animateTo, animationOptions);
                         }
                     });
@@ -940,9 +952,26 @@ if (PieSeries) {
         }
     });
 }
-Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
-    var series = this.series, chart = series.chart, drilldown = chart.options.drilldown,
-        i = (drilldown.series || []).length, seriesOptions;
+/**
+ * Perform drilldown on a point instance. The [drilldown](https://api.highcharts.com/highcharts/series.line.data.drilldown)
+ * property must be set on the point options.
+ *
+ * To drill down multiple points in the same category, use
+ * `Axis.drilldownCategory` instead.
+ *
+ * @requires  modules/drilldown
+ *
+ * @function Highcharts.Point#doDrilldown
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
+ */
+Point.prototype.doDrilldown = function () {
+    this.runDrilldown();
+};
+Point.prototype.runDrilldown = function (holdRedraw, category, originalEvent) {
+    var series = this.series, chart = series.chart, drilldown = chart.options.drilldown;
+    var i = (drilldown.series || []).length, seriesOptions;
     if (!chart.ddDupes) {
         chart.ddDupes = [];
     }
@@ -965,7 +994,7 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
     }, function (e) {
         var chart = e.point.series && e.point.series.chart, seriesOptions = e.seriesOptions;
         if (chart && seriesOptions) {
-            if (_holdRedraw) {
+            if (holdRedraw) {
                 chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
             } else {
                 chart.addSeriesAsDrilldown(e.point, seriesOptions);
@@ -975,22 +1004,28 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
 };
 /**
  * Drill down to a given category. This is the same as clicking on an axis
- * label.
+ * label. If multiple series with drilldown are present, all will drill down to
+ * the given category.
  *
- * @private
+ * See also `Point.doDrilldown` for drilling down on a single point instance.
+ *
  * @function Highcharts.Axis#drilldownCategory
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
+ *
  * @param {number} x
- *        Tick position
- * @param {global.MouseEvent} e
- *        Click event
+ *        The index of the category
+ * @param {global.MouseEvent} [originalEvent]
+ *        The original event, used internally.
  */
-Axis.prototype.drilldownCategory = function (x, e) {
+Axis.prototype.drilldownCategory = function (x, originalEvent) {
     this.getDDPoints(x).forEach(function (point) {
         if (point &&
             point.series &&
             point.series.visible &&
-            point.doDrilldown) { // #3197
-            point.doDrilldown(true, x, e);
+            point.runDrilldown) { // #3197
+            point.runDrilldown(true, x, originalEvent);
         }
     });
     this.chart.applyDrilldown();
@@ -1074,7 +1109,7 @@ var handlePointClick = function (e) {
         // #5822, x changed
         series.xAxis.drilldownCategory(point.x, e);
     } else {
-        point.doDrilldown(void 0, void 0, e);
+        point.runDrilldown(void 0, void 0, e);
     }
 };
 addEvent(Series, 'afterDrawDataLabels', function () {
@@ -1124,7 +1159,7 @@ addEvent(Point, 'afterSetState', function () {
     }
 });
 // After zooming out, shift the drillUpButton to the previous position, #8095.
-addEvent(H.Chart, 'selection', function (event) {
+addEvent(Chart, 'selection', function (event) {
     if (event.resetSelection === true && this.drillUpButton) {
         var buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
         if (buttonOptions && buttonOptions.position) {
@@ -1136,7 +1171,7 @@ addEvent(H.Chart, 'selection', function (event) {
         }
     }
 });
-addEvent(H.Chart, 'drillup', function () {
+addEvent(Chart, 'drillup', function () {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }

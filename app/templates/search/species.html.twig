@@ -4,7 +4,9 @@
 
 {% block stylesheets %}
     <!-- Data Table CSS -->
-    <link href="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css"/>
+
+    <!--<link href="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/plugins/datatables2/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/plugins/datatables2/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
@@ -15,7 +17,7 @@
     <link href="{{ asset('assets/plugins/datatables2/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
     <link href="{{ asset('assets/plugins/datatables2/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
-          type="text/css"/>
+          type="text/css"/>-->
     <link rel="stylesheet" href="{{ asset('assets/leaflet/leaflet.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('assets/leaflet/leaflet-locationpicker.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('assets/leaflet/Leaflet.Coordinates-0.1.5.css') }}" rel="stylesheet"/>
@@ -303,7 +305,9 @@
 {% endblock %}
 {% block javascripts %}
     <!-- Required datatable js -->
-     <script src="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.js"></script>
+
+    <!-- <script src="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables2/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables2/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables2/buttons.bootstrap4.min.js') }}"></script>
@@ -318,7 +322,7 @@
     <script src="{{ asset('assets/plugins/datatables2/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables2/dataTables.scroller.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables2/dataTables.colVis.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables2/dataTables.fixedColumns.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.fixedColumns.min.js') }}"></script>-->
     <script src="{{ asset('assets/leaflet/leaflet-locationpicker.js') }}"></script>
     <script src="{{ asset('assets/highcharts/highmaps.src.js') }}"></script>
     <script src="{{ asset('assets/highcharts/modules/data.src.js') }}"></script>

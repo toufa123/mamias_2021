@@ -29,15 +29,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+import Color from '../../Core/Color/Color.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 
-var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
-import H from '../../Core/Globals.js';
-
-var noop = H.noop;
+var colorMapSeriesMixin = ColorMapComposition.colorMapSeriesMixin;
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column,
@@ -62,7 +59,6 @@ var extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U
  */
 var HeatmapSeries = /** @class */ (function (_super) {
     __extends(HeatmapSeries, _super);
-
     function HeatmapSeries() {
         /* *
          *
@@ -84,7 +80,6 @@ var HeatmapSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -102,8 +97,31 @@ var HeatmapSeries = /** @class */ (function (_super) {
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
             this.points.forEach(function (point) {
-                point.graphic &&
-                point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
+                if (point.graphic) {
+                    point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
+                    // @todo
+                    // Applying the border radius here is not optimal. It should
+                    // be set in the shapeArgs or returned from `markerAttribs`.
+                    // However, Series.drawPoints does not pick up markerAttribs
+                    // to be passed over to `renderer.symbol`. Also, image
+                    // symbols are not positioned by their top left corner like
+                    // other symbols are. This should be refactored, then we
+                    // could save ourselves some tests for .hasImage etc. And
+                    // the evaluation of borderRadius would be moved to
+                    // `markerAttribs`.
+                    if (_this.options.borderRadius) {
+                        point.graphic.attr({
+                            r: _this.options.borderRadius
+                        });
+                    }
+                    // Saving option for reapplying later
+                    // when changing point's states (#16165)
+                    (point.shapeArgs || {}).r = _this.options.borderRadius;
+                    (point.shapeArgs || {}).d = point.graphic.pathArray;
+                    if (point.value === null) { // #15708
+                        point.graphic.addClass('highcharts-null-point');
+                    }
+                }
             });
         }
     };
@@ -152,10 +170,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
         // general point range
         this.yAxis.axisPointRange = options.rowsize || 1;
         // Bind new symbol names
-        extend(symbols, {
-            ellipse: symbols.circle,
-            rect: symbols.square
-        });
+        symbols.ellipse = symbols.circle;
     };
     /**
      * @private
@@ -183,8 +198,10 @@ var HeatmapSeries = /** @class */ (function (_super) {
                     shapeArgs[dimension[0]]) + (pointStateOptions[dimension[0] + 'Plus'] ||
                     seriesStateOptions[dimension[0] + 'Plus'] || 0);
                 // Align marker by a new size.
-                attribs[dimension[1]] = shapeArgs[dimension[1]] +
-                    (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
+                attribs[dimension[1]] =
+                    shapeArgs[dimension[1]] +
+                    (shapeArgs[dimension[0]] -
+                        attribs[dimension[0]]) / 2;
             });
         }
         return state ? attribs : shapeArgs;
@@ -198,12 +215,14 @@ var HeatmapSeries = /** @class */ (function (_super) {
             seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, stateOptions,
             brightness,
             // Get old properties in order to keep backward compatibility
-            borderColor = seriesOptions.borderColor ||
+            borderColor = (point && point.options.borderColor) ||
+                seriesOptions.borderColor ||
                 heatmapPlotOptions.borderColor ||
-                seriesPlotOptions.borderColor, borderWidth = seriesOptions.borderWidth ||
-            heatmapPlotOptions.borderWidth ||
-            seriesPlotOptions.borderWidth ||
-            attr['stroke-width'];
+                seriesPlotOptions.borderColor, borderWidth = (point && point.options.borderWidth) ||
+                seriesOptions.borderWidth ||
+                heatmapPlotOptions.borderWidth ||
+                seriesPlotOptions.borderWidth ||
+                attr['stroke-width'];
         // Apply lineColor, or set it to default series color.
         attr.stroke = ((point && point.marker && point.marker.lineColor) ||
             (seriesOptions.marker && seriesOptions.marker.lineColor) ||
@@ -220,7 +239,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
             brightness = stateOptions.brightness;
             attr.fill =
                 stateOptions.color ||
-                H.color(attr.fill).brighten(brightness || 0).get();
+                Color.parse(attr.fill).brighten(brightness || 0).get();
             attr.stroke = stateOptions.lineColor;
         }
         return attr;
@@ -234,7 +253,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
         if (series.options.clip !== false || animation) {
             series.markerGroup
                 .clip((animation || series.clipBox) && series.sharedClipKey ?
-                    chart[series.sharedClipKey] :
+                    chart.sharedClips[series.sharedClipKey] :
                     chart.clipRect);
         }
     };
@@ -242,17 +261,15 @@ var HeatmapSeries = /** @class */ (function (_super) {
      * @private
      */
     HeatmapSeries.prototype.translate = function () {
-        var series = this, options = series.options, symbol = options.marker && options.marker.symbol || '',
-            shape = symbols[symbol] ? symbol : 'rect', options = series.options,
-            hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
+        var series = this, options = series.options, symbol = options.marker && options.marker.symbol || 'rect',
+            shape = symbols[symbol] ? symbol : 'rect', hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var pointAttr, sizeDiff, hasImage, cellAttr = point.getCellAttributes(), shapeArgs = {
-                x: Math.min(cellAttr.x1, cellAttr.x2),
-                y: Math.min(cellAttr.y1, cellAttr.y2),
-                width: Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
-                height: Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0)
-            };
+            var pointAttr, sizeDiff, hasImage, cellAttr = point.getCellAttributes(), shapeArgs = {};
+            shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
+            shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
+            shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
+            shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
             hasImage = point.hasImage =
                 (point.marker && point.marker.symbol || symbol || '')
                     .indexOf('url') === 0;
@@ -313,7 +330,11 @@ var HeatmapSeries = /** @class */ (function (_super) {
          */
         animation: false,
         /**
-         * The border width for each heat map item.
+         * The border radius for each heatmap item.
+         */
+        borderRadius: 0,
+        /**
+         * The border width for each heatmap item.
          */
         borderWidth: 0,
         /**
@@ -374,10 +395,12 @@ var HeatmapSeries = /** @class */ (function (_super) {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        nullColor: palette.neutralColor3,
+        nullColor: "#f7f7f7" /* neutralColor3 */,
         dataLabels: {
             formatter: function () {
-                return this.point.value;
+                var numberFormatter = this.series.chart.numberFormatter;
+                var value = this.point.value;
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle',
@@ -558,26 +581,20 @@ extend(HeatmapSeries.prototype, {
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
     axisTypes: colorMapSeriesMixin.axisTypes,
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
     directTouch: true,
     /**
      * @private
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    /**
-     * @ignore
-     * @deprecated
-     */
-    getBox: noop,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: Series.prototype.getSymbol,
-    hasPointSpecificOptions: true,
     parallelArrays: colorMapSeriesMixin.parallelArrays,
     pointArrayMap: ['y', 'value'],
     pointClass: HeatmapPoint,
     trackerGroups: colorMapSeriesMixin.trackerGroups
 });
+ColorMapComposition.compose(HeatmapSeries);
 SeriesRegistry.registerSeriesType('heatmap', HeatmapSeries);
 /* *
  *

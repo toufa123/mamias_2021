@@ -34,9 +34,12 @@ import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
+import U from '../../Core/Utilities.js';
+
+var extend = U.extend;
 /* *
  *
- *  Declarations
+ *  Class
  *
  * */
 var XRangePoint = /** @class */ (function (_super) {
@@ -51,11 +54,9 @@ var XRangePoint = /** @class */ (function (_super) {
          * */
         _this.options = void 0;
         _this.series = void 0;
-        _this.tooltipDateKeys = ['x', 'x2'];
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      * Static properties
@@ -78,8 +79,8 @@ var XRangePoint = /** @class */ (function (_super) {
      */
     XRangePoint.getColorByCategory = function (series, point) {
         var colors = series.options.colors || series.chart.options.colors, colorCount = colors ?
-            colors.length :
-            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount,
+                colors.length :
+                series.chart.options.chart.colorCount, colorIndex = point.y % colorCount,
             color = colors && colors[colorIndex];
         return {
             colorIndex: colorIndex,
@@ -172,6 +173,10 @@ var XRangePoint = /** @class */ (function (_super) {
     };
     return XRangePoint;
 }(ColumnSeries.prototype.pointClass));
+extend(XRangePoint.prototype, {
+    ttBelow: false,
+    tooltipDateKeys: ['x', 'x2']
+});
 /* *
  *
  *  Default Export

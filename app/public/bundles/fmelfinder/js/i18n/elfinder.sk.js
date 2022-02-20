@@ -2,7 +2,7 @@
  * Slovak translation
  * @author RobiNN <kelcakrobo@gmail.com>
  * @author Jakub Ďuraš <jkblmr@gmail.com>
- * @version 2020-03-15
+ * @version 2021-06-10
  */
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -14,22 +14,22 @@
 	}
 }(this, function(elFinder) {
 	elFinder.prototype.i18.sk = {
-		translator : 'RobiNN &lt;kelcakrobo@gmail.com&gt;, Jakub Ďuraš &lt;jkblmr@gmail.com&gt;',
-		language   : 'Slovenčina',
-		direction  : 'ltr',
-		dateFormat : 'd.m.Y H:i', // will show like: 15.03.2020 16:42
-		fancyDateFormat : '$1 H:i', // will show like: Dnes 16:42
-		nonameDateFormat : 'ymd-His', // noname upload will show like: 200315-164238
-		messages   : {
+        translator: 'RobiNN &lt;kelcakrobo@gmail.com&gt;, Jakub Ďuraš &lt;jkblmr@gmail.com&gt;',
+        language: 'Slovenčina',
+        direction: 'ltr',
+        dateFormat: 'd.m.Y H:i', // will show like: 10.06.2021 23:35
+        fancyDateFormat: '$1 H:i', // will show like: Dnes 23:35
+        nonameDateFormat: 'ymd-His', // noname upload will show like: 210610-233522
+        messages: {
 
-			/********************************** errors **********************************/
-			'error'                : 'Chyba',
-			'errUnknown'           : 'Neznáma chyba.',
-			'errUnknownCmd'        : 'Neznámy príkaz.',
-			'errJqui'              : 'Nesprávna jQuery UI konfigurácia. Selectable, draggable a droppable musia byť načítané.',
-			'errNode'              : 'elFinder vyžaduje vytvorenie DOM elementu.',
-			'errURL'               : 'Nesprávna elFinder konfigurácia! URL nie je definovaná.',
-			'errAccess'            : 'Prístup zamietnutý.',
+            /********************************** errors **********************************/
+            'error': 'Chyba',
+            'errUnknown': 'Neznáma chyba.',
+            'errUnknownCmd': 'Neznámy príkaz.',
+            'errJqui': 'Nesprávna jQuery UI konfigurácia. Selectable, draggable a droppable musia byť načítané.',
+            'errNode': 'elFinder vyžaduje vytvorenie DOM elementu.',
+            'errURL': 'Nesprávna elFinder konfigurácia! URL nie je definovaná.',
+            'errAccess': 'Prístup zamietnutý.',
 			'errConnect'           : 'Nepodarilo sa pripojiť do backendu.',
 			'errAbort'             : 'Spojenie bolo prerušené.',
 			'errTimeout'           : 'Časový limit vypršal.',
@@ -106,26 +106,27 @@
 			'errArchiveExec'       : 'Chyba pri archivácii súborov: "$1"',
 			'errExtractExec'       : 'Chyba pri extrahovaní súborov: "$1"',
 			'errNetUnMount'        : 'Nepodarilo sa odpojiť', // from v2.1 added 30.04.2012
-			'errConvUTF8'          : 'Nie je prevoditeľný na UTF-8', // from v2.1 added 08.04.2014
-			'errFolderUpload'      : 'Vyskúšajte moderný prehliadač, ak chcete nahrať priečinok.', // from v2.1 added 26.6.2015
-			'errSearchTimeout'     : 'Vypršal časový limit pri hľadaní "$1". Výsledok vyhľadávania je čiastočný.', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : 'Opätovné povolenie je potrebné.', // from v2.1.10 added 24.3.2016
-			'errMaxTargets'        : 'Maximálny počet voliteľných položiek je $1.', // from v2.1.17 added 17.10.2016
-			'errRestore'           : 'Nepodarilo sa obnoviť z koša. Cieľ obnovenia nie je možné identifikovať.', // from v2.1.24 added 3.5.2017
-			'errEditorNotFound'    : 'Editor tohto typu súboru nebol nájdený.', // from v2.1.25 added 23.5.2017
-			'errServerError'       : 'Vyskytla sa chyba na strane servera.', // from v2.1.25 added 16.6.2017
-			'errEmpty'             : 'Nepodarilo sa vyprázdniť priečinok "$1".', // from v2.1.25 added 22.6.2017
-			'moreErrors'           : 'Existujú ešte ďalšie $1 chyby.', // from v2.1.44 added 9.12.2018
+            'errConvUTF8': 'Nie je prevoditeľný na UTF-8', // from v2.1 added 08.04.2014
+            'errFolderUpload': 'Vyskúšajte moderný prehliadač, ak chcete nahrať priečinok.', // from v2.1 added 26.6.2015
+            'errSearchTimeout': 'Vypršal časový limit pri hľadaní "$1". Výsledok vyhľadávania je čiastočný.', // from v2.1 added 12.1.2016
+            'errReauthRequire': 'Opätovné povolenie je potrebné.', // from v2.1.10 added 24.3.2016
+            'errMaxTargets': 'Maximálny počet voliteľných položiek je $1.', // from v2.1.17 added 17.10.2016
+            'errRestore': 'Nepodarilo sa obnoviť z koša. Cieľ obnovenia nie je možné identifikovať.', // from v2.1.24 added 3.5.2017
+            'errEditorNotFound': 'Editor tohto typu súboru nebol nájdený.', // from v2.1.25 added 23.5.2017
+            'errServerError': 'Vyskytla sa chyba na strane servera.', // from v2.1.25 added 16.6.2017
+            'errEmpty': 'Nepodarilo sa vyprázdniť priečinok "$1".', // from v2.1.25 added 22.6.2017
+            'moreErrors': 'Existujú ešte ďalšie $1 chyby.', // from v2.1.44 added 9.12.2018
+            'errMaxMkdirs': 'Môžete vytvoriť až $1 priečinkov naraz.', // from v2.1.58 added 20.6.2021
 
-			/******************************* commands names ********************************/
-			'cmdarchive'   : 'Vytvoriť archív',
-			'cmdback'      : 'Späť',
-			'cmdcopy'      : 'Kopírovať',
-			'cmdcut'       : 'Vystrihnúť',
-			'cmddownload'  : 'Stiahnuť',
-			'cmdduplicate' : 'Duplikovať',
-			'cmdedit'      : 'Upraviť súbor',
-			'cmdextract'   : 'Extrahovať súbory z archívu',
+            /******************************* commands names ********************************/
+            'cmdarchive': 'Vytvoriť archív',
+            'cmdback': 'Späť',
+            'cmdcopy': 'Kopírovať',
+            'cmdcut': 'Vystrihnúť',
+            'cmddownload': 'Stiahnuť',
+            'cmdduplicate': 'Duplikovať',
+            'cmdedit': 'Upraviť súbor',
+            'cmdextract': 'Extrahovať súbory z archívu',
 			'cmdforward'   : 'Ďalej',
 			'cmdgetfile'   : 'Vybrať súbory',
 			'cmdhelp'      : 'O tomto softvéri',

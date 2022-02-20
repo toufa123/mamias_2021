@@ -27,25 +27,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
-
 var animObject = A.animObject;
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import WindbarbPoint from './WindbarbPoint.js';
-
 /**
  * @private
  * @class
@@ -55,7 +49,6 @@ import WindbarbPoint from './WindbarbPoint.js';
  */
 var WindbarbSeries = /** @class */ (function (_super) {
     __extends(WindbarbSeries, _super);
-
     function WindbarbSeries() {
         /* *
          *
@@ -73,7 +66,6 @@ var WindbarbSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      * Static functions
@@ -179,21 +171,6 @@ var WindbarbSeries = /** @class */ (function (_super) {
         }
         return path;
     };
-    WindbarbSeries.prototype.translate = function () {
-        var beaufortFloor = this.beaufortFloor, beaufortName = this.beaufortName;
-        OnSeriesMixin.translate.call(this);
-        this.points.forEach(function (point) {
-            var level = 0;
-            // Find the beaufort level (zero based)
-            for (; level < beaufortFloor.length; level++) {
-                if (beaufortFloor[level] > point.value) {
-                    break;
-                }
-            }
-            point.beaufortLevel = level - 1;
-            point.beaufort = beaufortName[level - 1];
-        });
-    };
     WindbarbSeries.prototype.drawPoints = function () {
         var chart = this.chart, yAxis = this.yAxis, inverted = chart.inverted,
             shapeOffset = this.options.vectorLength / 2;
@@ -202,7 +179,7 @@ var WindbarbSeries = /** @class */ (function (_super) {
             // Check if it's inside the plot area, but only for the X
             // dimension.
             if (this.options.clip === false ||
-                chart.isInsidePlot(plotX, 0, false)) {
+                chart.isInsidePlot(plotX, 0)) {
                 // Create the graphic the first time
                 if (!point.graphic) {
                     point.graphic = this.chart.renderer
@@ -256,6 +233,14 @@ var WindbarbSeries = /** @class */ (function (_super) {
     WindbarbSeries.prototype.getExtremes = function () {
         return {};
     };
+    WindbarbSeries.prototype.shouldShowTooltip = function (plotX, plotY, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        options.ignoreX = this.chart.inverted;
+        options.ignoreY = !options.ignoreX;
+        return _super.prototype.shouldShowTooltip.call(this, plotX, plotY, options);
+    };
     /**
      * Wind barbs are a convenient way to represent wind speed and direction in
      * one graphical form. Wind direction is given by the stem direction, and
@@ -277,7 +262,7 @@ var WindbarbSeries = /** @class */ (function (_super) {
         /**
          * Data grouping options for the wind barbs. In Highcharts, this
          * requires the `modules/datagrouping.js` module to be loaded. In
-         * Highstock, data grouping is included.
+         * Highcharts Stock, data grouping is included.
          *
          * @sample  highcharts/plotoptions/windbarb-datagrouping
          *          Wind barb with data grouping
@@ -364,21 +349,35 @@ var WindbarbSeries = /** @class */ (function (_super) {
     });
     return WindbarbSeries;
 }(ColumnSeries));
+OnSeriesComposition.compose(WindbarbSeries);
 extend(WindbarbSeries.prototype, {
-    pointArrayMap: ['value', 'direction'],
-    parallelArrays: ['x', 'value', 'direction'],
+    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
+        24.5, 28.5, 32.7],
     beaufortName: ['Calm', 'Light air', 'Light breeze',
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
         'Violent storm', 'Hurricane'],
-    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-        24.5, 28.5, 32.7],
+    parallelArrays: ['x', 'value', 'direction'],
+    pointArrayMap: ['value', 'direction'],
+    pointClass: WindbarbPoint,
     trackerGroups: ['markerGroup'],
-    getPlotBox: OnSeriesMixin.getPlotBox,
-    // Don't invert the marker group (#4960)
-    invertGroups: noop
+    invertGroups: noop,
+    translate: function () {
+        var beaufortFloor = this.beaufortFloor, beaufortName = this.beaufortName;
+        OnSeriesComposition.translate.call(this);
+        this.points.forEach(function (point) {
+            var level = 0;
+            // Find the beaufort level (zero based)
+            for (; level < beaufortFloor.length; level++) {
+                if (beaufortFloor[level] > point.value) {
+                    break;
+                }
+            }
+            point.beaufortLevel = level - 1;
+            point.beaufort = beaufortName[level - 1];
+        });
+    }
 });
-WindbarbSeries.prototype.pointClass = WindbarbPoint;
 /* *
  *
  * Registry

@@ -1,11 +1,15 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  * @module highcharts/themes/high-contrast-light
  * @requires highcharts
  *
- * (c) 2009-2019 Highsoft AS
+ * (c) 2009-2021 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/HighContrastLight.js';
+import H from '../../Core/Globals.js';
+import HighContrastLightTheme from '../../Extensions/Themes/HighContrastLight.js';
+
+H.theme = HighContrastLightTheme.options;
+HighContrastLightTheme.apply();

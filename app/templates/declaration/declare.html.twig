@@ -16,13 +16,17 @@
     <link href="{{ asset('assets/plugins/select2/css/select2.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/plugins/bootstrap-select/css/bootstrap-select.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/bootstrap-touchspin/css/jquery.bootstrap-touchspin.min.css') }}"
+    <link href="{{ asset('assets/plugins/bootstrap-touchspin/css/jquery.bootstrap-touchspin.css') }}"
           rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"
           type="text/css"/>
+    <link href="{{ asset('assets/leaflet/leaflet.awesome-markers.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/leaflet/all.css') }}" rel="stylesheet" type="text/css"/>
     <script src="{{ asset('assets/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('assets/leaflet/Leaflet.Coordinates-0.1.5.min.js') }}"></script>
     <script src="{{ asset('assets/leaflet/Leaflet.Sleep.js') }}"></script>
+    <script src="{{ asset('assets/leaflet/leaflet.awesome-markers.js') }}"></script>
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
 
 {% endblock %}
 {% block body %}
@@ -39,20 +43,6 @@
                             {{ form_help(form.mamias) }}
                         </div>
                         <div class="col-md-6">
-                            {{ form_errors(form.country) }}
-                            {{ form_widget(form.country, {'placeholder':'choose a country','attr': {'class': 'form-control  select2'}}) }}
-                            {{ form_help(form.country) }}
-                        </div>
-
-                    </div>
-
-                    <div class="row row pt-4">
-                        <div class="col-md-6">
-                            {{ form_errors(form.Location) }}
-                            {{ form_widget(form.Location, {'value':'Coordinates','attr': {'class': 'form-control  text'}}) }}
-                            {{ form_help(form.Location) }}
-                        </div>
-                        <div class="col-md-6">
                             {{ form_errors(form.date_occurence) }}
                             <div class="input-group">
                                 {{ form_widget(form.date_occurence,{'attr': {'placeholder': 'Reporting date (dd/mm/yyyy)', 'id':'geo_occurence_date_occurence' }}) }}
@@ -64,12 +54,29 @@
                         </div>
 
                     </div>
+
+                    <div class="row pt-4">
+                        <div class="col-md-6">
+                            {{ form_errors(form.country) }}
+                            {{ form_widget(form.country, {'placeholder':'choose a country','attr': {'class': 'form-control  select2'}}) }}
+                            {{ form_help(form.country) }}
+
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_errors(form.Location) }}
+                            {{ form_widget(form.Location,{'value':'Coordinates','attr': {'class' : 'form-control  text'}}) }}
+                            {{ form_help(form.Location) }}
+                        </div>
+
+                    </div>
                     <div class="row pt-4">
                         <div class="col-md-12">
-                            {{ form_errors(form.imageFile) }}
-
-                            <div class="form-group m-b-0">
-                                {{ form_widget(form.imageFile) }}
+                            {#  #}
+                            {#   #}
+                            <div class="form-group mb-0">
+                                {{ form_errors(form.imageFile) }}
+                                {{ form_widget(form.imageFile, {'attr': {'class' : 'filestyle'}}) }}
+                                <!--<input type="file" name="geo_occurence[imageFile][file]" data-placeholder="Add Photo" id="geo_occurence_imageFile_file" class="filestyle" data-btnClass="btn-custom" data-iconName="glyphicon glyphicon-inbox" data-buttonText="Add Photo">-->
                             </div>
 
                         </div>
@@ -82,7 +89,7 @@
                         </div>
                         <div class="col-md-6">
                             {{ form_errors(form.nvalues) }}
-                            {{ form_widget(form.nvalues) }}
+                            {{ form_widget(form.nvalues, {'attr': {'type':'text', 'class' : 'vertical-spin'}}) }}
                             {{ form_help(form.nvalues) }}
                         </div>
                     </div>
@@ -123,10 +130,10 @@
 
                     </div>
                     <div class="form-group m-t-20">
-                        <input type="submit" name="form[save]" value="Report" class="btn btn-custom "/>
+                        <input type="submit" name="form[save]" value="Submit" class="btn btn-custom "/>
                         <!--<input type="reset" name="form[reset]" value="Reset" class="btn btn-warning"/>-->
                         <a href="{{ path('declaration') }}"
-                           class="btn btn-custom waves-light waves-effect float-left mx-1">Back to Report</a>
+                           class="btn btn-custom waves-light waves-effect float-left mx-1">Back</a>
                     </div>
                     {{ form_end(form) }}
                 </div> <!-- end card -->
@@ -157,12 +164,21 @@
     <script src="{{ asset('assets/plugins/jquery-quicksearch/jquery.quicksearch.js') }}"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap-filestyle/js/bootstrap-filestyle.js') }}"></script>
     <script src="{{ asset('assets/leaflet/leaflet-locationpicker.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.toast.min.js') }}"></script>
+    <!--<script src="{{ asset('assets/js/jquery.toast.min.js') }}"></script>-->
 
     <script type="text/javascript">
+
+        var AlienMarker = L.AwesomeMarkers.icon({
+            icon: 'alien',
+            prefix: 'fa',
+            stylePrefix: 'far',
+            markerColor: 'blue',
+            iconColor: '#fff'
+        });
 
         var map = L.map('map', {
             sleep: true,
@@ -184,9 +200,9 @@
             labelTemplateLat: "Latitude: {y}",
             labelTemplateLng: "Longitude: {x}"
         }).addTo(map);
-        var marker = L.marker([36.84, 11.58], {draggable: true}).addTo(map);
+        var marker = L.marker([36.84, 11.58], {icon: AlienMarker, draggable: true}).addTo(map);
         marker.on('dragend', function (e) {
-            document.getElementById('geo_occurence_Location').value = marker.getLatLng().lat + ' ' + marker.getLatLng().lng;
+            document.getElementById('geo_occurence_Location').value = marker.getLatLng().lat.toFixed(3) + '  ' + marker.getLatLng().lng.toFixed(3);
 
         });
 
@@ -201,12 +217,12 @@
             clickInput: true,
             orientation: "bottom"
         });
-        $('.custom-file-input').on('change', function (event) {
-            var inputFile = event.currentTarget;
-            $(inputFile).parent()
-                .find('.custom-file-label')
-                .html(inputFile.files[0].name);
+        $(".vertical-spin").TouchSpin({
+            verticalbuttons: true,
+            verticalupclass: 'ion-plus-round',
+            verticaldownclass: 'ion-minus-round'
         });
 
     </script>
 {% endblock %}
+

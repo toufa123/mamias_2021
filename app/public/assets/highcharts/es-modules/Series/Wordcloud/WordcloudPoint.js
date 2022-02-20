@@ -9,6 +9,7 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
+'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -26,20 +27,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 var WordcloudPoint = /** @class */ (function (_super) {
     __extends(WordcloudPoint, _super);
-
     function WordcloudPoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -54,23 +51,23 @@ var WordcloudPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions
      *
      * */
-    WordcloudPoint.prototype.shouldDraw = function () {
-        var point = this;
-        return !point.isNull;
-    };
     WordcloudPoint.prototype.isValid = function () {
         return true;
     };
     return WordcloudPoint;
 }(ColumnSeries.prototype.pointClass));
 extend(WordcloudPoint.prototype, {
-    draw: DrawPointMixin.drawPoint,
     weight: 1
 });
+DrawPointComposition.compose(WordcloudPoint);
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default WordcloudPoint;

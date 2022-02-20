@@ -27,13 +27,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import palette from '../../../Core/Color/Palette.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
 var _a = SeriesRegistry.seriesTypes, ATRIndicator = _a.atr, SMAIndicator = _a.sma;
 import U from '../../../Core/Utilities.js';
+import StockChart from '../../../Core/Chart/StockChart.js';
 
-var correctFloat = U.correctFloat, isArray = U.isArray, extend = U.extend, merge = U.merge, objectEach = U.objectEach;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, isArray = U.isArray, extend = U.extend, merge = U.merge,
+    objectEach = U.objectEach;
 /* eslint-disable require-jsdoc */
 
 // Utils:
@@ -62,7 +63,6 @@ function createPointObj(mainSeries, index, close) {
  */
 var SupertrendIndicator = /** @class */ (function (_super) {
     __extends(SupertrendIndicator, _super);
-
     function SupertrendIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
@@ -76,7 +76,6 @@ var SupertrendIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -85,13 +84,24 @@ var SupertrendIndicator = /** @class */ (function (_super) {
     SupertrendIndicator.prototype.init = function () {
         var options, parentOptions;
         SMAIndicator.prototype.init.apply(this, arguments);
-        options = this.options;
-        parentOptions = this.linkedParent.options;
-        // Indicator cropThreshold has to be equal linked series one
-        // reduced by period due to points comparison in drawGraph method
-        // (#9787)
-        options.cropThreshold = (parentOptions.cropThreshold -
-            (options.params.period - 1));
+        var indicator = this;
+        // Only after series are linked add some additional logic/properties.
+        var unbinder = addEvent(StockChart, 'afterLinkSeries', function () {
+            // Protection for a case where the indicator is being updated,
+            // for a brief moment the indicator is deleted.
+            if (indicator.options) {
+                var options_1 = indicator.options;
+                parentOptions = indicator.linkedParent.options;
+                // Indicator cropThreshold has to be equal linked series one
+                // reduced by period due to points comparison in drawGraph
+                // (#9787)
+                options_1.cropThreshold = (parentOptions.cropThreshold -
+                    (options_1.params.period - 1));
+            }
+            unbinder();
+        }, {
+            order: 1
+        });
     };
     SupertrendIndicator.prototype.drawGraph = function () {
         var indicator = this, indicOptions = indicator.options,
@@ -385,6 +395,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
+            index: void 0,
             /**
              * Multiplier for Supertrend Indicator.
              */
@@ -404,7 +415,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: palette.indicatorPositiveLine,
+        risingTrendColor: "#06b535" /* positiveColor */,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -413,7 +424,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: palette.indicatorNegativeLine,
+        fallingTrendColor: "#f21313" /* negativeColor */,
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -431,7 +442,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.neutralColor80,
+                lineColor: "#333333" /* neutralColor80 */,
                 /**
                  * The dash or dot style of the grid lines. For possible
                  * values, see
@@ -453,8 +464,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
 }(SMAIndicator));
 extend(SupertrendIndicator.prototype, {
     nameBase: 'Supertrend',
-    nameComponents: ['multiplier', 'period'],
-    requiredIndicators: ['atr']
+    nameComponents: ['multiplier', 'period']
 });
 SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
 /* *

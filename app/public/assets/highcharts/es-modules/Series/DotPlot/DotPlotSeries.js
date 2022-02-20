@@ -34,15 +34,12 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
-import './DotPlotSymbols.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import '../Column/ColumnSeries.js';
 /* *
@@ -59,7 +56,6 @@ import '../Column/ColumnSeries.js';
  */
 var DotPlotSeries = /** @class */ (function (_super) {
     __extends(DotPlotSeries, _super);
-
     function DotPlotSeries() {
         /* *
          *
@@ -77,7 +73,6 @@ var DotPlotSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
      *
      * Functions

@@ -25,7 +25,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -33,10 +32,11 @@ import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
 
+var MapPointSeries = SeriesRegistry.seriesTypes.mappoint;
+import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 import '../Bubble/BubbleSeries.js';
 import '../Map/MapSeries.js';
 /* *
@@ -53,13 +53,7 @@ import '../Map/MapSeries.js';
  */
 var MapBubbleSeries = /** @class */ (function (_super) {
     __extends(MapBubbleSeries, _super);
-
     function MapBubbleSeries() {
-        /* *
-         *
-         *  Static Properties
-         *
-         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -72,6 +66,17 @@ var MapBubbleSeries = /** @class */ (function (_super) {
         return _this;
     }
 
+    MapBubbleSeries.prototype.translate = function () {
+        MapPointSeries.prototype.translate.call(this);
+        this.getRadii();
+        this.translateBubble();
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    MapBubbleSeries.compose = BubbleSeries.compose;
     /**
      * A map bubble series is a bubble series laid out on top of a map
      * series, where each bubble is tied to a specific map area.
@@ -201,12 +206,15 @@ var MapBubbleSeries = /** @class */ (function (_super) {
 }(BubbleSeries));
 extend(MapBubbleSeries.prototype, {
     type: 'mapbubble',
-    getBox: MapSeries.prototype.getBox,
+    axisTypes: ['colorAxis'],
+    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
+    isCartesian: false,
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
     pointClass: MapBubblePoint,
     setData: MapSeries.prototype.setData,
     setOptions: MapSeries.prototype.setOptions,
+    useMapGeometry: true,
     xyFromShape: true
 });
 SeriesRegistry.registerSeriesType('mapbubble', MapBubbleSeries);

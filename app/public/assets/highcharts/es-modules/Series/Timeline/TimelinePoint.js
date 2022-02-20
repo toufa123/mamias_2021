@@ -29,15 +29,13 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var Series = SeriesRegistry.series, PiePoint = SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-
 var defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *
@@ -46,7 +44,6 @@ var defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.
  * */
 var TimelinePoint = /** @class */ (function (_super) {
     __extends(TimelinePoint, _super);
-
     function TimelinePoint() {
         /* *
          *
@@ -59,7 +56,6 @@ var TimelinePoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -115,7 +111,7 @@ var TimelinePoint = /** @class */ (function (_super) {
                 x2: point.plotX,
                 y2: isNumber(targetDLPos.y) ? targetDLPos.y : dl.y
             }, negativeDistance = ((dl.alignAttr || dl)[direction[0]] <
-            point.series.yAxis.len / 2), path;
+                point.series.yAxis.len / 2), path;
         // Recalculate coords when the chart is inverted.
         if (inverted) {
             coords = {
@@ -165,6 +161,11 @@ var TimelinePoint = /** @class */ (function (_super) {
         if (redraw) {
             series.chart.redraw();
         }
+    };
+    TimelinePoint.prototype.applyOptions = function (options, x) {
+        options = Point.prototype.optionsToObject.call(this, options);
+        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
+        return _super.prototype.applyOptions.call(this, options, x);
     };
     return TimelinePoint;
 }(Series.prototype.pointClass));

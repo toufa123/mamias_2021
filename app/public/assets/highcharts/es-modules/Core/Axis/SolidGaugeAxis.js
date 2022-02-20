@@ -9,10 +9,8 @@
  * */
 'use strict';
 import Color from '../Color/Color.js';
-
 var color = Color.parse;
 import U from '../Utilities.js';
-
 var extend = U.extend, merge = U.merge;
 /**
  * @private
@@ -106,7 +104,6 @@ var SolidGaugeAxis;
             return color;
         }
     };
-
     /* *
      *
      *  Functions
@@ -118,7 +115,6 @@ var SolidGaugeAxis;
     function init(axis) {
         extend(axis, methods);
     }
-
     SolidGaugeAxis.init = init;
 })(SolidGaugeAxis || (SolidGaugeAxis = {}));
 /* *

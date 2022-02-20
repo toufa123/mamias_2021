@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
- * (c) 2009-2019 Highsoft AS
+ * (c) 2009-2021 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -21,14 +21,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Themes/Sunset.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Extensions/Themes/Sunset.js', [_modules['Core/DefaultOptions.js']], function (D) {
         /* *
          *
          *  (c) 2010-2021 Highsoft AS
@@ -43,31 +42,64 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var setOptions = U.setOptions;
-        H.theme = {
-            colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
-            colorAxis: {
-                maxColor: '#60042E',
-                minColor: '#FDD089'
-            },
-            plotOptions: {
-                map: {
-                    nullColor: '#fefefc'
+        var setOptions = D.setOptions;
+        /* *
+         *
+         *  Theme
+         *
+         * */
+        var SunsetTheme;
+        (function (SunsetTheme) {
+            /* *
+             *
+             *  Constants
+             *
+             * */
+            SunsetTheme.options = {
+                colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
+                colorAxis: {
+                    maxColor: '#60042E',
+                    minColor: '#FDD089'
+                },
+                plotOptions: {
+                    map: {
+                        nullColor: '#fefefc'
+                    }
+                },
+                navigator: {
+                    series: {
+                        color: '#FF7F79',
+                        lineColor: '#A0446E'
+                    }
                 }
-            },
-            navigator: {
-                series: {
-                    color: '#FF7F79',
-                    lineColor: '#A0446E'
-                }
+            };
+
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /**
+             * Apply the theme.
+             */
+            function apply() {
+                setOptions(SunsetTheme.options);
             }
-        };
-        // Apply the theme
-        setOptions(H.theme);
 
+            SunsetTheme.apply = apply;
+        })(SunsetTheme || (SunsetTheme = {}));
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+
+        return SunsetTheme;
     });
-    _registerModule(_modules, 'masters/themes/sunset.src.js', [], function () {
+    _registerModule(_modules, 'masters/themes/sunset.src.js', [_modules['Core/Globals.js'], _modules['Extensions/Themes/Sunset.js']], function (H, SunsetTheme) {
 
+        H.theme = SunsetTheme.options;
+        SunsetTheme.apply();
 
     });
 }));

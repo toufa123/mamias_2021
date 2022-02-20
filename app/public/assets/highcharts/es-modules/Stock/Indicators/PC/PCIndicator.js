@@ -27,16 +27,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import palette from '../../../Core/Color/Palette.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import AU from '../ArrayUtilities.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 
 var merge = U.merge, extend = U.extend;
-var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /* *
  *
  *  Class
@@ -53,8 +52,12 @@ var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  */
 var PCIndicator = /** @class */ (function (_super) {
     __extends(PCIndicator, _super);
-
     function PCIndicator() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
         *
@@ -66,7 +69,6 @@ var PCIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-
     /* *
     *
     *  Functions
@@ -84,7 +86,7 @@ var PCIndicator = /** @class */ (function (_super) {
         for (i = period; i <= yValLen; i++) {
             date = xVal[i - 1];
             slicedY = yVal.slice(i - period, i);
-            extremes = getArrayExtremes(slicedY, low, high);
+            extremes = AU.getArrayExtremes(slicedY, low, high);
             TL = extremes[1];
             BL = extremes[0];
             ML = (TL + BL) / 2;
@@ -121,6 +123,7 @@ var PCIndicator = /** @class */ (function (_super) {
          * @excluding index
          */
         params: {
+            index: void 0,
             period: 20
         },
         lineWidth: 1,
@@ -132,7 +135,7 @@ var PCIndicator = /** @class */ (function (_super) {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[2],
+                lineColor: Palettes.colors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -147,7 +150,7 @@ var PCIndicator = /** @class */ (function (_super) {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[8],
+                lineColor: Palettes.colors[8],
                 /**
                  * Pixel width of the line.
                  */
@@ -161,16 +164,13 @@ var PCIndicator = /** @class */ (function (_super) {
     return PCIndicator;
 }(SMAIndicator));
 extend(PCIndicator.prototype, {
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    drawGraph: MultipleLinesMixin.drawGraph,
-    toYData: MultipleLinesMixin.toYData,
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
     nameBase: 'Price Channel',
     nameComponents: ['period'],
     linesApiNames: ['topLine', 'bottomLine'],
-    translate: MultipleLinesMixin.translate
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(PCIndicator);
 SeriesRegistry.registerSeriesType('pc', PCIndicator);
 /* *
  *

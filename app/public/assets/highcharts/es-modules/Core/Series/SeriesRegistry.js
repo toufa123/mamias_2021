@@ -9,9 +9,9 @@
  * */
 'use strict';
 import H from '../Globals.js';
-import O from '../Options.js';
+import D from '../DefaultOptions.js';
 
-var defaultOptions = O.defaultOptions;
+var defaultOptions = D.defaultOptions;
 import Point from './Point.js';
 import U from '../Utilities.js';
 
@@ -25,13 +25,17 @@ var SeriesRegistry;
 (function (SeriesRegistry) {
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
-    SeriesRegistry.seriesTypes = {};
+    /**
+     * @internal
+     * @todo Move `Globals.seriesTypes` code to her.
+     */
+    SeriesRegistry.seriesTypes = H.seriesTypes;
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
 
@@ -58,9 +62,7 @@ var SeriesRegistry;
         }
         return series;
     }
-
     SeriesRegistry.getSeries = getSeries;
-
     /**
      * Registers class pattern of a series.
      *
@@ -77,9 +79,7 @@ var SeriesRegistry;
         }
         SeriesRegistry.seriesTypes[seriesType] = seriesClass;
     }
-
     SeriesRegistry.registerSeriesType = registerSeriesType;
-
     /**
      * Old factory to create new series prototypes.
      *
@@ -118,25 +118,16 @@ var SeriesRegistry;
         SeriesRegistry.seriesTypes[type].prototype.type = type;
         // Create the point class if needed
         if (pointProto) {
-            SeriesRegistry.seriesTypes[type].prototype.pointClass =
-                extendClass(Point, pointProto);
+            SeriesRegistry.seriesTypes[type].prototype.pointClass = extendClass(Point, pointProto);
         }
         return SeriesRegistry.seriesTypes[type];
     }
-
     SeriesRegistry.seriesType = seriesType;
     /* eslint-enable valid-jsdoc */
 })(SeriesRegistry || (SeriesRegistry = {}));
 /* *
  *
- *  Compatibility
- *
- * */
-H.seriesType = SeriesRegistry.seriesType;
-H.seriesTypes = SeriesRegistry.seriesTypes;
-/* *
- *
- *  Export
+ *  Default Export
  *
  * */
 export default SeriesRegistry;

@@ -19,10 +19,10 @@ var langOptions = {
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * For more dynamic control over the accessibility functionality, see
-     * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
-     * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter),
+     * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter),
+     * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * and
-     * [accessibility.screenReaderSectionFormatter](#accessibility.screenReaderSectionFormatter).
+     * [accessibility.screenReaderSection.beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
      *
      * @since        6.0.6
      * @optionparent lang.accessibility
@@ -68,7 +68,7 @@ var langOptions = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information.',
+            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
             afterRegionLabel: '',
             /**
              * Language options for annotation descriptions.
@@ -104,7 +104,7 @@ var langOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
             legendLabel: 'Chart legend: {legendTitle}',
             legendItem: 'Show {itemName}'
         },
@@ -248,8 +248,7 @@ var langOptions = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'View chart menu',
-            exportRegionLabel: 'Chart menu'
+            menuButtonLabel: 'View chart menu, {chartTitle}'
         },
         /**
          * Lang configuration for different series types. For more dynamic

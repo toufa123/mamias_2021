@@ -1,9 +1,9 @@
 /**
- * @license Highstock JS v9.0.0 (2021-02-02)
+ * @license Highstock JS v9.3.0 (2021-10-21)
  *
  * Drag-panes module
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  * Author: Kacper Madej
  *
  * License: www.highcharts.com/license
@@ -24,14 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/DragPanes.js', [_modules['Core/Globals.js'], _modules['Core/Axis/Axis.js'], _modules['Core/Color/Palette.js'], _modules['Core/Pointer.js'], _modules['Core/Utilities.js']], function (H, Axis, palette, Pointer, U) {
+    _registerModule(_modules, 'Extensions/DragPanes.js', [_modules['Core/Globals.js'], _modules['Core/Axis/Axis.js'], _modules['Core/Axis/AxisDefaults.js'], _modules['Core/Pointer.js'], _modules['Core/Utilities.js']], function (H, Axis, AxisDefaults, Pointer, U) {
         /* *
          *
          *  Plugin for resizing axes / panes in a chart.
@@ -53,6 +52,11 @@
             objectEach = U.objectEach,
             relativeLength = U.relativeLength,
             wrap = U.wrap;
+        /* *
+         *
+         *  Class
+         *
+         * */
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The AxisResizer class.
@@ -259,15 +263,15 @@
                     axesGroup.forEach(function (axisInfo, i) {
                         // Axes given as array index, axis object or axis id
                         var axis = isNumber(axisInfo) ?
-                            // If it's a number - it's an index
-                            chart.yAxis[axisInfo] :
-                            (
-                                // If it's first elem. in first group
-                                (!isNext && !i) ?
-                                    // then it's an Axis object
-                                    axisInfo :
-                                    // else it should be an id
-                                    chart.get(axisInfo)),
+                                // If it's a number - it's an index
+                                chart.yAxis[axisInfo] :
+                                (
+                                    // If it's first elem. in first group
+                                    (!isNext && !i) ?
+                                        // then it's an Axis object
+                                        axisInfo :
+                                        // else it should be an id
+                                        chart.get(axisInfo)),
                             axisOptions = axis && axis.options,
                             optionsToUpdate = {},
                             hDelta = 0,
@@ -472,7 +476,7 @@
                      * @type     {Highcharts.ColorString}
                      * @requires modules/drag-panes
                      */
-                    lineColor: palette.neutralColor20,
+                    lineColor: "#cccccc" /* neutralColor20 */,
                     /**
                      * Dash style of the control line.
                      *
@@ -569,7 +573,7 @@
                 proceed.apply(this, Array.prototype.slice.call(arguments, 1));
             }
         });
-        merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+        merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
         H.AxisResizer = AxisResizer;
 
         return H.AxisResizer;

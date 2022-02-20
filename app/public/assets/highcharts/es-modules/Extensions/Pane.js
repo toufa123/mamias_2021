@@ -9,22 +9,20 @@
  * */
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
+import CU from '../Series/CenteredUtilities.js';
 import H from '../Core/Globals.js';
-import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
- * In the future, this can be extended to basic Highcharts and Highstock.
+ * In the future, this can be extended to basic Highcharts and Highcharts Stock.
  *
  * @private
  * @class
@@ -160,7 +158,7 @@ var Pane = /** @class */ (function () {
              * @since   2.3.0
              * @product highcharts
              */
-            borderColor: palette.neutralColor20,
+            borderColor: "#cccccc" /* neutralColor20 */,
             /**
              * The background color or gradient for the pane.
              *
@@ -174,8 +172,8 @@ var Pane = /** @class */ (function () {
                 linearGradient: {x1: 0, y1: 0, x2: 0, y2: 1},
                 /** @ignore-option */
                 stops: [
-                    [0, palette.backgroundColor],
-                    [1, palette.neutralColor10]
+                    [0, "#ffffff" /* backgroundColor */],
+                    [1, "#e6e6e6" /* neutralColor10 */]
                 ]
             },
             /** @ignore-option */
@@ -203,7 +201,6 @@ var Pane = /** @class */ (function () {
         };
         this.init(options, chart);
     }
-
     /**
      * Initialize the Pane object
      *
@@ -304,7 +301,7 @@ var Pane = /** @class */ (function () {
     Pane.prototype.updateCenter = function (axis) {
         this.center = (axis ||
             this.axis ||
-            {}).center = centeredSeriesMixin.getCenter.call(this);
+            {}).center = CU.getCenter.call(this);
     };
     /**
      * Destroy the pane item
@@ -334,7 +331,6 @@ var Pane = /** @class */ (function () {
      */
     Pane.prototype.update = function (options, redraw) {
         merge(true, this.options, options);
-        merge(true, this.chart.options.pane, options); // #9917
         this.setOptions(this.options);
         this.render();
         this.chart.axes.forEach(function (axis) {
@@ -346,7 +342,6 @@ var Pane = /** @class */ (function () {
     };
     return Pane;
 }());
-
 /**
  * Check whether element is inside or outside pane.
  * @private
@@ -358,7 +353,6 @@ var Pane = /** @class */ (function () {
 function isInsidePane(x, y, center) {
     return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) <= center[2] / 2;
 }
-
 Chart.prototype.getHoverPane = function (eventArgs) {
     var chart = this;
     var hoverPane;

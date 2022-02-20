@@ -1,9 +1,9 @@
 /**
- * @license Highmaps JS v9.0.0 (2021-02-02)
+ * @license Highmaps JS v9.3.0 (2021-10-21)
  *
  * Tilemap module
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -23,14 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/Tilemap/TilemapPoint.js', [_modules['Mixins/ColorSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (ColorSeriesModule, SeriesRegistry, U) {
+    _registerModule(_modules, 'Series/Tilemap/TilemapPoint.js', [_modules['Core/Axis/Color/ColorAxisComposition.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (ColorAxisComposition, SeriesRegistry, U) {
         /* *
          *
          *  Tilemaps module
@@ -67,7 +66,6 @@
                 d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
             };
         })();
-        var colorPointMixin = ColorSeriesModule.colorPointMixin;
         var Point = SeriesRegistry.series.prototype.pointClass,
             HeatmapPoint = SeriesRegistry.seriesTypes.heatmap.prototype.pointClass;
         var extend = U.extend;
@@ -78,7 +76,6 @@
          * */
         var TilemapPoint = /** @class */ (function (_super) {
             __extends(TilemapPoint, _super);
-
             function TilemapPoint() {
                 /* *
                  *
@@ -94,7 +91,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -114,7 +110,7 @@
         }(HeatmapPoint));
         extend(TilemapPoint.prototype, {
             setState: Point.prototype.setState,
-            setVisible: colorPointMixin.setVisible
+            setVisible: ColorAxisComposition.pointSetVisible
         });
         /* *
          *
@@ -143,7 +139,6 @@
             ScatterSeries = _a.scatter;
         var clamp = U.clamp,
             pick = U.pick;
-
         /**
          * Utility func to get padding definition from tile size division
          * @private
@@ -162,7 +157,6 @@
                 yPad: (options.rowsize || 1) / -yDiv
             };
         }
-
         /* *
          *
          *  Registry
@@ -206,7 +200,7 @@
                     series.generatePoints();
                     series.points.forEach(function (point) {
                         var x1 = clamp(Math.floor(xAxis.len -
-                            xAxis.translate(point.x - xPad * 2, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
+                                xAxis.translate(point.x - xPad * 2, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
                             x2 = clamp(Math.floor(xAxis.len -
                                 xAxis.translate(point.x - xPad, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
                             x3 = clamp(Math.floor(xAxis.len -
@@ -299,7 +293,7 @@
                     series.generatePoints();
                     series.points.forEach(function (point) {
                         var x1 = clamp(Math.round(xAxis.len -
-                            xAxis.translate(point.x - xPad, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
+                                xAxis.translate(point.x - xPad, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
                             x2 = clamp(Math.round(xAxis.len -
                                 xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
                             x3 = clamp(Math.round(xAxis.len -
@@ -378,7 +372,7 @@
                     series.generatePoints();
                     series.points.forEach(function (point) {
                         var x = clamp(Math.round(xAxis.len -
-                            xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
+                                xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len),
                             y = clamp(Math.round(yAxis.translate(point.y, 0, 1, 0, 0)), -yAxis.len, 2 * yAxis.len),
                             pointPadding = seriesPointPadding,
                             hasPerPointPadding = false;
@@ -458,7 +452,7 @@
 
         return TilemapShapes;
     });
-    _registerModule(_modules, 'Series/Tilemap/TilemapComposition.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Series/Tilemap/TilemapComposition.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Utilities.js']], function (Axis, U) {
         /* *
          *
          *  Tilemaps module
@@ -486,7 +480,7 @@
         // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
         // series and adds the largest padding required. If no series has this function
         // defined, we add nothing.
-        addEvent(H.Axis, 'afterSetAxisTranslation', function () {
+        addEvent(Axis, 'afterSetAxisTranslation', function () {
             if (this.recomputingForTilemap || this.coll === 'colorAxis') {
                 return;
             }
@@ -577,7 +571,6 @@
          */
         var TilemapSeries = /** @class */ (function (_super) {
             __extends(TilemapSeries, _super);
-
             function TilemapSeries() {
                 /* *
                  *
@@ -598,7 +591,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions

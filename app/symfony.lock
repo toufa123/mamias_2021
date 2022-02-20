@@ -12,6 +12,9 @@
             "config/routes/ch_cookie_consent.yaml"
         ]
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "1.12",
         "recipe": {
@@ -29,6 +32,12 @@
     },
     "doctrine/reflection": {
         "version": "1.2.2"
+    },
+    "edsdk/file-uploader-server-php": {
+        "version": "1.0.34"
+    },
+    "edsdk/flmngr-server-php": {
+        "version": "1.0.39"
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.3"

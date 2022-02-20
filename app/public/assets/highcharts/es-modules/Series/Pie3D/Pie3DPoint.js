@@ -27,12 +27,10 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var PiePoint = SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 /* *
  *
@@ -47,7 +45,6 @@ var superHaloPath = PiePoint.prototype.haloPath;
  * */
 var Pie3DPoint = /** @class */ (function (_super) {
     __extends(Pie3DPoint, _super);
-
     function Pie3DPoint() {
         /* *
          *
@@ -59,7 +56,6 @@ var Pie3DPoint = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

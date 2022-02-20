@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Dependency wheel module
  *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,14 +23,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/DependencyWheel/DependencyWheelPoint.js', [_modules['Mixins/Nodes.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (NodesMixin, SeriesRegistry, U) {
+    _registerModule(_modules, 'Series/DependencyWheel/DependencyWheelPoint.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
          *  Dependency wheel module
@@ -66,7 +65,7 @@
                 d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
             };
         })();
-        var SankeySeries = SeriesRegistry.seriesTypes.sankey;
+        var SankeyPoint = SeriesRegistry.seriesTypes.sankey.prototype.pointClass;
         var extend = U.extend;
         /* *
          *
@@ -75,7 +74,6 @@
          * */
         var DependencyWheelPoint = /** @class */ (function (_super) {
             __extends(DependencyWheelPoint, _super);
-
             function DependencyWheelPoint() {
                 /* *
                  *
@@ -96,7 +94,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -111,8 +108,8 @@
                 var renderer = this.series.chart.renderer,
                     shapeArgs = this.shapeArgs,
                     upperHalf = this.angle < 0 || this.angle > Math.PI,
-                    start = shapeArgs.start,
-                    end = shapeArgs.end;
+                    start = shapeArgs.start || 0,
+                    end = shapeArgs.end || 0;
                 if (!this.dataLabelPath) {
                     this.dataLabelPath = renderer
                         .arc({
@@ -139,10 +136,7 @@
                 return true;
             };
             return DependencyWheelPoint;
-        }(SankeySeries.prototype.pointClass));
-        extend(DependencyWheelPoint.prototype, {
-            setState: NodesMixin.setNodeState
-        });
+        }(SankeyPoint));
         /* *
          *
          *  Default Export
@@ -208,7 +202,6 @@
          */
         var DependencyWheelSeries = /** @class */ (function (_super) {
             __extends(DependencyWheelSeries, _super);
-
             function DependencyWheelSeries() {
                 /* *
                  *
@@ -230,7 +223,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -240,14 +232,16 @@
             DependencyWheelSeries.prototype.animate = function (init) {
                 if (!init) {
                     var duration = animObject(this.options.animation).duration,
-                        step = (duration / 2) / this.nodes.length;
+                        step_1 = (duration / 2) / this.nodes.length;
                     this.nodes.forEach(function (point, i) {
                         var graphic = point.graphic;
                         if (graphic) {
                             graphic.attr({opacity: 0});
                             setTimeout(function () {
-                                graphic.animate({opacity: 1}, {duration: step});
-                            }, step * i);
+                                if (point.graphic) {
+                                    point.graphic.animate({opacity: 1}, {duration: step_1});
+                                }
+                            }, step_1 * i);
                         }
                     }, this);
                     this.points.forEach(function (point) {
@@ -285,7 +279,6 @@
                         i,
                         links = node.linksFrom.concat(node.linksTo),
                         sliced;
-
                     /**
                      * @private
                      */
@@ -295,7 +288,6 @@
                         }
                         return link.fromNode;
                     }
-
                     // Sort and slice the links to avoid links going out of each
                     // node crossing each other.
                     links.sort(function (a, b) {
@@ -355,57 +347,57 @@
                     // Don't render the nodes if sum is 0 #12453
                     if (node.sum) {
                         var shapeArgs = node.shapeArgs,
-                            centerX = center[0],
-                            centerY = center[1],
+                            centerX_1 = center[0],
+                            centerY_1 = center[1],
                             r = center[2] / 2,
-                            innerR = r - options.nodeWidth,
-                            start = startAngle + factor * shapeArgs.y,
+                            innerR_1 = r - options.nodeWidth,
+                            start = startAngle + factor * (shapeArgs.y || 0),
                             end = startAngle +
-                                factor * (shapeArgs.y + shapeArgs.height);
+                                factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
                         // Middle angle
                         node.angle = start + (end - start) / 2;
                         node.shapeType = 'arc';
                         node.shapeArgs = {
-                            x: centerX,
-                            y: centerY,
+                            x: centerX_1,
+                            y: centerY_1,
                             r: r,
-                            innerR: innerR,
+                            innerR: innerR_1,
                             start: start,
                             end: end
                         };
                         node.dlBox = {
-                            x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
-                            y: centerY + Math.sin((start + end) / 2) * (r + innerR) / 2,
+                            x: centerX_1 + Math.cos((start + end) / 2) * (r + innerR_1) / 2,
+                            y: centerY_1 + Math.sin((start + end) / 2) * (r + innerR_1) / 2,
                             width: 1,
                             height: 1
                         };
                         // Draw the links from this node
                         node.linksFrom.forEach(function (point) {
                             if (point.linkBase) {
-                                var distance;
+                                var distance_1;
                                 var corners = point.linkBase.map(function (top,
                                                                            i) {
                                     var angle = factor * top,
-                                        x = Math.cos(startAngle + angle) * (innerR + 1),
-                                        y = Math.sin(startAngle + angle) * (innerR + 1),
+                                        x = Math.cos(startAngle + angle) * (innerR_1 + 1),
+                                        y = Math.sin(startAngle + angle) * (innerR_1 + 1),
                                         curveFactor = options.curveFactor;
                                     // The distance between the from and to node
                                     // along the perimeter. This affect how curved
                                     // the link is, so that links between neighbours
                                     // don't extend too far towards the center.
-                                    distance = Math.abs(point.linkBase[3 - i] * factor - angle);
-                                    if (distance > Math.PI) {
-                                        distance = 2 * Math.PI - distance;
+                                    distance_1 = Math.abs(point.linkBase[3 - i] * factor - angle);
+                                    if (distance_1 > Math.PI) {
+                                        distance_1 = 2 * Math.PI - distance_1;
                                     }
-                                    distance = distance * innerR;
-                                    if (distance < innerR) {
-                                        curveFactor *= (distance / innerR);
+                                    distance_1 = distance_1 * innerR_1;
+                                    if (distance_1 < innerR_1) {
+                                        curveFactor *= (distance_1 / innerR_1);
                                     }
                                     return {
-                                        x: centerX + x,
-                                        y: centerY + y,
-                                        cpX: centerX + (1 - curveFactor) * x,
-                                        cpY: centerY + (1 - curveFactor) * y
+                                        x: centerX_1 + x,
+                                        y: centerY_1 + y,
+                                        cpX: centerX_1 + (1 - curveFactor) * x,
+                                        cpY: centerY_1 + (1 - curveFactor) * y
                                     };
                                 });
                                 point.shapeArgs = {
@@ -414,7 +406,7 @@
                                         corners[0].x, corners[0].y
                                     ], [
                                         'A',
-                                        innerR, innerR,
+                                        innerR_1, innerR_1,
                                         0,
                                         0,
                                         1,
@@ -426,7 +418,7 @@
                                         corners[2].x, corners[2].y
                                     ], [
                                         'A',
-                                        innerR, innerR,
+                                        innerR_1, innerR_1,
                                         0,
                                         0,
                                         1,

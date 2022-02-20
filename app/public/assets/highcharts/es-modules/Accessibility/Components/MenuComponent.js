@@ -10,19 +10,18 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
+import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
 
-var extend = U.extend;
+var attr = U.attr, extend = U.extend;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+var getChartTitle = ChartUtilities.getChartTitle, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 
-var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
-
+var getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Get the wrapped export button element of a chart.
@@ -34,14 +33,13 @@ var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtiliti
 function getExportMenuButtonElement(chart) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
-
 /**
  * Show the export menu and focus the first item (if exists).
  *
  * @private
  * @function Highcharts.Chart#showExportMenu
  */
-H.Chart.prototype.showExportMenu = function () {
+Chart.prototype.showExportMenu = function () {
     var exportButton = getExportMenuButtonElement(this);
     if (exportButton) {
         var el = exportButton.element;
@@ -54,12 +52,14 @@ H.Chart.prototype.showExportMenu = function () {
  * @private
  * @function Highcharts.Chart#hideExportMenu
  */
-H.Chart.prototype.hideExportMenu = function () {
+Chart.prototype.hideExportMenu = function () {
     var chart = this, exportList = chart.exportDivElements;
     if (exportList && chart.exportContextMenu) {
         // Reset hover states etc.
         exportList.forEach(function (el) {
-            if (el.className === 'highcharts-menu-item' && el.onmouseout) {
+            if (el &&
+                el.className === 'highcharts-menu-item' &&
+                el.onmouseout) {
                 el.onmouseout(getFakeMouseEvent('mouseout'));
             }
         });
@@ -80,14 +80,15 @@ H.Chart.prototype.hideExportMenu = function () {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightExportItem = function (ix) {
-    var listItem = this.exportDivElements && this.exportDivElements[ix], curHighlighted = this.exportDivElements &&
-        this.exportDivElements[this.highlightedExportItemIx], hasSVGFocusSupport;
+Chart.prototype.highlightExportItem = function (ix) {
+    var listItem = this.exportDivElements && this.exportDivElements[ix];
+    var curHighlighted = this.exportDivElements &&
+        this.exportDivElements[this.highlightedExportItemIx];
     if (listItem &&
         listItem.tagName === 'LI' &&
         !(listItem.children && listItem.children.length)) {
         // Test if we have focus support for SVG elements
-        hasSVGFocusSupport = !!(this.renderTo.getElementsByTagName('g')[0] || {}).focus;
+        var hasSVGFocusSupport = !!(this.renderTo.getElementsByTagName('g')[0] || {}).focus;
         // Only focus if we can set focus back to the elements after
         // destroying the menu (#7422)
         if (listItem.focus && hasSVGFocusSupport) {
@@ -111,10 +112,10 @@ H.Chart.prototype.highlightExportItem = function (ix) {
  * @function Highcharts.Chart#highlightLastExportItem
  * @return {boolean}
  */
-H.Chart.prototype.highlightLastExportItem = function () {
-    var chart = this, i;
+Chart.prototype.highlightLastExportItem = function () {
+    var chart = this;
     if (chart.exportDivElements) {
-        i = chart.exportDivElements.length;
+        var i = chart.exportDivElements.length;
         while (i--) {
             if (chart.highlightExportItem(i)) {
                 return true;
@@ -123,7 +124,6 @@ H.Chart.prototype.highlightLastExportItem = function () {
     }
     return false;
 };
-
 /**
  * @private
  * @param {Highcharts.Chart} chart
@@ -160,6 +160,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this.addEvent(chart, 'exportMenuHidden', function () {
             component.onMenuHidden();
         });
+        this.createProxyGroup();
     },
     /**
      * @private
@@ -189,9 +190,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @param {string} stateStr
      */
     setExportButtonExpandedState: function (stateStr) {
-        var button = this.exportButtonProxy;
-        if (button) {
-            button.setAttribute('aria-expanded', stateStr);
+        if (this.exportButtonProxy) {
+            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
         }
     },
     /**
@@ -199,23 +199,33 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * proxy overlay.
      */
     onChartRender: function () {
-        var chart = this.chart, a11yOptions = chart.options.accessibility;
-        // Always start with a clean slate
-        removeElement(this.exportProxyGroup);
-        // Set screen reader properties on export menu
-        if (exportingShouldHaveA11y(chart)) {
-            // Proxy button and group
-            this.exportProxyGroup = this.addProxyGroup(
-                // Wrap in a region div if verbosity is high
-                a11yOptions.landmarkVerbosity === 'all' ? {
-                    'aria-label': chart.langFormat('accessibility.exporting.exportRegionLabel', {chart: chart}),
-                    'role': 'region'
-                } : {});
-            var button = getExportMenuButtonElement(this.chart);
-            this.exportButtonProxy = this.createProxyButton(button, this.exportProxyGroup, {
-                'aria-label': chart.langFormat('accessibility.exporting.menuButtonLabel', {chart: chart}),
-                'aria-expanded': 'false'
+        this.proxyProvider.clearGroup('chartMenu');
+        this.proxyMenuButton();
+    },
+    /**
+     * @private
+     */
+    proxyMenuButton: function () {
+        var chart = this.chart;
+        var proxyProvider = this.proxyProvider;
+        var buttonEl = getExportMenuButtonElement(chart);
+        if (exportingShouldHaveA11y(chart) && buttonEl) {
+            this.exportButtonProxy = proxyProvider.addProxyElement('chartMenu', {click: buttonEl}, {
+                'aria-label': chart.langFormat('accessibility.exporting.menuButtonLabel', {
+                    chart: chart,
+                    chartTitle: getChartTitle(chart)
+                }),
+                'aria-expanded': false
             });
+        }
+    },
+    /**
+     * @private
+     */
+    createProxyGroup: function () {
+        var chart = this.chart;
+        if (chart && this.proxyProvider) {
+            this.proxyProvider.addGroup('chartMenu', 'div');
         }
     },
     /**
@@ -227,17 +237,24 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             // Set tabindex on the menu items to allow focusing by script
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach(function (item) {
-                if (item.tagName === 'LI' &&
-                    !(item.children && item.children.length)) {
-                    item.setAttribute('tabindex', -1);
-                } else {
-                    item.setAttribute('aria-hidden', 'true');
+                if (item) {
+                    if (item.tagName === 'LI' &&
+                        !(item.children && item.children.length)) {
+                        item.setAttribute('tabindex', -1);
+                    } else {
+                        item.setAttribute('aria-hidden', 'true');
+                    }
                 }
             });
             // Set accessibility properties on parent div
-            var parentDiv = exportList[0].parentNode;
-            parentDiv.removeAttribute('aria-hidden');
-            parentDiv.setAttribute('aria-label', chart.langFormat('accessibility.exporting.chartMenuLabel', {chart: chart}));
+            var parentDiv = (exportList[0] && exportList[0].parentNode);
+            if (parentDiv) {
+                attr(parentDiv, {
+                    'aria-hidden': void 0,
+                    'aria-label': chart.langFormat('accessibility.exporting.chartMenuLabel', {chart: chart}),
+                    role: 'list' // Needed for webkit/VO
+                });
+            }
         }
     },
     /**
@@ -273,16 +290,17 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             // Only run exporting navigation if exporting support exists and is
             // enabled on chart
             validate: function () {
-                return chart.exportChart &&
+                return !!chart.exporting &&
                     chart.options.exporting.enabled !== false &&
                     chart.options.exporting.accessibility.enabled !==
                     false;
             },
             // Focus export menu button
             init: function () {
-                var exportBtn = component.exportButtonProxy, exportGroup = chart.exportingGroup;
-                if (exportGroup && exportBtn) {
-                    chart.setFocusToElement(exportGroup, exportBtn);
+                var proxy = component.exportButtonProxy;
+                var svgEl = component.chart.exportingGroup;
+                if (proxy && svgEl) {
+                    chart.setFocusToElement(svgEl, proxy.buttonElement);
                 }
             },
             // Hide the menu
@@ -294,14 +312,15 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     /**
      * @private
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @return {number}
-     * Response code
+     * @return {number} Response code
      */
     onKbdPrevious: function (keyboardNavigationHandler) {
-        var chart = this.chart, a11yOptions = chart.options.accessibility,
-            response = keyboardNavigationHandler.response, i = chart.highlightedExportItemIx || 0;
+        var chart = this.chart;
+        var a11yOptions = chart.options.accessibility;
+        var response = keyboardNavigationHandler.response;
         // Try to highlight prev item in list. Highlighting e.g.
         // separators will fail.
+        var i = chart.highlightedExportItemIx || 0;
         while (i--) {
             if (chart.highlightExportItem(i)) {
                 return response.success;
@@ -317,15 +336,15 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     /**
      * @private
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @return {number}
-     * Response code
+     * @return {number} Response code
      */
     onKbdNext: function (keyboardNavigationHandler) {
-        var chart = this.chart, a11yOptions = chart.options.accessibility,
-            response = keyboardNavigationHandler.response, i = (chart.highlightedExportItemIx || 0) + 1;
+        var chart = this.chart;
+        var a11yOptions = chart.options.accessibility;
+        var response = keyboardNavigationHandler.response;
         // Try to highlight next item in list. Highlighting e.g.
         // separators will fail.
-        for (; i < chart.exportDivElements.length; ++i) {
+        for (var i = (chart.highlightedExportItemIx || 0) + 1; i < chart.exportDivElements.length; ++i) {
             if (chart.highlightExportItem(i)) {
                 return response.success;
             }
@@ -340,12 +359,12 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     /**
      * @private
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @return {number}
-     * Response code
+     * @return {number} Response code
      */
     onKbdClick: function (keyboardNavigationHandler) {
-        var chart = this.chart, curHighlightedItem = chart.exportDivElements[chart.highlightedExportItemIx],
-            exportButtonElement = getExportMenuButtonElement(chart).element;
+        var chart = this.chart;
+        var curHighlightedItem = chart.exportDivElements[chart.highlightedExportItemIx];
+        var exportButtonElement = getExportMenuButtonElement(chart).element;
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);
         } else {

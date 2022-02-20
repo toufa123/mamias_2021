@@ -34,14 +34,13 @@ var __extends = (this && this.__extends) || (function () {
 import Color from '../../Core/Color/Color.js';
 
 var color = Color.parse;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 
-var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
+var colorMapSeriesMixin = ColorMapComposition.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
 
 var noop = H.noop;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column,
@@ -49,10 +48,9 @@ var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSerie
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 
-var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions,
-    updateRootId = TreeSeriesMixin.updateRootId;
+var getColor = TU.getColor, getLevelOptions = TU.getLevelOptions, updateRootId = TU.updateRootId;
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend,
@@ -73,7 +71,6 @@ import './TreemapComposition.js';
  */
 var TreemapSeries = /** @class */ (function (_super) {
     __extends(TreemapSeries, _super);
-
     function TreemapSeries() {
         /* *
          *
@@ -97,7 +94,6 @@ var TreemapSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Function
@@ -222,7 +218,8 @@ var TreemapSeries = /** @class */ (function (_super) {
         // boundaries in treemaps by applying ellipsis overflow.
         // The issue was happening when datalabel's text contained a
         // long sequence of characters without a whitespace.
-        if (!defined(style.textOverflow) &&
+        if (style &&
+            !defined(style.textOverflow) &&
             dataLabel.text &&
             dataLabel.getBBox().width > dataLabel.text.textWidth) {
             dataLabel.css({
@@ -276,7 +273,7 @@ var TreemapSeries = /** @class */ (function (_super) {
     TreemapSeries.prototype.calculateChildrenAreas = function (parent, area) {
         var series = this, options = series.options, mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1], algorithm = pick((series[(level && level.layoutAlgorithm)] &&
-            level.layoutAlgorithm), options.layoutAlgorithm), alternate = options.alternateStartingDirection,
+                level.layoutAlgorithm), options.layoutAlgorithm), alternate = options.alternateStartingDirection,
             childrenValues = [], children;
         // Collect all children which should be included
         children = parent.children.filter(function (n) {
@@ -367,6 +364,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 shouldAnimate = withinAnimationLimit && hasGraphic, shapeArgs = point.shapeArgs;
             // Don't bother with calculate styling if the point is not drawn
             if (point.shouldDraw()) {
+                point.isInside = true;
                 if (borderRadius) {
                     attribs.r = borderRadius;
                 }
@@ -534,7 +532,7 @@ var TreemapSeries = /** @class */ (function (_super) {
         var series = this, setOptionsEvent;
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
+            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
         }
         setOptionsEvent = addEvent(series, 'setOptions', function (event) {
             var options = event.userOptions;
@@ -576,8 +574,8 @@ var TreemapSeries = /** @class */ (function (_super) {
      */
     TreemapSeries.prototype.pointAttribs = function (point, state) {
         var series = this, mapOptionsToLevel = (isObject(series.mapOptionsToLevel) ?
-            series.mapOptionsToLevel :
-            {}), level = point && mapOptionsToLevel[point.node.level] || {}, options = this.options, attr,
+                series.mapOptionsToLevel :
+                {}), level = point && mapOptionsToLevel[point.node.level] || {}, options = this.options, attr,
             stateOptions = (state && options.states[state]) || {}, className = (point && point.getClassName()) || '',
             opacity;
         // Set attributes by precedence. Point trumps level trumps series.
@@ -700,16 +698,15 @@ var TreemapSeries = /** @class */ (function (_super) {
                 var y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
                 var y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
                 // Set point values
-                point.shapeArgs = {
+                var shapeArgs = {
                     x: Math.min(x1, x2),
                     y: Math.min(y1, y2),
                     width: Math.abs(x2 - x1),
                     height: Math.abs(y2 - y1)
                 };
-                point.plotX =
-                    point.shapeArgs.x + (point.shapeArgs.width / 2);
-                point.plotY =
-                    point.shapeArgs.y + (point.shapeArgs.height / 2);
+                point.plotX = shapeArgs.x + (shapeArgs.width / 2);
+                point.plotY = shapeArgs.y + (shapeArgs.height / 2);
+                point.shapeArgs = shapeArgs;
             } else {
                 // Reset visibility
                 delete point.plotX;
@@ -799,8 +796,8 @@ var TreemapSeries = /** @class */ (function (_super) {
     TreemapSeries.prototype.setTreeValues = function (tree) {
         var series = this, options = series.options, idRoot = series.rootNode, mapIdToNode = series.nodeMap,
             nodeRoot = mapIdToNode[idRoot], levelIsConstant = (TreemapUtilities.isBoolean(options.levelIsConstant) ?
-            options.levelIsConstant :
-            true), childrenTotal = 0, children = [], val, point = series.points[tree.i];
+                options.levelIsConstant :
+                true), childrenTotal = 0, children = [], val, point = series.points[tree.i];
         // First give the children some values
         tree.children.forEach(function (child) {
             child = series.setTreeValues(child);
@@ -852,6 +849,12 @@ var TreemapSeries = /** @class */ (function (_super) {
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
+        if (rootId !== '' &&
+            (!rootNode || !rootNode.children.length)) {
+            series.setRootNode('', false);
+            rootId = series.rootNode;
+            rootNode = series.nodeMap[rootId];
+        }
         series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions({
             from: rootNode.level + 1,
@@ -862,12 +865,6 @@ var TreemapSeries = /** @class */ (function (_super) {
                 colorByPoint: options.colorByPoint
             }
         });
-        if (rootId !== '' &&
-            (!rootNode || !rootNode.children.length)) {
-            series.setRootNode('', false);
-            rootId = series.rootNode;
-            rootNode = series.nodeMap[rootId];
-        }
         // Parents of the root node is by default visible
         TreemapUtilities.recursive(series.nodeMap[series.rootNode], function (node) {
             var next = false, p = node.parent;
@@ -960,6 +957,10 @@ var TreemapSeries = /** @class */ (function (_super) {
          */
         allowTraversingTree: false,
         animationLimit: 250,
+        /**
+         * The border radius for each treemap item.
+         */
+        borderRadius: 0,
         /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot
@@ -1327,7 +1328,7 @@ var TreemapSeries = /** @class */ (function (_super) {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: palette.neutralColor10,
+        borderColor: "#e6e6e6" /* neutralColor10 */,
         /**
          * The width of the border surrounding each tree map item.
          */
@@ -1356,7 +1357,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: palette.neutralColor40,
+                borderColor: "#999999" /* neutralColor40 */,
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the
                  * heatmap series is loaded first, otherwise 0.1.
@@ -1389,7 +1390,7 @@ extend(TreemapSeries.prototype, {
     buildKDTree: noop,
     colorKey: 'colorValue',
     directTouch: true,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',
@@ -1401,6 +1402,7 @@ extend(TreemapSeries.prototype, {
         recursive: TreemapUtilities.recursive
     }
 });
+ColorMapComposition.compose(TreemapSeries);
 SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
 /* *
  *
@@ -1457,7 +1459,7 @@ export default TreemapSeries;
  *
  * @type      {Array<number|null|*>}
  * @extends   series.heatmap.data
- * @excluding x, y
+ * @excluding x, y, pointPadding
  * @product   highcharts
  * @apioption series.treemap.data
  */

@@ -25,21 +25,27 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import H from './Globals.js';
-
 var charts = H.charts, doc = H.doc, noop = H.noop, win = H.win;
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
-
 var addEvent = U.addEvent, css = U.css, objectEach = U.objectEach, removeEvent = U.removeEvent;
-/* globals MSPointerEvent, PointerEvent */
+/* *
+ *
+ *  Constants
+ *
+ * */
 // The touches object keeps track of the points being touched at all times
 var touches = {};
 var hasPointerEvent = !!win.PointerEvent;
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 /** @private */
@@ -57,14 +63,13 @@ function getWebkitTouches() {
     });
     return fake;
 }
-
 /** @private */
 function translateMSPointer(e, method, wktype, func) {
-    var p;
+    var chart = charts[Pointer.hoverChartIndex || NaN];
     if ((e.pointerType === 'touch' ||
-        e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[H.hoverChartIndex]) {
+        e.pointerType === e.MSPOINTER_TYPE_TOUCH) && chart) {
+        var p = chart.pointer;
         func(e);
-        p = charts[H.hoverChartIndex].pointer;
         p[method]({
             type: wktype,
             target: e.currentTarget,
@@ -74,6 +79,11 @@ function translateMSPointer(e, method, wktype, func) {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
 /** @private */
 var MSPointer = /** @class */ (function (_super) {
     __extends(MSPointer, _super);
@@ -84,18 +94,21 @@ var MSPointer = /** @class */ (function (_super) {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+    MSPointer.isRequired = function () {
+        return !!(!H.hasTouch && (win.PointerEvent || win.MSPointerEvent));
+    };
+    /* *
+     *
      *  Functions
      *
      * */
     /**
      * Add or remove the MS Pointer specific events
-     *
      * @private
      * @function Highcharts.Pointer#batchMSEvents
-     *
-     * @param {Function} fn
-     *
-     * @return {void}
      */
     MSPointer.prototype.batchMSEvents = function (fn) {
         fn(this.chart.container, hasPointerEvent ? 'pointerdown' : 'MSPointerDown', this.onContainerPointerDown);
@@ -120,10 +133,6 @@ var MSPointer = /** @class */ (function (_super) {
     /**
      * @private
      * @function Highcharts.Pointer#onContainerPointerDown
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     MSPointer.prototype.onContainerPointerDown = function (e) {
         translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
@@ -137,10 +146,6 @@ var MSPointer = /** @class */ (function (_super) {
     /**
      * @private
      * @function Highcharts.Pointer#onContainerPointerMove
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     MSPointer.prototype.onContainerPointerMove = function (e) {
         translateMSPointer(e, 'onContainerTouchMove', 'touchmove', function (e) {
@@ -153,10 +158,6 @@ var MSPointer = /** @class */ (function (_super) {
     /**
      * @private
      * @function Highcharts.Pointer#onDocumentPointerUp
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     MSPointer.prototype.onDocumentPointerUp = function (e) {
         translateMSPointer(e, 'onDocumentTouchEnd', 'touchend', function (e) {
@@ -172,4 +173,9 @@ var MSPointer = /** @class */ (function (_super) {
     };
     return MSPointer;
 }(Pointer));
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default MSPointer;

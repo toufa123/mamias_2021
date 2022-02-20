@@ -1,8 +1,8 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  * Organization chart series type
  *
- * (c) 2019-2019 Torstein Honsi
+ * (c) 2019-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -22,13 +22,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/Organization/OrganizationPoint.js', [_modules['Core/Series/SeriesRegistry.js']], function (SeriesRegistry) {
         /* *
          *
@@ -73,7 +71,6 @@
          * */
         var OrganizationPoint = /** @class */ (function (_super) {
             __extends(OrganizationPoint, _super);
-
             function OrganizationPoint() {
                 /* *
                  *
@@ -91,7 +88,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Functions
@@ -115,7 +111,7 @@
 
         return OrganizationPoint;
     });
-    _registerModule(_modules, 'Series/Organization/OrganizationSeries.js', [_modules['Series/Organization/OrganizationPoint.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (OrganizationPoint, palette, SeriesRegistry, U) {
+    _registerModule(_modules, 'Series/Organization/OrganizationSeries.js', [_modules['Series/Organization/OrganizationPoint.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (OrganizationPoint, SeriesRegistry, U) {
         /* *
          *
          *  Organization chart module
@@ -171,7 +167,6 @@
          */
         var OrganizationSeries = /** @class */ (function (_super) {
             __extends(OrganizationSeries, _super);
-
             function OrganizationSeries() {
                 /* *
                  *
@@ -192,7 +187,6 @@
                 return _this;
                 /* eslint-enable valid-jsdoc */
             }
-
             /* *
              *
              *  Static Functions
@@ -265,22 +259,22 @@
             OrganizationSeries.prototype.alignDataLabel = function (point, dataLabel, options) {
                 // Align the data label to the point graphic
                 if (options.useHTML) {
-                    var width = point.shapeArgs.width,
-                        height = point.shapeArgs.height,
+                    var width_1 = point.shapeArgs.width,
+                        height_1 = point.shapeArgs.height,
                         padjust = (this.options.borderWidth +
                             2 * this.options.dataLabels.padding);
                     if (this.chart.inverted) {
-                        width = height;
-                        height = point.shapeArgs.width;
+                        width_1 = height_1;
+                        height_1 = point.shapeArgs.width;
                     }
-                    height -= padjust;
-                    width -= padjust;
+                    height_1 -= padjust;
+                    width_1 -= padjust;
                     // Set the size of the surrounding div emulating `g`
                     var text = dataLabel.text;
                     if (text) {
                         css(text.element.parentNode, {
-                            width: width + 'px',
-                            height: height + 'px'
+                            width: width_1 + 'px',
+                            height: height_1 + 'px'
                         });
                         // Set properties for the span emulating `text`
                         css(text.element, {
@@ -295,13 +289,13 @@
                     // inside the box
                     dataLabel.getBBox = function () {
                         return {
-                            width: width,
-                            height: height
+                            width: width_1,
+                            height: height_1
                         };
                     };
                     // Overwrite dataLabel dimensions (#13100).
-                    dataLabel.width = width;
-                    dataLabel.height = height;
+                    dataLabel.width = width_1;
+                    dataLabel.height = height_1;
                 }
                 _super.prototype.alignDataLabel.apply(this, arguments);
             };
@@ -453,7 +447,7 @@
                  * @type {Highcharts.ColorString}
                  * @private
                  */
-                borderColor: palette.neutralColor60,
+                borderColor: "#666666" /* neutralColor60 */,
                 /**
                  * The border radius of the node cards.
                  *
@@ -523,7 +517,6 @@
                                 opacity: 0.75,
                                 margin: '5px'
                             };
-
                         // eslint-disable-next-line valid-jsdoc
                         /**
                          * @private
@@ -533,7 +526,6 @@
                                 return str + key + ':' + style[key] + ';';
                             }, 'style="') + '"';
                         }
-
                         if (this.point.image) {
                             imageStyle['max-width'] = '30%';
                             innerStyle.width = '70%';
@@ -590,7 +582,7 @@
                  * @type {Highcharts.ColorString}
                  * @private
                  */
-                linkColor: palette.neutralColor60,
+                linkColor: "#666666" /* neutralColor60 */,
                 /**
                  * The line width of the links connecting nodes, in pixels.
                  *

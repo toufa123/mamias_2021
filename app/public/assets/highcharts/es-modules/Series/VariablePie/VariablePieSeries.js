@@ -27,12 +27,10 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 
@@ -54,7 +52,6 @@ var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.ex
  */
 var VariablePieSeries = /** @class */ (function (_super) {
     __extends(VariablePieSeries, _super);
-
     function VariablePieSeries() {
         /* *
          *
@@ -74,7 +71,6 @@ var VariablePieSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions

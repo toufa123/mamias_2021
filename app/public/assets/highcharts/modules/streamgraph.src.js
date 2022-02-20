@@ -1,9 +1,9 @@
 /**
- * @license Highcharts JS v9.0.0 (2021-02-02)
+ * @license Highcharts JS v9.3.0 (2021-10-21)
  *
  * Streamgraph module
  *
- * (c) 2010-2019 Torstein Honsi
+ * (c) 2010-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Series/Streamgraph/StreamgraphSeries.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
@@ -80,7 +78,6 @@
          */
         var StreamgraphSeries = /** @class */ (function (_super) {
             __extends(StreamgraphSeries, _super);
-
             function StreamgraphSeries() {
                 var _this = _super !== null && _super.apply(this,
                     arguments) || this;
@@ -94,7 +91,6 @@
                 _this.options = void 0;
                 return _this;
             }
-
             /* *
              *
              *  Functions

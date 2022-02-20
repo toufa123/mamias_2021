@@ -3,7 +3,7 @@
 #    controller: App\Controller\DefaultController::index
 sonata_user_admin_resetting:
     resource: '@SonataUserBundle/Resources/config/routing/admin_resetting.xml'
-    prefix: /user/resetting
+    prefix: /admin/resetting
 
 sonata_user:
     resource: '@SonataUserBundle/Resources/config/routing/admin_security.xml'
@@ -19,6 +19,10 @@ fos_user_profile:
 fos_user_register:
     resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
     prefix: /user/register
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
 
 news:
     resource: '@SonataNewsBundle/Resources/config/routing/news.xml'
@@ -103,3 +107,16 @@ CMS:
         breadcrumb:
             label: Contact Us
             parent_route: home
+
+
+mamias_terms:
+    path: /terms
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    terms.html.twig
+
+mamias_privacy:
+    path: /privacy
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    privacy.html.twig

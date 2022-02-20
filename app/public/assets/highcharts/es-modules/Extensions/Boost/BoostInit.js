@@ -12,23 +12,18 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-
 var noop = H.noop;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
-
 var eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler,
     allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting,
     renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
-
 /* eslint-disable valid-jsdoc */
 /**
  * Initialize the boot module.
@@ -50,7 +45,7 @@ function init() {
                 yMax = yExtremes.max, pointTaken = {}, lastClientX, sampling = !!series.sampling, points,
                 enableMouseTracking = options.enableMouseTracking !== false, threshold = options.threshold,
                 yBottom = yAxis.getThreshold(threshold), isRange = series.pointArrayMap &&
-                series.pointArrayMap.join(',') === 'low,high', isStacked = !!options.stacking,
+                    series.pointArrayMap.join(',') === 'low,high', isStacked = !!options.stacking,
                 cropStart = series.cropStart || 0, requireSorting = series.requireSorting, useRaw = !xData, minVal,
                 maxVal, minI, maxI, boostOptions, compareX = options.findNearestPointBy === 'x',
                 xDataFull = (this.xData ||
@@ -125,7 +120,6 @@ function init() {
                 // Perform the actual renderer if we're on series level
                 renderIfNotSeriesBoosting(renderer, this, chart);
             }
-
             /**
              * This builds the KD-tree
              * @private
@@ -133,6 +127,9 @@ function init() {
             function processPoint(d, i) {
                 var x, y, clientX, plotY, isNull, low = false, chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
+                if (typeof d === 'undefined') {
+                    return true;
+                }
                 if (!chartDestroyed) {
                     if (useRaw) {
                         x = d[0];
@@ -201,7 +198,6 @@ function init() {
                 }
                 return !chartDestroyed;
             }
-
             /**
              * @private
              */
@@ -214,7 +210,6 @@ function init() {
                     console.timeEnd('kd tree building'); // eslint-disable-line no-console
                 }
             }
-
             // Loop over the points to build the k-d tree - skip this if
             // exporting
             if (!chart.renderer.forExport) {
@@ -260,6 +255,7 @@ function init() {
         fill: true,
         sampling: true
     });
+    Chart.prototype.propsRequireUpdateSeries.push('boost');
     // Take care of the canvas blitting
     Chart.prototype.callbacks.push(function (chart) {
         /**
@@ -271,7 +267,6 @@ function init() {
                 chart.ogl.render(chart);
             }
         }
-
         /**
          * Clear chart-level canvas.
          * @private
@@ -309,8 +304,25 @@ function init() {
         //     chart.boostForceChartBoost =
         //         shouldForceChartSeriesBoosting(chart);
         // });
+        var prevX = -1;
+        var prevY = -1;
+        addEvent(chart.pointer, 'afterGetHoverData', function () {
+            var series = chart.hoverSeries;
+            if (chart.markerGroup && series) {
+                var xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                var yAxis = chart.inverted ? series.xAxis : series.yAxis;
+                if ((xAxis && xAxis.pos !== prevX) ||
+                    (yAxis && yAxis.pos !== prevY)) {
+                    // #10464: Keep the marker group position in sync with the
+                    // position of the hovered series axes since there is only
+                    // one shared marker group when boosting.
+                    chart.markerGroup.translate(xAxis.pos, yAxis.pos);
+                    prevX = xAxis.pos;
+                    prevY = yAxis.pos;
+                }
+            }
+        });
     });
     /* eslint-enable no-invalid-this */
 }
-
 export default init;

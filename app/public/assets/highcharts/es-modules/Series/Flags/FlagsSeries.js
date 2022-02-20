@@ -33,8 +33,10 @@ import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 
 var noop = H.noop;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
+import R from '../../Core/Renderer/RendererUtilities.js';
+
+var distribute = R.distribute;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
@@ -44,7 +46,11 @@ import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach,
     wrap = U.wrap;
 import './FlagsSymbols.js';
-
+/* *
+ *
+ *  Classes
+ *
+ * */
 /**
  * The Flags series.
  *
@@ -56,7 +62,6 @@ import './FlagsSymbols.js';
  */
 var FlagsSeries = /** @class */ (function (_super) {
     __extends(FlagsSeries, _super);
-
     function FlagsSeries() {
         /* *
          *
@@ -75,7 +80,6 @@ var FlagsSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-
     /* *
      *
      *  Functions
@@ -124,6 +128,10 @@ var FlagsSeries = /** @class */ (function (_super) {
             if (typeof plotY !== 'undefined' &&
                 plotX >= 0 &&
                 !outsideRight) {
+                // #15384
+                if (graphic && point.hasNewShapeType()) {
+                    graphic = graphic.destroy();
+                }
                 // Create the flag
                 if (!graphic) {
                     graphic = point.graphic = renderer.label('', null, null, shape, null, null, options.useHTML)
@@ -186,11 +194,15 @@ var FlagsSeries = /** @class */ (function (_super) {
         }
         // Handle X-dimension overlapping
         if (!options.allowOverlapX) {
+            var maxDistance_1 = 100;
             objectEach(boxesMap, function (box) {
                 box.plotX = box.anchorX;
                 boxes.push(box);
+                maxDistance_1 = Math.max(box.size, maxDistance_1);
             });
-            H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            // If necessary (for overlapping or long labels)  distribute it
+            // depending on the label width or a hardcoded value, #16041.
+            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, maxDistance_1);
             points.forEach(function (point) {
                 var box = point.graphic && boxesMap[point.plotX];
                 if (box) {
@@ -240,7 +252,10 @@ var FlagsSeries = /** @class */ (function (_super) {
         points.forEach(function (point) {
             var graphic = point.graphic;
             if (graphic) {
-                addEvent(graphic.element, 'mouseover', function () {
+                if (point.unbindMouseOver) {
+                    point.unbindMouseOver();
+                }
+                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function () {
                     // Raise this point
                     if (point.stackIndex > 0 &&
                         !point.raised) {
@@ -288,9 +303,10 @@ var FlagsSeries = /** @class */ (function (_super) {
      */
     FlagsSeries.prototype.setClip = function () {
         Series.prototype.setClip.apply(this, arguments);
-        if (this.options.clip !== false && this.sharedClipKey) {
-            this.markerGroup
-                .clip(this.chart[this.sharedClipKey]);
+        if (this.options.clip !== false &&
+            this.sharedClipKey &&
+            this.markerGroup) {
+            this.markerGroup.clip(this.chart.sharedClips[this.sharedClipKey]);
         }
     };
     /**
@@ -388,7 +404,7 @@ var FlagsSeries = /** @class */ (function (_super) {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
         threshold: null,
         /**
@@ -445,7 +461,7 @@ var FlagsSeries = /** @class */ (function (_super) {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highstock
          */
-        fillColor: palette.backgroundColor,
+        fillColor: "#ffffff" /* backgroundColor */,
         /**
          * The color of the line/border of the flag.
          *
@@ -475,14 +491,14 @@ var FlagsSeries = /** @class */ (function (_super) {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                lineColor: palette.neutralColor100,
+                lineColor: "#000000" /* neutralColor100 */,
                 /**
                  * The fill or background color of the flag.
                  *
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                fillColor: palette.highlightColor20
+                fillColor: "#ccd6eb" /* highlightColor20 */
             }
         },
         /**
@@ -504,35 +520,27 @@ var FlagsSeries = /** @class */ (function (_super) {
     });
     return FlagsSeries;
 }(ColumnSeries));
+OnSeriesComposition.compose(FlagsSeries);
 extend(FlagsSeries.prototype, {
     allowDG: false,
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#buildKDTree
-     */
-    buildKDTree: noop,
     forceCrop: true,
-    getPlotBox: OnSeriesMixin.getPlotBox,
-    /**
-     * Inherit the initialization from base Series.
-     *
-     * @private
-     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
-     */
-    init: Series.prototype.init,
-    /**
-     * Don't invert the flag marker group (#4960).
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#invertGroups
-     */
-    invertGroups: noop,
+    invertible: false,
     noSharedTooltip: true,
     pointClass: FlagsPoint,
     sorted: false,
     takeOrdinalPosition: false,
     trackerGroups: ['markerGroup'],
-    translate: OnSeriesMixin.translate
+    buildKDTree: noop,
+    /**
+     * Inherit the initialization from base Series.
+     * @private
+     */
+    init: Series.prototype.init,
+    /**
+     * Don't invert the flag marker group (#4960).
+     * @private
+     */
+    invertGroups: noop
 });
 SeriesRegistry.registerSeriesType('flags', FlagsSeries);
 /* *
